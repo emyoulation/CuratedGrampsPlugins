@@ -1,0 +1,1212 @@
+[
+  {
+    "t": 2,
+    "i": "addonpackship",
+    "n": "Addon Pack and Ship",
+    "v": "1.4.1",
+    "g": "5.2",
+    "d": "GUI tool to simplify and streamline addon distribution - pack it, ship it, share it",
+    "h": "https://gramps.discourse.group/t/5110",
+    "z": "AddonPackShip.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Beta What's Next",
+    "n": "Beta What's Next",
+    "v": "0.1.10",
+    "g": "5.2",
+    "d": "Beta Gramplet suggesting items to research",
+    "h": "https://github.com/emyoulation/_BetaDashboards",
+    "z": "Betawhatsnext.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "LocalTerm Gramplet",
+    "n": "Localized Gramps Glossary Terminology",
+    "v": "0.3.4",
+    "g": "5.2",
+    "d": "Localized index to Gramps Glossary terminology",
+    "h": "https://github.com/kajmikkelsen/LocalTerm",
+    "z": "LocalTerm.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "AncestorFill",
+    "n": "AncestorFill",
+    "v": "1.0.21",
+    "g": "5.2",
+    "d": "Report on the filling of the tree",
+    "h": "",
+    "z": "AncestorFill.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "DetailedDescendantBook",
+    "n": "Detailed Descendant Book",
+    "v": "1.1.27",
+    "g": "5.2",
+    "d": "Produces one or more detailed descendant reports based on a supplied query.",
+    "h": "",
+    "z": "DescendantBooks.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "Descendants Lines",
+    "n": "Descendants Lines",
+    "v": "1.1.9",
+    "g": "5.2",
+    "d": "Produces descendants lines of a person",
+    "h": "",
+    "z": "DescendantsLines.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "FamilySheet",
+    "n": "Family Sheet",
+    "v": "3.4.48",
+    "g": "5.2",
+    "d": "Produces a family sheet showing full information",
+    "h": "",
+    "z": "FamilySheet.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "LastChangeReport",
+    "n": "Last Change Report",
+    "v": "0.1.11",
+    "g": "5.2",
+    "d": "Report of the last records that have been changed",
+    "h": "LastChange",
+    "z": "LastChange.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "ListeEclair",
+    "n": "Liste Eclair",
+    "v": "1.0.27",
+    "g": "5.2",
+    "d": "Produit une liste eclair",
+    "h": "",
+    "z": "ListeEclair.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "PedigreeChart",
+    "n": "Pedigree Chart",
+    "v": "1.0.43",
+    "g": "5.2",
+    "d": "Alternate version of the traditional pedigree chart.",
+    "h": "",
+    "z": "PedigreeChart.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "PersonEverythingReport",
+    "n": "PersonEverything Report",
+    "v": "1.0.21",
+    "g": "5.2",
+    "d": "Produces a report containing everything about the active person",
+    "h": "",
+    "z": "PersonEverything.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "Repositories Report",
+    "n": "Repositories Report",
+    "v": "1.1.32",
+    "g": "5.2",
+    "d": "Produces a textual repositories report",
+    "h": "",
+    "z": "RepositoriesReport.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "SourcesCitationsReport",
+    "n": "Sources and Citations Report",
+    "v": "3.6.12",
+    "g": "5.2",
+    "d": "Provides a source and Citations Report with notes",
+    "h": "",
+    "z": "SourcesCitationsReport.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "denominoviso",
+    "n": "DenominoViso",
+    "v": "2.3.45",
+    "g": "5.2",
+    "d": "Generates a web (HTML) page with a graphical",
+    "h": "",
+    "z": "DenominoViso.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "networkchart",
+    "n": "Network Chart",
+    "v": "0.0.28",
+    "g": "5.2",
+    "d": "Generates a family network chart.",
+    "h": "",
+    "z": "NetworkChart.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "FamilyTree",
+    "n": "Family Tree",
+    "v": "4.2.23",
+    "g": "5.2",
+    "d": "Produces a graphical family tree.",
+    "h": "",
+    "z": "FamilyTree.addon.tgz"
+  },
+  {
+    "t": 0,
+    "i": "descendantspacetree",
+    "n": "Descendant Space Tree",
+    "v": "1.1.1",
+    "g": "5.2",
+    "d": "",
+    "h": "Addon:DescendantSpaceTree",
+    "z": "DescendantSpaceTree.addon.tgz"
+  },
+  {
+    "t": 1,
+    "i": "siblings",
+    "n": "Siblings",
+    "v": "1.0",
+    "g": "5.2",
+    "d": "Display a person's siblings.",
+    "h": "",
+    "z": "quickview.addon.tgz"
+  },
+  {
+    "t": 1,
+    "i": "biographyquickview",
+    "n": "Biography",
+    "v": "1.0.15",
+    "g": "5.2",
+    "d": "Display a text biography",
+    "h": "",
+    "z": "BiographyQuickview.addon.tgz"
+  },
+  {
+    "t": 1,
+    "i": "NumberOfAncestorsQuickview",
+    "n": "Number of ancestors",
+    "v": "1.0.9",
+    "g": "5.2",
+    "d": "Shows the number of ancestors of the current person",
+    "h": "",
+    "z": "NumberOfAncestorsQuickview.addon.tgz"
+  },
+  {
+    "t": 1,
+    "i": "NumberOfDescendantsQuickview",
+    "n": "Number of descendants",
+    "v": "3.4.31",
+    "g": "5.2",
+    "d": "Shows the number of descendants of the current person",
+    "h": "",
+    "z": "NumberOfDescendantsQuickview.addon.tgz"
+  },
+  {
+    "t": 1,
+    "i": "timelinequickview",
+    "n": "Timeline",
+    "v": "1.0.33",
+    "g": "5.2",
+    "d": "Display a person's events on a timeline",
+    "h": "",
+    "z": "TimelineQuickview.addon.tgz"
+  },
+  {
+    "t": 1,
+    "i": "add-multiple-events-person",
+    "n": "Add events to extended Family",
+    "v": "1.2",
+    "g": "5.2",
+    "d": "Add or share events to a Person and their spouses, children, parents",
+    "h": "",
+    "z": "add-multiple-events.addon.tgz"
+  },
+  {
+    "t": 1,
+    "i": "Query Quickview",
+    "n": "Query Quickview",
+    "v": "1.0.38",
+    "g": "5.2",
+    "d": "Quick view for SQL-like running queries",
+    "h": "QueryGramplet",
+    "z": "Query.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "media-genfilter",
+    "n": "Media",
+    "v": "VERSION",
+    "g": "5.2",
+    "d": "Generic media filter",
+    "h": "",
+    "z": "SuperTool.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "zipinstall",
+    "n": "ZipInstall",
+    "v": "1.1.9",
+    "g": "5.2",
+    "d": "Install a plugin from a ZIP file",
+    "h": "",
+    "z": "zipinstall.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "generatecitations",
+    "n": "Generate source citations from notes",
+    "v": "1.3.0",
+    "g": "5.2",
+    "d": "Generate source citations from notes",
+    "h": "",
+    "z": "generatecitations.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "NameMergeTool",
+    "n": "Name Merge Tool",
+    "v": "1.1.9",
+    "g": "5.2",
+    "d": "Merge names",
+    "h": "",
+    "z": "NameMergeTool.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "importsources",
+    "n": "Import Sources",
+    "v": "0.0.9",
+    "g": "5.2",
+    "d": "Import Sources from a CSV file",
+    "h": "",
+    "z": "importsources.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "NameEditorTool",
+    "n": "Name Editor Tool",
+    "v": "1.1.3",
+    "g": "5.2",
+    "d": "Edit names",
+    "h": "",
+    "z": "NameEditorTool.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "convert_narc_urls",
+    "n": "Convert NARC URLs",
+    "v": "1.0.7",
+    "g": "5.2",
+    "d": "",
+    "h": "",
+    "z": "convert_narc_urls.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "AttachSource",
+    "n": "Attach Source",
+    "v": "0.0.38",
+    "g": "5.2",
+    "d": "Attaches a shared source to multiple objects.",
+    "h": "",
+    "z": "AttachSourceTool.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "AvatarGenerator",
+    "n": "Avatar Generator Tool",
+    "v": "1.0.15",
+    "g": "5.2",
+    "d": "A tool to add avatar pictures to your family tree",
+    "h": "",
+    "z": "AvatarGenerator.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "EventDescriptionEditor",
+    "n": "Event Description Editor",
+    "v": "1.0.13",
+    "g": "5.2",
+    "d": "A tool to find and replace a string in event",
+    "h": "",
+    "z": "EventDescriptionEditor.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "FamilyRelationshipTool",
+    "n": "Family Relationship Tool",
+    "v": "1.1.8",
+    "g": "5.2",
+    "d": "Mass-edit the family relationship type for a group of families.",
+    "h": "",
+    "z": "FamilyRelationshipTool.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "PlaceCompletion",
+    "n": "PlaceCompletion",
+    "v": "0.0.43",
+    "g": "5.2",
+    "d": "Provides a browsable list of selected places, with possibility to complete/parse/set the attribute fields.",
+    "h": "",
+    "z": "PlaceCompletion.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "RemoveTagTool",
+    "n": "Add/Remove Tag Tool",
+    "v": "1.1.9",
+    "g": "5.2",
+    "d": "Add or remove a tag from groups of people, events, etc.",
+    "h": "",
+    "z": "RemoveTagTool.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "SetAttribute",
+    "n": "Set Attribute",
+    "v": "0.0.35",
+    "g": "5.2",
+    "d": "Set an attribute to a given value.",
+    "h": "",
+    "z": "SetAttributeTool.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "SetPrivacyTool",
+    "n": "Set Privacy Tool",
+    "v": "1.0.16",
+    "g": "5.2",
+    "d": "Set all objects of the last <number> of years private.",
+    "h": "Addon:SetPrivacyTool",
+    "z": "SetPrivacyTool.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "Topola",
+    "n": "Interactive Family Tree",
+    "v": "1.1.10",
+    "g": "5.2",
+    "d": "Opens an interactive tree in the browser",
+    "h": "",
+    "z": "Topola.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "calculateestimateddates",
+    "n": "Calculate Estimated Dates",
+    "v": "0.90.38",
+    "g": "5.2",
+    "d": "Calculates estimated dates for birth and death.",
+    "h": "",
+    "z": "CalculateEstimatedDates.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "chgivenname",
+    "n": "Fix Capitalization of Given Names",
+    "v": "1.0.37",
+    "g": "5.2",
+    "d": "Searches the entire database and attempts to",
+    "h": "",
+    "z": "ChangeGivenNames.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "climerge",
+    "n": "Command Line Merge",
+    "v": "1.0.38",
+    "g": "5.2",
+    "d": "Merge primary objects via the command line.",
+    "h": "",
+    "z": "CliMerge.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "downloadmedia",
+    "n": "Download media files from the internet",
+    "v": "1.0.18",
+    "g": "5.2",
+    "d": "This tool downloads media files from the internet",
+    "h": "",
+    "z": "DownloadMedia.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "mediaverify",
+    "n": "Media Verify",
+    "v": "1.0.28",
+    "g": "5.2",
+    "d": "Verify that media is present in the correct path",
+    "h": "",
+    "z": "MediaVerify.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "notecleanup",
+    "n": "Note Cleanup",
+    "v": "1.0.21",
+    "g": "5.2",
+    "d": "Clean up Notes that contain HTML markup",
+    "h": "",
+    "z": "NoteCleanup.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "s3uploader",
+    "n": "S3 Media Uploader",
+    "v": "0.1.8",
+    "g": "5.2",
+    "d": "",
+    "h": "",
+    "z": "S3MediaUploader.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "thumbgen",
+    "n": "Thumbnail Generator",
+    "v": "1.0.28",
+    "g": "5.2",
+    "d": "Generates thumbnails for media files",
+    "h": "",
+    "z": "ThumbnailGenerator.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "DoYouKnowYourFamily",
+    "n": "Do You Know Your Family",
+    "v": "0.9.0",
+    "g": "5.2",
+    "d": "Game that asks random questions about your family tree",
+    "h": "",
+    "z": "DoYouKnowYourFamily.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "deterministicid",
+    "n": "Deterministic ID",
+    "v": "1.0.10",
+    "g": "5.2",
+    "d": "Set/reset Gramps to use a Deterministic ID",
+    "h": "",
+    "z": "DetId.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "Index",
+    "n": "SourceIndex",
+    "v": "0.0.36",
+    "g": "5.2",
+    "d": "",
+    "h": "",
+    "z": "SourceIndex.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "FilterParams",
+    "n": "FilterParams",
+    "v": "1.2.7",
+    "g": "5.2",
+    "d": "Display custom filters and allow changing their parameters",
+    "h": "(",
+    "z": "FilterParams.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "reload_plugins",
+    "n": "Reload Plugins",
+    "v": "1.0.0",
+    "g": "5.2",
+    "d": "Tool to reload plugins",
+    "h": "",
+    "z": "reload_plugins.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "findduplicates2",
+    "n": "Find Duplicates 2",
+    "v": "0.9.0",
+    "g": "5.2",
+    "d": "Find Duplicate Persons",
+    "h": "",
+    "z": "findduplicates2.addon.tgz"
+  },
+  {
+    "t": 2,
+    "i": "FamilySearch komparo",
+    "n": "FamilySearch : kompari",
+    "v": "beta 2.0.66",
+    "g": "5.2",
+    "d": "FamilySearch : kompari gramps personojn kun FS personojn.",
+    "h": "",
+    "z": "PersonFS.addon.tgz"
+  },
+  {
+    "t": 3,
+    "i": "JSON Import",
+    "n": "JSON Import",
+    "v": "1.0.21",
+    "g": "5.2",
+    "d": "This is a JSON import",
+    "h": "",
+    "z": "JSON.addon.tgz"
+  },
+  {
+    "t": 3,
+    "i": "ex_sqlite",
+    "n": "SQLite Export",
+    "v": "1.1.10",
+    "g": "5.2",
+    "d": "SQLite is a common local database format",
+    "h": "",
+    "z": "Sqlite.addon.tgz"
+  },
+  {
+    "t": 3,
+    "i": "im_gedd",
+    "n": "GEDCOM_dialect",
+    "v": "1.0.1",
+    "g": "5.2",
+    "d": "",
+    "h": "(",
+    "z": "gedcom_dialect.addon.tgz"
+  },
+  {
+    "t": 4,
+    "i": "export",
+    "n": "export",
+    "v": "0.0.0",
+    "g": "5.2",
+    "d": "",
+    "h": "",
+    "z": "export.addon.tgz"
+  },
+  {
+    "t": 4,
+    "i": "Export GEDCOM Extensions",
+    "n": "Export GEDCOM Extensions (GED2)",
+    "v": "1.0.37",
+    "g": "5.2",
+    "d": "Extensions to the common GEDCOM format.",
+    "h": "",
+    "z": "GedcomExtensions.addon.tgz"
+  },
+  {
+    "t": 4,
+    "i": "Prolog Export",
+    "n": "Prolog Export",
+    "v": "1.0.18",
+    "g": "5.2",
+    "d": "Exports data into a Prolog fact format.",
+    "h": "",
+    "z": "ExportProlog.addon.tgz"
+  },
+  {
+    "t": 4,
+    "i": "Raw Export",
+    "n": "Raw Export",
+    "v": "1.0.39",
+    "g": "5.2",
+    "d": "This is a raw python object dump",
+    "h": "",
+    "z": "ExportRaw.addon.tgz"
+  },
+  {
+    "t": 4,
+    "i": "Export GEDCOM for Geneanet",
+    "n": "Export GEDCOM for Geneanet",
+    "v": "2.1.57",
+    "g": "5.2",
+    "d": "Extensions to the common GEDCOM format for Geneanet transfert.",
+    "h": "",
+    "z": "GedcomforGeneanet.addon.tgz"
+  },
+  {
+    "t": 4,
+    "i": "isotammiexportxml",
+    "n": "Isotammi XML export",
+    "v": "1.0.9",
+    "g": "5.2",
+    "d": "Isotammi XML export",
+    "h": "",
+    "z": "isotammiexportxml.addon.tgz"
+  },
+  {
+    "t": 5,
+    "i": "docgen",
+    "n": "docgen",
+    "v": "0.0.0",
+    "g": "5.2",
+    "d": "",
+    "h": "",
+    "z": "docgen.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "system webstuff",
+    "n": "Webstuff",
+    "v": "1.0",
+    "g": "5.2",
+    "d": "Provides a collection of resources for the web",
+    "h": "",
+    "z": "webstuff.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "libaccess",
+    "n": "Generic DB Access lib",
+    "v": "1.0.33",
+    "g": "5.2",
+    "d": "Provides a library for generic access to",
+    "h": "",
+    "z": "libaccess.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "libwebconnect",
+    "n": "libwebconnect",
+    "v": "1.0.34",
+    "g": "5.2",
+    "d": "Library for web site collections",
+    "h": "",
+    "z": "libwebconnect.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "recent-items",
+    "n": "Recent items",
+    "v": "0.9.7",
+    "g": "5.2",
+    "d": "Add recent items to selectors",
+    "h": "",
+    "z": "recent-items.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "PluginManager",
+    "n": "Plugin Manager Enhanced",
+    "v": "1.2.3",
+    "g": "5.2",
+    "d": "An Addon/Plugin Manager with several additional",
+    "h": "Addon:Plugin_ManagerV2",
+    "z": "PluginManager.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "Embedded-ChildMerge",
+    "n": "Embedded-ChildMerge",
+    "v": "0.9.0",
+    "g": "5.2",
+    "d": "Embedded ChildMerge",
+    "h": "",
+    "z": "ChildMerge.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "nameformat",
+    "n": "Name format",
+    "v": "0.9.1",
+    "g": "5.2",
+    "d": "Adds alternative surnames to the primary name",
+    "h": "",
+    "z": "nameformat.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "ErrorDetails",
+    "n": "ErrorDetails",
+    "v": "0.9.0",
+    "g": "5.2",
+    "d": "Addon that adds details of the error (stack trace) to ErrorDialog",
+    "h": "",
+    "z": "ErrorDetails.addon.tgz"
+  },
+  {
+    "t": 6,
+    "i": "citationbuilder",
+    "n": "citationbuilder",
+    "v": "0.9.0",
+    "g": "5.2",
+    "d": "",
+    "h": "",
+    "z": "citationbuilder.addon.tgz"
+  },
+  {
+    "t": 7,
+    "i": "GoogleEarth",
+    "n": "GoogleEarth",
+    "v": "1.0.50",
+    "g": "5.2",
+    "d": "Creates data file for GoogleEarth and opens it",
+    "h": "",
+    "z": "GoogleEarthWriteKML.addon.tgz"
+  },
+  {
+    "t": 8,
+    "i": "citationtreeview",
+    "n": "Citation Tree",
+    "v": "1.0",
+    "g": "5.2",
+    "d": "A view displaying citations and sources in a tree format.",
+    "h": "",
+    "z": "view.addon.tgz"
+  },
+  {
+    "t": 8,
+    "i": "HtreePedigreeView",
+    "n": "H-Tree Pedigree",
+    "v": "0.0.32",
+    "g": "5.2",
+    "d": "The view shows a space-efficient pedigree with",
+    "h": "",
+    "z": "HtreePedigreeView.addon.tgz"
+  },
+  {
+    "t": 8,
+    "i": "QuiltView",
+    "n": "Quilt Chart",
+    "v": "1.0.23",
+    "g": "5.2",
+    "d": "The view shows a quilt chart visualisation of a family tree",
+    "h": "",
+    "z": "QuiltView.addon.tgz"
+  },
+  {
+    "t": 8,
+    "i": "TimelinePedigreeView",
+    "n": "Timeline Pedigree",
+    "v": "0.1.63",
+    "g": "5.2",
+    "d": "The view shows a timeline pedigree with ancestors and",
+    "h": "",
+    "z": "TimelinePedigreeView.addon.tgz"
+  },
+  {
+    "t": 8,
+    "i": "geoancestor",
+    "n": "Ancestors map",
+    "v": "1.0.10",
+    "g": "5.2",
+    "d": "A view showing ancestors places on the map.",
+    "h": "",
+    "z": "GeoAncestor.addon.tgz"
+  },
+  {
+    "t": 8,
+    "i": "geotimelines",
+    "n": "TimeLines Map",
+    "v": "1.0.2",
+    "g": "5.2",
+    "d": "A view showing all the places visited by a person or persons on various date.",
+    "h": "https://gramps.discourse.group/t/timelines-map-addon-beta-testing/6130",
+    "z": "GeoTimeLines.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Geography coordinates for Family Events",
+    "n": "Geography coordinates for Family Events",
+    "v": "1.0.0",
+    "g": "5.2",
+    "d": "Gramplet showing the events for all the family",
+    "h": "GRAMPLET_HELP",
+    "z": "gramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Multimergegramplet Gramplet",
+    "n": "Multimerge Gramplet",
+    "v": "1.2.6",
+    "g": "5.2",
+    "d": "Multimerge Gramplet",
+    "h": "http://github.com/Taapeli/isotammi-addons/tree/master/source/multimergegramplet/README.md",
+    "z": "multimergegramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "PropertyEditor",
+    "n": "PropertyEditor",
+    "v": "1.1.9",
+    "g": "5.2",
+    "d": "Gramplet to edit attributes of multiple objects",
+    "h": "PropertyEditor Gramplet",
+    "z": "PropertyEditor.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "PlaceTool",
+    "n": "PlaceTool",
+    "v": "1.2.1",
+    "g": "5.2",
+    "d": "Gramplet to manipulate multiple places",
+    "h": "PlaceTool Gramplet",
+    "z": "PlaceTool.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "DeepConnectionsGraph",
+    "n": "Deep Connections Graph",
+    "v": "1.2.8",
+    "g": "5.2",
+    "d": "DeepConnectionsGraph; a Dashboard Server Gramplet",
+    "h": "Addon:Isotammi_addons#Deep_Connections_Graph",
+    "z": "DeepConnectionsGraph.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "AddSourcesGramplet",
+    "n": "AddSourcesGramplet",
+    "v": "0.9.9",
+    "g": "5.2",
+    "d": "Gramplet to add sources",
+    "h": "Addon:Isotammi_addons#Add_Sources_Gramplet",
+    "z": "AddSourcesGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Anniversaries",
+    "n": "Anniversaries",
+    "v": "1.0.2",
+    "g": "5.2",
+    "d": "A gramplet that displays the anniversaries of events",
+    "h": "AnniversariesGramplet",
+    "z": "AnniversariesGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Birthdays",
+    "n": "Birthdays",
+    "v": "1.1.13",
+    "g": "5.2",
+    "d": "a gramplet that displays the birthdays of the living people",
+    "h": "BirthdaysGramplet",
+    "z": "BirthdaysGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Clock Gramplet",
+    "n": "Clock",
+    "v": "0.0.35",
+    "g": "5.2",
+    "d": "Gramplet for demonstrating Cairo graphics",
+    "h": "Gramplets#GUI_Interface",
+    "z": "ClockGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "DateCalculator",
+    "n": "Date Calculator",
+    "v": "0.0.21",
+    "g": "5.2",
+    "d": "Perform date math calculations",
+    "h": "DateCalculator",
+    "z": "DateCalculator.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Deep Connections Gramplet",
+    "n": "Deep Connections Gramplet",
+    "v": "1.0.42",
+    "g": "5.2",
+    "d": "Gramplet showing a deep relationship between active and home people",
+    "h": "Deep_Connections_Gramplet",
+    "z": "DeepConnectionsGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Descendant Count Gramplet",
+    "n": "Descendant Count",
+    "v": "2.0.13",
+    "g": "5.2",
+    "d": "Gramplet for showing people and descendant counts",
+    "h": "Descendant_Count_Gramplet",
+    "z": "DescendantCount.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Extended Family Attributes",
+    "n": "Extended Family Attributes",
+    "v": "1.0.32",
+    "g": "5.2",
+    "d": "Gramplet showing the attributes of a family",
+    "h": "",
+    "z": "ExtendedAttributes.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Family Overview",
+    "n": "Family Overview",
+    "v": "1.0.18",
+    "g": "5.2",
+    "d": "Gramplet showing an overview of events for a family",
+    "h": "",
+    "z": "Overview.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Headline News",
+    "n": "Headline News",
+    "v": "1.0.46",
+    "g": "5.2",
+    "d": "Gramplet that shows the latest Gramps news",
+    "h": "HeadlineNewsGramplet",
+    "z": "HeadlineNewsGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Import Gramplet",
+    "n": "Import Text",
+    "v": "1.0.42",
+    "g": "5.2",
+    "d": "Gramplet for importing text",
+    "h": "ImportGramplet",
+    "z": "ImportGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "MediaBrowser",
+    "n": "Media Browser",
+    "v": "1.0.35",
+    "g": "5.2",
+    "d": "Gramplet showing details of a person",
+    "h": "",
+    "z": "MediaBrowser.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Note Gramplet",
+    "n": "Note Gramplet",
+    "v": "1.0.38",
+    "g": "5.2",
+    "d": "Gramplet for editing active person's notes",
+    "h": "Addon:NoteGramplet",
+    "z": "NoteGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Participants",
+    "n": "Participants",
+    "v": "1.0.18",
+    "g": "5.2",
+    "d": "Gramplet showing the participants in an event",
+    "h": "",
+    "z": "Participants.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Photo Tagging",
+    "n": "Photo Tagging",
+    "v": "1.0.43",
+    "g": "5.2",
+    "d": "Gramplet for tagging people in photos",
+    "h": "Addon:Photo_Tagging_Gramplet",
+    "z": "PhotoTaggingGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "PlaceUpdate",
+    "n": "PlaceUpdate",
+    "v": "1.0.9",
+    "g": "5.2",
+    "d": "Gramplet to manipulate multiple places",
+    "h": "http://gramps-project.org/wiki/index.php/PlaceUpdate_Gramplet",
+    "z": "PlaceUpdate.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Prerequisites Checker Gramplet",
+    "n": "Prerequisites Checker",
+    "v": "1.2.5",
+    "g": "5.2",
+    "d": "Prerequisites Checker Gramplet",
+    "h": "Addon:Prerequisites_Checker_Gramplet",
+    "z": "PrerequisitesCheckerGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Python Gramplet",
+    "n": "Python Shell",
+    "v": "1.0.36",
+    "g": "5.2",
+    "d": "Interactive Python interpreter",
+    "h": "PythonGramplet",
+    "z": "PythonGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Related Relatives Gramplet",
+    "n": "Related Relatives",
+    "v": "1.0.38",
+    "g": "5.2",
+    "d": "Gramplet showing relatives in a relation",
+    "h": "RelatedRelativesGramplet",
+    "z": "RelatedRelativesGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "This Day in Family History",
+    "n": "This Day in Family History",
+    "v": "1.0.10",
+    "g": "5.2",
+    "d": "A configurable program that shows you the connected events from your family tree that match today's day and month.",
+    "h": "This Day In Family History",
+    "z": "ThisDayInFamilyHistory.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Search Gramplet",
+    "n": "Search",
+    "v": "0.0.1",
+    "g": "5.2",
+    "d": "Gramplet for search objects in database.",
+    "h": "",
+    "z": "SearchGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "DeepGallery",
+    "n": "Deep Gallery",
+    "v": "0.0.1",
+    "g": "5.2",
+    "d": "Gramplet showing all media for active person",
+    "h": "https://github.com/hgboldt/deepgallery",
+    "z": "deepgallery.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Source References",
+    "n": "Source References",
+    "v": "1.0.18",
+    "g": "5.2",
+    "d": "Gramplet showing the references for a source",
+    "h": "",
+    "z": "SourceReferences.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Wordle Gramplet",
+    "n": "Wordle",
+    "v": "1.0.24",
+    "g": "5.2",
+    "d": "Gramplet used to make word clouds with wordle.net",
+    "h": "",
+    "z": "WordleGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Dates",
+    "n": "Dates",
+    "v": "1.2.5",
+    "g": "5.2",
+    "d": "Search and replace within Event date strings",
+    "h": "Addon:Isotammi_addons#Dates",
+    "z": "Dates.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Collections Clipboard Gramplet",
+    "n": "Collections Clipboard",
+    "v": "1.0.43",
+    "g": "5.2",
+    "d": "Gramplet for grouping collections of items to aid in data entry.",
+    "h": "",
+    "z": "ClipboardGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "HistContext",
+    "n": "Historical Context",
+    "v": "0.2.27",
+    "g": "5.2",
+    "d": "Lists relevant historical events during the lifetime of a Person",
+    "h": "Addon:Historical_Context",
+    "z": "HistContext.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Data Entry Gramplet",
+    "n": "Data Entry Gramplet",
+    "v": "1.0.49",
+    "g": "5.2",
+    "d": "Gramplet for quick data entry",
+    "h": "Data Entry Gramplet",
+    "z": "DataEntryGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "Person Events and Citations",
+    "n": "Person Events and Citations",
+    "v": "1.0.0",
+    "g": "5.2",
+    "d": "Gramplet showing the events and attached citations for a person",
+    "h": "",
+    "z": "events_and_citations.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "TestGr",
+    "n": "Test Gramplet",
+    "v": "0.0.26",
+    "g": "5.2",
+    "d": "Test Gramplet",
+    "h": "TestGramplet",
+    "z": "TestGramplet.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "WebSearch",
+    "n": "WebSearch",
+    "v": "1.10.8",
+    "g": "5.2",
+    "d": "",
+    "h": "Addon:WebSearch",
+    "z": "WebSearch.addon.tgz"
+  },
+  {
+    "t": 10,
+    "i": "PersonGN",
+    "n": "Geneanet Gramplet",
+    "v": "beta 0.1.4",
+    "g": "5.2",
+    "d": "interfaco por Geneanet",
+    "h": "",
+    "z": "PersonGN.addon.tgz"
+  },
+  {
+    "t": 11,
+    "i": "expandersidebar",
+    "n": "Expander Sidebar",
+    "v": "1.0",
+    "g": "5.2",
+    "d": "Selection of views from lists with expanders",
+    "h": "",
+    "z": "sidebar.addon.tgz"
+  },
+  {
+    "t": 13,
+    "i": "HasInValidDate",
+    "n": "Event',  # one of the primary object classes",
+    "v": "1.1.2",
+    "g": "5.2",
+    "d": "Events with an invalid date",
+    "h": "",
+    "z": "_hasvaliddate.addon.tgz"
+  },
+  {
+    "t": 15,
+    "i": "cite-legacy",
+    "n": "Legacy",
+    "v": "1.0",
+    "g": "5.2",
+    "d": "Legacy citation formatter",
+    "h": "",
+    "z": "cite.addon.tgz"
+  }
+]
