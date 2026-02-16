@@ -1,13 +1,45 @@
 [
   {
+    "t": 0,
+    "i": "kinship_report2",
+    "n": "Kinship Report2",
+    "v": "1.1",
+    "g": "5.2",
+    "d": "Produces a textual report of kinship for a given person",
+    "h": "",
+    "z": "KinshipReport2a.addon.tgz",
+    "s": 0,
+    "a": 0,
+    "o": [
+      "Brian G. Matherly"
+    ],
+    "e": [
+      "brian@gramps-project.org"
+    ]
+  },
+  {
     "t": 2,
     "i": "addonpackship",
     "n": "Addon Pack and Ship",
-    "v": "1.4.1",
+    "v": "1.5.0",
     "g": "5.2",
     "d": "GUI tool to simplify and streamline addon distribution - pack it, ship it, share it",
     "h": "https://gramps.discourse.group/t/5110",
-    "z": "AddonPackShip.addon.tgz"
+    "z": "AddonPackShip.addon.tgz",
+    "s": 0,
+    "a": 0,
+    "o": [
+      "Brian McCullough"
+    ],
+    "e": [
+      "emyoulation@yahoo.com"
+    ],
+    "m": [
+      "Brian McCullough"
+    ],
+    "c": [
+      "emyoulation@yahoo.com"
+    ]
   },
   {
     "t": 10,
@@ -17,7 +49,64 @@
     "g": "5.2",
     "d": "Beta Gramplet suggesting items to research",
     "h": "https://github.com/emyoulation/_BetaDashboards",
-    "z": "Betawhatsnext.addon.tgz"
+    "z": "Betawhatsnext.addon.tgz",
+    "s": 0,
+    "a": 0,
+    "o": [
+      "Reinhard Mueller",
+      "Brian McCullough"
+    ],
+    "e": [
+      "emyoulation@yahoo.com"
+    ],
+    "m": [
+      "Jakim Friant",
+      "Brian McCullough"
+    ],
+    "c": [
+      "jmodule@friant.org",
+      "emyoulation@yahoo.com"
+    ]
+  },
+  {
+    "t": 10,
+    "i": "VirtualKeyboard",
+    "n": "Virtual Keyboard",
+    "v": "1.3.0",
+    "g": "5.2",
+    "d": "Touch-friendly on-screen keyboard for clipboarding characters",
+    "h": "https://gramps.discourse.group/t/python-virtual-keyboard-with-diacritical-marks/3006/10",
+    "z": "VirtualKeyboard.addon.tgz",
+    "s": 0,
+    "a": 0,
+    "o": [
+      "Brian McCullough",
+      "Perplexity AI Assistant"
+    ],
+    "e": [
+      "emyoulation@yahoo.com"
+    ]
+  },
+  {
+    "t": 10,
+    "i": "markdownviewer",
+    "n": "Markdown Viewer",
+    "v": "0.0.1",
+    "g": "5.2",
+    "d": "View Markdown (.md) files with proper formatting",
+    "h": "MarkdownViewer.html",
+    "z": "MarkdownViewer.addon.tgz",
+    "s": 2,
+    "a": 0,
+    "o": [
+      "Claude AI"
+    ],
+    "m": [
+      "Brian McCullough"
+    ],
+    "c": [
+      "emyoulation@yahoo.com"
+    ]
   },
   {
     "t": 10,
@@ -27,6 +116,14 @@
     "g": "5.2",
     "d": "Localized index to Gramps Glossary terminology",
     "h": "https://github.com/kajmikkelsen/LocalTerm",
-    "z": "LocalTerm.addon.tgz"
+    "z": "LocalTerm.addon.tgz",
+    "s": 0,
+    "a": 0,
+    "o": [
+      "Kaj Mikkelsen"
+    ],
+    "e": [
+      "kmi@vgdata.dk"
+    ]
   }
 ]
