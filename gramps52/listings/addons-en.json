@@ -9,18 +9,30 @@
     "h": "https://gramps.discourse.group/t/5110",
     "z": "AddonPackShip.addon.tgz",
     "s": 0,
-    "a": 0,
-    "o": [
-      "Brian McCullough"
-    ],
-    "e": [
-      "emyoulation@yahoo.com"
-    ],
-    "m": [
-      "Brian McCullough"
-    ],
-    "c": [
-      "emyoulation@yahoo.com"
-    ]
+    "a": 0
   },
+  {
+    "t": 10,
+    "i": "LocalTerm Gramplet",
+    "n": "Localized Gramps Glossary Terminology",
+    "v": "0.3.4",
+    "g": "5.2",
+    "d": "Localized index to Gramps Glossary terminology",
+    "h": "https://github.com/kajmikkelsen/LocalTerm",
+    "z": "LocalTerm.addon.tgz",
+    "s": 0,
+    "a": 0
+  },
+  {
+    "t": 10,
+    "i": "VirtualKeyboard",
+    "n": "Virtual Keyboard",
+    "v": "1.3.0",
+    "g": "5.2",
+    "d": "Touch-friendly on-screen keyboard for clipboarding characters",
+    "h": "https://gramps.discourse.group/t/python-virtual-keyboard-with-diacritical-marks/3006/10",
+    "z": "VirtualKeyboard.addon.tgz",
+    "s": 0,
+    "a": 0
+  }
 ]
