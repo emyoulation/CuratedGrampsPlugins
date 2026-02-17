@@ -3,23 +3,11 @@
     "t": 2,
     "i": "addonpackship",
     "n": "Addon Pack and Ship",
-    "v": "1.5.5",
+    "v": "1.6.2",
     "g": "5.2",
     "d": "Packaging and distribution tool - create release-ready addon packages and listings for GitHub publishing",
     "h": "https://gramps.discourse.group/t/5110",
     "z": "AddonPackShip.addon.tgz",
-    "s": 0,
-    "a": 0
-  },
-  {
-    "t": 10,
-    "i": "LocalTerm Gramplet",
-    "n": "Localized Gramps Glossary Terminology",
-    "v": "0.3.4",
-    "g": "5.2",
-    "d": "Localized index to Gramps Glossary terminology",
-    "h": "https://github.com/kajmikkelsen/LocalTerm",
-    "z": "LocalTerm.addon.tgz",
     "s": 0,
     "a": 0
   },
@@ -32,6 +20,18 @@
     "d": "Touch-friendly on-screen keyboard for clipboarding characters",
     "h": "https://gramps.discourse.group/t/python-virtual-keyboard-with-diacritical-marks/3006/10",
     "z": "VirtualKeyboard.addon.tgz",
+    "s": 0,
+    "a": 0
+  },
+  {
+    "t": 10,
+    "i": "LocalTerm Gramplet",
+    "n": "Localized Gramps Glossary Terminology",
+    "v": "0.3.4",
+    "g": "5.2",
+    "d": "Localized index to Gramps Glossary terminology",
+    "h": "https://github.com/kajmikkelsen/LocalTerm",
+    "z": "LocalTerm.addon.tgz",
     "s": 0,
     "a": 0
   }
