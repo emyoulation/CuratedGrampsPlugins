@@ -3,24 +3,12 @@
     "t": 2,
     "i": "addonpackship",
     "n": "Addon Pack and Ship",
-    "v": "1.6.2",
+    "v": "1.7.1",
     "g": "5.2",
-    "d": "Packaging and distribution tool - create release-ready addon packages and listings for GitHub publishing",
-    "h": "https://gramps.discourse.group/t/5110",
+    "d": "Packaging and distribution tool - create release-ready Gramps addon plugin packages and listings for GitHub publishing",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins",
     "z": "AddonPackShip.addon.tgz",
-    "s": 0,
-    "a": 0
-  },
-  {
-    "t": 10,
-    "i": "VirtualKeyboard",
-    "n": "Virtual Keyboard",
-    "v": "1.3.0",
-    "g": "5.2",
-    "d": "Touch-friendly on-screen keyboard for clipboarding characters",
-    "h": "https://gramps.discourse.group/t/python-virtual-keyboard-with-diacritical-marks/3006/10",
-    "z": "VirtualKeyboard.addon.tgz",
-    "s": 0,
+    "s": 3,
     "a": 0
   },
   {
@@ -30,9 +18,21 @@
     "v": "0.3.4",
     "g": "5.2",
     "d": "Localized index to Gramps Glossary terminology",
-    "h": "https://github.com/kajmikkelsen/LocalTerm",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins",
     "z": "LocalTerm.addon.tgz",
-    "s": 0,
+    "s": 3,
+    "a": 0
+  },
+  {
+    "t": 10,
+    "i": "VirtualKeyboard",
+    "n": "Virtual Keyboard",
+    "v": "1.3.0",
+    "g": "5.2",
+    "d": "Touch-friendly on-screen keyboard for clipboarding characters",
+    "h": "https://gramps.discourse.group/t/python-virtual-keyboard-with-diacritical-marks/3006/21",
+    "z": "VirtualKeyboard.addon.tgz",
+    "s": 3,
     "a": 0
   }
 ]
