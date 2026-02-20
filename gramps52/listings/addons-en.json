@@ -39,7 +39,7 @@
     "t": 10,
     "i": "markdowndash",
     "n": "Markdown Dash",
-    "v": "0.1.1",
+    "v": "0.1.4",
     "g": "5.2",
     "d": "Dashboard gramplet to view Markdown (.md) files with proper formatting",
     "z": "MarkdownDash.addon.tgz",
