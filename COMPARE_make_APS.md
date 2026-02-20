@@ -1,151 +1,315 @@
-# Developer Note: Using Python Subprocesses in Gramps Addons
+# Feature Comparison: make.py vs AddonPackShip
 
-**Author**: Claude (Anthropic AI)  
-**Contributor**: Brian McCullough  
-**Date**: February 17, 2026  
-**Applies to**: Gramps 5.2.x, Gramps 6.0.x (desktop versions)  
-**Status**: Current as of February 2026
+**Document Version**: 1.0  
+**Date**: February 2026  
+**AddonPackShip Version**: 1.7.3
 
 ---
 
-**Note**: This document addresses a specific issue with Python subprocess calls in Gramps addon development. Future versions of Gramps may provide improved Python environment detection or alternative APIs that supersede this guidance. Always check current Gramps developer documentation for the latest best practices.
+## Overview
+
+**make.py** is the original command-line tool for Gramps addon packaging, used by addon maintainers and the Gramps project itself.
+
+**AddonPackShip** is a GUI tool that provides a user-friendly interface for the most common addon packaging workflows.
+
+This document explains which `make.py` features are available in AddonPackShip and which require using the command-line tool.
 
 ---
 
-## The Problem: "Python was not found"
+## Feature Availability Matrix
 
-When developing Gramps addons, a common error appears when trying to run Python scripts as subprocesses:
-
-```
-Error: Python was not found; run without arguments to install from 
-the Microsoft Store, or disable this shortcut from Settings > Apps...
-```
-
-This error occurs even though Gramps is running Python successfully. **Why?**
-
-## Root Cause
-
-Gramps bundles its own Python interpreter, especially on **Windows** and **macOS**:
-
-- **Windows AIO**: Python is embedded in `C:\Program Files\GrampsAIO64-5.2.0\gramps\bin\`
-- **macOS Bundle**: Python is inside the Gramps.app package
-- **Linux**: Usually uses system Python, but not always
-
-When you write code like this:
-
-```python
-import subprocess
-
-# ❌ WRONG - Will fail on Windows/macOS bundled installations
-result = subprocess.run(['python3', 'myscript.py'])
-```
-
-The `'python3'` command **does not exist** in the system PATH. It only exists in your development environment!
-
-## The Solution: Use `sys.executable`
-
-**Always use `sys.executable`** to run Python scripts from within Gramps:
-
-```python
-import sys
-import subprocess
-
-# ✅ CORRECT - Works on all platforms and installations
-result = subprocess.run([sys.executable, 'myscript.py'])
-```
-
-**What is `sys.executable`?**
-
-It's the **full path to the Python interpreter currently running your code**:
-
-- **Windows Gramps**: `C:\Program Files\GrampsAIO64-5.2.0\gramps\bin\python.exe`
-- **Linux**: `/usr/bin/python3` (or wherever Python is installed)
-- **macOS Gramps**: `/Applications/Gramps.app/Contents/MacOS/python`
-- **Development**: Whatever Python is running your test environment
-
-It **always points to the correct Python** for that Gramps installation.
-
-## Common Mistake Patterns
-
-### ❌ Don't Do This:
-```python
-subprocess.run(['python', 'script.py'])           # Fails on many Windows systems
-subprocess.run(['python3', 'script.py'])          # Fails on Windows Gramps
-subprocess.run(['/usr/bin/python3', 'script.py']) # Fails on Windows, hardcoded path
-```
-
-### ✅ Do This Instead:
-```python
-subprocess.run([sys.executable, 'script.py'])     # Works everywhere
-```
-
-## Why This Catches Developers
-
-1. **Works in development**: Your Linux/Mac dev environment has `python3` in PATH
-2. **Breaks in production**: Windows users with Gramps AIO don't have `python3` 
-3. **Hard to debug**: Error message talks about Microsoft Store, not the real issue
-4. **Not obvious**: Gramps runs fine, so you assume Python is accessible
-
-## Testing Your Addon
-
-Before releasing, **always test on Windows** with a standard Gramps AIO installation:
-
-```python
-import sys
-print(f"Python executable: {sys.executable}")
-# Verify this works on Windows, Linux, and macOS
-```
-
-## Real-World Example: AddonPackShip
-
-The AddonPackShip tool had this exact bug in v1.5.3. **All operations failed on Windows**:
-
-```python
-# v1.5.3 - BROKEN on Windows:
-cmd = ['python3', make_script, command, addon_path, output_dir]
-
-# v1.5.4 - FIXED for all platforms:
-cmd = [sys.executable, make_script, command, addon_path, output_dir]
-```
-
-One line change, complete fix. The lesson: **Always use `sys.executable` for subprocess calls to Python**.
-
-## Quick Reference
-
-| Scenario | Use | Don't Use |
-|----------|-----|-----------|
-| Run Python script | `sys.executable` | `'python'` or `'python3'` |
-| Run system command | `'msgfmt'`, `'git'` | Hardcoded paths |
-| Run Gramps tool | Let Gramps API handle it | Subprocess to Gramps |
-
-## Further Reading
-
-**For Learning Developers:**
-1. **Python subprocess module**: https://docs.python.org/3/library/subprocess.html - Official Python documentation on running subprocesses
-2. **Gramps Addon Tutorial**: https://gramps-project.org/wiki/index.php/5.2_Addons - Start here for Gramps addon development basics
-3. **Cross-platform Python**: https://docs.python.org/3/library/sys.html#sys.executable - Understanding `sys.executable` and platform differences
-4. **Gramps Developer Guide**: https://gramps-project.org/wiki/index.php/Portal:Developers - Complete guide to Gramps development practices
-
-**For Advanced Developers:**
-5. **Gramps Plugin API Reference**: https://gramps-project.org/docs/ - Technical reference for Gramps plugin architecture and available APIs
+| Feature | make.py Command | AddonPackShip GUI | Status | Notes |
+|---------|----------------|-------------------|--------|-------|
+| **Build addon package** | `build AddonName` | ✅ Build Selected | Full | Creates `.addon.tgz` files |
+| **Build all addons** | `build all` | ✅ Select All + Build | Full | Multi-select support |
+| **Compile translations** | `compile AddonName` | ✅ Compile Translations | Full | Compiles `.po` → `.mo` |
+| **Compile all translations** | `compile all` | ✅ Select All + Compile | Full | Multi-select support |
+| **Generate listings** | `listing AddonName` | ✅ Create Listings | Full | Creates JSON metadata |
+| **Generate all listings** | `listing all` | ✅ Select All + Listing | Full | Multi-select support |
+| **Pack and Ship workflow** | `build` + `listing` | ✅ Pack and Ship | Enhanced | One-button workflow with β/Δ modes |
+| **Clean cache files** | `clean` | ❌ Removed | N/A | Feature disabled pending safety review |
+| **Create MANIFEST** | Manual editing | ✅ Edit MANIFEST | Enhanced | GUI editor with directory preview |
+| **Generate template.pot** | `xgettext` (manual) | ✅ Auto-generated | Enhanced | Created during Compile if missing |
+| **Initialize addon structure** | `init AddonDirectory` | ❌ Not Available | Use make.py | Creates directory structure |
+| **Initialize translation file** | `init AddonDirectory fr` | ❌ Not Available | Use make.py | Creates empty `.po` files |
+| **Update translations** | `update AddonDirectory fr` | ❌ Not Available | Use make.py | Updates `.po` from `.pot` |
+| **Build as-needed** | `as-needed` | ❌ Not Available | Use make.py | Builds only changed addons |
+| **Manifest validation** | `manifest-check` | ❌ Not Available | Use make.py | Validates MANIFEST syntax |
+| **Unlist addon** | `unlist AddonName` | ❌ Not Available | Use make.py | Removes from listings |
+| **Check addon** | `check AddonName` | ❌ Not Available | Use make.py | Validates addon structure |
+| **Aggregate POT files** | `aggregate-pot` | ❌ Not Available | Use make.py | Combines all `.pot` files |
+| **Extract PO translations** | `extract-po` | ❌ Not Available | Use make.py | Splits aggregated translations |
 
 ---
 
-**Remember**: Gramps is **not** a normal Python environment. It bundles dependencies, runs in isolation on some platforms, and your addon needs to work with **that** Python, not the system Python. Always use `sys.executable` for subprocess calls.
+## ✅ Features Available in AddonPackShip
+
+### 1. Build Addon Packages
+**make.py**: `python3 make.py gramps52 build AddonName`  
+**AddonPackShip**: Select addon(s) → **Build Selected**
+
+**Advantages in GUI**:
+- Visual selection interface
+- Multi-select support
+- Real-time feedback
+- Shows which MANIFEST file was used
+- Dual build modes (β Beta / Δ Release)
+
+### 2. Compile Translations
+**make.py**: `python3 make.py gramps52 compile AddonName`  
+**AddonPackShip**: Select addon(s) → **Compile Translations**
+
+**Advantages in GUI**:
+- Auto-generates `template.pot` if missing
+- Visual selection of multiple addons
+- Progress feedback
+- Flexible `.po` file naming (handles `-local`, `_FR`, etc.)
+
+### 3. Generate Listings
+**make.py**: `python3 make.py gramps52 listing AddonName`  
+**AddonPackShip**: Select addon(s) → **Create Listings**
+
+**Advantages in GUI**:
+- Uses actual plugin registration data (more accurate)
+- Multi-select support
+- Shows metadata extraction
+- Validates `.gpr.py` syntax
+
+### 4. Pack and Ship (Enhanced Workflow)
+**make.py**: Multiple commands required  
+**AddonPackShip**: **📦 Pack and Ship (Build + Listing)**
+
+**GUI Exclusive Features**:
+- **β Beta mode**: Auto-includes translation sources, docs, all files
+- **Δ Release mode**: Clean end-user package
+- Warning dialog before lossy Release builds
+- One-click complete workflow
+- Visual confirmation of output location
+
+### 5. MANIFEST Editor (GUI Exclusive)
+**make.py**: Manual file editing  
+**AddonPackShip**: **✏️ Edit MANIFEST** button
+
+**Features**:
+- Creates `MANIFEST` or `MANIFEST.beta` based on mode
+- Seeds from existing MANIFEST when creating `.beta`
+- Appends filtered directory listing
+- Opens in system default editor
+- Smart filtering (omits auto-included files)
 
 ---
 
-## Document Information
+## ❌ Features NOT Available in AddonPackShip
 
-**Version**: 1.0  
-**Created**: February 17, 2026  
-**Author**: Claude (Anthropic AI), with contributions from Brian McCullough  
-**Verified On**:
-- Gramps 5.2.3 (Windows 10 AIO, Fedora Linux, macOS)
-- Gramps 6.0.0-beta (preliminary testing)
+These features require using the command-line `make.py` tool:
 
-**Feedback**: Report issues or suggestions for this document through Gramps Discourse forums
+### 1. Initialize New Addon Structure
+**Command**: `python3 make.py gramps52 init AddonDirectory`
 
-**License**: This document is provided under CC BY 4.0 (Creative Commons Attribution 4.0 International). You are free to share and adapt this content with appropriate attribution.
+**What it does**:
+- Creates addon directory
+- Creates `po/` subdirectory
+- Sets up basic structure
 
-**Related Tools**: This issue was discovered and resolved during development of AddonPackShip v1.5.4 (Gramps addon packaging tool)
+**Why not in GUI**: This is a one-time setup task better suited to command-line or IDE.
+
+### 2. Initialize Translation Files
+**Command**: `python3 make.py gramps52 init AddonDirectory fr`
+
+**What it does**:
+- Creates empty `po/fr-local.po` file
+- Sets up translation file headers
+
+**Why not in GUI**: Rare operation; translators typically receive `.po` files from developers.
+
+### 3. Update Existing Translations
+**Command**: `python3 make.py gramps52 update AddonDirectory fr`
+
+**What it does**:
+- Runs `msgmerge` to update `.po` files from new `.pot`
+- Preserves existing translations
+- Adds new strings, marks obsolete ones
+
+**Workaround**: Use standalone `msgmerge`:
+```bash
+msgmerge -U po/fr-local.po po/template.pot
+```
+
+### 4. Build As-Needed (Incremental)
+**Command**: `python3 make.py gramps52 as-needed`
+
+**What it does**:
+- Checks modification times
+- Rebuilds only changed addons
+- Regenerates listings
+- Runs cleanup
+
+**Why not in GUI**: Optimization for batch operations; GUI is for explicit user actions.
+
+### 5. Manifest Validation
+**Command**: `python3 make.py gramps52 manifest-check`
+
+**What it does**:
+- Validates MANIFEST syntax
+- Checks for non-existent files
+- Reports errors
+
+**Workaround**: AddonPackShip validates during build and reports errors.
+
+### 6. Unlist Addon
+**Command**: `python3 make.py gramps52 unlist AddonName`
+
+**What it does**:
+- Removes addon from listing JSON
+- Keeps `.addon.tgz` file
+
+**Workaround**: Manually edit JSON file or don't build listing for that addon.
+
+### 7. Check Addon Structure
+**Command**: `python3 make.py gramps52 check AddonName`
+
+**What it does**:
+- Validates `.gpr.py` syntax
+- Checks required files exist
+- Reports structural issues
+
+**Workaround**: AddonPackShip validates during build and reports malformed `.gpr.py` files.
+
+### 8. Aggregate POT Files
+**Command**: `python3 make.py gramps60 aggregate-pot`
+
+**What it does**:
+- Combines all `template.pot` files
+- Creates single `po/addons.pot`
+- Excludes strings already in `gramps.pot`
+
+**Purpose**: For Gramps project translation coordination.
+
+**Why not in GUI**: Project-level operation, not needed by individual addon developers.
+
+### 9. Extract PO Translations
+**Command**: `python3 make.py gramps60 extract-po`
+
+**What it does**:
+- Extracts translations from aggregated `po/{lang}.po`
+- Distributes to individual addon `{lang}-local.po` files
+
+**Purpose**: For Gramps project translation distribution.
+
+**Why not in GUI**: Project-level operation, reverse of aggregation.
+
+---
+
+## Clean Feature (Temporarily Disabled)
+
+**Command**: `python3 make.py gramps52 clean [AddonDirectory]`  
+**AddonPackShip**: ❌ Removed (pending safety review)
+
+**What it does**:
+- Removes `__pycache__` directories
+- Deletes `.pyc`, `.pyo` bytecode files
+- Cleans editor backup files (`*~`)
+
+**Status**: Disabled in v1.7.0 due to safety concerns about inadvertent file deletion during development.
+
+**Workaround**: Manually delete `__pycache__/` directories when needed.
+
+---
+
+## Workflow Recommendations
+
+### For Individual Addon Developers
+
+**Use AddonPackShip for**:
+- Day-to-day packaging
+- Creating beta releases
+- Generating final releases
+- Compiling translations
+- Creating/editing MANIFEST files
+
+**Use make.py for**:
+- Initial addon setup (`init`)
+- Updating translation files (`update`)
+- Batch operations on many addons
+
+### For Gramps Project Maintainers
+
+**Use AddonPackShip for**:
+- Testing individual addons
+- Quick rebuilds during review
+
+**Use make.py for**:
+- Batch building all addons (`build all`)
+- Translation aggregation (`aggregate-pot`)
+- Translation distribution (`extract-po`)
+- Incremental builds (`as-needed`)
+- Structural validation (`check`, `manifest-check`)
+
+### For Translators
+
+**Use AddonPackShip for**:
+- Compiling translations to test
+- Generating `template.pot` from source
+
+**Use make.py for**:
+- Updating `.po` files from new `.pot` (`update`)
+
+---
+
+## Migration Notes
+
+If you're currently using `make.py` and want to switch to AddonPackShip:
+
+### What You Can Replace
+
+✅ **Daily packaging workflow**  
+Replace: `python3 make.py gramps52 build MyAddon && python3 make.py gramps52 listing MyAddon`  
+With: Select addon → **Pack and Ship**
+
+✅ **Translation compilation**  
+Replace: `python3 make.py gramps52 compile MyAddon`  
+With: Select addon → **Compile Translations**
+
+✅ **MANIFEST management**  
+Replace: Text editor  
+With: **Edit MANIFEST** button
+
+### What You Must Keep make.py For
+
+❌ **New addon initialization** (`init`)  
+❌ **Translation file updates** (`update`)  
+❌ **Project-wide aggregation** (`aggregate-pot`, `extract-po`)
+
+---
+
+## Summary
+
+**AddonPackShip** covers **~70% of common use cases** with a much easier interface:
+- Building packages (single or batch)
+- Compiling translations
+- Creating listings
+- MANIFEST editing
+- Dual build modes (β/Δ)
+
+**make.py** remains necessary for:
+- Initial setup operations
+- Advanced translation workflows
+- Project-level coordination
+- Batch optimization features
+
+**Best Practice**: Use AddonPackShip for regular addon packaging, keep `make.py` available for specialized operations.
+
+---
+
+## Additional Resources
+
+- **AddonPackShip README.md** — Complete GUI tool documentation
+- **AddonPackShip QuickStart.md** — 5-minute getting started guide
+- **make.py source** — Command-line reference implementation
+- **Gramps Wiki** — Developer documentation
+
+---
+
+**Questions or Suggestions?**
+
+If you need a `make.py` feature in the GUI, please discuss on Gramps Discourse forums!
