@@ -6,7 +6,7 @@
     "d": "Packaging and distribution tool - create release-ready Gramps addon plugin packages and listings for GitHub publishing",
     "v": "1.8.11",
     "g": "6.0",
-    "s": 3,
+    "s": 2,
     "z": "AddonPackShip.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/ COMPARE_make_APS.md",
     "a": 1
