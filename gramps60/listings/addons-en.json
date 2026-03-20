@@ -77,17 +77,6 @@
     "h": "https://gramps.discourse.group/t/9158"
   },
   {
-    "n": "Plugin Manager Enhanced",
-    "i": "PluginManager",
-    "t": 6,
-    "d": "An Addon/Plugin Manager with several additional capabilities",
-    "v": "1.2.8",
-    "g": "6.0",
-    "s": 3,
-    "z": "PluginManager.addon.tgz",
-    "h": "Addon:Plugin_ManagerV2"
-  },
-  {
     "n": "Virtual Keyboard",
     "i": "VirtualKeyboard",
     "t": 10,
