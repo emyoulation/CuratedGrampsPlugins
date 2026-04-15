@@ -121,4 +121,21 @@
     "z": "vcardenhanced.addon.tgz",
     "h": "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#vCard_export"
   }  
+  {
+    "n": "WebP Thumbnailer",
+    "i": "webpthumb",
+    "t": 14,
+    "d": "Dedicated thumbnailer for WEBP images",
+    "v": "0.1.3",
+    "g": "6.0",
+    "s": 1,
+    "z": "Thumbnailers.addon.tgz",
+    "rg": [
+      [
+        "GdkPixbuf",
+        "2.0"
+      ]
+    ],
+    "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
+    }  
 ]
