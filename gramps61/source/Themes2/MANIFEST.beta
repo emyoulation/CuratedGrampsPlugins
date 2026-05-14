@@ -1,0 +1,11 @@
+# MANIFEST.beta for Themes2
+*.py
+*.gpr.py
+*.md
+css/*
+locale/*
+media/*
+po/*
+MANIFEST
+MANIFEST.beta
+
