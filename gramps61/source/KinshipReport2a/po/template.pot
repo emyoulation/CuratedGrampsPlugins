@@ -1,0 +1,116 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-18 16:59-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.gpr.py:38
+msgid "Kinship Report2"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.gpr.py:39
+msgid "Produces a textual report of kinship for a given person"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:116
+#, python-format
+msgid "Person %s is not in the Database"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:134
+#, python-format
+msgid "Kinship Report for %s"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:142
+msgid "Spouses"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:370
+msgid "Report Options"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:372
+msgid "Center Person"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:373
+msgid "The center person for the report"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:376
+msgid "Max Descendant Generations"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:377
+msgid "The maximum number of descendant generations"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:380
+msgid "Max Ancestor Generations"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:381
+msgid "The maximum number of ancestor generations"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:384
+msgid "Show Gramps ID"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:385
+msgid "Whether to show Gramps ID"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:388
+msgid "Include spouses"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:389
+msgid "Whether to include spouses"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:392
+msgid "Include cousins"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:393
+msgid "Whether to include cousins"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:396
+msgid "Include aunts/uncles/nephews/nieces"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:397
+msgid "Whether to include aunts/uncles/nephews/nieces"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:400
+msgid "Report Options (2)"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:424
+msgid "The style used for the title."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:434
+msgid "The style used for second level headings."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/KinshipReport2a/kinshipreport2.py:442
+msgid "The basic style used for the text display."
+msgstr ""

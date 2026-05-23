@@ -1,0 +1,413 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-27 11:43-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.gpr.py:42
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:240
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:241
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:254
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1509
+msgid "Addon Pack and Ship"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.gpr.py:44
+msgid ""
+"Packaging and distribution tool - create release-ready Gramps addon plugin "
+"packages and listings for GitHub publishing"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:124
+msgid "No Addons Found"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:125
+msgid "No third-party addons found. Install some addons first."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:259
+msgid ""
+"Select installed addons to package and publish.\n"
+"Found {} addon(s) in your Gramps installation."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:271
+msgid "Filter Addons"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:278
+msgid "Name/Contributor contains:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:282
+msgid "e.g., addon name, your name, or email"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:286
+msgid "Clear"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:324
+msgid "Build Selected"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:329
+msgid "Compile Translations"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:334
+msgid "Create Listings"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:341
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:704
+msgid "✏️ Edit MANIFEST.beta"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:343
+msgid ""
+"Create or edit the MANIFEST file for the selected addon.\n"
+"Only available when exactly one addon is selected.\n"
+"• β Beta mode: edits MANIFEST.beta\n"
+"• Δ Release mode: edits MANIFEST\n"
+"Appends the addon's directory listing to help\n"
+"you choose which files to include in the package."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:360
+msgid "📦 Pack and Ship"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:371
+msgid "Close"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:571
+msgid "Select All Visible"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:575
+msgid "Deselect All"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:588
+msgid "<b>Build Mode:</b>"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:592
+msgid "β  Beta"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:594
+msgid ""
+"Beta build — includes everything for testers and translators:\n"
+"• All core files (.py, .glade, .xml)\n"
+"• README.md and all *.md files\n"
+"• po/*.po translation source files\n"
+"• po/template.pot translation template\n"
+"• MANIFEST and MANIFEST.beta files\n"
+"• All subdirectory contents (data, layouts, etc.)\n"
+"• locale/*.mo compiled translations\n"
+"\n"
+"Uses MANIFEST.beta if present, otherwise auto-includes all extras."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:608
+msgid "Δ  Release"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:611
+msgid ""
+"Release build — clean end-user package:\n"
+"• All core files (.py, .glade, .xml)\n"
+"• README.md only (no other .md files)\n"
+"• locale/*.mo compiled translations only\n"
+"• MANIFEST extras (if MANIFEST present)\n"
+"\n"
+"⚠ Intentionally lossy — po/ source files,\n"
+"CHANGELOG, dev notes are NOT included.\n"
+"Uses MANIFEST if present."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:702
+msgid "✏️ Edit MANIFEST"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:809
+msgid "make_addon.py not found in AddonPackShip directory"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:899
+msgid "Single Selection Required"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:900
+msgid "Please select exactly one addon to edit its MANIFEST."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1075
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1087
+msgid "MANIFEST {}"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1076
+msgid ""
+"{} has been {} for {}.\n"
+"\n"
+"Location:\n"
+"  {}\n"
+"\n"
+"The file has been opened in your default text editor.\n"
+"\n"
+"The bottom of the file shows files not yet in the MANIFEST\n"
+"(auto-included files like .py and .glade are omitted).\n"
+"Copy any lines you want to include into the body above."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1088
+msgid ""
+"{} has been {} for {}.\n"
+"\n"
+"Location:\n"
+"  {}\n"
+"\n"
+"Could not open editor automatically: {}\n"
+"Please open the file manually."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1103
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1142
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1157
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1229
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1281
+msgid "No Selection"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1104
+msgid "Please select at least one addon to build."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1117
+msgid ""
+"Cannot build - the following addon(s) have malformed .gpr.py files:\n"
+"\n"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1121
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1175
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1299
+msgid ""
+"\n"
+"\n"
+"Problem: These fields contain commas INSIDE quoted strings.\n"
+"\n"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1122
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1176
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1300
+msgid "Wrong:  authors = [\"Name1, Name2\"]\n"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1123
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1177
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1301
+msgid ""
+"Correct: authors = [\"Name1\", \"Name2\"]\n"
+"\n"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1124
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1178
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1302
+msgid "Please fix the .gpr.py file(s) and try again."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1127
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1181
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1305
+msgid "Malformed .gpr.py File"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1143
+msgid "Please select at least one addon to compile."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1158
+msgid "Please select at least one addon to list."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1171
+msgid ""
+"Cannot create listing - the following addon(s) have malformed .gpr.py "
+"files:\n"
+"\n"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1202
+msgid "Missing Package Files"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1203
+msgid ""
+"The following addons don't have .addon.tgz files yet:\n"
+"\n"
+"{}\n"
+"\n"
+"Listings require built packages. Would you like to:\n"
+"• Build these addons first (recommended), or\n"
+"• Try creating listings anyway (may result in empty entries)"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1208
+msgid "Build First"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1209
+msgid "Create Anyway"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1230
+msgid "Please select at least one addon to clean."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1241
+msgid "Clean Selected Addons?"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1242
+msgid ""
+"This will remove Python cache files from:\n"
+"\n"
+"{}\n"
+"\n"
+"═══════════════════════════════════════════\n"
+"WILL BE REMOVED (Python regenerates these):\n"
+"═══════════════════════════════════════════\n"
+"• __pycache__/ directories\n"
+"• *.pyc and *.pyo files (bytecode)\n"
+"• *~ backup files (editor temps)\n"
+"\n"
+"═══════════════════════════════════════════\n"
+"WILL BE PRESERVED (your work):\n"
+"═══════════════════════════════════════════\n"
+"• locale/ (compiled translations - needed!)\n"
+"• po/template.pot (translator reference)\n"
+"• po/*.po (translation source files)\n"
+"• All source code and data files\n"
+"\n"
+"Python will automatically regenerate cache files\n"
+"when you restart Gramps.\n"
+"\n"
+"Continue with Clean?"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1259
+msgid "Yes, Clean Cache"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1260
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1341
+msgid "No, Cancel"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1282
+msgid "Please select at least one addon to package."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1295
+msgid ""
+"Cannot package - the following addon(s) have malformed .gpr.py files:\n"
+"\n"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1318
+msgid "Δ Release Build — Intentionally Lossy"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1319
+msgid ""
+"You are about to create a RELEASE package for:\n"
+"\n"
+"{}\n"
+"\n"
+"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+"WILL BE INCLUDED:\n"
+"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+"• All core files (.py, .gpr.py, .glade, .xml)\n"
+"• README.md (if present)\n"
+"• Compiled translations (locale/*.mo)\n"
+"• MANIFEST extras (if MANIFEST present)\n"
+"\n"
+"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+"INTENTIONALLY EXCLUDED:\n"
+"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+"• po/*.po translation source files\n"
+"• po/template.pot\n"
+"• CHANGELOG.md and other .md files\n"
+"• MANIFEST.beta and development files\n"
+"\n"
+"⚠  This package is NOT suitable for translators\n"
+"   or beta testers who need source files.\n"
+"\n"
+"Use β Beta mode for development sharing.\n"
+"\n"
+"Continue with Release build?"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1340
+msgid "Yes, Build Release"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1385
+msgid "{} completed:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1395
+msgid "{} Complete"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1410
+msgid "OK"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1485
+msgid ""
+"{} completed [{}]:\n"
+"\n"
+"{}"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1495
+msgid ""
+"\n"
+"\n"
+"📁 Output location:\n"
+"  {}/download/\n"
+"  {}/listings/"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1500
+msgid "Pack and Ship Complete"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/AddonPackShip/AddonPackShip.py:1501
+msgid ""
+"\n"
+"\n"
+"Your addons are ready to share!"
+msgstr ""

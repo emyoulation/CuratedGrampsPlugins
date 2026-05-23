@@ -1,0 +1,94 @@
+
+
+    "Person ","Nachname ","Vorname ","Geschlecht ","Geburtsdatum ","Geburtsort-ID ","Sterbedatum ","Sterbeort-ID ","Taufdatum ","Taufort-ID ","Beerdigungsdatum ","Beerdigungsort-ID ","Berufsbeschreibung ","Beruf Ort ID ","Wohnort Datum ","Wohnort Ort ID ","Notiz "
+    "M445","A","Anna Elisabeth","weiblich","7.3.1672","[P0053]",
+    "M890","A","Leonhard","männlich","22.3.1672","[P0053]","Pachtinhaber der krf.sächs.Drahtmühle","[P0053]","gestorben als Besitzer der Drahtmühle"
+    "M1703","B ","Magdalena","weiblich","1631",
+    "M3406","B ","Merten","männlich","1533","[P0032]","Bürger von Dresden","[P0022]",
+    "M6812","B ","Valentin","männlich","1501","[P0032]","4.9.1579","[P0032]",
+    "M10001","Ottenbachin","Walpurgis ","weiblich",
+    "M13624","B ","Johann","männlich","1458","[P0032]","1519","[P0032]","[P0116]","begraben St.Peter "
+    "M27248","B ","Stephan","männlich","1428","3.3.1489","[P0032]","[P0116]","oder geboren 1431 gelangte aus Ungarn über Passau u. Regens burg des Bergwerks wegen nach Freiberg/Sa., begr.das.St.Peter in einer von ihm 1488 gestifteten Kapelle,
+    1457 Bürger, 1458 Ratsherr, 1473,77,84,88 Bürgermeister"
+    "M54496","B ","Johann","männlich","1379","1431","[P0117]",
+    "M108992","B ","Wenzel","männlich","25.9.1396","[P0120]","ein berühmter Soldat in den Türkenkriegen","Gefallen in der Schlacht bei Nikopolis 1396"
+    "M1691","C","Anna","weiblich",
+    "M3382","C","Melchior","männlich","Schulmeister ","[P0089]",
+    "M261","D ","Barbara","weiblich","11.1.1745","[P0077]","22.7.1664","[P0077]",
+    "M522","D ","Christoph","männlich","1621","8.4.1697","[P0077]","Schneidermeister und Schmied","[P0077]",
+    "M1041","D ","Maria","weiblich","21.10.1594","[P0077]","9.11.1657","[P0077]",
+    "M2082","D ","Christoph","männlich","1611",
+    "M1059","D ","Katharina","weiblich","1564","18.4.1638","[P0077]",
+    "M2118","D ","Balthasar","männlich","1608",
+    "M1079","D ","Magdalena","weiblich","31.5.1607","[P0077]","26.1.1679","[P0077]",
+    "M10002","E","Martin","männlich",
+    "M2158","D ","Christoph","männlich",
+    "M2297","D ","Regina","weiblich",
+    "M4594","D ","Paul","männlich",
+    "M505","F","Rosina Florentine","weiblich","3.1726","29.8.1671","[P0076]",
+    "M1010","F","Daniel","männlich","1623","Okulist.Stein- und Bruchschneider, Chirurgus und Wundarzt","[P0078]",
+    "M2020","F","Peter","männlich","1670","Richter oder Schultheiß ","[P0078]",
+    "M283","G","Maria","weiblich",
+    "M566","G","Hans","männlich","Wagner ","[P0061]",
+    "M3","H","Charlotte Marianne","weiblich","15.10.1901","[P0022]","1990","[P0062]",
+    "M6","H","Karl Richard","männlich","4.10.1853","[P0028]","28.11.1917","[P0022]","","[P0022]",
+    "M12","H","Karl Wilhelm","männlich","17.7.1812","[P0064]","28.1.1872","[P0121]","Oberforstmeister ","[P0121]",
+    "M24","H","Johann Gottlieb","männlich","1767","[P0123]","14.4.1846","[P0050]","emer.Revier- u.Holzförster ","[P0122]","emer.Revier- u.Holzförster "
+
+    "Hochzeit ","Ehemann/Vater/Elter1 ","Ehefrau/Mutter/Elter2 ","Datum ","Orts-ID "
+    "H222","[M444]","[M445]","[P0046]"
+    "H445","[M890]","[M891]","[P0053]"
+    "H851","[M1702]","[M1703]","1600",
+    "H1703","[M3406]","[M3407]",
+    "H3406","[M6812]","[M6813]",
+    "H20001","[M6812]","[M10001]","1560",
+    "H6812","[M13624]","[M13625]",
+    "H13624","[M27248]","[M27249]","1453",
+    "H27248","[M54496]","[M54497]",
+    "H54496","[M108992]","[M108993]",
+    "H845","[M1690]","[M1691]","[P0089]"
+    "H130","[M260]","[M261]","[P0077]"
+    "H261","[M522]","[M523]","[P0077]"
+    "H520","[M1040]","[M1041]","[P0077]"
+    "H529","[M1058]","[M1059]","[P0077]"
+    "H1059","[M2118]","[M2119]",
+    "H539","[M1078]","[M1079]","[P0077]"
+    "H20002","[M10002]","[M1079]","[P0077]"
+    "H1079","[M2158]","[M2159]",
+    "H1148","[M2296]","[M2297]","[P0077]"
+    "H2297","[M4594]","[M4595]",
+    "H252","[M504]","[M505]","[P0076]"
+    "H505","[M1010]","[M1011]","[P0076]"
+    "H141","[M282]","[M283]","1674",
+    "H1","[M2]","[M3]","7914","[P0022]"
+    "H3","[M6]","[M7]","[P0022]"
+    "H6","[M12]","[M13]","[P0115]"
+    "H12","[M24]","[M25]","[P0041]"
+
+    "Familie","Kind "
+    "[H222]","[M222]"
+    "[H445]","[M445]"
+    "[H851]","[M851]"
+    "[H1703]","[M1703]"
+    "[H3406]","[M3406]"
+    "[H6812]","[M6812]"
+    "[H13624]","[M13624]"
+    "[H27248]","[M27248]"
+    "[H54496]","[M54496]"
+    "[H845]","[M845]"
+    "[H130]","[M130]"
+    "[H261]","[M261]"
+    "[H520]","[M520]"
+    "[H529]","[M529]"
+    "[H1059]","[M1059]"
+    "[H539]","[M539]"
+    "[H1079]","[M1079]"
+    "[H1148]","[M1148]"
+    "[H2297]","[M2297]"
+    "[H252]","[M252]"
+    "[H505]","[M505]"
+    "[H141]","[M141]"
+    "[H1]","[M1]"
+    "[H3]","[M3]"
+    "[H6]","[M6]"
+    "[H12]","[M12]"

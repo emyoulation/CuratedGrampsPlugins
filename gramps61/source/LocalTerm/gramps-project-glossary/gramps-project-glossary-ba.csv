@@ -1,0 +1,159 @@
+location,source,target,id,fuzzy,context,translator_comments,developer_comments
+,EnglishExonym,Bashkir (AI),,no,language,"Инглиз телендә тел атамаһы",https://gramps-project.org/wiki/index.php/Gramps_Glossary/ba
+,endonym,Башҡорт (AI),,no,language,"Туған телдә тел атамаһы",https://gramps-project.org/wiki/index.php/Gramps_Glossary/ba
+,language  code,ba,,no,language,"ISO 639 стандартындағы тел коды",https://hosted.weblate.org/projects/gramps-project/-/ba/
+,translators,Тәржемәселәр,,yes,language,"GUI өсөн төп тәржемәсе",https://gramps-project.org/wiki/index.php/Portal:Translators#ba
+,translations,Тәржемәләр,,yes,language,"Вики тәржемә статусы",https://gramps-project.org/wiki/index.php/User_manual_translations#ba
+,documentation,документация,,yes,language,"Тәржемә ителгән вики-бит индексы",https://gramps-project.org/wiki/index.php/Category:ba:Documentation
+,Active Әүҙем Кеше,,False,terminology,"person билдәле бер мәлдәге төп фокус нөктәһе итеп күрһәтелгән",
+,active person,әүҙем кеше,,False,terminology,"person билдәле бер мәлдәге төп фокус нөктәһе итеп күрһәтелгән.",
+,Add-on,Өҫтәлмә,,yes,terminology,"Addon Manager аша ҡуйылған ихтыяри өсөнсө яҡ киңәйтеү плагины",Gramps_Glossary/ba#addon
+,addon,өҫтәлмә,,False,terminology,"Addon Manager аша ҡуйылған ихтыяри өсөнсө яҡ киңәйтеү плагины",
+,Addon,Өҫтәлмә,,yes,terminology,"Addon Manager аша ҡуйылған ихтыяри өсөнсө яҡ киңәйтеү плагины",Gramps_Glossary/ba#addon
+,Address,Адрес,,yes,terminology,"билдәле бер урын һәм уға бәйле ваҡыт арауығы",Gramps_Glossary/ba#address
+,administrative division,административ бүленеш,,yes,terminology,"геосәйәси төбәкте ғәҙәти ҡатламдарға бүлгән берәмек",Gramps_Glossary/ba#administrative_division
+,Aide,Ярҙамсы,,yes,terminology,"вәкил, ярҙамсы ролен билдәләүсе термин",Gramps_Glossary/ba#aide
+,Ancestry,Шәжәрә,,False,terminology,,
+,anglicization,англизация,,yes,terminology,"сит ил исемен уның инглизсә вариантына әйләндереү процессы",Gramps_Glossary/ba#anglicisation
+,Association,ассоциация,,yes,terminology,"бер кешенең икенсе кешегә нисбәтен асыҡ билдәләгән роль",Gramps_Glossary/ba#association
+,Associations,Ассоциации,,yes,terminology,"кешеләр араһындағы биологик булмаған бәйләнештәрҙе һәм уртаҡ үҙенсәлектәрҙе билдәләгән ролдәр",Gramps_Glossary/ba#association
+,Attribute,Атрибут,,yes,terminology,"даими үҙенсәлекте ҡул менән индерелгән яҙма",Gramps_Glossary/ba#attribute
+,Attributes,Атрибуттар,,yes,terminology,"алдан билдәләнгән йыйылманы тулыландырыусы даими үҙенсәлектәрҙең көйләнгән категориялары",Gramps_Glossary/ba#attribute
+,base relative media path,медиа файлдарының төп сағыштырма юлы,,False,terminology,,
+,Books Report,Китаптар отчеты,,yes,terminology,"Gramps текслы һәм график отчеттарының бер документта тәртипкә килтерелгән йыйылмаһы",Gramps_Glossary/ba#books_report
+,border,сик,,False,terminology,,
+,Bride,Кәләш,,yes,terminology,"никахтағы ҡатын ролен аңлатҡан термин,"Gramps_Glossary/ba#bride
+,BSDDB,BSDDB,,yes,terminology,"Berkeley Software Distribution базаһы: альтернатив база двигателе",Gramps_Glossary/ba#bsddb
+,bug,хата,,False,terminology,,
+,bugs,хаталар,,False,terminology,,
+,burial,ерләү,,False,terminology,,
+,Categories,Категориялар,,yes,terminology,"Gramps һәр төп объектты айырым тасуирлау схемалары йыйылмаһына ойоштора",Gramps_Glossary/ba#category
+,Category,Категория,,yes,terminology,"төп база объекты өсөн тасуирлау схемәһе",Gramps_Glossary/ba#category
+,Celebrant,Йөрөтәүсе,,yes,terminology,"ритуалды башҡарыусы кешене билдәләүсе термин",Gramps_Glossary/ba#celebrant
+,Citation,өҙөмтә,,yes,terminology,"сығанаҡ материалынан аныҡ өлөштө табырға мөмкинлек биргән мәғлүмәт",Gramps_Glossary/ba#citation
+,Citations,Өҙөмтәләр,,yes,terminology,"тикшеренеү яҙмаларын хуплаусы сығанаҡтарҙы атлап күрһәткән һәм урынлаштырған һылтанмалар йыйылмаһы",Gramps_Glossary/ba#citation
+,Clergy,Дин әһелдәре,,yes,terminology,"дини ваҡиғаның рәсми башҡарыусыһын билдәләүсе термин",Gramps_Glossary/ba#clergy
+,Clipboard,Күсереү буферы,,yes,terminology,"икенсел объекттарҙы уртаҡлаштырыу, навигация һәм ҡулдан фильтрҙар төҙөү өсөн ҡыҫҡа юл системаһы",Gramps_Glossary/ba#clipboard
+,Color Swatch,Төҫ үрнәге,,yes,terminology,,Gramps_Glossary/ba#color_swatch
+,Configure,Көйләү,,yes,terminology,"ҡулланыусы көйләй алған параметрҙар, улар урындағы ҡарау режимының эш итеүен яраҡлаштыра",Gramps_Glossary/ba#configure
+,Context menu,Контекст менюһы,,yes,terminology,"һөҙөмтәле элементҡа ҡағылышлы параметрҙар менән ҡалҡып сыҡҡан GUI менюһы",Gramps_Glossary/ba#context_menu
+,CSV,CSV,,yes,terminology,"үтмәләр менән бүленгән ҡиммәттәр форматындағы ябай текстлы мәғлүмәт алмашыу ҡыҫҡартмаһы",Gramps_Glossary/ba#json
+,Custom Filter,Ҡуллансы фильтры,,yes,terminology,"билдәле критерийҙарҙы үтәгән яҙмаларҙы ғына күрһәтеү өсөн ҡағиҙәләр системаһы",Gramps_Glossary/ba#filter
+,Custom Types,Ҡулланыусы Төрҙәре,,yes,terminology,"алдан билдәләнгән классификацияларҙан айырмалы, ҡулланыусы билдәләгән классификация",Gramps_Glossary/ba#custom
+,Data,Мәғлүмәт,,False,terminology,,
+,Date,Дата,,yes,terminology,сифат, "аныҡлыҡ һәм календарь сиге булған ваҡыт арауығы",Gramps_Glossary/ba#date
+,debug,юнәтеү,,False,terminology,,
+,Default,Ғәҙәти,,False,terminology,,
+,Delimiter,Айырғыс,,False,terminology,,
+,DNA,ДНК,,yes,terminology,"DeoxyriboNucleic Acid ҡыҫҡартмаһы; генетик мәғлүмәттең төп төҙөлөш өлөштәре",Gramps_Glossary/ba#dna
+,Dock,Беркетергә,,yes,terminology,"GUI термины: Dashboard ҡарауына Gramplet өҫтәү йәки бүленә торған контейнерҙарға ҡуйыу",Gramps_Glossary/ba#dock
+,DTD,DTD,,yes,terminology,"Document Type Definition ҡыҫҡартмаһы: файл структураһын билдәләүсе стандартлаштырылған документ форматы",Gramps_Glossary/ba#dtd
+,Edit Family,Ғаиләне төҙәтеү,,yes,terminology,"яҡын бәйләнгән кешеләрҙең төп ғаилә бәйләнешен тасуирлаған структур мәғлүмәтте яңыртыу",Gramps_Glossary/ba#edit_family
+,Edit Person,Кешене төҙәтеү,,yes,terminology,"бер шәхесте тасуирлаған структур мәғлүмәтте яңыртыу",Gramps_Glossary/ba#edit_person
+,Event,Ваҡиға,,yes,terminology,"ваҡиға тураһында структур мәғлүмәт",Gramps_Glossary/ba#event
+,Event Role,Ваҡиға Роле,,yes,terminology,"кеше ваҡиға эсендә үтәгән роль",Gramps_Glossary/ba#event_role
+,event type,ваҡиға төрө,,yes,terminology,"ваҡиғаларҙың ғәмәлгә ашырылған дөйөм төркөмө",Gramps_Glossary/ba#event_type
+,Events,Ваҡиғалар,,False,terminology,,
+,Fallback events,Алмаш ваҡиғалар,,yes,terminology,"етмәгән мөһим статистик ваҡиға урынына ҡулланыла торған сағыштырырлыҡ ваҡиғалар",Gramps_Glossary/ba#fallback
+,Family,Ғаилә,,yes,terminology,,Gramps_Glossary/ba#family
+,File Chooser,Файл һайлаусы,,yes,terminology,,Gramps_Glossary/ba#file_chooser
+,File formats,Файл форматтары,,yes,terminology,"компьютер файлында мәғлүмәт һаҡлау өсөн уның файл киңәйтеүе менән билдәләнгән стандарт ҡоролмалар",Gramps_Glossary/ba#file_format
+,Filter,Фильтр,,yes,terminology,,Gramps_Glossary/ba#filter
+,funeral,ерләү,,False,terminology,,
+,GEDCOM,GEDCOM,,yes,terminology,"Genealogical Data Communication стандартизацияланған мәғлүмәт алмашыу форматының ҡыҫҡартмаһы",Gramps_Glossary/ba#gedcom
+,Godparent,Крёстный ата-әсә,,yes,terminology,"Genealogical Data Communication стандартизацияланған мәғлүмәт алмашыу форматының ҡыҫҡартмаһы",Gramps_Glossary/ba#godparent
+,Gramplet,Грамплет,,yes,terminology,"ябай, интеграцияланған Gramps плагин төрө; ул интерфейсты нәҫел мәғлүмәттәре менән динамик эшләү өсөн киңәйтә",Gramps_Glossary/ba#gramplet
+,Gramps,Gramps,,yes,terminology,,Gramps_Glossary/ba#gramps
+,Gramps for Desktops,Өҫтәл компьютерҙары өсөн Gramps,,yes,terminology,,Gramps_Glossary/ba#gramps
+,Gramps Web,Gramps Web,,False,terminology,,
+,Gramps Web for Servers,Серверҙар өсөн Gramps Web,,yes,terminology,,Gramps_Glossary/ba#grampsweb
+,Graphical User Interface,График ҡулланыусы интерфейсы,,yes,terminology,"иконкалар, төймәләр һәм менюларҙан торған, ҡурҡылтмайынса баҫып эш итеү мөмкинлеген биргән визуаль система",Gramps_Glossary/ba#graphical_user_interface
+,Groom,Кейәү,,yes,terminology,"никахтағы ир ролен билдәләүсе термин",Gramps_Glossary/ba#groom
+,GUI,GUI,,yes,terminology,"ҡулланма график интерфейс ҡыҫҡартмаһы",Gramps_Glossary/ba#graphical_user_interface
+,heatmap,йылылыҡ картаһы,,False,terminology, "Карта өҫтәү, урындарҙа ваҡиғалар һанын күрһәтеү өсөн төҫ ҡулланыла.",
+,Home Person,Төп шәхес,,yes,terminology,"даими тикшеренеү үҙәге итеп билдәләнгән кеше",Gramps_Glossary/ba#home_person
+,Informant,Информант,,yes,terminology,"ваҡиға тураһында мәғлүмәт сығанағын билдәләүсе термин",Gramps_Glossary/ba#informant
+,JSON,JSON,,yes,terminology,"JavaScript Object Notation мәғлүмәт алмашыу форматының ҡыҫҡартмаһы",Gramps_Glossary/ba#json
+,keybinding,Ҡыҫҡа төймәләр,,yes,terminology,,Gramps_Glossary/ba#keybinding
+,matronym,Матроним,,yes,terminology,,Gramps_Glossary/ba#matronymic
+,Media,Медиалар,,yes,terminology,,Gramps_Glossary/ba#media
+,Merge,Берләштереү,,yes,terminology,,Gramps_Glossary/ba#merge
+,Mode,Режим,,yes,terminology,,Gramps_Glossary/ba#viewmode
+,Name Origin,Исем сығышы,,yes,terminology, "Фамилия происхождение. Кешегә фамилияһы нисек бирелгән өлгөһө.",
+,Navigator,Йүнәлткес,,yes,terminology, "Ян панелендә иконалар менән навигация аша категориялы экрандар мәғлүмәттәр.",
+,Note,Иҫкәрмә,,yes,terminology, "note",
+,Object,Объект,,yes,terminology,"тулы бер шәжәрә яҙмаһын һаҡлаған структураланған база контейнеры; программалау объекты түгел",Gramps_Glossary/ba#object
+,Object Editor,Объект мөхәррире,,yes,terminology,,Gramps_Glossary/ba#object_editor
+,Object Reference Editors,Объект һылтанмалары мөхәррирҙәре,,yes,terminology,"object_reference_editors",
+,Officiator,Билгеле итеүсе,,yes,terminology,,Gramps_Glossary/ba#officiator
+,patronym,Патроним,,yes,terminology,,Gramps_Glossary/ba#patronymic
+,Person,Шәхес,,yes,terminology,"Gramps-тағы айырым яҙма",Gramps_Glossary/ba#person
+,Place,Урын,,yes,terminology,,Gramps_Glossary/ba#place
+,places,урындар,,False,terminology,,
+,Plug-in,плагин,,yes,terminology,"Addon Manager аша идара ителә торған киңәйтеү модуле",Gramps_Glossary/ba#plugin
+,Plugin,плагин,,yes,terminology,"Addon Manager аша идара ителә торған киңәйтеү модуле",Gramps_Glossary/ba#plugin
+,POSIX,POSIX,,yes,terminology,,Gramps_Glossary/ba#posix
+,Preferences,Көйләүҙәр,,yes,terminology,"Gramps'тың тышҡы ҡиәфәтен һәм функцияларын даими көйләргә мөмкинлек биргән дөйөм ҡулланыусы көйләүҙәре",Gramps_Glossary/ba#preferences
+,Prerequisites,Талап ителгән программалар,,yes,terminology,,Gramps_Glossary/ba#prerequisites
+,Primary Object,Төп объект,,yes,terminology,"төрлө категориялар өсөн өҫкө дәрәжә база яҙмаһы",Gramps_Glossary/ba#primary_object
+,Primary role,Төп роль,,yes,terminology,,Gramps_Glossary/ba#primary
+,Private flag,Шәхси флаг,,yes,terminology,,Gramps_Glossary/ba#private
+,Private tag,Шәхси тег,,yes,terminology,,Gramps_Glossary/ba#private_tag
+,project,проект,,False,terminology,"Кураторлыҡ онлайн-каталогы өҫтәмә плагиндар өсөн өҫтәмә менеджеры", 
+,Public flag,Йәмәғәт флагы,,yes,terminology,,Gramps_Glossary/ba#public
+,Public tag,Йәмәғәт тегы,,yes,terminology,,Gramps_Glossary/ba#public_tag
+,Quick View,Тиҙ ҡарау,,yes,terminology,,Gramps_Glossary/ba#quickview
+,Re-order,Ҡабат урынлаштырыу,,yes,terminology,,Gramps_Glossary/ba#reorder
+,Reference,Һылтанма,,yes,terminology,,Gramps_Glossary/ba#reference
+,Reference information,Һылтанма мәғлүмәттәре,,yes,terminology,,Gramps_Glossary/ba#reference_information
+,References tab,Һылтанмалар ҡушымтаһы,,yes,terminology,,Gramps_Glossary/ba#references_tab
+,REFN,REFN,,False,terminology, "Ҡулланыусы билдәләгән идентификаторҙы һаҡлау өсөн ҡулланылған GEDCOM тегы.",
+,Regular Expressions,Даими аңлатмалар,,yes,terminology,,Gramps_Glossary/ba#regex
+,relation,мөнәсәбәт,,False,terminology,,
+,Repositories,Архивтар,,yes,terminology,,Gramps_Glossary/ba#repository
+,Repository,Архив,,yes,terminology,,Gramps_Glossary/ba#repository
+,Role,Роль,,yes,terminology,,Gramps_Glossary/ba#role
+,Roles,Ролдәр,,yes,terminology,,Gramps_Glossary/ba#role
+,romanization,Романизация,,yes,terminology,,Gramps_Glossary/ba#romanization
+,Rule,Ҡағиҙә,,yes,terminology,,Gramps_Glossary/ba#rule
+,Rules,Ҡағиҙәләр,,yes,terminology,,Gramps_Glossary/ba#rule
+,secondary object,Икенсел объект,,yes,terminology,"төрлө төп объекттар менән бәйләнгән ярҙамсы база яҙмаһы",Gramps_Glossary/ba#secondary_object
+,selector,Һайлаусы,,yes,terminology,,Gramps_Glossary/ba#selector
+,Selector combo box,Һайлау өсөн комбобокс,,yes,terminology,,Gramps_Glossary/ba#selector_combo_box
+,Shared information,Уртаҡ мәғлүмәт,,yes,terminology,,Gramps_Glossary/ba#shared_information
+,Shared object,Уртаҡ объект,,yes,terminology,"ҡулланыусының өҫтәлгән мәғлүмәте менән бер нисә төп объект араһында уртаҡлашылған бер ярҙамсы объект",Gramps_Glossary/ba#sharing
+,Source,Сығанаҡ,,yes,terminology,,Gramps_Glossary/ba#source
+,Sources,Сығанаҡтар,,yes,terminology,,Gramps_Glossary/ba#source
+,SQLite,SQLite,,yes,terminology,,Gramps_Glossary/ba#sqlite
+,Stamen,Stamen,,False,terminology,,
+,substring,аҫҡы юл,,False,terminology,,
+,Swatch,Төҫ үрнәге,,yes,terminology,,Gramps_Glossary/ba#swatch
+,Tag,Тег,,yes,terminology,объектҡа ҡулланылған ҡулланыусы яҙмаһы һәм төҫ кодлау,Gramps_Glossary/ba#tag
+,Tags,Ярлыҡтар,,yes,terminology,"объекттарға ҡулланылған ҡулланыусы яҙмалары һәм төҫ менән билдәләү",Gramps_Glossary/ba#tag
+,Toolbar,Ҡоралдар панели,,yes,terminology,"күрһәтелгән эште йәки режимды башҡарыу өсөн төймә һылтанмалары теҙмәһе булған GUI элементы",Gramps_Glossary/ba#toolbar
+,Try to find,Табырға тырышыу,,False,terminology,,
+,Typographical conventions,Типографик конвенциялар,,yes,terminology,"айырым һәм бәлки үҙенсәлекле мәғәнәгә ишара иткән ғәҙәти форматлау",Gramps_Glossary/ba#typographical_conventions
+,Undock,Доктан сығарыу,,yes,terminology,"GUI термины: Gramplet-ты Dashboard күренешенән йә бүленә торған контейнерҙан азат итеү",Gramps_Glossary/ba#dock
+,Unknown,Билдәһеҙ,,yes,terminology,"ваҡиғаҙа ҡатнашҡан роль билдәләнмәгәнен аңлатҡан термин",Gramps_Glossary/ba#unknown
+,User Directory,Ҡулланыусы папкаһы,,yes,terminology,"кушымталар өсөн көйләүҙәрҙе һәм мәғлүмәтте һаҡлаған каталогҡа юлдың ҡушамат исеме",Gramps_Glossary/ba#user_directory
+,Verify the Data,Мәғлүмәтте тикшереү,,False,terminology,,
+,View,Ҡарау,,yes,terminology,"фильтрланған мәғлүмәт менән категорияла әлегә актив булған ҡарау режимы; өҫтәмә идара элементтары һәм gramplet күренештәре менән",Gramps_Glossary/ba#view
+,View category,Күренеш категорияһы,,yes,terminology,"оҡшаш структураланған мәғлүмәттең төрлө яҡтарын күрһәтеүсе ҡарау режимдары йыйылмаһы",Gramps_Glossary/ba#view_category
+,View mode,Ҡарау режимы,,yes,terminology,"ҡарау категорияһының структураланған мәғлүмәтен алдан көтөлгән тәртиптә күрһәтеүсе күренештәр",Gramps_Glossary/ba#viewmode
+,Wiki,Вики,,yes,terminology,"уртаҡ хеҙмәтләндерелгән веб-сайт",Gramps_Glossary/ba#wiki
+,Witness,Шаһит,,yes,terminology,"ваҡиғаны күҙәтеүсене билдәләүсе термин",Gramps_Glossary/ba#witness
+,XML,XML,,yes,terminology,"Extensible Markup language  ҡыҫҡартмаһы: ҡулланыусы билдәләгән тегтарға рөхсәт биргән структураланған файл форматы",Gramps_Glossary/ba#xml
+,Tishri,Тишри,,False,terminology,"Иврит календары: гражданлыҡ йылының 1-се айы һәм сиркәү йылының 7-се айы",
+,Tishrei,Тишрей,,False,calendar,"Иврит календары: гражданлыҡ йылының 1-се айы һәм сиркәү йылының 7-се айы",Hebrew_dates
+,Cheshvan,Чешван,,False,calendar,"Иврит календары: гражданлыҡ йылының 2-се айы һәм сиркәү йылының 8-се айы",Hebrew_dates
+,Kislev,Кислев,,False,calendar,"Иврит календары: гражданлыҡ йылының 3-сө айы һәм сиркәү йылының 9-сы айы",Hebrew_dates
+,Tevet,Тевет,,False,calendar,"Иврит календары: гражданлыҡ йылының 4-се айы һәм сиркәү йылының 10-сы айы",Hebrew_dates
+,Shevat,Шәүәт,,False,calendar,"Иврит календары: гражданлыҡ йылының 5-се айы һәм сиркәү йылының 11-се айы",Hebrew_dates
+,Adar,Адар,,False,calendar,"Иврит календары: гражданлыҡ йылының 6-сы айы һәм сиркәү йылының 12-се айы",Hebrew_dates
+,Nisan,Нисан,,False,calendar,"Иврит календары: гражданлыҡ йылының 7-се айы һәм сиркәү йылының 1-се айы",Hebrew_dates
+,Iyar,Ийәр,,False,calendar,"Иврит календары: гражданлыҡ йылының 8-се айы һәм сиркәү йылының 2-се айы",Hebrew_dates
+,Sivan,Сиван,,False,calendar,"Иврит календары: гражданлыҡ йылының 9-сы айы һәм сиркәү йылының 3-сө айы",Hebrew_dates
+,Tammuz,Таммуз,,False,calendar,"Иврит календары: гражданлыҡ йылының 10-сы һәм сиркәү йылының 4-се айы",Hebrew_dates
+,Av,Ав,,False,calendar,"Иврит календары: гражданлыҡ йылының 11-се айы һәм сиркәү йылының 5-се айы",Hebrew_dates
+,Elul,Элул,,False,calendar,"Иврит календары: гражданлыҡ йылының 12-се айы һәм сиркәү йылының 6-сы айы",Hebrew_dates
+

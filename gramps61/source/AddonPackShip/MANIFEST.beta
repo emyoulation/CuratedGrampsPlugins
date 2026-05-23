@@ -1,0 +1,53 @@
+# MANIFEST.beta for AddonPackShip
+# β Beta/development build — lists additional files beyond auto-includes.
+# Auto-included in β Beta: *.py, *.gpr.py, *.glade, *.xml, locale/*.mo,
+#   *.md, po/*.po, po/template.pot, MANIFEST, MANIFEST.beta,
+#   and all subdirectory contents.
+# Use this file to OVERRIDE that behavior with explicit patterns,
+# or leave it absent to use all auto-includes.
+#
+# Examples:
+#   AddonPackShip/data/*
+#   AddonPackShip/layouts/*.csv
+#   AddonPackShip/README.md
+
+# --- Add your entries below this line ---
+
+AddonPackShip/locale/*/LC_MESSAGES/addon.mo
+AddonPackShip/po/*-local.po
+AddonPackShip/po/template.pot
+AddonPackShip/*.md
+AddonPackShip/media/*
+AddonPackShip/MANIFEST
+AddonPackShip/MANIFEST.beta
+
+# Full directory listing of AddonPackShip/  —  2026-03-08
+# [auto]  = already included automatically in this build mode
+# [add?]  = NOT yet included — uncomment/copy to entries section above to add
+# [skip]  = intentionally excluded (temp/cache file)
+
+# [auto]  ← .py/.glade/.xml always packed  AddonPackShip/AddonPackShip.gpr.py
+# [auto]  ← .py/.glade/.xml always packed  AddonPackShip/AddonPackShip.py
+# [auto]  ← *.md auto-included in β Beta  AddonPackShip/COMPARE_make_APS.md
+# [auto]  ← this file  AddonPackShip/MANIFEST.beta
+# [auto]  ← *.md auto-included in β Beta  AddonPackShip/QuickStart.md
+# [auto]  ← *.md auto-included in β Beta  AddonPackShip/README.md
+# [add?]  AddonPackShip/import (copy).csv
+# [add?]  AddonPackShip/import.csv
+# [auto]  ← .py/.glade/.xml always packed  AddonPackShip/make52.py
+# [auto]  ← .py/.glade/.xml always packed  AddonPackShip/make60.py
+# [auto]  ← .py/.glade/.xml always packed  AddonPackShip/make_addon.py
+# [add?]  AddonPackShip/gramps52/download/AddSourcesGramplet.addon.tgz
+# [add?]  AddonPackShip/gramps52/listings/addons-en.json
+# [auto]  ← compiled translation  AddonPackShip/locale/da/LC_MESSAGES/addon.mo
+# [auto]  ← compiled translation  AddonPackShip/locale/de/LC_MESSAGES/addon.mo
+# [auto]  ← compiled translation  AddonPackShip/locale/fi/LC_MESSAGES/addon.mo
+# [auto]  ← compiled translation  AddonPackShip/locale/fr/LC_MESSAGES/addon.mo
+# [add?]  AddonPackShip/media/APS.png
+# [add?]  AddonPackShip/media/AddonManager.png
+# [add?]  AddonPackShip/media/LocaleCompile.png
+# [auto]  ← po/ files auto-included in β Beta  AddonPackShip/po/da-local.po
+# [auto]  ← po/ files auto-included in β Beta  AddonPackShip/po/de-local.po
+# [auto]  ← po/ files auto-included in β Beta  AddonPackShip/po/fi-local.po
+# [auto]  ← po/ files auto-included in β Beta  AddonPackShip/po/fr-local.po
+# [auto]  ← po/ files auto-included in β Beta  AddonPackShip/po/template.pot

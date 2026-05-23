@@ -1,0 +1,240 @@
+location,source,target,id,fuzzy,context,translator_comments,developer_comments
+,EnglishExonym,Hebrew,,no,language,"שם שפה באנגלית",Gramps_Glossary/en
+,endonym,עברית,,no,language,"שם השפה בשפת האם",Gramps_Glossary/he
+,language code,he,,no,language," מתרגם ראשי עבור ממשק משתמש גרפי ",https://hosted.weblate.org/projects/gramps-project/-/he/
+,translators,מתרגמים,,yes,language,"סטטוס תרגום ויקי",Portal:Translators#he
+,translations,תרגומים,,yes,language,"אינדקס דף ויקי מתורגם",User_manual_translations#he
+,documentation,תיעוד,,yes,language,"אינדקס דפי ויקי מתורגמים",Category:He:Documentation
+,Tishrei,תִּשְׁרֵי,,False,calendar,"לוח שנה עברי: החודש הראשון של השנה האזרחית; החודש השביעי של השנה הכנסייתית",Hebrew_dates
+,Cheshvan,חֶשְׁוָן,,False,calendar,"לוח שנה עברי: החודש השני של השנה האזרחית; החודש השמיני של השנה הכנסייתית",Hebrew_dates
+,Kislev,כִּסְלֵו,,False,calendar,"לוח שנה עברי: החודש השלישי של השנה האזרחית; החודש התשיעי של השנה הכנסייתית",Hebrew_dates
+,Tevet,טֵבֵת,,False,calendar,"לוח שנה עברי: החודש הרביעי של השנה האזרחית; החודש העשירי של השנה הכנסייתית",Hebrew_dates
+,Shevat,שְׁבָט,,False,calendar,"לוח שנה עברי: החודש החמישי בשנה האזרחית; החודש האחד עשר בשנה הכנסייתית",Hebrew_dates
+,Adar,אֲדָר,,False,calendar,"לוח שנה עברי: החודש השישי של השנה האזרחית; החודש השנים עשר של השנה הכנסייתית",Hebrew_dates
+,Nisan,נִיסָן,,False,calendar,"לוח שנה עברי: החודש השביעי של השנה האזרחית; החודש הראשון של השנה הכנסייתית",Hebrew_dates
+,Iyar,אִיָּר,,False,calendar,"לוח שנה עברי: החודש השמיני בשנה האזרחית; החודש השני בשנה הכנסייתית",Hebrew_dates
+,Sivan,סִיוָן,,False,calendar,"לוח שנה עברי: החודש התשיעי של השנה האזרחית; החודש השלישי של השנה הכנסייתית",Hebrew_dates
+,Tammuz,תַּמּוּז,,False,calendar,"לוח שנה עברי: החודש העשירי בשנה האזרחית; החודש הרביעי בשנה הכנסייתית",Hebrew_dates
+,Av,אָב,,False,calendar,"לוח שנה עברי: החודש האחד עשר בשנה האזרחית; החודש החמישי בשנה הכנסייתית",Hebrew_dates
+,Elul,אֱלוּל,,False,calendar,"לוח שנה עברי: החודש השנים עשר של השנה האזרחית; החודש השישי של השנה הכנסייתית",Hebrew_dates
+,Activate,שפעול,,False,,,
+,Active Person,אדם פעיל,,yes,terminology,"אדם המיועד כמרכז המוקד הרגעי",Gramps_Glossary/he#active_person
+,Add-on,תוסף,,yes,terminology,"תוסף הרחבה אופציונלי של צד שלישי המותקן דרך מנהל התוספים",Gramps_Glossary/he#addon
+,Addon,תוסף,,yes,terminology,"תוסף הרחבה אופציונלי של צד שלישי המותקן דרך מנהל התוספים",Gramps_Glossary/he#addon
+,Address,כְּתוֹבֶת,,yes,terminology,"מיקום מסוים עם מסגרת זמן משויכת",Gramps_Glossary/he#address
+,administrative division,חלוקה מנהלית,,yes,terminology,"יחידה המחלקת אזור גיאופוליטי לשכבות קונבנציונליות",Gramps_Glossary/he#administrative_division
+,Aide,עוֹזֵר,,yes,terminology,"מונח לזיהוי תפקיד האירוע כעוזר",Gramps_Glossary/he#aide
+,ambiguous,רב־משמעי,,False,,,
+,Ancestors,אבות קדמונים,,False,,,
+,Ancestor,אב קדמון,,False,,,
+,Ancestry,יוחסין,,False,,,
+,anglicization,אנגליזציה,,yes,,"תהליך של הפיכת שם זר לגרסה האנגלית שלו",Gramps_Glossary/he#anglicisation
+,Association,תסמיך,,yes,terminology,"תפקיד המגדיר במפורש כיצד אדם אחד מתייחס לאחר",Gramps_Glossary/he#association
+,Associations,עמותות,,yes,terminology,"תפקידים המגדירים קשרים לא ביולוגיים ומאפיינים משותפים בין אנשים",Gramps_Glossary/he#association
+,Attribute,תְכוּנָה,,yes,terminology,"רישום מותאם אישית של מאפיין קבוע",Gramps_Glossary/he#attribute
+,Attributes,מאפיינים,,yes,terminology,"קטגוריות הניתנות להתאמה אישית עבור מאפיינים קבועים מעבר לקבוצה המוגדרת מראש",Gramps_Glossary/he#attribute
+,Audience,קהל,,False,,,
+,automat,איטמוט,,False,,,
+,avatar,יצגן,,False,,,
+,backlink,קישור חוזר,,False,,,
+,base relative media path,נתיב מדיה יחסי,,False,,,
+,batch,אצווה,,False,,,
+,Blog,יומן רשת,,False,,,
+,Blur,ריטוט,,False,,,
+,Books Report,דוח ספרים,,yes,terminology,"איסוף מסודר של דוחות טקסטואליים וגרפיים של סבא במסמך אחד",Gramps_Glossary/he#books_report
+,border,גבול,,False,,,
+,Bride,כַּלָה,,yes,,"מונח לזיהוי תפקיד הנישואין כאישה",Gramps_Glossary/he#bride
+,BSDDB,BSDDB,,yes,,"מסד הנתונים של Berkeley Software Distribution: מנוע מסד נתונים חלופי",Gramps_Glossary/he#bsddb
+,bugs,תקלים,,False,,,
+,bug,תקל,,False,,,
+,burial,קבורה,,False,,,
+,Categories,קטגוריות,,yes,terminology,"סבא מארגן כל אובייקט ראשוני לקבוצה של סכמות תיאוריות שונות באופן מובהק.",Gramps_Glossary/he#category
+,Category,קָטֵגוֹרִיָה,,yes,terminology,"סכימה תיאורית של אובייקט ראשי במסד נתונים",Gramps_Glossary/he#category
+,Celebrant,חוֹגֵג,,yes,,"מונח לזיהוי תפקיד כאדם המבצע טקס",Gramps_Glossary/he#celebrant
+,census,מפקד,,False,,,
+,chart,תרשים,,False,,,
+,Citation,מובאה,,yes,terminology,"מידע המאפשר איתור תוכן ספציפי בחומר המקור",Gramps_Glossary/he#citation
+,Citations,מובאות,,yes,terminology,"אוסף מקורות המספק קרדיט ואיתור מקורות התומכים ברשומות מחקר",Gramps_Glossary/he#citation
+,Clergy,כּמוּרָה,,yes,terminology,"מונח לזיהוי תפקיד באירוע דתי כממלא מקום",Gramps_Glossary/he#clergy
+,Clipboard,לוח־גזירים,,yes,terminology,"מערכת קיצורי דרך לשיתוף אובייקטים משניים, ניווט ויצירת מסננים מותאמים אישית",Gramps_Glossary/he#clipboard
+,Color Swatch,דוגמית צבע,,yes,terminology,"",Gramps_Glossary/he#color_swatch
+,Configure,הגדרות,,yes,terminology,"הגדרות הניתנות להגדרה על ידי המשתמש אשר מתאימות אישית את התנהגות מצב התצוגה המקומית",Gramps_Glossary/he#configure
+,Context menu,תפריט ההקשר,,yes,terminology,"מונח GUI: תפריט קופץ של אפשרויות המתאימות לפריט שנלחץ באמצעות לחיצה ימנית",Gramps_Glossary/he#context_menu
+,CSV,CSV,,yes,,"ראשי תיבות של פורמט חילופי נתונים של ערכים מופרדים באמצעות פסיקים בטקסט רגיל עם מפרידים.",Gramps_Glossary/he#json
+,Custom Filter,מסנן מותאם אישית,,yes,terminology,"מערכת כללים להצגת רשומות שעומדות בקריטריונים מסוימים בלבד",Gramps_Glossary/he#filter
+,custom Types,סוגים מותאמים אישית,,yes,terminology,"סיווג מוגדר על ידי המשתמש; בניגוד לסיווגים שהוגדרו מראש",Gramps_Glossary/he#custom
+,database,מסד־נתונים,,False,,,
+,Date,תַאֲרִיך,,yes,terminology,"תקופת זמן עם נקודות קצה ספציפיות של איכות, דיוק ולוח שנה",Gramps_Glossary/he#date
+,debug,ניפוי־תקלים,,False,,,
+,Default,ברירת מחדל,,False,,,
+,Delimiter,תוחם,,False,,,
+,Dialect,להג,,False,,,
+,dialect,תסדיר,,False,,'@avma במקור זה לא מונח נכון להשתמש בו.',
+,directory,מחיצה,,False,,,
+,DNA,DNA,,yes,,"ראשי תיבות של חומצה דאוקסיריבו-נוקלאית; אבני הבניין של המידע הגנטי",Gramps_Glossary/he#dna
+,Dock,לַעֲגוֹן,,yes,terminology,"מונח GUI: הוספת Gramplet לתצוגת לוח המחוונים או למכולות של סרגל חלוקה",Gramps_Glossary/he#dock
+,drag-and-drop,גרירה ושחרור,,False,,,
+,DTD,DTD,,yes,,"ראשי תיבות של הגדרת סוג מסמך: פורמט מסמך סטנדרטי המגדיר את מבנה הקובץ.",Gramps_Glossary/he#dtd
+,Edit Family,עריכת משפחה,,yes,terminology,"לחזור על הנתונים המובנים המתארים את קיבוץ היחסים הבסיסי של אנשים מגובשים",Gramps_Glossary/he#edit_family
+,Edit Person,עריכת אדם,,yes,terminology,"שינוי הנתונים המובנים המתארים אדם",Gramps_Glossary/he#edit_person
+,e.g.,לדוגמה,,False,,"ראשי תיבות של המילים הלטיניות exempli gratia",Genealogy_Glossary#latin
+,E-mail,דואר אלקטרוני,,False,,,
+,Email,דואר אלקטרוני,,False,,,
+,Enable,לאפשר,,False,,,
+,Event,מִקרֶה,,yes,terminology,"נתונים מובנים על אירוע",Gramps_Glossary/he#event
+,Event Role,תפקיד האירוע,,yes,terminology,"התפקיד שממלא אדם באירוע",Gramps_Glossary/he#event_role
+,Events,אירועים,,False,,,
+,event type,סוג האירוע,,yes,terminology,"קיבוץ כללי של אירועים",Gramps_Glossary/he#event_type
+,Evidence,ראיה,,False,,,
+,Fallback events,אירועי גיבוי,,yes,terminology,"אירועים שונים הנחשבים דומים לנתון חיוני חסר",Gramps_Glossary/he#fallback
+,Family,מִשׁפָּחָה,,yes,terminology,"קבוצת היחסים הבסיסית של אנשים מגובשים",Gramps_Glossary/he#family
+,Family Surnames,שמות משפחה,,False,,,
+,Family tree,אילן־יוחסין,,False,,,
+,File Chooser,בורר קבצים,,yes,terminology,"",Gramps_Glossary/he#file_chooser
+,File formats,פורמטי קבצים,,yes,terminology,"מבנים סטנדרטיים לאחסון נתונים בקובץ מחשב המזוהה על ידי סיומת הקובץ שלו",Gramps_Glossary/he#file_format
+,Filter,לְסַנֵן,,yes,terminology,"",Gramps_Glossary/he#filter
+,footer,סיומת עמוד,,False,,"טכנולוגיית המידע (תשס""ג, 2002) סיומת עמוד footer, running foot מילון עיבוד תמלילים [טכנולוגיית המידע]",
+,format,תסדיר,,False,,"טכנולוגיית המידע (תשע""ה, 2015) תסדיר בשפות תכנות – צרף שפה המפרט באמצעות תווים את הייצוג של עצמי נתונים ברשומה, בקובץ, במסר, בהתקן אחסון או באפיק שידור. הפועל: תִּסְדֵּר format n. מילון שפות תכנות [טכנולוגיית המידע] > טיפוסי נתונים",
+,funeral,לוויה,,False,,,
+,GEDCOM,GEDCOM,,yes,,"ראשי תיבות של פורמט חילופי נתונים סטנדרטי לתקשורת נתונים גנאלוגית",Gramps_Glossary/he#gedcom
+,generated,חולל,,False,,,
+,Godparent,סַנדָק,,yes,,"מונח לזיהוי תפקיד אירוע הטבילה/טבילה כהורה פונדקאית",Gramps_Glossary/he#godparent
+,Gramplet,גרמפלט,,yes,terminology,"סוג של תוסף קטן של Gramps שניתן להטמיע, אשר מרחיב את הממשק לאינטראקציה דינמית עם נתוני גנאלוגיה",Gramps_Glossary/he#gramplet
+,Gramps for Desktops,סבא למחשבים שולחניים,,yes,terminology,"",Gramps_Glossary/he#gramps
+,Gramps,גרמפס,,yes,terminology,"",Gramps_Glossary/he#gramps
+,Gramps Web for Servers,גרמפס ווב לשרתים,,yes,terminology,"",Gramps_Glossary/he#grampsweb
+,Gramps Web,מרשתת גרמפס,,yes,terminology,"",Gramps_Glossary/he#grampsweb
+,Graphical User Interface,ממשק משתמש גרפי,,yes,terminology,"מערכת חזותית של סמלים, כפתורים ותפריטים המאפשרים אינטראקציה עם תוכנה באמצעות לחיצה",Gramps_Glossary/he#graphical_user_interface
+,Groom,חָתָן,,yes,,"מונח לזיהוי תפקיד הנישואין כבעל",Gramps_Glossary/he#groom
+,GUI,ממשק משתמש גרפי,,yes,terminology,"ראשי תיבות של ממשק משתמש גרפי של אפליקציה",Gramps_Glossary/he#graphical_user_interface
+,Hierarchy,מדרג,,False,,"סוציולוגיה (תשע""ו, 2015) מִדְרָג hierarchy מילון סוציולוגיה > מונחי אתניות",
+,Home Person,אדם בבית,,yes,terminology,"האדם המיועד כמרכז המחקר המתמיד",Gramps_Glossary/he#home_person
+,i.e.,כלומר,,False,,"ראשי תיבות של המילים הלטיניות id est",Genealogy_Glossary#latin
+,Index,מפתח,,False,,"זה מילון ישן, חפש שוב במילוני האקדמיה, במילון החדש מ־2015 זה נקרא ציון: https://terms.hebrew-academy.org.il/munnah/5234_2/index",
+,Indicate,מצביע על כך,,False,,,
+,Informant,מודיע,,yes,terminology,"מונח לזיהוי תפקיד האירוע כמקור הדיווח",Gramps_Glossary/he#informant
+,interpreter,מפענחת,,False,,,
+,JSON,JSON,,yes,,"ראשי תיבות של פורמט חילופי נתונים של סימון אובייקטים ב-JavaScript",Gramps_Glossary/he#json
+,keybinding,קשירת מקשים,,yes,terminology,"",Gramps_Glossary/he#keybinding
+,leap year,שנה מעוברת,,False,,,
+,lifespan,משך חיים,,False,,,
+,Locality,מקומיות,,False,,,
+,localization,המקמה,,False,,,
+,matronym,מטרונים,,yes,,"",Gramps_Glossary/he#matronymic
+,Media,כְּלֵי תִקְשׁוֹרֶת,,yes,terminology,"",Gramps_Glossary/he#media
+,Merge,לְמַזֵג,,yes,terminology,"",Gramps_Glossary/he#merge
+,Mode,מצב,,yes,terminology,"",Gramps_Glossary/he#viewmode
+,Module,פרקן,,False,,,
+,Name Origin,מקור השם,,yes,terminology,"",Gramps_Glossary/he#name_origin
+,namespace,מרחב שמות,,False,,,
+,Navigator,נווט,,yes,terminology,"",Gramps_Glossary/he#navigator
+,node,צומת,,False,,"טכנולוגיית המידע (תשס""ז, 2007) צֹמֶת node מילון מושגים בסיסיים בטכנולוגיית המידע (תשס""ג, 2002)",
+,Note,פֶּתֶק,,yes,terminology,"",Gramps_Glossary/he#note
+,Object Editor,עורך אובייקטים,,yes,terminology,"",Gramps_Glossary/he#object_editor
+,Object,עצם,,yes,terminology,"מאגר נתונים מובנה עבור רשומה גנאלוגית אחת מלאה (לא אובייקט תכנות)",Gramps_Glossary/he#object
+,Object Reference Editors,עורכי הפניות לאובייקטים,,yes,terminology,"",object_reference_editors
+,Occupation,עיסוק,,False,,,
+,Officiator,פקיד,,yes,terminology,"",Gramps_Glossary/he#officiator
+,OK,☑,,False,,,
+,override,עקיפה,,False,,,
+,package,חבילה,,False,,,
+,page,עמוד,,False,,"ספרנות (תשס""ד, 2003) דַּף leaf, folio מילון ספרנות",
+,password,סיסמה,,False,"'@avma נא לשים לב לכתיב ללא ניקוד בעמוד הבא באתר האקדמיה: ",https://hebrew-academy.org.il/keyword/%D7%A1%D6%B4%D7%A1%D6%B0%D7%9E%D6%B8%D7%94/
+,patrilineal,מצד משפחת האב,,False,,,
+,patronym,פטרון,,yes,terminology,"",Gramps_Glossary/he#patronymic
+,Pattern,דגם,,False,,,
+,pedigree,יוחסין,,False,,,
+,Person,אדם,,yes,terminology,"רשומת "אדם" בתוך Gramps",Gramps_Glossary/he#person
+,Place,מקום,,yes,terminology,"",Gramps_Glossary/he#place
+,places,מקומות,,False,,,
+,Plug-in,מתקע,,yes,terminology,"מודול הרחבה המנוהל באמצעות מנהל התוספים",Gramps_Glossary/he#plugin
+,Plugin,מתקע,,yes,terminology,"מודול הרחבה המנוהל באמצעות מנהל התוספים",Gramps_Glossary/he#plugin
+,POSIX,POSIX,,yes,,"",Gramps_Glossary/he#posix
+,Preferences,העדפות,,yes,terminology,"הגדרות גלובליות הניתנות להגדרה על ידי המשתמש אשר מתאימות אישית באופן קבוע את התנהגות Gramps, כולל מראה ופונקציונליות.",Gramps_Glossary/he#preferences
+,Prerequisites,דרישות קדם,,yes,terminology,"",Gramps_Glossary/he#prerequisites
+,Primary Object,אובייקט ראשי,,yes,terminology,"רשומת מסד נתונים ברמה העליונה עבור הקטגוריות השונות",Gramps_Glossary/he#primary_object
+,Primary role,תפקיד ראשי,,yes,terminology,"",Gramps_Glossary/he#primary
+,Private flag,דגל פרטי,,yes,terminology,"",Gramps_Glossary/he#private
+,Private tag,תג פרטי,,yes,terminology,"",Gramps_Glossary/he#private_tag
+,Probate,קיום צוואה,,False,,,
+,Project,מיזם,,False,,,
+,project,מיזם,,False,A project object within Gramps,,
+,Public flag,דגל ציבורי,,yes,terminology,"",Gramps_Glossary/he#public
+,Public tag,תג ציבורי,,yes,terminology,"",Gramps_Glossary/he#public_tag
+,Python,פיתון,,False,,,
+,Quick View,תצוגה מהירה,,yes,terminology,"",Gramps_Glossary/he#quickview
+,reciprocal,הדדי,,False,,,
+,Referenced,מאוזכר,,False,,,
+,Reference information,מידע על התייחסות,,yes,terminology,"",Gramps_Glossary/he#reference_information
+,Reference,אזכור,,yes,terminology,"בלשנות (תשפ""ג, 2022) אזכור לא: רִפְרוּר reference מילון תחביר [בלשנות]",Gramps_Glossary/he#reference
+,References tab,אזכורים tab,,yes,terminology,"",Gramps_Glossary/he#references_tab
+,REFN,REFN,,False,,"תגית GEDCOM המשמשת לאחסון מזהה מוגדר על ידי המשתמש",
+,Region,אזור,,False,,,
+,Regular Expressions,ביטוי רגולרי,,yes,terminology,"RegEx: רצף תווים המגדיר דפוסי חיפוש והתאמה של טקסט",Gramps_Glossary/he#regex
+,relationships,קשרי־קרבה,,False,,,
+,Relationship,יוחסה,,False,,"טכנולוגיית המידע (תשס""ז, 2007) יוחסה relationship, relation מילון מושגים בסיסיים בטכנולוגיית המידע (תשס""ג, 2002)",
+,relationship,קשר־קרבה,,False,,,
+,relation,יוחסה,,False,,,
+,Re-order,Re-order,,yes,terminology,"",Gramps_Glossary/he#reorder
+,Repositories,מאגרים,,yes,terminology,"",Gramps_Glossary/he#repository
+,Repository,מאגר,,yes,terminology,"",Gramps_Glossary/he#repository
+,reset,שיצוב,,False,,,
+,Residence,מגורים,,False,,,
+,Role,תַפְקִיד,,yes,terminology,"",Gramps_Glossary/he#role
+,Roles,תפקידים,,yes,terminology,"",Gramps_Glossary/he#role
+,romanization,romanization,,yes,,"",Gramps_Glossary/he#romanization
+,Rule,כְּלָל,,yes,terminology,"",Gramps_Glossary/he#rule
+,Rules,כללים,,yes,terminology,"",Gramps_Glossary/he#rule
+,Scale,סילום,,False,,,
+,Secondary Object,אובייקט משני,,yes,terminology,"רשומת מסד נתונים תומכת המצורפת לאובייקטים ראשיים שונים",Gramps_Glossary/he#secondary_object
+,Selector combo box,תיבת שילוב בורר,,yes,terminology,"",Gramps_Glossary/he#selector_combo_box
+,selector,בורר אובייקטים,,yes,terminology,"",Gramps_Glossary/he#selector
+,session,שיח,,False,,,
+,Shared information,מידע משותף,,yes,terminology,"",Gramps_Glossary/he#shared_information
+,Shared object,אובייקט משותף,,yes,terminology,"אובייקט משני אחד המשותף למספר אובייקטים ראשיים עם פרטי חיבור הניתנים להתאמה אישית",Gramps_Glossary/he#sharing
+,sheet,גיליון,,False,,,
+,siblings,אַחָאִים,,False,,,
+,sibling,אַחָאִי,,False,,,
+,Source,מָקוֹר,,yes,terminology,"",Gramps_Glossary/he#source
+,Sources,מקורות,,yes,terminology,"",Gramps_Glossary/he#source
+,specific,יחודי,,False,,,
+,SQLite,SQLite,,yes,terminology,"",Gramps_Glossary/he#sqlite
+,Stamen,Stamen,,False,,,
+,style sheet,גיליון סגנון,,False,,,
+,style,סגנון,,False,,,
+,substring,תת-מחרוזת,,False,,,
+,Suffix,סיומת,,False,,,
+,Surnames,שמות משפחה,,False,,,
+,surname,שם משפחה,,False,,,
+,Swatch,דוּגמַת אָרִיג,,yes,terminology,"",Gramps_Glossary/he#swatch
+,Tab,טבלר,,False,,,
+,Tab,לשונית,,False,,,
+,Tags,תגיות,,yes,terminology,"כותרות מותאמות אישית וקידוד צבעים שהוחלו על אובייקטים",Gramps_Glossary/he#tag
+,Tag,תָג,,yes,terminology,"כותרת מותאמת אישית וקידוד צבעים שהוחלו על אובייקט",Gramps_Glossary/he#tag
+,template,תבנית,,False,,,
+,Thumbnail,דוגמית,,False,,,
+,Toggle,מיתוג ,,False,,,
+,Toolbar,סרגל כלים,,yes,terminology,"מונח GUI: רצועת כלים של קיצורי דרך של לחצנים להפעלת משימת תצוגה או מצב פעולה",Gramps_Glossary/he#toolbar
+,Township,עיירה,,False,,,
+,tree view,מצג־עץ,,False,,,
+,Try to find,ניסיון למצוא,,False,,,
+,Typographical conventions,מוסכמות טיפוגרפיות,,yes,,"עיצוב מקובל שמרמז על משמעות מיוחדת (ואולי גם מוזרה)",Gramps_Glossary/he#typographical_conventions
+,unambiguous,חד־משמעי,,False,,,
+,Undock,ניתוק עגינה,,yes,terminology,"מונח GUI: שחרור Gramplet מתצוגת לוח המחוונים או ממכולות splitbar",Gramps_Glossary/he#dock
+,Undo,להסיג,,False,,,
+,unique,יחיד,,False,,,
+,Unknown,לֹא יְדוּעַ,,yes,terminology,"מונח המציין את התפקיד שמילא באירוע לא זוהה",Gramps_Glossary/he#unknown
+,Upgrade,שדרוג,,False,,,
+,urls,מעני־url,,False,,,
+,URL,מען־URL,,False,,,
+,User Directory,ספריית משתמשים,,yes,terminology,"כינוי לנתיב לתיקיית קבצים המאחסנת התאמות אישיות ונתונים עבור אפליקציות",Gramps_Glossary/he#user_directory
+,version,גרסה,,False,,,
+,View category,הצג קטגוריה,,yes,terminology,"אוסף של מצבי תצוגה המציגים היבטים שונים של מידע מובנה דומה",Gramps_Glossary/he#view_category
+,View mode,מצב תצוגה,,yes,terminology,"פריסות תצוגה המציגות את המידע המובנה של קטגוריית תצוגה באופן צפוי",Gramps_Glossary/he#viewmode
+,View,נוֹף,,yes,terminology,"מצב התצוגה הפעיל כעת בקטגוריה עם נתונים מסוננים. כולל פקדים משלימים ותצוגות גרמפלט",Gramps_Glossary/he#view
+,volume,כרך,,False,,,
+,Wiki,ויקי,,yes,terminology,"אתר אינטרנט המתוחזק בשיתוף פעולה",Gramps_Glossary/he#wiki
+,Witness,עֵד,,yes,,"מונח לזיהוי תפקיד האירוע כצופה",Gramps_Glossary/he#witness
+,XML,XML,,yes,terminology,"ראשי תיבות של Extensible Markup Language: פורמט קובץ מובנה המאפשר תגיות מותאמות אישית",Gramps_Glossary/he#xml
+המילה הנכונה היא סיסמה, בעבר האיות ססמה היה האיות הנכון עד שהוחלף לפני כמה שנים.'",
+

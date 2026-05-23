@@ -1,0 +1,174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-18 16:59-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:436
+#, python-format
+msgid "Could not open Note editor: %s"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:586
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:960
+msgid "No database is open."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:590
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:963
+msgid "The database contains no people."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:638
+msgid "Proband:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:640
+msgid "Reset to Active Person (re-enables auto-follow)"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:642
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:847
+msgid "Select Proband"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:646
+msgid "Progenitor:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:648
+msgid "Reset to Home Person"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:650
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:841
+msgid "Select Progenitor"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:654
+msgid "Founder:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:656
+msgid "Clear Founder"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:658
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:853
+msgid "Select Founder"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:728
+msgid "ID"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:729
+msgid "Type a Gramps ID and press Enter"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:737
+msgid "Drop a person here to select"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:795
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:800
+#, python-format
+msgid "No person found with ID \"%s\"."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:864
+msgid "No Home Person is set in this database."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:876
+msgid "No valid active person to reset to."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:967
+msgid "No Progenitor selected. Use the selector button or set a Home Person."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:972
+msgid "No Proband selected. Navigate to a person or use the selector button."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:980
+msgid "Progenitor no longer exists — please re-select."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:985
+msgid "Proband no longer exists — please re-select."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:990
+msgid "Progenitor and Proband are the same person."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:994
+#, python-brace-format
+msgid ""
+"{progenitor} is not a direct ancestor of {proband}. Only direct ancestor "
+"\\u2192 descendant paths are supported."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1002
+#, python-format
+msgid "Could not compute a path between %s and %s."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1010
+msgid "Founder no longer exists — please re-select."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1015
+#, python-brace-format
+msgid "{founder} is not a direct ancestor of Progenitor {progenitor}."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1027
+msgid "No path entries found."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1051
+msgid "Copy breadcrumb to clipboard"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1052
+msgid "Copy generation list to clipboard"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1054
+msgid "Open breadcrumb as new Note"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1055
+msgid "Open generation list as new Note"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.py:1056
+msgid "Open both formats as new Note"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.gpr.py:24
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.gpr.py:32
+msgid "Pedigree Breadcrumbs"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/breadcrumbs/PedigreeBreadcrumbs.gpr.py:25
+msgid ""
+"Shows the relationship 'breadcrumb' path between people in different "
+"generations."
+msgstr ""

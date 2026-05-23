@@ -1,0 +1,73 @@
+location,source,target,id,fuzzy,context,translator_comments,developer_comments
+,citation,cita,,False,,,
+,Gramps,Gramps,,False,,,
+,place,lugar,,False,,,
+,places,lugares,,False,,,
+,Events,Eventos,,False,,,
+,bug,fallo,,False,,,
+,Gramplet,Gramplete,,False,,,
+,debug,depurar,,False,,,
+,bugs,fallos,,False,,,
+,note,nota,,False,,,
+,media,objeto audiovisual,,False,,,Mediaobjekti (kuvan metatiedot)
+,backlink,enlace de vuelta,,False,,,
+,i.e,es decir,,False,,,
+,Python,Python,,False,,,
+,individual,individual,,False,,,
+,person,persona,,False,,,
+,spouse,cónyuge,,False,,,
+,tag,etiqueta,,False,,,
+,families,familias,,False,,,
+,source,fuente,,False,,,
+,repository,repositorio,,False,,,
+,ID,id.,,False,,,
+,home,inicio,,False,"As in ""home person"" or ""home page""",,
+,descendant,descendiente,,False,,,
+,call name,llamar por el nombre,,False,,,
+,ancestor,ancestro,,False,,,
+,addon,extensión,,False,,,
+,active person,persona activa,,False,,,"Valittu henkilö, johon toiminto kohdistetaan"
+,Default,Predeterminado,,False,,,
+,border,borde,,False,,,
+,Try to find,Intenta encontrar,,False,,,
+,relation,relación,,False,,,
+,Gramps Web,Web de Gramps,,False,,,
+,REFN,REFN,,False,,,A GEDCOM tag used to store a user-defined identifier.
+,base relative media path,ruta de medios relativa,,False,,,
+,Purim,Purim,,False,,,
+,Shavuot,Shavuot,,False,,,
+,Kislev,Kislev,,False,,,"El nombre otorgado al mes de Kislev en la Biblia es simplemente «el mes noveno», siguiendo la numeración ordinal, al igual que el resto de los meses del año"
+,Safar,Safar,,False,,,"Safar (en árabe: صفر ṣafar) es el segundo mes del calendario islámico, consta de 29 días."
+,Muharram,Muharram,,False,,,"Muḥarram (en árabe: المحرم al-muḥarram) es el primer mes del calendario islámico, consta de 30 días."
+,Rajab,Rajab,,False,,,"Rayab o Rajab (en árabe: رجب) es el séptimo mes del calendario musulmán, consta de 30 días."
+,Shawwal,Shawwal,,False,,,Shawwal es el décimo mes del calendario Islámico (hijri) y el primer día de este mes es el día del Eid Al-Fitr.
+,Ordibehesht,Ordibehesht,,False,,,"Ordibehesht ( persa : اردیبهشت , pronunciación persa: [oɾdiːbeˈheʃt]) es el segundo mes del calendario Solar Hijri , el calendario oficial de Irán"
+,Mordad,Mordad,,False,,,"Mordad es el quinto mes del calendario persa, vigente en Irán y Afganistán. Tiene una duración de 31 días,"
+,Mehr,Mehr,,False,,,"Mehr es el séptimo mes del calendario persa, vigente en Irán y Afganistán. Tiene una duración de 30 días"
+,Shahrivar,Shahrivar,,False,,,"Shahrivar es el sexto mes del calendario persa, vigente en Irán y Afganistán. Tiene una duración de 31 días,"
+,Esfand,Esfand,,False,,,"Esfand es el duodécimo y último mes del calendario persa, vigente en Irán y Afganistán. Tiene una duración de 29 días"
+,Passover,Pésaj,,False,,,"Pascua (en hebreo פסח, 'salto') es una festividad judía que conmemora la liberación del pueblo hebreo de la esclavitud de Egipto, relatada en el Pentateuco"
+,debug,depurar,,False,1,,
+,Delimiter,Delimitador,,False,,,
+,funeral,funeral,,False,,,
+,burial,entierro,,False,,,
+,creamation,cremación,,False,,,
+,plugin,complemento,,False,,,
+,substring,Teilzeichenfolge,,False,,,
+,Nisan,Nisan,,False,,,
+,Tishri,Tiszri,,False,,,
+,Elul,Elul,,False,,,
+,Stamen,Stamen,,False,,,
+,Ancestry,Ancestry,,False,,"Good afternoon:
+
+Before making a mistake, I prefer to ask. 
+
+Since Ancestry has translation. But at the same time it is the name of a web page.
+
+So I don't know if it refers to the website or if it has to be translated?
+
+Best regards",
+,project,proyecto,,False,A project object within Gramps,,
+,Person,Miembro,,False,"A ""person"" record within Gramps",,
+,Blur,Difuminar,,False,Color,,
+,Bookmark,Marcador,,False,,,

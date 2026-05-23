@@ -1,0 +1,8 @@
+LocalTerm/*.md
+LocalTerm/*.html
+LocalTerm/*.txt
+LocalTerm/gramps-project-glossary/*
+LocalTerm/disabledCSVs/*
+LocalTerm/MANIFEST
+LocalTerm/LICENSE
+

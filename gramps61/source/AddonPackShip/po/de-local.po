@@ -1,0 +1,198 @@
+# German translation for AddonPackShip
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the AddonPackShip package.
+# Claude (Anthropic AI), 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AddonPackShip 1.5.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-17 00:00+0000\n"
+"PO-Revision-Date: 2026-02-17 00:00+0000\n"
+"Last-Translator: Claude (Anthropic AI)\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: AddonPackShip.py
+msgid "Addon Pack and Ship"
+msgstr "Erweiterung Packen und Versenden"
+
+#: AddonPackShip.py
+msgid "Packaging and distribution tool - create release-ready addon packages and listings for GitHub publishing"
+msgstr "Paketierungs- und Verteilungswerkzeug - erstellen Sie versandbereite Erweiterungspakete und Listen für GitHub"
+
+#: AddonPackShip.py
+msgid "Select installed addons to package and publish.\nFound {} addon(s) in your Gramps installation."
+msgstr "Installierte Erweiterungen zum Paketieren und Veröffentlichen auswählen.\n{} Erweiterung(en) in Ihrer Gramps-Installation gefunden."
+
+#: AddonPackShip.py
+msgid "No Addons Found"
+msgstr "Keine Erweiterungen Gefunden"
+
+#: AddonPackShip.py
+msgid "No third-party addons found. Install some addons first."
+msgstr "Keine Drittanbieter-Erweiterungen gefunden. Installieren Sie zuerst einige Erweiterungen."
+
+#: AddonPackShip.py
+msgid "Filter Addons"
+msgstr "Erweiterungen Filtern"
+
+#: AddonPackShip.py
+msgid "Name/Contributor contains:"
+msgstr "Name/Mitwirkender enthält:"
+
+#: AddonPackShip.py
+msgid "e.g., addon name, your name, or email"
+msgstr "z. B. Erweiterungsname, Ihr Name oder E-Mail"
+
+#: AddonPackShip.py
+msgid "Clear"
+msgstr "Löschen"
+
+#: AddonPackShip.py
+msgid "Select All Visible"
+msgstr "Alle Sichtbaren Auswählen"
+
+#: AddonPackShip.py
+msgid "Deselect All"
+msgstr "Alle Abwählen"
+
+#: AddonPackShip.py
+msgid "Build Selected"
+msgstr "Auswahl Erstellen"
+
+#: AddonPackShip.py
+msgid "Compile Translations"
+msgstr "Übersetzungen Kompilieren"
+
+#: AddonPackShip.py
+msgid "Create Listings"
+msgstr "Listen Erstellen"
+
+#: AddonPackShip.py
+msgid "Clean"
+msgstr "Bereinigen"
+
+#: AddonPackShip.py
+msgid "📦 Pack and Ship (Build + Listing)"
+msgstr "📦 Packen und Versenden (Erstellen + Listen)"
+
+#: AddonPackShip.py
+msgid "Close"
+msgstr "Schließen"
+
+#: AddonPackShip.py
+msgid "No Selection"
+msgstr "Keine Auswahl"
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to build."
+msgstr "Bitte wählen Sie mindestens eine Erweiterung zum Erstellen aus."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to compile."
+msgstr "Bitte wählen Sie mindestens eine Erweiterung zum Kompilieren aus."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to list."
+msgstr "Bitte wählen Sie mindestens eine Erweiterung zum Auflisten aus."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to clean."
+msgstr "Bitte wählen Sie mindestens eine Erweiterung zum Bereinigen aus."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to package."
+msgstr "Bitte wählen Sie mindestens eine Erweiterung zum Paketieren aus."
+
+#: AddonPackShip.py
+msgid "Malformed .gpr.py File"
+msgstr "Fehlerhafte .gpr.py-Datei"
+
+#: AddonPackShip.py
+msgid "Cannot build - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Erstellen nicht möglich - folgende Erweiterung(en) haben fehlerhafte .gpr.py-Dateien:\n\n"
+
+#: AddonPackShip.py
+msgid "Cannot create listing - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Liste kann nicht erstellt werden - folgende Erweiterung(en) haben fehlerhafte .gpr.py-Dateien:\n\n"
+
+#: AddonPackShip.py
+msgid "Cannot package - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Paketieren nicht möglich - folgende Erweiterung(en) haben fehlerhafte .gpr.py-Dateien:\n\n"
+
+#: AddonPackShip.py
+msgid "\n\nProblem: These fields contain commas INSIDE quoted strings.\n\n"
+msgstr "\n\nProblem: Diese Felder enthalten Kommas INNERHALB von Zeichenketten in Anführungszeichen.\n\n"
+
+#: AddonPackShip.py
+msgid "Wrong:  authors = [\"Name1, Name2\"]\n"
+msgstr "Falsch:  authors = [\"Name1, Name2\"]\n"
+
+#: AddonPackShip.py
+msgid "Correct: authors = [\"Name1\", \"Name2\"]\n\n"
+msgstr "Richtig: authors = [\"Name1\", \"Name2\"]\n\n"
+
+#: AddonPackShip.py
+msgid "Please fix the .gpr.py file(s) and try again."
+msgstr "Bitte korrigieren Sie die .gpr.py-Datei(en) und versuchen Sie es erneut."
+
+#: AddonPackShip.py
+msgid "Missing Package Files"
+msgstr "Fehlende Paketdateien"
+
+#: AddonPackShip.py
+msgid "The following addons don't have .addon.tgz files yet:\n\n{}\n\nListings require built packages. Would you like to:\n• Build these addons first (recommended), or\n• Try creating listings anyway (may result in empty entries)"
+msgstr "Folgende Erweiterungen haben noch keine .addon.tgz-Dateien:\n\n{}\n\nListen benötigen erstellte Pakete. Möchten Sie:\n• Diese Erweiterungen zuerst erstellen (empfohlen), oder\n• Trotzdem versuchen, Listen zu erstellen (kann zu leeren Einträgen führen)"
+
+#: AddonPackShip.py
+msgid "Build First"
+msgstr "Zuerst Erstellen"
+
+#: AddonPackShip.py
+msgid "Create Anyway"
+msgstr "Trotzdem Erstellen"
+
+#: AddonPackShip.py
+msgid "Clean Selected Addons?"
+msgstr "Ausgewählte Erweiterungen Bereinigen?"
+
+#: AddonPackShip.py
+msgid "This will remove Python cache files from:\n\n{}\n\n═══════════════════════════════════════════\nWILL BE REMOVED (Python regenerates these):\n═══════════════════════════════════════════\n• __pycache__/ directories\n• *.pyc and *.pyo files (bytecode)\n• *~ backup files (editor temps)\n\n═══════════════════════════════════════════\nWILL BE PRESERVED (your work):\n═══════════════════════════════════════════\n• locale/ (compiled translations - needed!)\n• po/template.pot (translator reference)\n• po/*.po (translation source files)\n• All source code and data files\n\nPython will automatically regenerate cache files\nwhen you restart Gramps.\n\nContinue with Clean?"
+msgstr "Dies entfernt Python-Cache-Dateien von:\n\n{}\n\n═══════════════════════════════════════════\nWERDEN ENTFERNT (Python regeneriert diese):\n═══════════════════════════════════════════\n• __pycache__/-Verzeichnisse\n• *.pyc- und *.pyo-Dateien (Bytecode)\n• *~-Sicherungsdateien (Editor-Temps)\n\n═══════════════════════════════════════════\nWERDEN BEWAHRT (Ihre Arbeit):\n═══════════════════════════════════════════\n• locale/ (kompilierte Übersetzungen - benötigt!)\n• po/template.pot (Übersetzer-Referenz)\n• po/*.po (Übersetzungsquelldateien)\n• Aller Quellcode und Datendateien\n\nPython regeneriert Cache-Dateien automatisch\nbeim nächsten Start von Gramps.\n\nMit Bereinigen fortfahren?"
+
+#: AddonPackShip.py
+msgid "Yes, Clean Cache"
+msgstr "Ja, Cache Bereinigen"
+
+#: AddonPackShip.py
+msgid "No, Cancel"
+msgstr "Nein, Abbrechen"
+
+#: AddonPackShip.py
+msgid "{} completed:"
+msgstr "{} abgeschlossen:"
+
+#: AddonPackShip.py
+msgid "{} Complete"
+msgstr "{} Abgeschlossen"
+
+#: AddonPackShip.py
+msgid "OK"
+msgstr "OK"
+
+#: AddonPackShip.py
+msgid "Pack and Ship Complete"
+msgstr "Packen und Versenden Abgeschlossen"
+
+#: AddonPackShip.py
+msgid "\n\nYour addons are ready to share!"
+msgstr "\n\nIhre Erweiterungen sind bereit zum Teilen!"
+
+#: AddonPackShip.py
+msgid "\n\n📁 Output location:\n  {}/download/\n  {}/listings/"
+msgstr "\n\n📁 Ausgabeort:\n  {}/download/\n  {}/listings/"

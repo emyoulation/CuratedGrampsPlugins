@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the LocalTerm package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LocalTerm\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-17 22:16-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.gpr.py:20
+msgid "Localized Gramps Glossary Terminology"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.gpr.py:21
+msgid "Localized index to Gramps Glossary terminology"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.gpr.py:31
+msgid "Localized Glossary Index"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:304
+msgid "URL base for glossary anchors"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:307
+msgid "Show anchor column"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:310
+msgid "Track Changes"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:313
+msgid "Search language"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:316
+msgid "Foreground color"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:319
+msgid "Background color"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:331
+msgid "Language 1"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:336
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:511
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:581
+msgid "Language 2"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:510
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:578
+msgid "Target"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:554
+msgid "Create Note from row"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:558
+msgid "Copy row to OS Clipboard"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:562
+msgid "Edit source CSV file"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:575
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:666
+msgid "English Term"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:584
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:695
+msgid "Anchor"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:590
+msgid "Double click row to open glossary entry"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:701
+msgid "Glossary section:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocalTerm.py:707
+msgid "MediaWiki seed:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocaleChecker.gpr.py:18
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocaleChecker.gpr.py:27
+msgid "Locale Checker"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/LocalTerm/LocaleChecker.gpr.py:19
+msgid "Dashboard with the current Locale and installed languages"
+msgstr ""

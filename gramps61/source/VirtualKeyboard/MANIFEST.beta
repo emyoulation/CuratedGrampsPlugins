@@ -1,0 +1,29 @@
+# MANIFEST.beta for VirtualKeyboard
+# β Beta/development build — lists additional files beyond auto-includes.
+# Auto-included in β Beta: *.py, *.gpr.py, *.glade, *.xml, locale/*.mo,
+#   *.md, po/*.po, po/template.pot, MANIFEST, MANIFEST.beta,
+#   and all subdirectory contents.
+# Use this file to OVERRIDE that behavior with explicit patterns,
+# or leave it absent to use all auto-includes.
+#
+# Pattern examples:
+#   VirtualKeyboard/data/*
+#   VirtualKeyboard/README.md
+#
+# --- Add your entries below this line ---
+
+VirtualKeyboard/README.md
+VirtualKeyboard/layouts/*
+VirtualKeyboard/po/*
+VirtualKeyboard/MANIFEST
+VirtualKeyboard/MANIFEST.beta
+
+# Directory listing of VirtualKeyboard/  —  2026-02-23
+# Copy lines you want included into the entries section above.
+
+VirtualKeyboard/MANIFEST
+
+# Directory listing of VirtualKeyboard/  —  2026-02-23
+# Copy lines you want included into the entries section above.
+
+VirtualKeyboard/MANIFEST

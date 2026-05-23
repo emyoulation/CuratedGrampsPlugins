@@ -1,0 +1,198 @@
+# Finnish translation for AddonPackShip
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the AddonPackShip package.
+# Claude (Anthropic AI), 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AddonPackShip 1.5.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-17 00:00+0000\n"
+"PO-Revision-Date: 2026-02-17 00:00+0000\n"
+"Last-Translator: Claude (Anthropic AI)\n"
+"Language-Team: Finnish\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: AddonPackShip.py
+msgid "Addon Pack and Ship"
+msgstr "Lisäosa: Pakkaa ja Lähetä"
+
+#: AddonPackShip.py
+msgid "Packaging and distribution tool - create release-ready addon packages and listings for GitHub publishing"
+msgstr "Pakkaus- ja jakelutökalu - luo julkaisuvalmiit lisäosapaketit ja listat GitHub-julkaisua varten"
+
+#: AddonPackShip.py
+msgid "Select installed addons to package and publish.\nFound {} addon(s) in your Gramps installation."
+msgstr "Valitse pakattavat ja julkaistavat asennetut lisäosat.\nGramps-asennuksestasi löytyi {} lisäosa(a)."
+
+#: AddonPackShip.py
+msgid "No Addons Found"
+msgstr "Lisäosia Ei Löydy"
+
+#: AddonPackShip.py
+msgid "No third-party addons found. Install some addons first."
+msgstr "Kolmannen osapuolen lisäosia ei löydy. Asenna ensin joitakin lisäosia."
+
+#: AddonPackShip.py
+msgid "Filter Addons"
+msgstr "Suodata Lisäosia"
+
+#: AddonPackShip.py
+msgid "Name/Contributor contains:"
+msgstr "Nimi/Tekijä sisältää:"
+
+#: AddonPackShip.py
+msgid "e.g., addon name, your name, or email"
+msgstr "esim. lisäosan nimi, nimesi tai sähköposti"
+
+#: AddonPackShip.py
+msgid "Clear"
+msgstr "Tyhjennä"
+
+#: AddonPackShip.py
+msgid "Select All Visible"
+msgstr "Valitse Kaikki Näkyvät"
+
+#: AddonPackShip.py
+msgid "Deselect All"
+msgstr "Poista Kaikki Valinnat"
+
+#: AddonPackShip.py
+msgid "Build Selected"
+msgstr "Rakenna Valitut"
+
+#: AddonPackShip.py
+msgid "Compile Translations"
+msgstr "Käännä Lokalisaatiot"
+
+#: AddonPackShip.py
+msgid "Create Listings"
+msgstr "Luo Listat"
+
+#: AddonPackShip.py
+msgid "Clean"
+msgstr "Siivoa"
+
+#: AddonPackShip.py
+msgid "📦 Pack and Ship (Build + Listing)"
+msgstr "📦 Pakkaa ja Lähetä (Rakenna + Listaa)"
+
+#: AddonPackShip.py
+msgid "Close"
+msgstr "Sulje"
+
+#: AddonPackShip.py
+msgid "No Selection"
+msgstr "Ei Valintaa"
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to build."
+msgstr "Valitse vähintään yksi rakennettava lisäosa."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to compile."
+msgstr "Valitse vähintään yksi käännettävä lisäosa."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to list."
+msgstr "Valitse vähintään yksi listattava lisäosa."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to clean."
+msgstr "Valitse vähintään yksi siivottava lisäosa."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to package."
+msgstr "Valitse vähintään yksi pakattava lisäosa."
+
+#: AddonPackShip.py
+msgid "Malformed .gpr.py File"
+msgstr "Virheellinen .gpr.py-Tiedosto"
+
+#: AddonPackShip.py
+msgid "Cannot build - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Rakentaminen epäonnistui - seuraavilla lisäosilla on virheellisiä .gpr.py-tiedostoja:\n\n"
+
+#: AddonPackShip.py
+msgid "Cannot create listing - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Listan luominen epäonnistui - seuraavilla lisäosilla on virheellisiä .gpr.py-tiedostoja:\n\n"
+
+#: AddonPackShip.py
+msgid "Cannot package - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Pakkaaminen epäonnistui - seuraavilla lisäosilla on virheellisiä .gpr.py-tiedostoja:\n\n"
+
+#: AddonPackShip.py
+msgid "\n\nProblem: These fields contain commas INSIDE quoted strings.\n\n"
+msgstr "\n\nOngelma: Nämä kentät sisältävät pilkkuja lainausmerkkien SISÄLLÄ olevissa merkkijonoissa.\n\n"
+
+#: AddonPackShip.py
+msgid "Wrong:  authors = [\"Name1, Name2\"]\n"
+msgstr "Väärin:  authors = [\"Nimi1, Nimi2\"]\n"
+
+#: AddonPackShip.py
+msgid "Correct: authors = [\"Name1\", \"Name2\"]\n\n"
+msgstr "Oikein: authors = [\"Nimi1\", \"Nimi2\"]\n\n"
+
+#: AddonPackShip.py
+msgid "Please fix the .gpr.py file(s) and try again."
+msgstr "Korjaa .gpr.py-tiedosto(t) ja yritä uudelleen."
+
+#: AddonPackShip.py
+msgid "Missing Package Files"
+msgstr "Pakettitiedostot Puuttuvat"
+
+#: AddonPackShip.py
+msgid "The following addons don't have .addon.tgz files yet:\n\n{}\n\nListings require built packages. Would you like to:\n• Build these addons first (recommended), or\n• Try creating listings anyway (may result in empty entries)"
+msgstr "Seuraavilla lisäosilla ei ole vielä .addon.tgz-tiedostoja:\n\n{}\n\nListat vaativat rakennettuja paketteja. Haluatko:\n• Rakentaa nämä lisäosat ensin (suositeltavaa), vai\n• Yrittää luoda listat joka tapauksessa (saattaa johtaa tyhjiin merkintöihin)"
+
+#: AddonPackShip.py
+msgid "Build First"
+msgstr "Rakenna Ensin"
+
+#: AddonPackShip.py
+msgid "Create Anyway"
+msgstr "Luo Joka Tapauksessa"
+
+#: AddonPackShip.py
+msgid "Clean Selected Addons?"
+msgstr "Siivotaanko Valitut Lisäosat?"
+
+#: AddonPackShip.py
+msgid "This will remove Python cache files from:\n\n{}\n\n═══════════════════════════════════════════\nWILL BE REMOVED (Python regenerates these):\n═══════════════════════════════════════════\n• __pycache__/ directories\n• *.pyc and *.pyo files (bytecode)\n• *~ backup files (editor temps)\n\n═══════════════════════════════════════════\nWILL BE PRESERVED (your work):\n═══════════════════════════════════════════\n• locale/ (compiled translations - needed!)\n• po/template.pot (translator reference)\n• po/*.po (translation source files)\n• All source code and data files\n\nPython will automatically regenerate cache files\nwhen you restart Gramps.\n\nContinue with Clean?"
+msgstr "Tämä poistaa Python-välimuistitiedostot kohteesta:\n\n{}\n\n═══════════════════════════════════════════\nPOISTETAAN (Python luo nämä uudelleen):\n═══════════════════════════════════════════\n• __pycache__/-hakemistot\n• *.pyc- ja *.pyo-tiedostot (tavukoodi)\n• *~-varmuuskopiotiedostot (editorin väliaikaiset)\n\n═══════════════════════════════════════════\nSÄILYTETÄÄN (sinun työsi):\n═══════════════════════════════════════════\n• locale/ (käännetyt lokalisaatiot - tarvitaan!)\n• po/template.pot (kääntäjän viite)\n• po/*.po (lokalisaation lähdetiedostot)\n• Kaikki lähdekoodi ja datatiedostot\n\nPython luo välimuistitiedostot automaattisesti uudelleen\nkunn Gramps käynnistetään uudelleen.\n\nJatketaanko siivousta?"
+
+#: AddonPackShip.py
+msgid "Yes, Clean Cache"
+msgstr "Kyllä, Siivoa Välimuisti"
+
+#: AddonPackShip.py
+msgid "No, Cancel"
+msgstr "Ei, Peruuta"
+
+#: AddonPackShip.py
+msgid "{} completed:"
+msgstr "{} valmistui:"
+
+#: AddonPackShip.py
+msgid "{} Complete"
+msgstr "{} Valmis"
+
+#: AddonPackShip.py
+msgid "OK"
+msgstr "OK"
+
+#: AddonPackShip.py
+msgid "Pack and Ship Complete"
+msgstr "Pakkaus ja Lähetys Valmis"
+
+#: AddonPackShip.py
+msgid "\n\nYour addons are ready to share!"
+msgstr "\n\nLisäosasi ovat valmiita jaettavaksi!"
+
+#: AddonPackShip.py
+msgid "\n\n📁 Output location:\n  {}/download/\n  {}/listings/"
+msgstr "\n\n📁 Tulostushakemisto:\n  {}/download/\n  {}/listings/"

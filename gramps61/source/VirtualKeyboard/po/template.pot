@@ -1,0 +1,156 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the VirtualKeyboard package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: VirtualKeyboard\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-17 22:16-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.gpr.py:46
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.gpr.py:54
+msgid "Virtual Keyboard"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.gpr.py:47
+msgid "Touch-friendly on-screen keyboard for clipboarding characters"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:139
+msgid "⚠  Layout Set Invalid"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:140
+msgid "The selected keyboard layout set could not be loaded"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:159
+msgid "QWERTY"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:159
+msgid "Most common English-language keyboard layout"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:161
+msgid "Shift QWERTY"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:161
+msgid "Uppercase letters and shifted symbols"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:163
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:226
+msgid "Composed / Dead Keys"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:164
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:227
+msgid "Mashup of diacritics, extended, and composed characters"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:166
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:191
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:224
+msgid "Special"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:166
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:224
+msgid "Mashup of special characters"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:168
+msgid "Math"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:168
+msgid "Mashup of mathematical operators"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:187
+msgid "azerty"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:187
+msgid "Disposition française standard"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:189
+msgid "AZERTY"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:189
+msgid "Majuscules et chiffres"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:191
+msgid "Caractères spéciaux"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:193
+msgid "Compose"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:193
+msgid "Caractères composés et diacritiques"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:212
+msgid "qwertz"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:213
+msgid "Standard German keyboard layout"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:215
+msgid "Shift QWERTZ"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:216
+msgid "German uppercase letters and shifted symbols"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:218
+msgid "AltGr"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:219
+msgid "Alternate characters, symbols, and currency"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:221
+msgid "Shift AltGr"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:222
+msgid "Shifted alternate characters, symbols, and currency"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:522
+msgid "⌧ Clear"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:523
+msgid "␣ Space"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:524
+msgid "⇥ Tab"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/VirtualKeyboard/virtualkeyboard.py:526
+msgid "📋 Copy"
+msgstr ""

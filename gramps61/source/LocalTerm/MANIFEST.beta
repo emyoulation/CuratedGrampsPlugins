@@ -1,0 +1,16 @@
+# MANIFEST.beta for LocalTerm
+# β Beta/development build — lists additional files beyond auto-includes.
+# Auto-included in β Beta: *.py, *.gpr.py, *.glade, *.xml, locale/*.mo,
+#   *.md, po/*.po, po/template.pot, MANIFEST, MANIFEST.beta,
+#   and all subdirectory contents.
+# Use this file to OVERRIDE that behavior with explicit patterns,
+# or leave it absent to use all auto-includes.
+
+LocalTerm/*.md
+LocalTerm/*.html
+LocalTerm/*.txt
+LocalTerm/LICENSE
+LocalTerm/MANIF*
+LocalTerm/gramps-project-glossary/*
+LocalTerm/po/*
+

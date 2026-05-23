@@ -1,0 +1,65 @@
+location,source,target,id,fuzzy,context,translator_comments,developer_comments
+,EnglishExonym,Bashkir,,no,language,"Инглиз телендә тел атамаһы",https://gramps-project.org/wiki/index.php/Gramps_Glossary/ba
+,endonym,Башҡорт,,no,language,"Туған телдә тел атамаһы",https://gramps-project.org/wiki/index.php/Gramps_Glossary/ba
+,language code,ba,,no,language,"ISO 639 стандартындағы тел коды",https://hosted.weblate.org/projects/gramps-project/-/ba/
+,translators,Тәржемәселәр,,yes,language,"GUI өсөн төп тәржемәсе",https://gramps-project.org/wiki/index.php/Portal:Translators#ba
+,translations,Тәржемәләр,,yes,language,"Вики тәржемә статусы",https://gramps-project.org/wiki/index.php/User_manual_translations#ba
+,documentation,документация,,yes,language,"Тәржемә ителгән вики-бит индексы",https://gramps-project.org/wiki/index.php/Category:ba:Documentation
+,Elul,Элул,,False,,,
+,Default,Ғәҙәти,,False,,,
+,Stamen,Stamen,,False,,,
+,Gramplet,Грамплет,,False,,,
+,border,сик,,False,,,line (or set of lines) that outline a visual item
+,Ancestry,Шәжәрә,,False,,,
+,REFN,REFN,,False,,,A GEDCOM tag used to store a user-defined identifier.
+,relation,мөнәсәбәт,,False,,,
+,Person,Шәхес,,False,"A ""person"" record within Gramps",,
+,place,урын,,False,,,
+,addon,өҫтәлмә,,False,,,
+,debug,юнәтеү,,False,,,
+,burial,ерләү,,False,,,
+,Delimiter,Айырғыс,,False,,,
+,citation,өҙөмтә,,False,,,
+,base relative media path,медиа файлдарының төп сағыштырма юлы,,False,,,
+,funeral,ерләү,,False,,,
+,Tishri,Тишри,,False,,,
+,places,урындар,,False,,,
+,bug,хата,,False,,,
+,Events,Ваҡиғалар,,False,,,
+,bugs,хаталар,,False,,,
+,substring,аҫҡы юл,,False,,,
+,Gramps Web,Gramps Web,,False,,,
+,plugin,плагин,,False,,,a software extension that adds features or functions to the core program
+,Nisan,Нисан,,False,,,
+,Gramps,Gramps,,False,,,
+,Try to find,Табырға тырышыу,,False,,,
+,project,проект,,False,A project object within Gramps,,
+,Active Person,Әүҙем Кеше,,False,Active Person,,
+,active person,әүҙем кеше,,False,,,Currently selected Person and the focus of the view.
+,Attribute,Атрибут,,False,Attribute,,
+,association,ассоциация,,False,1,,
+,Category,Категория,,False,Category,,
+,Clipboard,Күсереү буферы,,False,Clipboard,,
+,Context Menu,Контекст менюһы,,False,Context Menu,,
+,Custom Types,Ҡулланыусы Төрҙәре,,False,Custom Types,,
+,Dock,Беркетергә,,False,Dock,,"insert a Gramplet widget into the Dashboard, Sidebar, or Bottombar"
+,Event,Ваҡиға,,False,Event,,the record of a defining moment in a the life of a Person or Family
+,Event Role,Ваҡиға Роле,,False,Event Role,,the part a person played in that moment in history
+,Event Type,Ваҡиға төрө,,False,Event Type,,label used to group similar happenings together
+,Family,Ғаилә,,False,Family,,
+,Filter,Фильтр,,False,Filter,,user-created rule to select specific records that contain specific data
+,Home Person,Төп шәхес,,False,Home Person,,Person selected to be the central target of the tree
+,Keybinding,Ҡыҫҡа төймәләр,,False,Keybinding,,Keyboard shortcuts (aka hotkeys) that may be used to navigate a GUI
+,Merge,Берләштереү,,False,Merge,,combine records in in a category view into a single object
+,Navigator,Йүнәлткес,,False,Navigator,,left sidebar of icons. Allows movement between the different View categories
+,Object Editor,Объект мөхәррире,,False,Object Editor,,basic information dialog of a Primary Object for recording details
+,Preferences,Көйләүҙәр,,False,Preferences,,"GLOBAL customization of the appearance, defaults and behavior of Gramps"
+,Configure,Көйләү,,False,,,"Customization of a VIEW's appearance, defaults and behavior"
+,Prerequisites,Талап ителгән программалар,,False,,,Additional external software required for a feature to work
+,Primary role,Төп роль,,False,,,focal participant of a Event
+,Secondary object,Икенсел объект,,False,,,"a supporting record linked to primary object(s), adding extra details"
+,Primary object,Төп объект,,False,,,
+,View category,Күренеш категорияһы,,False,,,collection of display layouts related to one type of Primary object
+,Verify the Data,Мәғлүмәтте тикшереү,,False,,,
+,View mode,Ҡарау режимы,,False,,,a distinct display layout in a Category
+,heatmap,йылылыҡ картаһы,,False,,,overlay using color to indicate the count of events a places on a map

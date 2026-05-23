@@ -1,0 +1,39 @@
+## Gramps Glossary Entry Guidelines
+The goal of a Gramps Glossary entry is to provide a "broad strokes" identification of a term. It should act as a quick-reference signpost that defines the what and why, while delegating the how-to and where to specific manual sections.
+------------------------------
+## 1. Content & Scope
+
+* Brief Definition: Limit the description to 1–3 sentences. Define the term’s purpose within Gramps without listing exhaustive steps or edge cases.
+* The "Gloss Over" Rule: If you find yourself explaining "how" to use a feature, move that detail to a Tutorial link instead.
+
+## 2. Linking & Navigation (The Three-Pillar Rule)
+Each entry must provide clear paths to the Wiki using the following categorized links:
+
+* Introduction (including Interface): Contextual overview and the specific UI path (e.g., View > Charts).
+* Tutorial: A link to step-by-step instructions or "Getting Started" guides.
+* Expert Use: Advanced techniques, technical specifications, or power-user workflows.
+
+## 3. Icons
+
+* Placement: If the feature has a unique GUI icon, it must be displayed to the right of the Glossary subsection heading for that term.
+* Purpose: This aids visual recognition for users who may know what the button looks like but not its formal name.
+
+## 4. Anchors & Localization
+
+* English Anchors: Every entry must have an HTML/Wiki anchor using lower-case, simple English words (e.g., #active-person).
+* Stability: This English anchor must remain identical across all localized (translated) versions of the Glossary. This ensures that deep links from the software or other manual pages do not break when a user switches languages.
+
+------------------------------
+## Example Entry Template
+[Icon] [Term Name]
+[[#anchor-name]]
+Definition: A brief, broad-strokes explanation of the term. It identifies the item's role in genealogy or Gramps specifically.
+
+* Introduction: [Link] (Found in the [Menu Path])
+* Tutorial: [Link]
+* Expert Use: [Link]
+
+------------------------------
+Would you like a sample entry for a specific Gramps feature (like "Citations" or "Gramplets") to see this guideline in action?
+
+

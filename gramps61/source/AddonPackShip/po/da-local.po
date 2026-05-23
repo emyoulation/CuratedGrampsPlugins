@@ -1,0 +1,198 @@
+# Danish translation for AddonPackShip
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the AddonPackShip package.
+# Claude (Anthropic AI), 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AddonPackShip 1.5.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-17 00:00+0000\n"
+"PO-Revision-Date: 2026-02-17 00:00+0000\n"
+"Last-Translator: Claude (Anthropic AI)\n"
+"Language-Team: Danish\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: AddonPackShip.py
+msgid "Addon Pack and Ship"
+msgstr "Tilføjelsesprogram: Pak og Send"
+
+#: AddonPackShip.py
+msgid "Packaging and distribution tool - create release-ready addon packages and listings for GitHub publishing"
+msgstr "Paknings- og distributionsværktøj - opret udgivelsesklare tilføjelsesprogrampakker og lister til GitHub"
+
+#: AddonPackShip.py
+msgid "Select installed addons to package and publish.\nFound {} addon(s) in your Gramps installation."
+msgstr "Vælg installerede tilføjelsesprogrammer til pakning og publicering.\nFandt {} tilføjelsesprogram(mer) i din Gramps-installation."
+
+#: AddonPackShip.py
+msgid "No Addons Found"
+msgstr "Ingen Tilføjelsesprogrammer Fundet"
+
+#: AddonPackShip.py
+msgid "No third-party addons found. Install some addons first."
+msgstr "Ingen tredjeparts tilføjelsesprogrammer fundet. Installer venligst nogle tilføjelsesprogrammer først."
+
+#: AddonPackShip.py
+msgid "Filter Addons"
+msgstr "Filtrer Tilføjelsesprogrammer"
+
+#: AddonPackShip.py
+msgid "Name/Contributor contains:"
+msgstr "Navn/Bidragyder indeholder:"
+
+#: AddonPackShip.py
+msgid "e.g., addon name, your name, or email"
+msgstr "f.eks. tilføjelsesprogramnavn, dit navn eller e-mail"
+
+#: AddonPackShip.py
+msgid "Clear"
+msgstr "Ryd"
+
+#: AddonPackShip.py
+msgid "Select All Visible"
+msgstr "Vælg Alle Synlige"
+
+#: AddonPackShip.py
+msgid "Deselect All"
+msgstr "Fravælg Alle"
+
+#: AddonPackShip.py
+msgid "Build Selected"
+msgstr "Byg Valgte"
+
+#: AddonPackShip.py
+msgid "Compile Translations"
+msgstr "Kompilér Oversættelser"
+
+#: AddonPackShip.py
+msgid "Create Listings"
+msgstr "Opret Lister"
+
+#: AddonPackShip.py
+msgid "Clean"
+msgstr "Ryd Op"
+
+#: AddonPackShip.py
+msgid "📦 Pack and Ship (Build + Listing)"
+msgstr "📦 Pak og Send (Byg + List)"
+
+#: AddonPackShip.py
+msgid "Close"
+msgstr "Luk"
+
+#: AddonPackShip.py
+msgid "No Selection"
+msgstr "Intet Valgt"
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to build."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at bygge."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to compile."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at kompilere."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to list."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at liste."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to clean."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at rydde op."
+
+#: AddonPackShip.py
+msgid "Please select at least one addon to package."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at pakke."
+
+#: AddonPackShip.py
+msgid "Malformed .gpr.py File"
+msgstr "Fejlformateret .gpr.py-fil"
+
+#: AddonPackShip.py
+msgid "Cannot build - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Kan ikke bygge - følgende tilføjelsesprogram(mer) har fejlformaterede .gpr.py-filer:\n\n"
+
+#: AddonPackShip.py
+msgid "Cannot create listing - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Kan ikke oprette liste - følgende tilføjelsesprogram(mer) har fejlformaterede .gpr.py-filer:\n\n"
+
+#: AddonPackShip.py
+msgid "Cannot package - the following addon(s) have malformed .gpr.py files:\n\n"
+msgstr "Kan ikke pakke - følgende tilføjelsesprogram(mer) har fejlformaterede .gpr.py-filer:\n\n"
+
+#: AddonPackShip.py
+msgid "\n\nProblem: These fields contain commas INSIDE quoted strings.\n\n"
+msgstr "\n\nProblem: Disse felter indeholder kommaer INDE I citerede strenge.\n\n"
+
+#: AddonPackShip.py
+msgid "Wrong:  authors = [\"Name1, Name2\"]\n"
+msgstr "Forkert:  authors = [\"Navn1, Navn2\"]\n"
+
+#: AddonPackShip.py
+msgid "Correct: authors = [\"Name1\", \"Name2\"]\n\n"
+msgstr "Korrekt: authors = [\"Navn1\", \"Navn2\"]\n\n"
+
+#: AddonPackShip.py
+msgid "Please fix the .gpr.py file(s) and try again."
+msgstr "Ret venligst .gpr.py-filen(erne) og prøv igen."
+
+#: AddonPackShip.py
+msgid "Missing Package Files"
+msgstr "Manglende Pakke-filer"
+
+#: AddonPackShip.py
+msgid "The following addons don't have .addon.tgz files yet:\n\n{}\n\nListings require built packages. Would you like to:\n• Build these addons first (recommended), or\n• Try creating listings anyway (may result in empty entries)"
+msgstr "Følgende tilføjelsesprogrammer har endnu ikke .addon.tgz-filer:\n\n{}\n\nLister kræver byggede pakker. Vil du:\n• Bygge disse tilføjelsesprogrammer først (anbefalet), eller\n• Forsøge at oprette lister alligevel (kan resultere i tomme poster)"
+
+#: AddonPackShip.py
+msgid "Build First"
+msgstr "Byg Først"
+
+#: AddonPackShip.py
+msgid "Create Anyway"
+msgstr "Opret Alligevel"
+
+#: AddonPackShip.py
+msgid "Clean Selected Addons?"
+msgstr "Ryd Op i Valgte Tilføjelsesprogrammer?"
+
+#: AddonPackShip.py
+msgid "This will remove Python cache files from:\n\n{}\n\n═══════════════════════════════════════════\nWILL BE REMOVED (Python regenerates these):\n═══════════════════════════════════════════\n• __pycache__/ directories\n• *.pyc and *.pyo files (bytecode)\n• *~ backup files (editor temps)\n\n═══════════════════════════════════════════\nWILL BE PRESERVED (your work):\n═══════════════════════════════════════════\n• locale/ (compiled translations - needed!)\n• po/template.pot (translator reference)\n• po/*.po (translation source files)\n• All source code and data files\n\nPython will automatically regenerate cache files\nwhen you restart Gramps.\n\nContinue with Clean?"
+msgstr "Dette fjerner Python-cache-filer fra:\n\n{}\n\n═══════════════════════════════════════════\nVIL BLIVE FJERNET (Python regenererer disse):\n═══════════════════════════════════════════\n• __pycache__/-mapper\n• *.pyc- og *.pyo-filer (bytekode)\n• *~-sikkerhedskopifiler (editor-midlertidige)\n\n═══════════════════════════════════════════\nVIL BLIVE BEVARET (dit arbejde):\n═══════════════════════════════════════════\n• locale/ (kompilerede oversættelser - nødvendige!)\n• po/template.pot (oversætter-reference)\n• po/*.po (oversættelses-kildefiler)\n• Al kildekode og datafiler\n\nPython regenererer automatisk cache-filer\nnår Gramps genstartes.\n\nFortsæt med at rydde op?"
+
+#: AddonPackShip.py
+msgid "Yes, Clean Cache"
+msgstr "Ja, Ryd Cache Op"
+
+#: AddonPackShip.py
+msgid "No, Cancel"
+msgstr "Nej, Annullér"
+
+#: AddonPackShip.py
+msgid "{} completed:"
+msgstr "{} fuldført:"
+
+#: AddonPackShip.py
+msgid "{} Complete"
+msgstr "{} Fuldført"
+
+#: AddonPackShip.py
+msgid "OK"
+msgstr "OK"
+
+#: AddonPackShip.py
+msgid "Pack and Ship Complete"
+msgstr "Pakning og Forsendelse Fuldført"
+
+#: AddonPackShip.py
+msgid "\n\nYour addons are ready to share!"
+msgstr "\n\nDine tilføjelsesprogrammer er klar til at dele!"
+
+#: AddonPackShip.py
+msgid "\n\n📁 Output location:\n  {}/download/\n  {}/listings/"
+msgstr "\n\n📁 Outputplacering:\n  {}/download/\n  {}/listings/"

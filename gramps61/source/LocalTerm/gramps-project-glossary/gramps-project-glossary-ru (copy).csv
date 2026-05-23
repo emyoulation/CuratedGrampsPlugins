@@ -1,0 +1,23 @@
+location,source,target,id,fuzzy,context,translator_comments,developer_comments
+,EnglishExonym,Russian,,no,language,"language name in english",Gramps_Glossary/en
+,endonym,Русский (предложения),,no,language,"название языка на родном языке",Gramps_Glossary/ru
+,language code,ru,,no,language,"language code in ISO 639 standard",https://hosted.weblate.org/projects/gramps-project/-/ru/
+,translators,translators,,yes,language,"lead translator for GUI",Portal:Translators#ru
+,translations,переводы,,yes,language,"status of wiki translation",User_manual_translations#ru
+,documentation,документация,,yes,language,"translated wiki page index",Category:Ru:Documentation
+,citation,цитирование,,False,,,
+,Gramps,Gramps,,False,,
+,Given,Фамилия при рождении,,No,terminology,"name was bestowed on the individual (includes ‘John Doe’ names)",
+,Unknown,Прочее,,No,terminology,"indeterminate origin",
+,Location,Местоположение,,no,terminology,"",
+,Inherited,Фамилия унаследованная,,no,terminology,"name was based on the parent name(s)",
+,Taken,Фамилия принятая,,no,terminology,"name was chosen by the individual, including when adopting a spouse’s surname",
+,People,Люди,,False,,,
+,relation,отношение,,False,,,
+,Gramps Web,Gramps Web,,False,,,
+,REFN,REFN,,True,,Suggested in Weblate: Номер референса,A GEDCOM tag used to store a user-defined identifier.
+,Default,По умолчанию,,False,1,,
+,Default,По умолчанию,,False,1,,
+,base relative media path,относительный путь к медиафайлу,,False,,,
+
+
