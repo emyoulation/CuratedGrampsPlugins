@@ -48,6 +48,6 @@ if VERSION_TUPLE >= (5, 2, 0):
         gramplet_title=_("Environment Inspector"),
         navtypes=["Dashboard"],
         include_in_listing=True,
-        help_url="https://github.com/emyoulation/EnvironmentInspector/blob/master/"
-                 "README.md#environment-inspector-gramplet",
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/"
+                 "gramps61/source/EnvironmentInspector",
     )
