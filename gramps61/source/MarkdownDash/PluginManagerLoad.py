@@ -2,6 +2,7 @@
 # Gramps - a GTK+/GNOME based genealogy program
 #
 # Copyright (C) 2017       Paul Culley <paulr2787_at_gmail.com>
+# Copyright (C) 2026       Brian McCullough (with Claude AI coding)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 """ Help/Plugin Manager
-This module implements the enhanced Plugin manager load patches.
+This module implements the "Plugin Manager plus" load patches.
 """
 import sys
 import os
@@ -32,7 +33,7 @@ def load_on_reg(dbstate, uistate, plugin):
         # It is necessary to avoid load GUI elements when run under CLI mode.
         # So we just don't load it at all.
         sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-        from PluginManager import PluginStatus
+        from PluginManagerPlus import PluginStatus
         import gramps.gui.viewmanager
         gramps.gui.viewmanager.__dict__[
             'PluginWindows'].PluginStatus = PluginStatus

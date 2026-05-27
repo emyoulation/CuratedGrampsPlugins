@@ -1,4 +1,4 @@
-# MANIFEST.beta for LocaleChecker
+# MANIFEST.beta for EnvironmentInspector
 # β Beta/development build — lists additional files beyond auto-includes.
 # Auto-included in β Beta: *.py, *.gpr.py, *.glade, *.xml, locale/*.mo,
 #   *.md, po/*.po, po/template.pot, MANIFEST, MANIFEST.beta,
@@ -7,8 +7,8 @@
 # or leave it absent to use all auto-includes.
 #
 # Examples:
-#   LocaleChecker/data/*
-#   LocaleChecker/layouts/*.csv
-#   LocaleChecker/README.md
+#   EnvironmentInspector/data/*
+#   EnvironmentInspector/layouts/*.csv
+#   EnvironmentInspector/README.md
 
 
