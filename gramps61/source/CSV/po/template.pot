@@ -1,0 +1,755 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-12 15:05-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:142
+msgid "Include people"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:143
+msgid "Include marriages"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:144
+msgid "Include children"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:145
+msgid "Include places"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:146
+msgid "Include events"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:147
+msgid "Include citations"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:148
+msgid "Translate headers"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:283
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:477
+msgid "Custom"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:288
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:292
+#, python-format
+msgid "Could not create %s"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:318
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:596
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:690
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:788
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:402
+msgid "Place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:319
+msgid "Title"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:320
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:404
+msgid "Name"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:321
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:405
+msgid "Type"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:322
+msgid "Latitude"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:323
+msgid "Longitude"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:324
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:408
+msgid "Code"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:325
+msgid "Enclosed_by"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:326
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:595
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:689
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:780
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:401
+msgid "Date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:404
+#, python-brace-format
+msgid "CSV export doesn't support non-primary surnames, {count} dropped"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:430
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:696
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:785
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:323
+msgid "Person"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:431
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:215
+msgid "Surname"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:432
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:224
+msgid "Given"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:433
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:233
+msgid "Call"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:434
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:240
+msgid "Nickname"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:435
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:251
+msgid "Suffix"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:436
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:250
+msgid "Prefix"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:437
+msgctxt "Person"
+msgid "Title"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:438
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:252
+msgid "Gender"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:439
+msgid "Birth date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:440
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:260
+msgid "Birth place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:441
+msgid "Birth source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:442
+msgid "Baptism date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:443
+msgid "Baptism place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:444
+msgid "Baptism source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:445
+msgid "Death date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:446
+msgid "Death place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:447
+msgid "Death source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:448
+msgid "Burial date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:449
+msgid "Burial place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:450
+msgid "Burial source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:451
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:598
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:693
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:782
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:254
+msgid "Note"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:592
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:400
+msgid "Marriage"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:593
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:396
+msgid "Husband"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:594
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:386
+msgid "Wife"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:597
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:692
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:778
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:253
+msgid "Source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:641
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:697
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:786
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:378
+msgid "Family"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:641
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:377
+msgid "Child"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:687
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:787
+msgid "Event"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:688
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:420
+msgid "Event type"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:691
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:426
+msgid "Description"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:694
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:783
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:436
+msgid "Note type"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:695
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:784
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:248
+msgid "Tag"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:698
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:428
+msgid "Role"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:777
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:429
+msgid "Citation"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:779
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:430
+msgid "Page"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/exportcsv.py:781
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:431
+msgid "Confidence"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/csvInOut.gpr.py:41
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/csvInOut.gpr.py:58
+msgid "Comma Separated Values Spreadsheet (CSV) — Enhanced"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/csvInOut.gpr.py:42
+msgid "Import data from CSV files (enhanced: events, citations, media)"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/csvInOut.gpr.py:59
+msgid "Comma _Separated Values Spreadsheet (CSV) — Enhanced"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/csvInOut.gpr.py:61
+msgid ""
+"CSV is a common spreadsheet format.\n"
+"This enhanced exporter includes events, citations, and media.\n"
+"You can change this behavior in the 'Configure active view' of any list-"
+"based view"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/csvInOut.gpr.py:73
+msgid "CSV spreadsheet options"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:160
+msgid "Bad references"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:162
+#, python-format
+msgid "%s could not be opened\n"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:164
+msgid "Results"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:164
+msgid "done"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:215
+msgid "surname"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:222
+msgid "given name"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:223
+msgid "given"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:225
+msgid "Given name"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:229
+msgid "Call name"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:234
+msgid "call"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:238
+msgid "nickname"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:242
+msgid "nick"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:244
+msgid "Nick"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:246
+msgid "nick_name"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:248
+msgid "tag"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:249
+msgid "title"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:249
+msgctxt "Person or Place"
+msgid "title"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:250
+msgid "prefix"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:251
+msgid "suffix"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:252
+msgid "gender"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:253
+msgid "source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:254
+msgid "note"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:259
+msgid "birth place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:266
+msgid "birth place id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:269
+msgid "birth date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:274
+msgid "birth source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:276
+msgid "baptism place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:280
+msgid "baptism place id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:284
+msgid "baptism date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:285
+msgid "baptism source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:286
+msgid "burial place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:290
+msgid "burial place id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:294
+msgid "burial date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:295
+msgid "burial source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:300
+msgid "death place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:305
+msgid "death place id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:309
+msgid "death date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:314
+msgid "death source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:320
+msgid "death cause"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:322
+msgid "Gramps ID"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:323
+msgid "person"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:326
+msgid "occupationdescr"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:327
+msgid "Occupation description"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:331
+msgid "occupationdate"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:332
+msgid "Occupation date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:336
+msgid "occupationplace"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:337
+msgid "Occupation place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:341
+msgid "occupationplace_id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:342
+msgid "Occupation place id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:346
+msgid "occupationsource"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:347
+msgid "Occupation source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:349
+msgid "residencedate"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:349
+msgid "residence date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:352
+msgid "residenceplace"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:353
+msgid "residence place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:357
+msgid "residenceplace_id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:358
+msgid "residence place id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:362
+msgid "residencesource"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:363
+msgid "residence source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:365
+msgid "attributetype"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:365
+msgid "attribute type"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:368
+msgid "attributevalue"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:369
+msgid "attribute value"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:373
+msgid "attributesource"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:374
+msgid "attribute source"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:377
+msgid "child"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:378
+msgid "family"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:382
+msgid "mother"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:383
+msgid "Mother"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:385
+msgid "wife"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:388
+msgid "parent2"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:392
+msgid "father"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:393
+msgid "Father"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:395
+msgid "husband"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:398
+msgid "parent1"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:400
+msgid "marriage"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:401
+msgid "date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:402
+msgid "place"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:403
+msgid "place id"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:404
+msgid "name"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:405
+msgid "type"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:406
+msgid "latitude"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:407
+msgid "longitude"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:408
+msgid "code"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:411
+msgid "enclosed by"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:413
+msgid "enclosed_by"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:419
+msgid "event type"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:425
+msgid "description"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:428
+msgid "role"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:429
+msgid "citation"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:430
+msgid "page"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:431
+msgid "confidence"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:435
+msgid "note type"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:438
+msgid "media"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:438
+msgid "Media"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:442
+msgid "media description"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:443
+msgid "Media description"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:448
+msgid "media date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:449
+msgid "Media date"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:489
+#, python-format
+msgid "format error: line %(line)d: %(zero)s"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:605
+msgid "CSV Import"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:606
+msgid "Reading data..."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:610
+msgid "Importing data..."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:614
+msgid "CSV import"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:624
+#, python-brace-format
+msgid "Import Complete: {number_of} second"
+msgid_plural "Import Complete: {number_of} seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:642
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:1184
+msgid "Unknown"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/CSV/importcsv.py:648
+msgid "The following IDs were referenced but not found:\n"
+msgstr ""
