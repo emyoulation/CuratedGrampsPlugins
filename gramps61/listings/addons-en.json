@@ -9,5 +9,17 @@
     "s": 1,
     "z": "Themes2.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Themes2/README.md"
+  },
+  {
+    "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
+    "i": "ex_csv_enhanced",
+    "t": 4,
+    "d": "CSV is a common spreadsheet format.\nThis enhanced exporter includes events, citations, and media.\nYou can change this behavior in the 'Configure active view' of any list-based view",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "CSV.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/CSV",
+    "a": 1
   }
 ]
