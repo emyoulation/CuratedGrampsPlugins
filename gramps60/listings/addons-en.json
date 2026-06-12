@@ -137,5 +137,17 @@
     "s": 3,
     "z": "vcardenhanced.addon.tgz",
     "h": "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#vCard_export"
+  },
+  {
+    "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
+    "i": "ex_csv_enhanced",
+    "t": 4,
+    "d": "CSV is a common spreadsheet format.\nThis enhanced exporter includes events, citations, and media.\nYou can change this behavior in the 'Configure active view' of any list-based view",
+    "v": "1.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "CSV.addon.tgz",
+    "h": "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#csv_export",
+    "a": 1
   }
 ]
