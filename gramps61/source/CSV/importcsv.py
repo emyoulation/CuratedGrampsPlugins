@@ -899,16 +899,18 @@ class CSVParser:
             if surname is None:
                 LOG.warning("empty surname for new person on line %d" % line_number)
                 surname = ""
-            # Resolve the gramps_id to assign before db.add_person() is called,
-            # so the database records the requested ID rather than an auto one.
+            # new person — resolve gramps_id before db.add_person() so the
+            # auto-generated ID does not overwrite the one from the CSV.
+            resolved_id = None
             if grampsid is not None:
                 resolved_id = grampsid
-            elif person_ref is not None and person_ref.startswith("[") and person_ref.endswith("]"):
+            elif (
+                person_ref is not None
+                and person_ref.startswith("[")
+                and person_ref.endswith("]")
+            ):
                 resolved_id = self.db.id2user_format(person_ref[1:-1])
-            else:
-                resolved_id = None
-            # new person
-            person = self.create_person(gramps_id=resolved_id)
+            person = self.create_person(resolved_id)
             name = Name()
             name.set_type(NameType(NameType.BIRTH))
             if firstname is not None:
@@ -1153,13 +1155,15 @@ class CSVParser:
         # if this place already exists, don't create it
         place = self.lookup("place", place_id)
         if place is None:
-            # Resolve the gramps_id before db.add_place() is called so the
-            # database records the requested ID rather than an auto one.
+            # new place — resolve gramps_id before db.add_place()
             resolved_id = None
-            if place_id is not None and place_id.startswith("[") and place_id.endswith("]"):
+            if (
+                place_id is not None
+                and place_id.startswith("[")
+                and place_id.endswith("]")
+            ):
                 resolved_id = self.db.pid2user_format(place_id[1:-1])
-            # new place
-            place = self.create_place(gramps_id=resolved_id)
+            place = self.create_place(resolved_id)
             if place_id is not None:
                 self.storeup("place", place_id, place)
         if place_title is not None:
@@ -1180,14 +1184,13 @@ class CSVParser:
             place_enclosed_by = self.lookup("place", place_enclosed_by_id)
             if place_enclosed_by is None:
                 # Not yet found in import, so store for later
-                place_enclosed_by = self.create_place()
-                place_enclosed_by.name.set_value(_("Unknown"))
+                enclosed_id = None
                 if place_enclosed_by_id.startswith(
                     "["
                 ) and place_enclosed_by_id.endswith("]"):
-                    place_enclosed_by.gramps_id = self.db.pid2user_format(
-                        place_enclosed_by_id[1:-1]
-                    )
+                    enclosed_id = self.db.pid2user_format(place_enclosed_by_id[1:-1])
+                place_enclosed_by = self.create_place(enclosed_id)
+                place_enclosed_by.name.set_value(_("Unknown"))
                 self.storeup("place", place_enclosed_by_id, place_enclosed_by)
             for placeref in place.placeref_list:
                 if place_enclosed_by.handle == placeref.ref:
@@ -1255,7 +1258,11 @@ class CSVParser:
                 return
             event = Event()
             event.set_type(self._resolve_type(EventType, self.event_types, eventtype))
-            if event_ref is not None and event_ref.startswith("[") and event_ref.endswith("]"):
+            if (
+                event_ref is not None
+                and event_ref.startswith("[")
+                and event_ref.endswith("]")
+            ):
                 event.set_gramps_id(self.db.eid2user_format(event_ref[1:-1]))
             if self.default_tag:
                 event.add_tag(self.default_tag.handle)
@@ -1356,7 +1363,11 @@ class CSVParser:
             citation = Citation()
             new, source_obj = self.get_or_create_source(source)
             citation.set_reference_handle(source_obj.get_handle())
-            if citation_ref is not None and citation_ref.startswith("[") and citation_ref.endswith("]"):
+            if (
+                citation_ref is not None
+                and citation_ref.startswith("[")
+                and citation_ref.endswith("]")
+            ):
                 citation.set_gramps_id(self.db.cid2user_format(citation_ref[1:-1]))
             if self.default_tag:
                 citation.add_tag(self.default_tag.handle)
@@ -1575,13 +1586,7 @@ class CSVParser:
         return (1, attr)
 
     def create_person(self, gramps_id: str | None = None):
-        """
-        Used to create a new person we know doesn't exist.
-
-        :param gramps_id: Optional Gramps ID to assign before committing, so
-            the database records the requested ID rather than an auto-generated
-            one.
-        """
+        """Used to create a new person we know doesn't exist"""
         person = Person()
         if gramps_id is not None:
             person.set_gramps_id(gramps_id)
@@ -1592,13 +1597,7 @@ class CSVParser:
         return person
 
     def create_place(self, gramps_id: str | None = None):
-        """
-        Used to create a new place we know doesn't exist.
-
-        :param gramps_id: Optional Gramps ID to assign before committing, so
-            the database records the requested ID rather than an auto-generated
-            one.
-        """
+        """Used to create a new place we know doesn't exist"""
         place = Place()
         if gramps_id is not None:
             place.set_gramps_id(gramps_id)

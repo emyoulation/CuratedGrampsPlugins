@@ -1,0 +1,175 @@
+Place,Title,Name,Type,Latitude,Longitude,Code,Enclosed_by,Date
+[P0000],,USA,Country,,,,,
+[P0001],,Virginia,State,,,,[P0000],
+[P0002],,Westmoreland County,County,,,,[P0001],
+[P0004],,Fairfax county,County,,,,[P0001],
+[P0005],,Mount Vernon Estate,Farm,38.70686,-77.08872,,[P0004],
+[P0006],,Colonial Beach,Town,,,,[P0002],
+[P0024],"Fredericksburg County,Virginia,USA",Fredericksburg county,County,,,,[P0001],
+[P0026],"Latanes,Westmoreland County,Virginia,USA",Latanes,Unknown,,,,[P0002],
+[P0028],"Fredericksburg,Fredericksburg city,Virginia,USA",Fredericksburg,Unknown,,,,[P0024],
+[P0029],"New Kent County,Virginia,USA",New Kent county,County,,,,[P0001],
+[P0032],,Wakefield,Unknown,,,,[P0002],
+[P0033],,Stafford County,Unknown,,,,[P0001],
+[P0034],,King George county,Unknown,,,,[P0001],
+[P0035],,Lancaster County,Unknown,,,,[P0001],
+[P0003],,Wakefield plantation,Farm,38.1839,-76.9202,,[P0006],
+[P0021],"Bridges Creek,Wakefield,Westmoreland County,Virginia,USA",Bridges Creek,Unknown,,,,[P0032],
+[P0022],"Rental Rolls,Stafford County,VA",Rental Rolls,Unknown,,,,[P0033],
+[P0025],"Ferry Farm,King George County,Virginia,USA",Ferry Farm,Unknown,,,,[P0034],
+[P0027],"Epping Forest,Lancaster County,Virginia,USA",Epping Forest,Unknown,,,,[P0035],
+
+Person,Surname,Given,Call,Nickname,Suffix,Prefix,Title,Gender,Birth date,Birth place,Birth source,Baptism date,Baptism place,Baptism source,Death date,Death place,Death source,Burial date,Burial place,Burial source,Note
+[I000000],Ball,Mary,,,,,,female,September 1708,[P0027],geneanet tree diconnolly,,,,25 August 1789,[P0024],geneanet tree diconnolly,,[P0028],geneanet tree diconnolly,
+[I000009],Dandridge,Martha,,,,,,female,21 June 1731,[P0029],geneanet tree diconnolly,,,,22 May 1802,[P0005],geneanet tree diconnolly,,[P0005],geneanet tree diconnolly,
+[I000001],Washington,Augustine,,Gus,,,Capt. ,male,12 November 1694,[P0021],geneanet tree diconnolly,,,,12 April 1743,[P0025],geneanet tree diconnolly,,[P0026],geneanet tree diconnolly,
+[IUS_P001],Washington,George,,,,,Pres.,male,22 February 1732,[P0003],,,,,14 December 1799,[P0005],,,[P0005],geneanet tree diconnolly,
+
+Marriage,Husband,Wife,Date,Place,Source,Note
+[F0000],[I000001],[I000000],,,,
+[F0003],[IUS_P001],[I000009],6 January 1759,[P0029],,
+
+Family,Child
+[F0000],[IUS_P001]
+
+Event,Event type,Date,Place,Description,Source,Note,Note type,Tag,Person,Family,Role
+[E0039],Birth,25 March 1731 (Julian),,,,,,,[IUS_P001],,Primary
+[E86597],Elected,from 1789 to 1797,,President of the United States; 1st,,,,,[IUS_P001],,Primary
+[E86598],Birth,22 February 1732,[P0003],,,,,,[IUS_P001],,Primary
+[E86599],Death,14 December 1799,[P0005],,,,,,[IUS_P001],,Primary
+[E0020],Burial,,[P0005],,geneanet tree diconnolly,,,,[IUS_P001],,Primary
+[E0021],Birth,12 November 1694,[P0021],,geneanet tree diconnolly,,,,[I000001],,Primary
+[E0022],Residence,1723,[P0022],,geneanet tree diconnolly,,,,[I000001],,Primary
+[E0023],Residence,1734,[P0005],,geneanet tree diconnolly,"Augustine moved the family up the Potomac River to another Washington home, Little Hunting Creek Plantation (later renamed Mount Vernon).
+",geneanet note diconnolly,,[I000001],,Primary
+[E0024],Residence,1738,[P0024],,geneanet tree diconnolly,"The family moved again to Ferry Farm, a plantation on the Rappahannock River, where son George spent much of his youth.
+",geneanet note diconnolly,,[I000001],,Primary
+[E0025],Death,12 April 1743,[P0025],,geneanet tree diconnolly,,,,[I000001],,Primary
+[E0026],Burial,,[P0026],,geneanet tree diconnolly,"George Washington Birthplace National Monument
+",geneanet note diconnolly,,[I000001],,Primary
+[E0027],Birth,September 1708,[P0027],,geneanet tree diconnolly,,,,[I000000],,Primary
+[E0028],Family,,,,geneanet tree diconnolly,"Mother of President George Washington.
+",geneanet note diconnolly,,,,
+[E0029],Orphan,after 1721,,,geneanet tree diconnolly,"Mary was completely orphaned by the age of 12 or 13. She was raised by a guardian, George Eskridge.
+",geneanet note diconnolly,,[I000000],,Primary
+[E0030],Death,25 August 1789,[P0024],,geneanet tree diconnolly,,,,[I000000],,Primary
+[E0031],Burial,,[P0028],,geneanet tree diconnolly,"Kenmore Plantation and Gardens
+",geneanet note diconnolly,,[I000000],,Primary
+[E0032],Birth,21 June 1731,[P0029],,geneanet tree diconnolly,,,,[I000009],,Primary
+[E0033],Residence,,[P0001],,geneanet tree diconnolly,"Relation To Head: Widow
+",geneanet note diconnolly,,[I000009],,Primary
+[E0034],Death,22 May 1802,[P0005],,geneanet tree diconnolly,,,,[I000009],,Primary
+[E0035],Burial,,[P0005],,geneanet tree diconnolly,,,,[I000009],,Primary
+[E0036],Marriage,6 January 1759,[P0029],,,,,,,[F0003],Primary
+[E0037],EPERS_CUSTOM,after 1743,[P0001],,geneanet tree diconnolly,,,,[IUS_P001],,Primary
+[E0038],Residence,1776,,,geneanet tree diconnolly,,,,[IUS_P001],,Primary
+
+Citation,Source,Page,Date,Confidence,Note,Note type,Tag,Person,Family,Event,Place
+[C0021],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+
+ - U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1353022
+ - UK and Ireland, Find A Grave Index, 1300s-Current - Ancestry.com - 1,60526::0 - 1,60526::1657
+",Citation,,,,[E0020],
+[C0022],geneanet tree diconnolly,,,1,person imported from the geneanet site at the 2025-06-08,Citation,,[I000001],,,
+[C0023],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+
+ - Web: Netherlands, GenealogieOnline Trees Index, 1000-2015 - Ancestry.com - 1,9289::0 - 1,9289::19720759
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 1277.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: PJN - 1,7836::1286787
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 2741.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: PKS - 1,7836::1286789
+ - U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1356112
+ - Colonial Families of the USA, 1607-1775 - Ancestry.com - 1,61175::0 - 1,61175::45641
+ - Ancestry.com - Millennium File - Heritage Consulting - 1,7249::0 - 1,7249::100812501
+ - Ancestry.com - Millennium File - Heritage Consulting - 1,7249::0 - 1,7249::110658139
+ - U.S., Sons of the American Revolution Membership Applications, 1889-1970 - Ancestry.com - 1,2204::0 - 1,2204::872136
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 407.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: FAI - 1,7836::1286785
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 2823.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: PKS - 1,7836::1286784
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 1328.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: PJN - 1,7836::1286783
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 4427.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: CM1 - 1,7836::1286786
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 1284.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: LJV - 1,7836::1286788
+",Citation,,,,[E0021],
+[C0024],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+Virginia, Compiled Census and Census Substitutes Index, 1607-1890 - Ancestry.com - 1,3578::0 - 1,3578::33942345",Citation,,,,[E0022],
+[C0025],geneanet tree diconnolly,,,1,event imported from the geneanet site at the 2025-06-08,Citation,,,,[E0023],
+[C0026],geneanet tree diconnolly,,,1,event imported from the geneanet site at the 2025-06-08,Citation,,,,[E0024],
+[C0027],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+
+ - Web: Netherlands, GenealogieOnline Trees Index, 1000-2015 - Ancestry.com - 1,9289::0 - 1,9289::19720759
+ - U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1356112
+ - Colonial Families of the USA, 1607-1775 - Ancestry.com - 1,61175::0 - 1,61175::45641
+ - Ancestry.com - Millennium File - Heritage Consulting - 1,7249::0 - 1,7249::100812501
+ - Ancestry.com - Millennium File - Heritage Consulting - 1,7249::0 - 1,7249::110658139
+ - U.S., Sons of the American Revolution Membership Applications, 1889-1970 - Ancestry.com - 1,2204::0 - 1,2204::872136
+",Citation,,,,[E0025],
+[C0028],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1356112",Citation,,,,[E0026],
+[C0029],geneanet tree diconnolly,,,1,person imported from the geneanet site at the 2025-06-08,Citation,,[I000000],,,
+[C0030],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 1277.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: PJN - 1,7836::53882
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 2741.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: PKS - 1,7836::53884
+ - Web: Netherlands, GenealogieOnline Trees Index, 1000-2015 - Ancestry.com - 1,9289::0 - 1,9289::15425768
+ - U.S., Sons of the American Revolution Membership Applications, 1889-1970 - Ancestry.com - 1,2204::0 - Volume: 286 - 1,2204::1204620
+ - U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1370434
+ - Colonial Families of the USA, 1607-1775 - Ancestry.com - 1,61175::0 - 1,61175::30769
+ - North America, Family Histories, 1500-2000 - Ancestry.com - 1,61157::0 - Book Title: Lineage Book of the Charter Members of the DAR Vol 032 - 1,61157::2038267
+",Citation,,,,[E0027],
+[C0031],geneanet tree diconnolly,,,1,event imported from the geneanet site at the 2025-06-08,Citation,,,,[E0028],
+[C0032],geneanet tree diconnolly,,,1,event imported from the geneanet site at the 2025-06-08,Citation,,,,[E0029],
+[C0033],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+
+ - Web: Netherlands, GenealogieOnline Trees Index, 1000-2015 - Ancestry.com - 1,9289::0 - 1,9289::15425768
+ - U.S., Sons of the American Revolution Membership Applications, 1889-1970 - Ancestry.com - 1,2204::0 - Volume: 286 - 1,2204::1204620
+ - U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1370434
+ - Colonial Families of the USA, 1607-1775 - Ancestry.com - 1,61175::0 - 1,61175::30769
+ - North America, Family Histories, 1500-2000 - Ancestry.com - 1,61157::0 - Book Title: Lineage Book of the Charter Members of the DAR Vol 032 - 1,61157::2038267
+",Citation,,,,[E0030],
+[C0034],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1370434",Citation,,,,[E0031],
+[C0035],geneanet tree diconnolly,,,1,person imported from the geneanet site at the 2025-06-08,Citation,,[I000009],,,
+[C0036],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 1329.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: PJN - 1,7836::310198
+ - U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1365173
+ - Ancestry.com - Minnesota Cemetery Inscription Index, Select Counties - Dalby, John - 1,3775::0 - 1,3775::283351
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 3795.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: CM1 - 1,7836::310197
+ - North America, Family Histories, 1500-2000 - Ancestry.com - 1,61157::0 - Book Title: Lineage Book of the Charter Members of the DAR Vol 037 - 1,61157::2082451
+ - Web: Netherlands, GenealogieOnline Trees Index, 1000-2015 - Ancestry.com - 1,9289::0 - 1,9289::14164257
+ - Ancestry.com - U.S. and International Marriage Records, 1560-1900 - Yates Publishing - 1,7836::0 - Source number: 67.000; Source type: Electronic Database; Number of Pages: 1; Submitter Code: LDF - 1,7836::310209
+ - Ancestry.com - American Genealogical-Biographical Index (AGBI) - Godfrey Memorial Library, comp. - 1,3599::0 - 1,3599::2428096
+ - North America, Family Histories, 1500-2000 - Ancestry.com - 1,61157::0 - Book Title: Lineage Book of the Charter Members of the DAR Vol 056 - 1,61157::2276845
+ - Alabama, Surname Files Expanded, 1702–1981 - Ancestry.com - 1,61266::0 - Alabama Department of Archives and History; Montgomery, AL; Alabama Surname Files; Box or Film Number: M84-4558 - 1,61266::57944
+",Citation,,,,[E0032],
+[C0037],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+Ancestry.com - U.S., Civil War Pension Index: General Index to Pension Files, 1861-1934 - National Archives and Records Administration - 1,4654::0 - The National Archives at Washington, D.C.; Washington, D.C.; Record Group Title: Records of the Department of Veterans Affairs, 1773 - 2007; Record Group Number: 15; Series Title: U.S., Civil War Pension Index: General Index to Pension Files, 1861-1934; Se - 1,4654::10683256",Citation,,,,[E0033],
+[C0038],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+
+ - U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1365173
+ - Ancestry.com - Minnesota Cemetery Inscription Index, Select Counties - Dalby, John - 1,3775::0 - 1,3775::283351
+ - Connecticut, Hale Collection of Cemetery Inscriptions and Newspaper Notices, 1629-1934 - Ancestry.com - 1,2900::0 - Connecticut State Library; Hartford, Connecticut - 1,2900::811234
+ - North America, Family Histories, 1500-2000 - Ancestry.com - 1,61157::0 - Book Title: Lineage Book of the Charter Members of the DAR Vol 037 - 1,61157::2082451
+ - U.S., Newspaper Extractions from the Northeast, 1704-1930 - Ancestry.com - 1,50015::0 - 1,50015::310670
+ - Web: Netherlands, GenealogieOnline Trees Index, 1000-2015 - Ancestry.com - 1,9289::0 - 1,9289::14164257
+ - Connecticut, Deaths and Burials Index, 1650-1934 - Ancestry.com - 1,2557::0 - 1,2557::603945
+ - Connecticut, Hale Collection of Cemetery Inscriptions and Newspaper Notices, 1629-1934 - Ancestry.com - 1,2900::0 - Connecticut State Library; Hartford, Connecticut - 1,2900::972409
+ - North America, Family Histories, 1500-2000 - Ancestry.com - 1,61157::0 - Book Title: Lineage Book of the Charter Members of the DAR Vol 056 - 1,61157::2276845
+ - Alabama, Surname Files Expanded, 1702–1981 - Ancestry.com - 1,61266::0 - Alabama Department of Archives and History; Montgomery, AL; Alabama Surname Files; Box or Film Number: M84-4558 - 1,61266::57944
+",Citation,,,,[E0034],
+[C0039],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+U.S., Find A Grave Index, 1600s-Current - Ancestry.com - 1,60525::0 - 1,60525::1365173",Citation,,,,[E0035],
+[C0040],geneanet tree diconnolly,,,1,event imported from the geneanet site at the 2025-06-08,Citation,,,,[E0037],
+[C0041],geneanet tree diconnolly,,,1,"event imported from the geneanet site at the 2025-06-08
+
+New York, Genealogical Records, 1675-1920 - Ancestry.com - 1,7831::0 - New York in the Revolution as Colony and State, Vol. I - Extracts; Publication Place: Albany, New York; Publisher: J. B. Lyon Co.; Publication Year: 1904; Page Number: 271 - 1,7831::748031",Citation,,,,[E0038],
+

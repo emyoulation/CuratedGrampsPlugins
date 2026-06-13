@@ -1,0 +1,5 @@
+Name,Tags,ID,Gender,Birth Date,Birth Place,Death Date,Death Place,Spouse,Number of Parents,Number of Marriages,Number of Children,Last Changed
+"Ball, Mary",,I000000,female,September 1708,"Epping Forest, Lancaster County, Virginia, British Colonial America",25 August 1789,"Fredericksburg county, Virginia, USA","Washington, Augustine",0,1,1,8 June 2025 03:10:41 PM
+"Washington, Augustine",,I000001,male,12 November 1694,"Bridges Creek, Wakefield, Westmoreland County, Virginia, British Colonial America",12 April 1743,"Ferry Farm, King George county, Virginia, British Colonial America","Ball, Mary",0,1,1,8 June 2025 03:10:55 PM
+"Dandridge, Martha",,I000009,female,21 June 1731,"New Kent county, Virginia, British Colonial America",22 May 1802,"Mount Vernon Estate, Fairfax county, Virginia, USA","Washington, George",0,1,0,8 June 2025 03:02:23 PM
+"Washington, George",,IUS_P001,male,22 February 1732,"Wakefield plantation, Colonial Beach, Westmoreland County, Virginia, British Colonial America",14 December 1799,"Mount Vernon Estate, Fairfax county, Virginia, USA","Dandridge, Martha",2,1,0,21 May 2026 07:21:08 AM

@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
 #
 # Gramps - a GTK+/GNOME based genealogy program
 #
-# Copyright (C) 2007-2008  Douglas S. Blank
-# Copyright (C) 2004-2007  Donald N. Allingham
-# Copyright (C) 2008       Brian G. Matherly
+# Copyright (C) 2007-2008 Douglas S. Blank
+# Copyright (C) 2004-2007 Donald N. Allingham
+# Copyright (C) 2008      Brian G. Matherly
 # Copyright (C) 2010       Jakim Friant
 # Copyright (C) 2011       Tim G L Lyons
 # Copyright (C) 2013       Vassilii Khachaturov
-# Copyright (C) 2026       Douglas S. Blank
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,35 +22,45 @@
 # with this program; if not, see <https://www.gnu.org/licenses/>.
 #
 
-"""Export to CSV Spreadsheet."""
+"Export to CSV Spreadsheet."
 
-# ------------------------
-# Python modules
-# ------------------------
-import codecs
-import csv
-import logging
+# -------------------------------------------------------------------------
+#
+# Standard Python Modules
+#
+# -------------------------------------------------------------------------
 import os
-from collections import abc
-from io import StringIO
-
-# ------------------------
-# Gramps modules
-# ------------------------
-from gramps.gen.config import config
 from gramps.gen.const import GRAMPS_LOCALE as glocale
-from gramps.gen.constfunc import win
-from gramps.gen.datehandler import get_date
-from gramps.gen.display.place import displayer as _pd
-from gramps.gen.lib import EventType, Person
-from gramps.gen.lib.eventroletype import EventRoleType
-from gramps.gen.utils.string import gender as gender_map
-from gramps.gui.glade import Glade
-from gramps.gui.plug.export import WriterOptionBox
 
 _ = glocale.translation.sgettext
+import csv
+from io import StringIO
+import codecs
+
+# ------------------------------------------------------------------------
+#
+# Set up logging
+#
+# ------------------------------------------------------------------------
+import logging
+from collections import abc
 
 LOG = logging.getLogger(".ExportCSV")
+
+# -------------------------------------------------------------------------
+#
+# Gramps modules
+#
+# -------------------------------------------------------------------------
+from gramps.gen.config import config
+from gramps.gen.lib import EventType, Person
+from gramps.gen.lib.eventroletype import EventRoleType
+from gramps.gui.plug.export import WriterOptionBox
+from gramps.gen.utils.string import gender as gender_map
+from gramps.gen.datehandler import get_date
+from gramps.gen.display.place import displayer as _pd
+from gramps.gui.glade import Glade
+from gramps.gen.constfunc import win
 
 
 # -------------------------------------------------------------------------
