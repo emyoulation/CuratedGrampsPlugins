@@ -1,4 +1,4 @@
-# CSV Import and Export v1.1.0
+# CSV Import and Export v1.1.1
 <!-- undocked=false edit=True status=True browse=True -->
 _Experimental_ version for Gramps 6.0 testing 
 Use only on Backup Tree data.
