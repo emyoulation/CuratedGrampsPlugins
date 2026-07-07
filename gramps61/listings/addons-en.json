@@ -43,5 +43,17 @@
     "z": "CSV.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/CSV",
     "a": 1
+  },
+  {
+    "n": "Environment Inspector",
+    "i": "EnvironmentInspector",
+    "t": 10,
+    "d": "Two-tab developer reference gramplet showing the current locale and a searchable, sortable table of all Gramps string constants.",
+    "v": "1.0.5",
+    "g": "6.1",
+    "s": 3,
+    "z": "EnvironmentInspector.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
+    "a": 0
   }
 ]
