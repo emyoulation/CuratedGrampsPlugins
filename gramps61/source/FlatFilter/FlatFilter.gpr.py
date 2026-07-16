@@ -84,5 +84,5 @@ register(
     gramplet="FlatFilter",
     gramplet_title=_("Flat Filter"),
     navtypes=["Person"],
-    help_url="README.md",
+    help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md",
 )
