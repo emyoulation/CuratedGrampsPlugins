@@ -3,8 +3,8 @@
 **Author:** Paul Womack (developer name: BugBear)  
 **Maintainer:** *(position vacant — see "Taking Over Maintenance" below)*  
 **License:** GNU General Public License v2 or later (GPL-2.0-or-later)  
-**Gramps target version:** 5.2  
-**Plugin version:** 1.0.0  
+**Gramps target version:** 5.2 and 6.0+  
+**Plugin version:** 1.0.2  
 **Status:** Stable
 
 ---
