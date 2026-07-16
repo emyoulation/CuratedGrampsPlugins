@@ -10,6 +10,7 @@
 ---
 
 ## Overview
+<img width="562" height="620" alt="undocked Flat Filter gramplet" src="media/undocked.png" />
 
 FlatFilter is a sidebar/bottombar Gramplet for Person-oriented [Gramps](https://www.gramps-project.org/) views that extends the built-in Person Filter with a richer set of relationship-aware name-matching fields.
 
