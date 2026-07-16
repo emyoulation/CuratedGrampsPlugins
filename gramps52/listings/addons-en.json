@@ -143,5 +143,16 @@
     "z": "EnvironmentInspector.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
     "a": 0
+  },
+  {
+    "n": "Flat Filter",
+    "i": "Flat Filter",
+    "t": 10,
+    "d": "Extended person filter gramplet with split given/family name entry boxes and relationship-aware name-matching rules for father, mother, spouse, sibling, and child.",
+    "v": "1.0.2",
+    "g": "5.2",
+    "s": 3,
+    "z": "FlatFilter.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md"
   }
 ]
