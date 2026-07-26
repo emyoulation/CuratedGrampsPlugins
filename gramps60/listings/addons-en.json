@@ -172,5 +172,17 @@
     "s": 3,
     "z": "FlatFilter.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md"
+  },
+  {
+    "n": "Name format",
+    "i": "nameformat",
+    "a": "Kari Kujansuu",
+    "t": 6,
+    "d": "Adds alternative surnames to the primary name parenthetically",
+    "v": "0.9.2",
+    "g": "5.2",
+    "s": 3,
+    "z": "nameformat.addon.tgz",
+    "h": "https://github.com/kkujansuu/gramps/tree/master/addons/nameformat"
   }  
 ]
