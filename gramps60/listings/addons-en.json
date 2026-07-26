@@ -180,7 +180,7 @@
     "t": 6,
     "d": "Adds alternative surnames to the primary name parenthetically",
     "v": "0.9.2",
-    "g": "5.2",
+    "g": "6.0",
     "s": 3,
     "z": "nameformat.addon.tgz",
     "h": "https://github.com/kkujansuu/gramps/tree/master/addons/nameformat"
