@@ -30,6 +30,7 @@ Date: February 2026
 
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 _ = glocale.translation.gettext
+from gramps.version import major_version, VERSION_TUPLE
 
 #------------------------------------------------------------------------
 #
@@ -37,27 +38,27 @@ _ = glocale.translation.gettext
 #
 #------------------------------------------------------------------------
 
-register(
-    TOOL,
-    id = 'addonpackship',
-    name = _("Addon Pack and Ship"),
-    description = _(
-        "Packaging and distribution tool - create release-ready "
-        "Gramps addon plugin packages and listings for GitHub publishing"
-    ),
-    version = '1.8.11',
-    gramps_target_version = '5.2',
-    status = STABLE,
-    audience = EXPERT,
-    fname = 'AddonPackShip.py',
-    authors = ["Claude (Anthropic AI)"],
-    authors_email = [""],
-    maintainers = ["Brian McCullough"],
-    maintainers_email = ["emyoulation@yahoo.com"],
-    category = TOOL_UTILS,
-    toolclass = 'AddonPackShip',
-    tool_modes = [TOOL_MODE_GUI],
-    help_url = ("https://github.com/emyoulation/CuratedGrampsPlugins/"
-        "blob/main/ COMPARE_make_APS.md"),
-    optionclass = 'AddonPackShipOptions',
-)
+if (5, 2, 0) <= VERSION_TUPLE <= (6,2,0):
+    register(
+        TOOL,
+        id = 'addonpackship',
+        name = _("Addon Pack and Ship"),
+        description = _(
+            "Packaging and distribution tool - create release-ready "
+            "Gramps addon plugin packages and listings for GitHub publishing"
+        ),
+        version = '1.9.0',
+        gramps_target_version = major_version,
+        status = STABLE,
+        audience = EXPERT,
+        fname = 'AddonPackShip.py',
+        authors = ["Claude (Anthropic AI)"],
+        authors_email = [""],
+        maintainers = ["Brian McCullough"],
+        maintainers_email = ["emyoulation@yahoo.com"],
+        category = TOOL_UTILS,
+        toolclass = 'AddonPackShip',
+        tool_modes = [TOOL_MODE_GUI],
+        help_url = ("https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonPackShip/README.md"),
+        optionclass = 'AddonPackShipOptions',
+    )

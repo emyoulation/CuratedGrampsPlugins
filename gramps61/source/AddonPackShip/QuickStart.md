@@ -7,7 +7,7 @@
 
 ## Install
 
-**Via Addon Manager** (not the Plugin Manager):
+**Via Addon Manager** (not the Plugin Manager): 
 
 1. **Tools** → **Addon Manager** → **Projects** tab
 2. Add repository URL:  

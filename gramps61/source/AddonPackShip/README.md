@@ -1,7 +1,7 @@
 # AddonPackShip — Gramps Addon Packaging Tool
 
-**Version 1.8.3** — Development Release  
-**For Gramps 5.2.x** desktop genealogy software  
+**Version 1.9.0** — Development Release
+**For Gramps 5.2+** desktop genealogy software — packages for one or several installed Gramps versions at once
 [**QuickStart.md**](QuickStart.md) | [**README.md**](README.md)
 
 ![Addon Pack and Ship](media/APS.png)
@@ -14,11 +14,14 @@ Package your Gramps addons for distribution with a simple checkbox interface. Cr
 
 **AddonPackShip** packages finished Gramps addons for sharing:
 
-✅ **Build** — Creates `.addon.tgz` packages from installed addons  
-✅ **Compile** — Compiles translation files (`.po` → `.mo`), generates `template.pot` if missing  
-✅ **Amend Listings** — Adds/updates JSON metadata for the Addon Manager  
-✅ **Pack and Ship** — One-click build + listing for GitHub upload  
-✅ **Per-Addon MANIFEST Editor** — Folder icon button on each addon row opens a file chooser/editor
+✅ **Build** — Creates `.addon.tgz` packages from installed addons, for one or more Gramps versions at once
+✅ **Compile** — Compiles translation files (`.po` → `.mo`), generates `template.pot` if missing
+✅ **Amend Listings** — Adds/updates JSON metadata for the Addon Manager
+✅ **Pack and Ship** — One-click build + listing for GitHub upload
+✅ **Per-Addon MANIFEST Editor** — Folder icon button on each addon row/bundle opens a file chooser/editor
+✅ **Per-Addon Version Bump** — Click an addon's version tag to flag a patch-version bump on its next build
+✅ **Named Configurations** — Save and reload your build mode, target versions, output folder, filters, and selections by name
+✅ **Built-in Documentation** — Help icon opens this README directly, no browser required (when Markdown Dash is installed)
 
 **Not a development tool** — use this when your addon is ready to share. For active development, use your preferred text editor.
 
@@ -28,9 +31,9 @@ Package your Gramps addons for distribution with a simple checkbox interface. Cr
 
 **Via Addon Manager** (Recommended):
 
-1. Open Gramps → **Edit** → **Addon Manager**  
-2. Go to the **Projects** tab  
-3. Add (if not already present) and select the **Emyoulation GitHub curated addons** URL from the **Project** tab:  
+1. Open Gramps → **Edit** → **Addon Manager**
+2. Go to the **Projects** tab
+3. Add (if not already present) and select the **Emyoulation GitHub curated addons** URL from the **Project** tab:
    `https://raw.githubusercontent.com/emyoulation/CuratedGrampsPlugins/main/gramps52/listings/addons-en.json`
 4. Click **Refresh**
 5. Find **Addon Pack and Ship** under the Tools category
@@ -50,10 +53,11 @@ The tool then appears under **Tools** → **Utilities** → **Addon Pack and Shi
 1. **Tools** → **Utilities** → **Addon Pack and Ship**
 2. Select addon(s) with checkboxes
 3. Choose **β Beta** mode (includes translation source files)
-4. Click **📦 Pack and Ship**
-5. Upload the `gramps52/` folder to GitHub
+4. Check which **Gramps Versions** to package for under **Package Targets:** — the version you're currently running is pre-checked for you
+5. Click **📦 Pack and Ship**
+6. Upload the generated `gramps52/` (and/or `gramps60/`, etc.) folder(s) to GitHub
 
-Your addon is ready to share!
+Your addon is ready to share! The settings you used are saved automatically the first time you run this tool, under a configuration named **default**, so they're ready to reuse next time — see [Named Configurations](#named-configurations) below.
 
 ---
 
@@ -63,21 +67,50 @@ Your addon is ready to share!
 
 The **Filter Addons** frame at the top contains all controls that stay visible while the addon list scrolls:
 
-- **Select All Visible** / **Deselect All** — checkbox selection helpers
+- **Select All Visible** / **Deselect All** — checkbox selection helpers (apply to whatever the current filters show)
 - **Build Mode** radio buttons — **β Beta** (default) or **Δ Release**
-- **Name/Contributor contains:** — filter the addon list by name, author, or email
+- **Type filter** dropdown — narrow the list to one plugin type (VIEW, GRAMPLET, TOOL, REPORT, GENERAL, etc.)
+- **Search bundles and plugins…** — a live search box (with a built-in ✕ clear button) that matches across every plugin field: name, type, id, path, authors, version, category, and more
 - **Build Selected**, **Compile Translations**, **Amend Listings** — individual operation buttons
+
+### Package Targets Frame
+
+Directly below the addon filters, the **Package Targets** frame controls which installed Gramps releases to build and list packages for:
+
+- **Gramps Versions** — one checkbox per bundled packaging script (e.g. `5.2`, `6.0`). Check as many as you want to target in one pass; the same `.addon.tgz` is reused across every checked version, so nothing is rebuilt twice. By default, only the Gramps version you're currently running is checked — tick additional boxes to also package for other installed versions.
+- **Update Scripts…** — fetches the latest packaging scripts from `gramps-project/addons-source` on GitHub, refreshing your bundled copies (with a timestamped backup kept) and offering to add a script for any newly released Gramps version not yet bundled here. Requires an internet connection; existing bundled scripts keep working offline if it can't reach GitHub.
+
+### Output Location & Named Configurations
+
+Below Package Targets, one row combines where packages are written with saving/loading your settings:
+
+- **Output location** — the parent folder under which each checked version's `download/` and `listings/` subfolders are created. Defaults to this tool's own installation folder; pick something else (e.g. a local clone of your addon's GitHub repository) if you want the generated files to land somewhere you can commit and push directly.
+- **Suggested folder** dropdown (shown only if any are found) — local Git repository clones detected under common developer folders (e.g. `~/Documents/GitHub`); picking one fills in the Output location for you.
+- **Configuration** name box and save icon — see [Named Configurations](#named-configurations) below.
+
+### Named Configurations
+
+AddonPackShip can remember a complete snapshot of your settings — build mode, checked Gramps Versions, output location, filters, and which addons are selected — under a name you choose, so you don't have to rebuild the same setup by hand each time:
+
+- Type a name and press **Enter** (or click the save icon) to save the current settings under that name, overwriting it if it already exists.
+- Pick an existing name from the dropdown to load it.
+- Whichever configuration was active when you last closed this tool is restored automatically the next time you open it.
+- On a fresh install, before you've saved anything, AddonPackShip automatically saves your very first session's settings as a configuration named **default** — including the running-version-only Gramps Versions selection above — so there's always at least one ready to reload.
+
+Configurations are stored in `APS.ini`, alongside this tool's own files — not in `gramps.ini`.
 
 ### Addon List (scrollable)
 
-Each addon row shows:
-- A **checkbox** with the addon's display name
+Each addon row (or, for addons that register several plugins in one folder, each bundle header) shows:
+- A **checkbox** with the addon's display name (bundles with multiple plugins list one checkbox per plugin beneath a shared header)
 - Small text showing type(s) and folder path
-- A **📂 folder icon button** on the right — click to create or open the MANIFEST/MANIFEST.beta for that addon in your text editor
+- A **version tag** (e.g. `1.2.3`) — click it to flag that addon for a patch-version bump (e.g. `1.2.3` → `1.2.4`) in its `.gpr.py` the next time it's built; click again to cancel
+- A **📂 folder icon button** — click to create or open the MANIFEST/MANIFEST.beta for that addon in your text editor
 
 ### Bottom Bar
 
-- **Selected N of M addons** status — left side
+- **❓ Help icon** — leftmost. Opens this tool's own documentation, preferring to show `README.md` directly if the Markdown Dash gramplet is installed, otherwise opening the online help page in your browser
+- **Found N bundles (M registered plugins)…** — shown when nothing is selected; switches to a live **Selected bundles: X/Y • Plugins: V/T** readout as soon as you check something
 - **📦 Pack and Ship** — centre, highlighted action button
 - **Close** — right side
 
@@ -121,46 +154,62 @@ Each addon row shows:
 
 ### Checkbox Selection Interface
 
-- Filter addons by name, author, or email
-- **Select All Visible** / **Deselect All** — fixed in the Filter frame, never scrolls away
-- Selection count shown in bottom-left status bar
+- Filter addons by type, or search by name, author, email, id, path, version, or category
+- **Select All Visible** / **Deselect All** — fixed in the Filter frame, never scrolls away, and respects whatever the current filters show
+- Selection count shown in the bottom bar, next to the Help icon
 - Shows addon type and path beneath each checkbox
+
+### Multi-Version Package Targets
+
+- Check as many **Gramps Versions** as you want to package for in one pass — each checked version gets its own `gramps<NN>/download/` and `gramps<NN>/listings/` output
+- The version you're currently running is pre-checked by default; add others as needed
+- **Update Scripts…** refreshes the bundled packaging engines from `gramps-project/addons-source` on GitHub, and can add scripts for newly released Gramps versions not yet bundled
+
+### Output Location and Named Configurations
+
+- Choose where the generated `gramps<NN>/` folders are created — defaults to this tool's own folder, or point it at a local Git clone
+- Detected local Git repository clones are offered as one-click suggestions
+- Save and reload complete settings snapshots by name, backed by `APS.ini`
+- Your most recently used configuration is restored automatically next time you open the tool
+- A **default** configuration is created for you automatically the first time you use this tool
 
 ### Build Operations
 
-**Build Selected** — Creates `.addon.tgz` packages  
-- Compiles translations automatically  
-- Generates `template.pot` if missing  
-- Uses `MANIFEST.beta` or `MANIFEST` if present  
-- Auto-includes appropriate files per mode  
-- Output: `gramps52/download/AddonName.addon.tgz`
+**Build Selected** — Creates `.addon.tgz` packages
+- Compiles translations automatically
+- Generates `template.pot` if missing
+- Uses `MANIFEST.beta` or `MANIFEST` if present
+- Auto-includes appropriate files per mode
+- Bumps the `.gpr.py` patch version first for any addon flagged with its version tag
+- Builds once per checked Gramps Version — output: `gramps<NN>/download/AddonName.addon.tgz`
 
-**Compile Translations** — Standalone translation compilation  
-- Generates `template.pot` from source files if missing  
-- Finds all `.po` files (any naming pattern)  
-- Compiles to `locale/*/LC_MESSAGES/*.mo`  
+**Compile Translations** — Standalone translation compilation
+- Generates `template.pot` from source files if missing
+- Finds all `.po` files (any naming pattern)
+- Compiles to `locale/*/LC_MESSAGES/*.mo`
 - Works with typical `.po` file-naming patterns (e.g., `fr-local.po`, `fr_FR.po`, `fr.po`)
 
 ![](media/LocaleCompile.png)
 
-**Amend Listings** — Generates/updates JSON metadata  
-> ℹ️ **"Amend" not "Create"**: This operation *adds or updates* entries in `addons-en.json` — it does **not** remove entries for addons you haven't selected. Existing entries for other addons are preserved.  
-> **To shrink the listing** (e.g., to remove a retired addon): delete the `gramps52/listings/` folder first, then run Amend Listings for only the addons you want listed.
+**Amend Listings** — Generates/updates JSON metadata
+> ℹ️ **"Amend" not "Create"**: This operation *adds or updates* entries in `addons-en.json` — it does **not** remove entries for addons you haven't selected. Existing entries for other addons are preserved.
+> **To shrink the listing** (e.g., to remove a retired addon): delete the `gramps<NN>/listings/` folder first, then run Amend Listings for only the addons you want listed.
 
-- Creates `addons-LANG.json` for each locale
+- Creates `addons-LANG.json` for each locale, for each checked Gramps Version
 - Uses actual plugin registration data
 - Includes status and audience fields
-- Output: `gramps52/listings/addons-en.json`
+- Output: `gramps<NN>/listings/addons-en.json`
 
-**Pack and Ship** — Combined build + listing (recommended!)  
-- One button for complete packaging  
-- Shows which `MANIFEST` file was used  
-- Creates both `download/` and `listings/` folders  
+**Pack and Ship** — Combined build + listing (recommended!)
+- One button for complete packaging across every checked Gramps Version
+- Validates every selected addon's `.gpr.py` first and reports any that are malformed
+- Confirms before a Release build, since it's intentionally lossy
+- Creates both `download/` and `listings/` folders
 - Ready to upload to GitHub
 
 ### Per-Addon MANIFEST Editor (📂 button)
 
-Each addon row has a **folder icon button** on the right. Clicking it:
+Each addon row (or bundle header, for addons with multiple plugins) has a **folder icon button**. Clicking it:
 
 1. Opens (or creates) `MANIFEST.beta` (β mode) or `MANIFEST` (Δ mode) for that specific addon
 2. Seeds from existing `MANIFEST` when creating a new `MANIFEST.beta`
@@ -171,6 +220,16 @@ Each addon row has a **folder icon button** on the right. Clicking it:
 The button's tooltip tells you whether the file already exists, its full path, and which mode it applies to — so it doubles as a quick sanity check.
 
 > The button is always enabled — you don't need to select an addon first. Just click the folder icon next to whichever addon you want to manage.
+
+### Per-Addon Version Bump
+
+Each addon shows its current version as a small clickable tag next to its name:
+
+1. Click the tag to flag that addon for a **patch-version bump** (e.g. `1.2.3` → `1.2.4`) — the tag turns red and previews the new version
+2. Click it again to cancel the flag
+3. Flagged addons have their `.gpr.py` version actually incremented the next time they're built (via **Build Selected** or **Pack and Ship**)
+
+This applies per addon folder — for a bundle with multiple plugins sharing one `.gpr.py`, the tag on the bundle header covers the whole group.
 
 ---
 
@@ -194,7 +253,7 @@ VirtualKeyboard/layouts/*
 VirtualKeyboard/data/config.json
 ```
 
-**If `MANIFEST.beta` exists** → it controls inclusion (additive on top of core files)  
+**If `MANIFEST.beta` exists** → it controls inclusion (additive on top of core files)
 **If `MANIFEST.beta` absent** → auto-includes everything
 
 ### MANIFEST (Δ Release mode)
@@ -234,18 +293,19 @@ AddonName/README.md           # Individual file
 #### For Beta Testing / Translation
 
 1. Select **β Beta** mode
-2. Click **📦 Pack and Ship**
-3. Find output in `~/.gramps/gramps52/plugins/AddonPackShip/gramps52/`
+2. Check the **Gramps Versions** you want to package for
+3. Click **📦 Pack and Ship**
+4. Find the output under whichever **Output location** folder you've chosen — the tool's own folder by default — inside `gramps<NN>/`
 
 #### For Public Release
 
 1. Select **Δ Release** mode
 2. Click **📦 Pack and Ship** (confirm warning dialog)
-3. Find output in same location
+3. Find output in the same location
 
 ### 3. Upload to GitHub
 
-Create this structure in your GitHub repository:
+Create this structure in your GitHub repository (one `gramps<NN>/` folder per Gramps Version you packaged for):
 
 ```
 your-repo/
@@ -256,8 +316,13 @@ your-repo/
 │       ├── addons-en.json
 │       ├── addons-fr.json
 │       └── addons-de.json
+├── gramps60/
+│   ├── download/
+│   └── listings/
 └── README.md
 ```
+
+Tip: if you point **Output location** at a local Git clone of this repository (or use the **Suggested folder** dropdown to find one), the generated files land exactly where you'll commit and push them from.
 
 **URL format**: `https://raw.githubusercontent.com/username/repo/main/gramps52/listings/addons-en.json`
 
@@ -275,10 +340,10 @@ your-repo/
 Test your addon package **before** uploading to GitHub using `file://` URLs:
 
 1. **Build** your addon with AddonPackShip
-2. Note the output path (shown in results dialog)
+2. Note the output path (shown in results dialog) — this depends on your chosen **Output location**
 3. **Tools** → **Addon Manager** → **Projects** tab
-4. Add: `file:///home/username/.gramps/gramps52/plugins/AddonPackShip/gramps52/listings/addons-en.json`
-   - Windows: `file:///C:/Users/username/.gramps/gramps52/plugins/AddonPackShip/gramps52/listings/addons-en.json`
+4. Add: `file:///<output-location>/gramps52/listings/addons-en.json`
+   - Windows: `file:///C:/<output-location>/gramps52/listings/addons-en.json`
 5. Refresh and install from your local "repository"
 
 **Test both modes**:
@@ -353,7 +418,19 @@ authors = ["Smith", "John"]  # ✅ Correct
 
 **Cause**: "Amend Listings" adds/updates but never removes entries.
 
-**Solution**: Delete the `gramps52/listings/` folder entirely, then run Pack and Ship (or Amend Listings) for only the addons you want in the listing.
+**Solution**: Delete the `gramps<NN>/listings/` folder entirely, then run Pack and Ship (or Amend Listings) for only the addons you want in the listing.
+
+### "No Versions Found" when clicking Update Scripts…
+
+**Cause**: No bundled packaging scripts were found locally, and the GitHub branch list couldn't be reached.
+
+**Solution**: Check your internet connection and try again. If you're offline, any already-bundled `make<NN>.py` scripts still work for packaging — this only affects fetching newer/additional ones.
+
+### Help icon opens a browser instead of the README
+
+**Cause**: The Markdown Dash gramplet isn't installed (or couldn't be loaded), so AddonPackShip falls back to opening its online help page instead of showing `README.md` directly.
+
+**Solution**: This is expected without Markdown Dash — the browser fallback still gets you to the documentation. Install Markdown Dash from the Addon Manager if you'd like the README shown in-app instead.
 
 ---
 
@@ -361,29 +438,43 @@ authors = ["Smith", "John"]  # ✅ Correct
 
 ### For Addon Developers
 
-✅ Start with **β Beta** mode for all development and testing  
-✅ Use the **📂 folder button** on each addon row to check or create MANIFEST files  
-✅ Test locally with `file://` URLs before publishing  
-✅ Run **Compile Translations** to generate `template.pot`  
-✅ Commit MANIFEST files to version control for transparency  
-✅ To reduce the listing file, delete `gramps52/listings/` first
+✅ Start with **β Beta** mode for all development and testing
+✅ Check every **Gramps Version** you want to support before Pack and Ship
+✅ Use the **📂 folder button** on each addon row to check or create MANIFEST files
+✅ Use the version tag to flag a patch bump instead of hand-editing `.gpr.py`
+✅ Save a **named configuration** once your settings are right, so you don't have to redo them next time
+✅ Test locally with `file://` URLs before publishing
+✅ Run **Compile Translations** to generate `template.pot`
+✅ Commit MANIFEST files to version control for transparency
+✅ To reduce the listing file, delete `gramps<NN>/listings/` first
 
 ### For Translators
 
-✅ Request **β Beta** packages — you need `po/template.pot` and `po/*.po` files  
-✅ Check `template.pot` is up-to-date before translating  
-✅ Return `.po` files to addon author for next release  
+✅ Request **β Beta** packages — you need `po/template.pot` and `po/*.po` files
+✅ Check `template.pot` is up-to-date before translating
+✅ Return `.po` files to addon author for next release
 ✅ Test compiled translations by installing β Beta package locally
 
 ### For Beta Testers
 
-✅ Install from **β Beta** to get latest features  
-✅ Report bugs with version number and mode (β/Δ)  
+✅ Install from **β Beta** to get latest features
+✅ Report bugs with version number and mode (β/Δ)
 ✅ Check `README.md` in β Beta packages for testing instructions
 
 ---
 
 ## Version History
+
+### 1.9.0 (2026-08)
+
+- **Multi-version Package Targets**: Check any number of **Gramps Versions** to build and list for in one pass, instead of packaging for a single hardcoded version
+- **Gramps Versions now default to the version you're running**: only the checkbox matching the currently running Gramps release is pre-checked, instead of every known version
+- **Update Scripts…**: fetch the latest packaging scripts from `gramps-project/addons-source` on GitHub, with automatic backups and detection of newly released Gramps versions
+- **Configurable Output location**, with a **Suggested folder** dropdown for detected local Git repository clones
+- **Named Configurations**: save/load a full settings snapshot (build mode, target versions, output location, filters, selections) to `APS.ini`; your last-used configuration is restored automatically, and a **default** one is seeded for you on first use
+- **Type filter** dropdown alongside the search box, and the search box now matches across every plugin field, not just name/contributor
+- **Per-addon version bump control**: click an addon's version tag to flag a patch-version bump for its next build
+- **Help icon**: opens this README directly when the Markdown Dash gramplet is installed, falling back to the online help page in your browser otherwise
 
 ### 1.8.3 (2026-02-27)
 
@@ -411,27 +502,27 @@ authors = ["Smith", "John"]  # ✅ Correct
 
 ## Credits
 
-**Author**: Brian McCullough  
-**Email**: emyoulation@yahoo.com  
-**Development**: AI-assisted using Claude (Anthropic)  
-**License**: GPL v2 or later  
-**Gramps**: https://gramps-project.org  
+**Author**: Brian McCullough
+**Email**: emyoulation@yahoo.com
+**Development**: AI-assisted using Claude (Anthropic)
+**License**: GPL v2 or later
+**Gramps**: https://gramps-project.org
 **Repository**: https://github.com/emyoulation/CuratedGrampsPlugins
 
 ---
 
 ## Support and Feedback
 
-**Issues**: Report via Gramps Discourse forums  
-**Feature Requests**: Discourse or email  
+**Issues**: Report via Gramps Discourse forums
+**Feature Requests**: Discourse or email
 **Contributions**: Welcome — discuss on Discourse first
 
 ---
 
 ## See Also
 
-[**QuickStart.md**](QuickStart.md) — 5-minute guide to first use  
-[**COMPARE_make_APS.md**](COMPARE_make_APS.md) — How AddonPackShip compares to make52.py/make60.py  
+[**QuickStart.md**](QuickStart.md) — 5-minute guide to first use
+[**COMPARE_make_APS.md**](COMPARE_make_APS.md) — How AddonPackShip compares to make52.py/make60.py
 **Gramps Developer Docs** — https://gramps-project.org/wiki/index.php/Portal:Developers
 
 ---

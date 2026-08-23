@@ -1,32 +1,95 @@
 [
   {
-    "n": "Markdown Dash",
-    "i": "markdowndash",
-    "t": 10,
-    "d": "Dashboard gramplet to view formatted Markdown (.md) files",
-    "v": "1.0.0",
+    "n": "Addon Pack and Ship",
+    "i": "addonpackship",
+    "t": 2,
+    "d": "Packaging and distribution tool - create release-ready Gramps addon plugin packages and listings for GitHub publishing",
+    "v": "1.9.0",
+    "g": "6.0",
+    "s": 3,
+    "z": "AddonPackShip.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonPackShip/README.md",
+    "a": 1
+  },
+  {
+    "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
+    "i": "im_csv_enhanced",
+    "t": 3,
+    "d": "Import data from CSV files (enhanced: events, citations, media)",
+    "v": "1.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "CSV.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
+    "a": 1
+  },
+  {
+    "n": "vCard (Enhanced — v1/2.1/3.0/4.0)",
+    "i": "im_vcard_enh",
+    "t": 3,
+    "d": "Import contacts from vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, and 4.0. Unhandled properties are preserved as Person attributes. Variant Call Format (DNA) files are detected and rejected.",
+    "v": "1.0.2",
+    "g": "6.0",
+    "s": 3,
+    "z": "vcardenhanced.addon.tgz",
+    "h": "README.md"
+  },
+  {
+    "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
+    "i": "ex_csv_enhanced",
+    "t": 4,
+    "d": "CSV is a common spreadsheet format.\nThis enhanced exporter includes events, citations, and media.\nYou can change this behavior in the 'Configure active view' of any list-based view",
+    "v": "1.1.1",
+    "g": "6.0",
+    "s": 1,
+    "z": "CSV.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
+    "a": 1
+  },
+  {
+    "n": "vCard (Enhanced — v1/2.1/3.0/4.0)",
+    "i": "ex_vcard_enh",
+    "t": 4,
+    "d": "Export contacts to vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, and 4.0 (default: 3.0).",
+    "v": "1.0.1",
+    "g": "6.0",
+    "s": 3,
+    "z": "vcardenhanced.addon.tgz",
+    "h": "README.md"
+  },
+  {
+    "n": "Theme preferences",
+    "i": "ThemesPrefs",
+    "t": 6,
+    "d": "An addition to Preferences for simple Theme and Font adjustment.  Especially useful for Windows users. Also supports a layered CSS theming system with CSS Themes, CSS Patches, and a personal user override.",
+    "v": "1.0.1",
     "g": "6.0",
     "s": 2,
-    "z": "MarkdownDash.addon.tgz",
-    "rg": [
-      [
-        "Gtk",
-        "3.0"
-      ],
-      [
-        "Gdk",
-        "3.0"
-      ],
-      [
-        "GdkPixbuf",
-        "2.0"
-      ],
-      [
-        "Pango",
-        "1.0"
-      ]
-    ],
-    "h": "https://gramps.discourse.group/t/9158"
+    "z": "Themes2.addon.tgz",
+    "h": "Addon:ThemePreferences"
+  },
+  {
+    "n": "Environment Inspector",
+    "i": "EnvironmentInspector",
+    "t": 10,
+    "d": "Two-tab developer reference gramplet showing the current locale and a searchable, sortable table of all Gramps string constants.",
+    "v": "1.0.6",
+    "g": "6.0",
+    "s": 3,
+    "z": "EnvironmentInspector.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
+    "a": 0
+  },
+  {
+    "n": "Flat Filter",
+    "i": "Flat Filter",
+    "t": 10,
+    "d": "Extended person filter gramplet with split given/family name entry boxes and relationship-aware name-matching rules for father, mother, spouse, sibling, and child.",
+    "v": "1.0.3",
+    "g": "6.0",
+    "s": 3,
+    "z": "FlatFilter.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md"
   },
   {
     "n": "WebP Thumbnailer",
@@ -44,18 +107,6 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
-  },
-  {
-    "n": "Addon Pack and Ship",
-    "i": "addonpackship",
-    "t": 2,
-    "d": "Packaging and distribution tool - create release-ready Gramps addon plugin packages and listings for GitHub publishing",
-    "v": "1.8.11",
-    "g": "6.0",
-    "s": 3,
-    "z": "AddonPackShip.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/ COMPARE_make_APS.md",
-    "a": 1
   },
   {
     "n": "Beta What's Next",
@@ -82,18 +133,6 @@
     "a": 1
   },
   {
-    "n": "Locale Checker",
-    "i": "Locale Checker Gramplet",
-    "t": 10,
-    "d": "Dashboard with the current Locale and installed languages",
-    "v": "1.0.0",
-    "g": "6.0",
-    "s": 2,
-    "z": "LocaleChecker.addon.tgz",
-    "h": "https://github.com/emyoulation/LocalTerm/blob/master/README.md#locale-checker-gramplet",
-    "a": 2
-  },
-  {
     "n": "Virtual Keyboard",
     "i": "VirtualKeyboard",
     "t": 10,
@@ -105,83 +144,4 @@
     "h": "https://gramps.discourse.group/t/python-virtual-keyboard-with-diacritical-marks/3006/10",
     "a": 0
   },
-  {
-    "n": "Pedigree Breadcrumbs",
-    "i": "PedigreeBreadcrumbs",
-    "t": 10,
-    "d": "Shows the relationship 'breadcrumb' path between people in different generations.",
-    "v": "0.1.0",
-    "g": "6.0",
-    "s": 2,
-    "z": "breadcrumbs.addon.tgz",
-    "h": "https://gramps.discourse.group/t/3367/3"
-  },
-  {
-    "n": "vCard (Enhanced — v1/2.1/3.0/4.0)",
-    "i": "im_vcard_enh",
-    "t": 3,
-    "d": "Import contacts from vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, and 4.0. Unhandled properties are preserved as Person attributes. Variant Call Format (DNA) files are detected and rejected.",
-    "v": "1.0.1",
-    "g": "6.0",
-    "s": 3,
-    "z": "vcardenhanced.addon.tgz",
-    "h": "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#Importing_data"
-  },
-  {
-    "n": "vCard (Enhanced — v1/2.1/3.0/4.0)",
-    "i": "ex_vcard_enh",
-    "t": 4,
-    "d": "Export contacts to vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, and 4.0 (default: 3.0).",
-    "v": "1.0.1",
-    "g": "6.0",
-    "s": 3,
-    "z": "vcardenhanced.addon.tgz",
-    "h": "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#vCard_export"
-  },
-  {
-    "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
-    "i": "ex_csv_enhanced",
-    "t": 4,
-    "d": "CSV is a common spreadsheet format.\nThis enhanced exporter includes events, citations, and media.\nYou can change this behavior in the 'Configure active view' of any list-based view",
-    "v": "1.1.0",
-    "g": "6.0",
-    "s": 1,
-    "z": "CSV.addon.tgz",
-    "h": "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#csv_export",
-    "a": 1
-  },
-  {
-    "n": "Environment Inspector",
-    "i": "EnvironmentInspector",
-    "t": 10,
-    "d": "Two-tab developer reference gramplet showing the current locale and a searchable, sortable table of all Gramps string constants.",
-    "v": "1.0.5",
-    "g": "6.0",
-    "s": 3,
-    "z": "EnvironmentInspector.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
-    "a": 0
-  },
-  {
-    "n": "Person Flat Filter",
-    "i": "Person Flat Filter",
-    "t": 10,
-    "d": "Extended person filter gramplet with split given/family name entry boxes and relationship-aware name-matching rules for father, mother, spouse, sibling, and child.",
-    "v": "1.0.02",
-    "g": "6.0",
-    "s": 3,
-    "z": "FlatFilter.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md"
-  },
-  {
-    "n": "Name format",
-    "i": "nameformat",
-    "t": 6,
-    "d": "(Kari Kujansuu) Adds alternative surnames to the primary name parenthetically",
-    "v": "0.9.2",
-    "g": "6.0",
-    "s": 3,
-    "z": "nameformat.addon.tgz",
-    "h": "https://github.com/kkujansuu/gramps/tree/master/addons/nameformat"
-  }  
 ]
