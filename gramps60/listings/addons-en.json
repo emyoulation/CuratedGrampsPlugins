@@ -71,18 +71,6 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md"
   },
   {
-    "n": "Localized Gramps Glossary Terminology",
-    "i": "LocalTerm Gramplet",
-    "t": 10,
-    "d": "Localized index to Gramps Glossary terminology",
-    "v": "0.3.4",
-    "g": "6.0",
-    "s": 2,
-    "z": "LocalTerm.addon.tgz",
-    "h": "https://github.com/emyoulation/LocalTerm/blob/master/README.md",
-    "a": 1
-  },
-  {
     "n": "Theme preferences",
     "i": "ThemesPrefs",
     "t": 6,
@@ -131,17 +119,5 @@
     "s": 3,
     "z": "vcardenhanced.addon.tgz",
     "h": "README.md"
-  },
-  {
-    "n": "Virtual Keyboard",
-    "i": "VirtualKeyboard",
-    "t": 10,
-    "d": "Touch-friendly on-screen keyboard for clipboarding characters",
-    "v": "1.3.0",
-    "g": "6.0",
-    "s": 2,
-    "z": "VirtualKeyboard.addon.tgz",
-    "h": "https://gramps.discourse.group/t/python-virtual-keyboard-with-diacritical-marks/3006/10",
-    "a": 0
   }
 ]
