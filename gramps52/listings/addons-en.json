@@ -1,123 +1,134 @@
 [
-{
-"n": "Addon Pack and Ship",
-"i": "addonpackship",
-"t": 2,
-"d": "Packaging and distribution tool - create release-ready Gramps addon plugin packages and listings for GitHub publishing",
-"v": "1.9.4",
-"g": "5.2",
-"s": 3,
-"z": "AddonPackShip.addon.tgz",
-"h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonPackShip/README.md",
-"a": 1
-},
-{
-"n": "Beta What's Next",
-"i": "Beta What's Next",
-"t": 10,
-"d": "Beta Gramplet suggesting items to research",
-"v": "0.1.10",
-"g": "5.2",
-"s": 2,
-"z": "Betawhatsnext.addon.tgz",
-"h": "https://github.com/emyoulation/_BetaDashboards",
-"a": 0
-},
-{
-"n": "Comma Separated Values Spreadsheet (CSV) \u2014 Enhanced",
-"i": "im_csv_enhanced",
-"t": 3,
-"d": "Import data from CSV files (enhanced: events, citations, media)",
-"v": "1.1.0",
-"g": "5.2",
-"s": 1,
-"z": "CSV.addon.tgz",
-"h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
-"a": 1
-},
-{
-"n": "Comma Separated Values Spreadsheet (CSV) \u2014 Enhanced",
-"i": "ex_csv_enhanced",
-"t": 4,
-"d": "CSV is a common spreadsheet format.\nThis enhanced exporter includes events, citations, and media.\nYou can change this behavior in the 'Configure active view' of any list-based view",
-"v": "1.1.1",
-"g": "5.2",
-"s": 1,
-"z": "CSV.addon.tgz",
-"h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
-"a": 1
-},
-{
-"n": "Environment Inspector",
-"i": "EnvironmentInspector",
-"t": 10,
-"d": "Two-tab developer reference gramplet showing the current locale and a searchable, sortable table of all Gramps string constants.",
-"v": "1.0.6",
-"g": "5.2",
-"s": 3,
-"z": "EnvironmentInspector.addon.tgz",
-"h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
-"a": 0
-},
-{
-"n": "Flat Filter",
-"i": "Flat Filter",
-"t": 10,
-"d": "Extended person filter gramplet with split given/family name entry boxes and relationship-aware name-matching rules for father, mother, spouse, sibling, and child.",
-"v": "1.0.3",
-"g": "5.2",
-"s": 3,
-"z": "FlatFilter.addon.tgz",
-"h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md"
-},
-{
-"n": "Theme preferences",
-"i": "ThemesPrefs",
-"t": 6,
-"d": "An addition to Preferences for simple Theme and Font adjustment.  Especially useful for Windows users. Also supports a layered CSS theming system with CSS Themes, CSS Patches, and a personal user override.",
-"v": "1.0.1",
-"g": "5.2",
-"s": 2,
-"z": "Themes2.addon.tgz",
-"h": "Addon:ThemePreferences"
-},
-{
-"n": "WebP Thumbnailer",
-"i": "webpthumb",
-"t": 14,
-"d": "Dedicated thumbnailer for WEBP format images",
-"v": "0.1.3",
-"g": "5.2",
-"s": 1,
-"z": "Thumbnailers.addon.tgz",
-"rg": [
-[
-"GdkPixbuf",
-"2.0"
-]
-],
-"h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
-},
-{
-"n": "vCard (Enhanced \u2014 v1/2.1/3.0/4.0)",
-"i": "im_vcard_enh",
-"t": 3,
-"d": "Import contacts from vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, and 4.0. Unhandled properties are preserved as Person attributes. Variant Call Format (DNA) files are detected and rejected.",
-"v": "1.0.2",
-"g": "5.2",
-"s": 3,
-"z": "vcardenhanced.addon.tgz",
-"h": "README.md"
-},
-{
-"n": "vCard (Enhanced \u2014 v1/2.1/3.0/4.0)",
-"i": "ex_vcard_enh",
-"t": 4,
-"d": "Export contacts to vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, and 4.0 (default: 3.0).",
-"v": "1.0.1",
-"g": "5.2",
-"s": 3,
-"z": "vcardenhanced.addon.tgz",
-"h": "README.md"
-}
+  {
+    "n": "Addon Pack and Ship",
+    "i": "addonpackship",
+    "t": 2,
+    "d": "Packaging and distribution tool - create release-ready Gramps addon plugin packages and listings for GitHub publishing",
+    "v": "1.9.5",
+    "g": "5.2",
+    "s": 3,
+    "z": "AddonPackShip.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonPackShip/README.md",
+    "a": 1
+  },
+  {
+    "n": "Beta What's Next",
+    "i": "Beta What's Next",
+    "t": 10,
+    "d": "Beta Gramplet suggesting items to research",
+    "v": "0.1.10",
+    "g": "5.2",
+    "s": 2,
+    "z": "Betawhatsnext.addon.tgz",
+    "h": "https://github.com/emyoulation/_BetaDashboards",
+    "a": 0
+  },
+  {
+    "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
+    "i": "im_csv_enhanced",
+    "t": 3,
+    "d": "Import data from CSV files (enhanced: events, citations, media)",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "CSV.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
+    "a": 1
+  },
+  {
+    "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
+    "i": "ex_csv_enhanced",
+    "t": 4,
+    "d": "CSV is a common spreadsheet format.\nThis enhanced exporter includes events, citations, and media.\nYou can change this behavior in the 'Configure active view' of any list-based view",
+    "v": "1.1.1",
+    "g": "5.2",
+    "s": 1,
+    "z": "CSV.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
+    "a": 1
+  },
+  {
+    "n": "Environment Inspector",
+    "i": "EnvironmentInspector",
+    "t": 10,
+    "d": "Two-tab developer reference gramplet showing the current locale and a searchable, sortable table of all Gramps string constants.",
+    "v": "1.0.6",
+    "g": "5.2",
+    "s": 3,
+    "z": "EnvironmentInspector.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
+    "a": 0
+  },
+  {
+    "n": "Flat Filter",
+    "i": "Flat Filter",
+    "t": 10,
+    "d": "Extended person filter gramplet with split given/family name entry boxes and relationship-aware name-matching rules for father, mother, spouse, sibling, and child.",
+    "v": "1.0.3",
+    "g": "5.2",
+    "s": 3,
+    "z": "FlatFilter.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md"
+  },
+  {
+    "n": "Photo Tagging",
+    "i": "Photo Tagging",
+    "t": 10,
+    "d": "Gramplet for tagging people in photos",
+    "v": "1.1.2",
+    "g": "5.2",
+    "s": 3,
+    "z": "PhotoTaggingGramplet.addon.tgz",
+    "h": "https://gramps.discourse.group/t/1889/10"
+  },
+  {
+    "n": "Theme preferences",
+    "i": "ThemesPrefs",
+    "t": 6,
+    "d": "An addition to Preferences for simple Theme and Font adjustment.  Especially useful for Windows users. Also supports a layered CSS theming system with CSS Themes, CSS Patches, and a personal user override.",
+    "v": "1.0.1",
+    "g": "5.2",
+    "s": 2,
+    "z": "Themes2.addon.tgz",
+    "h": "Addon:ThemePreferences"
+  },
+  {
+    "n": "WebP Thumbnailer",
+    "i": "webpthumb",
+    "t": 14,
+    "d": "Dedicated thumbnailer for WEBP format images",
+    "v": "0.1.3",
+    "g": "5.2",
+    "s": 1,
+    "z": "Thumbnailers.addon.tgz",
+    "rg": [
+      [
+        "GdkPixbuf",
+        "2.0"
+      ]
+    ],
+    "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
+  },
+  {
+    "n": "vCard (Enhanced — v1/2.1/3.0/4.0)",
+    "i": "im_vcard_enh",
+    "t": 3,
+    "d": "Import contacts from vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, and 4.0. Unhandled properties are preserved as Person attributes. Variant Call Format (DNA) files are detected and rejected.",
+    "v": "1.0.2",
+    "g": "5.2",
+    "s": 3,
+    "z": "vcardenhanced.addon.tgz",
+    "h": "README.md"
+  },
+  {
+    "n": "vCard (Enhanced — v1/2.1/3.0/4.0)",
+    "i": "ex_vcard_enh",
+    "t": 4,
+    "d": "Export contacts to vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, and 4.0 (default: 3.0).",
+    "v": "1.0.1",
+    "g": "5.2",
+    "s": 3,
+    "z": "vcardenhanced.addon.tgz",
+    "h": "README.md"
+  }
 ]
