@@ -75,7 +75,7 @@
     "i": "Fuzzy Matching",
     "t": 10,
     "d": "Gramplet for finding people in the Family Tree whose surname phonetically matches a given surname, using a cached per-tree index so it stays fast on large Family Trees",
-    "v": "0.2.1",
+    "v": "0.2.2",
     "g": "6.1",
     "s": 1,
     "z": "Fuzzy.addon.tgz",
