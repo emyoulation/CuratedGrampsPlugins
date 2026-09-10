@@ -1,0 +1,120 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-10 00:10-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.gpr.py:33
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.gpr.py:46
+msgid "Fuzzy Matching"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.gpr.py:35
+msgid ""
+"Gramplet for finding people in the Family Tree whose surname phonetically "
+"matches a given surname, using a cached per-tree index so it stays fast on "
+"large Family Trees"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:348
+msgid "Surname:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:352
+msgid "Encoding system:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:362
+msgid "Code(s):"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:380
+msgid "Matches:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:420
+msgid "Code"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:453
+msgid "Surname"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:482
+msgid "Person"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:560
+msgid "Select a person from the whole Family Tree"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:581
+msgid "Open the documentation for this gramplet"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:585
+msgid "Help"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:867
+msgid "Select a person"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:937
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:945
+msgid "surnames"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:969
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:979
+msgid "people"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1027
+#, python-brace-format
+msgid "Indexing {phase}… {done} / {total}"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1032
+#, python-brace-format
+msgid "Indexing {phase}…"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1114
+#, python-brace-format
+msgid "({count})"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1175
+#, python-brace-format
+msgid "No filter available for {algorithm}"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1179
+msgid ""
+"This Encoding system does not have a matching People filter rule yet, so a "
+"filter cannot be created from it."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1186
+#, python-brace-format
+msgid "Fuzzy match: {surname} ({algorithm})"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1197
+#, python-format
+msgid "Created on %(year)4d/%(month)02d/%(day)02d by Fuzzy Matching gramplet"
+msgstr ""

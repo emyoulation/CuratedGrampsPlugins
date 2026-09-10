@@ -1,0 +1,62 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-10 00:10-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.gpr.py:40
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.py:219
+msgid "Match Rating Approach match of People with the <surname>"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.gpr.py:42
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.py:221
+msgid ""
+"Matches people whose primary surname has a specified Match Rating Approach "
+"codex"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.py:218
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.py:424
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.py:348
+msgid "Surname:"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.py:224
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.py:429
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.py:351
+msgid "General filters"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.gpr.py:39
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.py:425
+msgid "Metaphone match of People with the <surname>"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.gpr.py:41
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.py:427
+msgid "Matches people whose primary surname has a specified Metaphone code"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.gpr.py:39
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.py:349
+msgid "NYSIIS match of People with the <surname>"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.gpr.py:41
+#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.py:350
+msgid "Matches people whose primary surname has a specified NYSIIS code"
+msgstr ""
