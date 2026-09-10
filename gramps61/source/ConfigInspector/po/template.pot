@@ -1,0 +1,133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-10 12:30-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.gpr.py:30
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:637
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:648
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:694
+msgid "Config Inspector"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.gpr.py:32
+msgid ""
+"Lists every gramplet entry cached in this profile's saved dashboard, "
+"sidebar, and bottombar layout .ini files (identifying which view/splitbar "
+"each came from), and can flush all of them at once so every view rebuilds "
+"its gramplet layout fresh from the currently registered plugin data."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:88
+msgid "File not found"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:227
+msgid "Flush"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:319
+msgid "Gramplet Containers"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:320
+msgid "Flush All Listed Files"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:351
+msgid "Gramplet"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:360
+msgid "View mode container"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:371
+msgid "Cached help_url"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:383
+msgid "Registered help_url"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:393
+msgid "Stale"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:452
+msgid "Registration file not found"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:453
+#, python-format
+msgid "Could not determine which .gpr.py file registers %s."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:473
+msgid "Could not update"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:474
+msgid "No help_url= line was found to update in that section."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:540
+msgid "(no cached gramplet layouts found)"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:552
+msgid "Nothing to flush"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:553
+msgid "No cached gramplet-layout files were found."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:560
+msgid "Flush all listed .ini files?"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:562
+msgid ""
+"This deletes the following files. Every dashboard, sidebar, and bottombar "
+"gramplet layout they describe will be rebuilt from scratch (default "
+"gramplets only) the next time Gramps opens the affected view. This cannot be "
+"undone.\n"
+"\n"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:569
+msgid "_Flush"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:585
+msgid "Some files could not be flushed"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:591
+msgid "Flushed"
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:593
+msgid ""
+"All listed files were deleted. Restart Gramps for every affected view to "
+"rebuild its gramplet layout."
+msgstr ""
+
+#: /home/districtsupport/.gramps/gramps52/plugins/ConfigInspector/config_inspector.py:640
+msgid "_Close"
+msgstr ""

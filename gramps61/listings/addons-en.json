@@ -28,11 +28,11 @@
     "i": "Config Inspector",
     "t": 2,
     "d": "Lists every gramplet entry cached in this profile's saved dashboard, sidebar, and bottombar layout .ini files (identifying which view/splitbar each came from), and can flush all of them at once so every view rebuilds its gramplet layout fresh from the currently registered plugin data.",
-    "v": "0.0.1",
+    "v": "0.0.2",
     "g": "6.1",
     "s": 1,
     "z": "ConfigInspector.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ConfigInspector",
     "a": 2
   },
   {
