@@ -75,12 +75,44 @@
     "i": "Fuzzy Matching",
     "t": 10,
     "d": "Gramplet for finding people in the Family Tree whose surname phonetically matches a given surname, using a cached per-tree index so it stays fast on large Family Trees",
-    "v": "0.2.2",
+    "v": "0.3.0",
     "g": "6.0",
-    "s": 1,
+    "s": 3,
     "z": "Fuzzy.addon.tgz",
-    "h": "https://gramps.discourse.group/t/9951/6",
-    "a": 1
+    "h": "https://gramps.discourse.group/t/9951/14"
+  },
+  {
+    "n": "Match Rating Approach match of People with the <surname>",
+    "i": "FuzzyMatchingEncoder:match_rating",
+    "t": 13,
+    "d": "Matches people whose primary surname has a specified Match Rating Approach codex",
+    "v": "0.2.0",
+    "g": "6.0",
+    "s": 3,
+    "z": "FuzzyRules.addon.tgz",
+    "h": "https://gramps.discourse.group/t/9951/14"
+  },
+  {
+    "n": "Metaphone match of People with the <surname>",
+    "i": "FuzzyMatchingEncoder:metaphone",
+    "t": 13,
+    "d": "Matches people whose primary surname has a specified Metaphone code",
+    "v": "0.1.0",
+    "g": "6.0",
+    "s": 3,
+    "z": "FuzzyRules.addon.tgz",
+    "h": "https://gramps.discourse.group/t/9951/14"
+  },
+  {
+    "n": "NYSIIS match of People with the <surname>",
+    "i": "FuzzyMatchingEncoder:nysiis",
+    "t": 13,
+    "d": "Matches people whose primary surname has a specified NYSIIS code",
+    "v": "0.2.0",
+    "g": "6.0",
+    "s": 3,
+    "z": "FuzzyRules.addon.tgz",
+    "h": "https://gramps.discourse.group/t/9951/14"
   },
   {
     "n": "Photo Tagging",
