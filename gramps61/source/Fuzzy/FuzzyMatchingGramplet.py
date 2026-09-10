@@ -69,6 +69,20 @@ than only the raw code for a single typed name, which is the more
 useful "matching" workflow for spotting spelling variants of the same
 family.
 
+The left Matches column also shows how many people share each
+matching surname, e.g. "Smith (12)", rather than the surname alone -
+see :meth:`FuzzyMatchingGramplet.cb_name_changed`.
+
+Rows in the right Matches column can be dragged out as a standard
+Gramps "person-link" (:class:`gramps.gui.ddtargets.DdTargets`), the
+same drag type used throughout Gramps, so a match found here can be
+dropped onto any other view, gramplet, or editor field that already
+accepts a dragged person - see
+:meth:`FuzzyMatchingGramplet.cb_person_drag_data_get`. The Surname
+entry itself accepts that same drag type as a drop target: dropping a
+person there sets the field to that person's surname - see
+:meth:`FuzzyMatchingGramplet.cb_name_drag_data_received`.
+
 Why the gramplet used to freeze the whole application
 -------------------------------------------------------
 
@@ -107,25 +121,26 @@ module is imported by its bare name below instead, exactly as it will
 be found once the addon folder is on ``sys.path``.
 """
 
-# Deferred annotation evaluation (PEP 563), required for Python 3.8/3.9
-# compatibility: this module's type hints use `list[X]`, `dict[K, V]`,
-# `X | None`, etc. (PEP 585/604 syntax), which those Python versions
-# cannot evaluate at runtime even though they parse it fine - Gramps
-# 5.2's own official minimum is Python 3.8, which predates both PEPs
-# (585 needs 3.9+, 604 needs 3.10+). This import makes every
-# annotation in this file a deferred string, never evaluated at
-# runtime at all, restoring compatibility with the full (5.2.0,
-# 6.2.0) Gramps range this addon's own .gpr.py declares, without
-# giving up the modern annotation syntax itself.
-from __future__ import annotations
-
 # ------------------------
 # Python modules
 # ------------------------
 import contextlib
 import logging
 import os
+import pickle
 import time
+from typing import List, Set
+
+# Field reports (Gramps 5.2.5 / Python 3.6.9) confirm this addon needs
+# to actually import successfully on Python 3.6, not just parse: see
+# the equivalent, longer comment in phonetic_codes.py for why a bare
+# `set[str]`/`list[str]` annotation only works on Python 3.9+, why
+# `from __future__ import annotations` does not exist before 3.7 and
+# so fails even earlier, and why `typing.Set`/`typing.List` were used
+# for the handful of function signatures below instead. Every other
+# annotation in this file (`self.attr: ...`, and local variables
+# inside a function body) is never evaluated at runtime by any Python
+# 3 version and needed no change.
 
 # ------------------------
 # Gtk modules
@@ -138,18 +153,16 @@ from gi.repository import Gdk, GLib, Gtk
 from gramps.gen.config import config as global_config
 from gramps.gen.const import CUSTOM_FILTERS
 from gramps.gen.const import GRAMPS_LOCALE as glocale
-from gramps.gen.const import URL_MANUAL_PAGE
 from gramps.gen.display.name import displayer as name_displayer
 from gramps.gen.errors import HandleError
 from gramps.gen.filters import FilterList, GenericFilterFactory
-from gramps.gen.plug import Gramplet, PluginRegister
+from gramps.gen.plug import Gramplet
 from gramps.gen.utils.db import get_birth_or_fallback, get_death_or_fallback
 from gramps.gui.autocomp import fill_combo
+from gramps.gui.ddtargets import DdTargets
 from gramps.gui.dialog import OkDialog
-from gramps.gui.display import display_help, display_url
 from gramps.gui.editors import EditFilter, EditPerson
 from gramps.gui.makefilter import edit_filter_save
-from gramps.gui.pluginmanager import GuiPluginManager
 from gramps.gui.selectors import SelectorFactory
 from gramps.gui.widgets import SimpleButton
 
@@ -170,13 +183,6 @@ _ = glocale.translation.sgettext
 
 LOG = logging.getLogger(__name__)
 
-#: Icon shown on the Help button, at HELP_ICON_SIZE pixels.
-#: "help-browser" is a standard GNOME/freedesktop icon name, switched
-#: to from "help-contents-symbolic" after visual testing on a real
-#: desktop.
-HELP_ICON_NAME = "help-browser"
-HELP_ICON_SIZE = 24
-
 #: CSS for the "Matches:" row's header bar - a darker background band
 #: giving a clear visual break between the encoding-system controls
 #: above and the two Matches columns below, rather than relying on
@@ -190,10 +196,6 @@ _MATCHES_HEADER_CSS = b"""
     padding: 3px 6px;
 }
 """
-
-#: Wiki page used when this gramplet's own help_url is unset, matching
-#: the fallback grampletpane.py itself uses for gramplet Help actions.
-WIKI_HELP_PAGE = URL_MANUAL_PAGE + "_-_Gramplets"
 
 #: How long (seconds) the background indexing generator processes
 #: surnames before yielding back to the GTK main loop. Time-based
@@ -393,12 +395,6 @@ class FuzzyMatchingGramplet(Gramplet):
         grid.attach(matches_header_box, 0, 4, 2, 1)
         grid.attach(self._build_matches_box(), 0, 5, 2, 1)
 
-        # Help button: pinned to the lower-left corner because it is
-        # the only widget below the vexpand=True matches row, and it
-        # is left-aligned within that row rather than spanning it.
-        self.help_button = self._build_help_button()
-        grid.attach(self.help_button, 0, 6, 2, 1)
-
         grid.show_all()
         return grid
 
@@ -444,9 +440,25 @@ class FuzzyMatchingGramplet(Gramplet):
         that row's surname (not necessarily the typed Surname field -
         see :meth:`cb_surname_activated`).
 
+        The right column also acts as a drag source for the standard
+        Gramps "person-link" drag type
+        (:attr:`gramps.gui.ddtargets.DdTargets.PERSON_LINK`), the same
+        payload used throughout Gramps (e.g. the Relationships view,
+        People view, and Person editor's reference lists) to let a
+        person be dropped onto another view, gramplet, or editor field
+        elsewhere - see :meth:`cb_person_drag_data_get`.
+
         :returns: A :class:`Gtk.Paned` containing both columns.
         """
-        self.surname_store = Gtk.ListStore(str)
+        # Columns: (display text, raw surname). The raw-surname column
+        # is never added to the TreeView, so it is not shown to the
+        # user; it exists so the displayed text can carry a "(count)"
+        # suffix (see cb_name_changed) while every other method that
+        # matches against a row's actual surname - cb_surname_selected,
+        # cb_surname_activated, _focus_active_person - still has the
+        # exact, un-annotated string to compare against, the same
+        # display/lookup split already used below for person_store.
+        self.surname_store = Gtk.ListStore(str, str)
         self.surname_view = Gtk.TreeView(model=self.surname_store)
         self.surname_view.set_headers_visible(False)
         self.surname_view.append_column(
@@ -485,6 +497,12 @@ class FuzzyMatchingGramplet(Gramplet):
             "changed", self.cb_person_selected
         )
         self.person_view.connect("row-activated", self.cb_person_activated)
+        self.person_view.enable_model_drag_source(
+            Gdk.ModifierType.BUTTON1_MASK,
+            [DdTargets.PERSON_LINK.target()],
+            Gdk.DragAction.COPY,
+        )
+        self.person_view.connect("drag-data-get", self.cb_person_drag_data_get)
         person_scrolled = Gtk.ScrolledWindow()
         person_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         person_scrolled.set_hexpand(True)
@@ -545,12 +563,28 @@ class FuzzyMatchingGramplet(Gramplet):
         way for person/family/note/media selectors throughout
         ``gramps.gui.plug._guioptions`` and several core edit dialogs).
 
+        The entry is also a drop target for the standard Gramps
+        "person-link" drag type
+        (:attr:`gramps.gui.ddtargets.DdTargets.PERSON_LINK`): dropping
+        a person dragged from elsewhere in Gramps (or from this
+        gramplet's own right Matches column - see
+        :meth:`cb_person_drag_data_get`) sets the field to that
+        person's surname, the same way typing it or selecting the
+        active person already does - see
+        :meth:`cb_name_drag_data_received`.
+
         :returns: A :class:`Gtk.Box` containing the combo and button.
         """
         self.name_combo = Gtk.ComboBox.new_with_entry()
         self.name_combo.set_hexpand(True)
         self.name_entry = self.name_combo.get_child()
         self.name_entry.connect("changed", self.cb_name_changed)
+        self.name_entry.drag_dest_set(
+            Gtk.DestDefaults.ALL,
+            [DdTargets.PERSON_LINK.target()],
+            Gdk.DragAction.COPY,
+        )
+        self.name_entry.connect("drag-data-received", self.cb_name_drag_data_received)
 
         self.browse_person_button = SimpleButton(
             "gtk-index", self.cb_browse_person_clicked
@@ -564,58 +598,6 @@ class FuzzyMatchingGramplet(Gramplet):
         name_box.pack_start(self.name_combo, True, True, 0)
         name_box.pack_start(self.browse_person_button, False, False, 0)
         return name_box
-
-    def _build_help_button(self) -> Gtk.Button:
-        """
-        Build the "Help" button shown at the lower left of the gramplet.
-
-        The button's icon leads the label text, matching the requested
-        layout, and is forced to :data:`HELP_ICON_SIZE` pixels
-        regardless of the icon theme's own default sizes so it renders
-        consistently across desktop environments.
-
-        :returns: The unrealized (not yet shown) Help button.
-        """
-        button = Gtk.Button()
-        button.set_halign(Gtk.Align.START)
-        button.set_tooltip_text(_("Open the documentation for this gramplet"))
-
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        box.pack_start(self._help_icon_image(), False, False, 0)
-        box.pack_start(Gtk.Label(label=_("Help")), False, False, 0)
-        button.add(box)
-
-        button.connect("clicked", self.cb_help_clicked)
-        return button
-
-    @staticmethod
-    def _help_icon_image() -> Gtk.Image:
-        """
-        Return a :data:`HELP_ICON_SIZE`-pixel icon image for the Help
-        button.
-
-        :returns: A :class:`Gtk.Image` showing :data:`HELP_ICON_NAME`
-            at exactly :data:`HELP_ICON_SIZE` pixels, forced to that
-            size even if the active icon theme has no matching native
-            size, or a themed fallback image if the icon cannot be
-            loaded at all.
-        """
-        icon_theme = Gtk.IconTheme.get_default()
-        try:
-            pixbuf = icon_theme.load_icon(
-                HELP_ICON_NAME, HELP_ICON_SIZE, Gtk.IconLookupFlags.FORCE_SIZE
-            )
-        except GLib.Error:
-            LOG.debug(
-                "Fuzzy Matching: could not load '%s' icon, using fallback",
-                HELP_ICON_NAME,
-            )
-            pixbuf = None
-        if pixbuf is None:
-            return Gtk.Image.new_from_icon_name(
-                HELP_ICON_NAME, Gtk.IconSize.LARGE_TOOLBAR
-            )
-        return Gtk.Image.new_from_pixbuf(pixbuf)
 
     def db_changed(self) -> None:
         """
@@ -710,7 +692,7 @@ class FuzzyMatchingGramplet(Gramplet):
         fill_combo(self.name_combo, sorted(surnames, key=glocale.sort_key))
 
     @classmethod
-    def _degrees_of_separation(cls, db, root_handle: str, degrees: int) -> set[str]:
+    def _degrees_of_separation(cls, db, root_handle: str, degrees: int) -> Set[str]:
         """
         Return the set of person handles within ``degrees`` of
         ``root_handle``.
@@ -749,7 +731,7 @@ class FuzzyMatchingGramplet(Gramplet):
         return persons
 
     @staticmethod
-    def _collect_ancestors(db, root_handle: str, degrees: int) -> list[str]:
+    def _collect_ancestors(db, root_handle: str, degrees: int) -> List[str]:
         """
         Return ``root_handle`` and its ancestors up to ``degrees``
         generations back, adapted from
@@ -792,7 +774,7 @@ class FuzzyMatchingGramplet(Gramplet):
         root_handle: str,
         gen: int,
         degrees: int,
-        persons: set[str],
+        persons: Set[str],
     ) -> None:
         """
         Add ``root_handle`` and its descendants up to ``degrees``
@@ -826,7 +808,7 @@ class FuzzyMatchingGramplet(Gramplet):
                 cls._collect_descendants(db, child_ref.ref, gen + 1, degrees, persons)
 
     @staticmethod
-    def _add_partners(db, persons: set[str]) -> None:
+    def _add_partners(db, persons: Set[str]) -> None:
         """
         Add the partners/spouses of everyone in ``persons``, in place,
         adapted from ``DegreesOfSeparationHome.__get_partners``.
@@ -1109,9 +1091,66 @@ class FuzzyMatchingGramplet(Gramplet):
         with self._blocked_selection_handlers(
             self.surname_view, self._surname_selection_handler_id
         ):
-            for surname in sorted(matches):
-                self.surname_store.append([surname])
+            for surname in sorted(matches, key=glocale.sort_key):
+                count = len(self._surname_to_handles.get(surname, []))
+                display = _("{surname} ({count})").format(surname=surname, count=count)
+                self.surname_store.append([display, surname])
         self.matches_count_label.set_text(_("({count})").format(count=total_people))
+
+    def cb_name_drag_data_received(
+        self,
+        _widget: Gtk.Entry,
+        _context: Gdk.DragContext,
+        _xpos: int,
+        _ypos: int,
+        sel_data: Gtk.SelectionData,
+        _info: int,
+        _time: int,
+    ) -> None:
+        """
+        Set the Surname entry to a dropped person's surname.
+
+        Accepts the standard Gramps "person-link" drag payload (see
+        :meth:`cb_person_drag_data_get`) from any source that offers
+        it - the People view, the Relationships view, other
+        Person-reference drag sources, or this gramplet's own right
+        Matches column - not just persons dragged from within this
+        gramplet.
+
+        Setting :attr:`name_entry`'s text fires :meth:`cb_name_changed`
+        exactly as if the surname had been typed, so the Code(s) and
+        Matches columns refresh the same way; no separate refresh call
+        is needed here.
+
+        A no-op if the drop carries no data, or carries a drag type
+        other than :attr:`~gramps.gui.ddtargets.DdTargets.PERSON_LINK`
+        (defensive: this widget only ever advertises that one target,
+        but a well-behaved drop handler should not assume a source
+        never offers more than what it asked for), or if the dropped
+        handle no longer resolves to a person (for example: the person
+        was deleted between the drag starting and the drop landing).
+
+        :param _widget: The Surname entry that emitted the signal.
+        :param _context: The drag context.
+        :param _xpos: Drop x position within the widget.
+        :param _ypos: Drop y position within the widget.
+        :param sel_data: The :class:`Gtk.SelectionData` carrying the
+            dropped person-link payload.
+        :param _info: The matched target's registered info id.
+        :param _time: The event time.
+        """
+        data = sel_data.get_data() if sel_data is not None else None
+        if not data:
+            return
+        drag_type, _idval, handle, _val = pickle.loads(data)
+        if drag_type != DdTargets.PERSON_LINK.drag_type:
+            return
+        try:
+            person = self.dbstate.db.get_person_from_handle(handle)
+        except HandleError:
+            return
+        if person is not None:
+            self.name_entry.set_text(person.get_primary_name().get_surname())
 
     def cb_surname_activated(
         self,
@@ -1163,7 +1202,7 @@ class FuzzyMatchingGramplet(Gramplet):
         :param _column: The activated column.
         """
         tree_iter = self.surname_store.get_iter(path)
-        surname = self.surname_store[tree_iter][0]
+        surname = self.surname_store[tree_iter][1]
         if not surname:
             return
 
@@ -1326,7 +1365,7 @@ class FuzzyMatchingGramplet(Gramplet):
             if tree_iter is None:
                 return
 
-            surname = model[tree_iter][0]
+            surname = model[tree_iter][1]
             db = self.dbstate.db
             rows = []
             for handle in self._surname_to_handles.get(surname, []):
@@ -1435,6 +1474,53 @@ class FuzzyMatchingGramplet(Gramplet):
         if person is not None:
             EditPerson(self.dbstate, self.uistate, self.track, person)
 
+    def cb_person_drag_data_get(
+        self,
+        _tree_view: Gtk.TreeView,
+        _context: Gdk.DragContext,
+        sel_data: Gtk.SelectionData,
+        _info: int,
+        _time: int,
+    ) -> None:
+        """
+        Supply the dragged person's handle when a row in the right
+        Matches column is dragged, using the same "person-link"
+        payload shape Gramps itself uses throughout (e.g.
+        ``gramps.plugins.view.relview.RelationshipView`` and the
+        Person editor's reference-list drag sources): a pickled
+        ``(drag_type, id(self), handle, 0)`` tuple, set on
+        ``sel_data`` under
+        :attr:`gramps.gui.ddtargets.DdTargets.PERSON_LINK`'s own atom.
+        Any Gramps view, gramplet, or editor field that already
+        accepts a dropped person (the Relationships view, other
+        Person-reference fields, and now this gramplet's own Surname
+        entry - see :meth:`cb_name_drag_data_received`) can therefore
+        accept a person dragged from here with no further change on
+        its side.
+
+        A no-op (``sel_data`` is left unset) if no row is currently
+        selected, which simply results in no drag payload being
+        available - GTK does not otherwise let a "no selection" case
+        be signalled here.
+
+        :param _tree_view: The right column's :class:`Gtk.TreeView`
+            that emitted the signal.
+        :param _context: The drag context.
+        :param sel_data: The :class:`Gtk.SelectionData` to populate
+            with the dragged person's handle.
+        :param _info: The requested target's registered info id.
+        :param _time: The event time.
+        """
+        model, tree_iter = self.person_view.get_selection().get_selected()
+        if tree_iter is None:
+            return
+        handle = model[tree_iter][1]
+        sel_data.set(
+            DdTargets.PERSON_LINK.atom_drag_type,
+            8,
+            pickle.dumps((DdTargets.PERSON_LINK.drag_type, id(self), handle, 0)),
+        )
+
     def _focus_active_person(self, active_person) -> None:
         """
         Select and center the active person's row in both Matches
@@ -1470,7 +1556,7 @@ class FuzzyMatchingGramplet(Gramplet):
         surname = active_person.get_primary_name().get_surname()
         surname_path = None
         for row in self.surname_store:
-            if row[0] == surname:
+            if row[1] == surname:
                 surname_path = row.path
                 break
         if surname_path is None:
@@ -1494,81 +1580,3 @@ class FuzzyMatchingGramplet(Gramplet):
                     self.person_view.get_selection().select_path(row.path)
                     self.person_view.scroll_to_cell(row.path, None, True, 0.5, 0.0)
                     break
-
-    def cb_help_clicked(self, _button: Gtk.Button) -> None:
-        """
-        Open this gramplet's documentation.
-
-        Prefers this addon's own bundled README.md, opened in Markdown
-        Dash, following the same checks documented in
-        ``doc_reader_integration.md``. Falls back to the gramplet's
-        registered ``help_url`` (a Gramps wiki page, or a full internet
-        URL) if the README or Markdown Dash are unavailable for any
-        reason.
-
-        :param _button: The Help button that emitted the signal.
-        """
-        if not self._open_local_readme():
-            self._open_help_url()
-
-    def _open_local_readme(self) -> bool:
-        """
-        Try to open this addon's own README.md in Markdown Dash.
-
-        :returns: True if the README was found and handed off to
-            Markdown Dash successfully; False if any of the
-            ``doc_reader_integration.md`` checks failed, meaning the
-            caller should fall back to :meth:`_open_help_url` instead.
-        """
-        preg = PluginRegister.get_instance()
-
-        # self.gui.gname is this gramplet's own registered plugin id
-        # (grampletpane.py sets it from the same PluginData used to
-        # build this gramplet), so this looks itself up without
-        # duplicating the id string from FuzzyMatchingGramplet.gpr.py.
-        pdata = preg.get_plugin(self.gui.gname)
-        if pdata is None or not pdata.fpath:
-            return False
-
-        readme_path = os.path.join(pdata.fpath, "README.md")
-        if not os.path.isfile(readme_path):
-            return False
-
-        markdowndash_pdata = preg.get_plugin("markdowndash")
-        if markdowndash_pdata is None or not markdowndash_pdata.fpath:
-            return False
-
-        pmgr = GuiPluginManager.get_instance()
-        mod = pmgr.load_plugin(markdowndash_pdata)
-        if not mod:
-            return False
-
-        open_markdown_file = getattr(mod, "open_markdown_file", None)
-        if open_markdown_file is None:
-            return False
-
-        open_markdown_file(
-            readme_path,
-            self.uistate,
-            parent=self.uistate.window,
-            addon_name=pdata.name,
-        )
-        return True
-
-    def _open_help_url(self) -> None:
-        """
-        Open this gramplet's registered ``help_url``.
-
-        Follows the same convention as the built-in gramplet "Help"
-        context-menu action in ``grampletpane.py``: a full internet URL
-        opens directly in the system browser, anything else is treated
-        as a Gramps wiki page title.
-        """
-        help_url = self.gui.help_url
-        if help_url:
-            if help_url.startswith(("http://", "https://")):
-                display_url(help_url)
-            else:
-                display_help(help_url)
-        else:
-            display_help(WIKI_HELP_PAGE, self.gui.tname.replace(" ", "_"))

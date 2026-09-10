@@ -4,8 +4,8 @@
 Type a surname and find every person in the Family Tree whose surname phonetically matches it — spelling variants, transcription differences, the "Smith vs. Smyth" problem — instead of just being told a code. It grew out of the core Gramps **SoundEx** gramplet (`gramps/plugins/gramplet/soundgen.py`), which only ever computed a single Soundex code for one typed name and rebuilt its surname list in a way that visibly slowed down on large trees; this gramplet keeps the same starting idea and turns it into an actual search tool.
 
 ## Features
-* [Matching people, not just a code](#matching-people-not-just-a-code) — see every surname and every person that phonetically matches what you type
-* [Working with a match](#working-with-a-match) — click a person to make them active, double-click to edit them
+* [Matching people, not just a code](#matching-people-not-just-a-code) — see every surname and every person that phonetically matches what you type, with a count of how many people share each surname
+* [Working with a match](#working-with-a-match) — click a person to make them active, double-click to edit them, or drag them elsewhere
 * [Staying in sync](#staying-in-sync) — the gramplet follows along as you navigate the tree elsewhere
 * [Creating a filter from a match](#creating-a-filter-from-a-match) — turn a code into a reusable People filter
 * [Finding a surname to search](#finding-a-surname-to-search) — nearby-relative suggestions, or browse anyone in the tree
@@ -16,10 +16,12 @@ Type a surname and find every person in the Family Tree whose surname phonetical
 * [What's inherited from the original gramplet](#whats-inherited-from-the-original-gramplet) — the name field and code display still work the way they always did
 
 ## Matching people, not just a code
-Type a surname into the **Surname** field and pick an **Encoding system** (see [Encoding systems](#encoding-systems)). The **Code(s)** list shows the phonetic code(s) for what you typed, and **Matches** shows the results in two columns: every surname in the tree sharing that code on the left, and every person who has whichever surname you select on the right, as `Display Name (birth year–death year) [Gramps ID]`. The number next to the **Matches:** heading is the total across every matching surname combined, not just whichever one is currently selected — handy for confirming a Custom Filter built from [a match](#creating-a-filter-from-a-match) or [directly](RulesREADME.md) returns the same count.
+Type a surname into the **Surname** field and pick an **Encoding system** (see [Encoding systems](#encoding-systems)). The **Code(s)** list shows the phonetic code(s) for what you typed, and **Matches** shows the results in two columns: every surname in the tree sharing that code on the left — each shown with a count of how many people have that surname, e.g. `Smith (12)` — and every person who has whichever surname you select on the right, as `Display Name (birth year–death year) [Gramps ID]`. The number next to the **Matches:** heading is the total across every matching surname combined, not just whichever one is currently selected — handy for confirming a Custom Filter built from [a match](#creating-a-filter-from-a-match) or [directly](RulesREADME.md) returns the same count.
+
+You can also drop a person onto the **Surname** field — dragged from this gramplet's own person list, or from another Gramps view such as People or Relationships — to set the field to that person's surname, the same as typing it.
 
 ## Working with a match
-Click a person in the right-hand column to make them the active person elsewhere in Gramps. Double-click (or press Enter on) a row to open that person directly in the standard Person editor.
+Click a person in the right-hand column to make them the active person elsewhere in Gramps. Double-click (or press Enter on) a row to open that person directly in the standard Person editor. You can also drag a person from this column and drop them onto any other Gramps view, gramplet, or editor field that accepts a dragged person — for example, the Relationships view, or this gramplet's own Surname field.
 
 ## Staying in sync
 The gramplet isn't just a one-way search box: when the active person changes — from this gramplet, the Home button, another view, or another gramplet — their surname and their own row are automatically selected and scrolled into view in both columns, so you can always see where the active person sits among their phonetic namesakes.

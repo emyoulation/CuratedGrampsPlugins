@@ -83,25 +83,30 @@ shipped after it failed validation against the standard reference
 vectors (e.g. "Peters" should encode to {"739400", "734000"}).
 """
 
-# Deferred annotation evaluation (PEP 563), required for Python 3.8/3.9
-# compatibility: this module's type hints use `list[X]`, `dict[K, V]`,
-# `X | None`, etc. (PEP 585/604 syntax), which those Python versions
-# cannot evaluate at runtime even though they parse it fine - Gramps
-# 5.2's own official minimum is Python 3.8, which predates both PEPs
-# (585 needs 3.9+, 604 needs 3.10+). This import makes every
-# annotation in this file a deferred string, never evaluated at
-# runtime at all, restoring compatibility with the full (5.2.0,
-# 6.2.0) Gramps range this addon's own .gpr.py declares, without
-# giving up the modern annotation syntax itself.
-from __future__ import annotations
-
 # ------------------------
 # Python modules
 # ------------------------
 import importlib
 import logging
 from types import ModuleType
-from typing import Callable, Iterable
+from typing import Callable, Dict, Iterable, List, Optional, Set, Tuple, Type
+
+# Field reports (Gramps 5.2.5 / Python 3.6.9) confirm this addon needs
+# to actually import successfully on Python 3.6, not just parse: a
+# bare `list[X]`/`dict[K, V]`/`X | None` annotation (PEP 585/604) is
+# evaluated at function-definition time for every parameter/return
+# annotation and every true module-level variable annotation, and
+# that subscripting only works on Python 3.9+ (585) / 3.10+ (604) -
+# `from __future__ import annotations` would defer that evaluation,
+# but does not exist before Python 3.7 and so fails even earlier, with
+# a SyntaxError, on 3.6. Using `typing.Dict`/`List`/`Tuple`/`Set`/
+# `Optional` here instead works unchanged from Python 3.6 onward,
+# without deferring anything. Annotations on `self.attr` and on local
+# variables inside a function body (elsewhere in this addon) are never
+# evaluated at all, by any Python 3 version - confirmed directly by
+# testing `def f(): x: NotDefined = 1` - so only the annotations
+# touched here (function signatures; the four ALGORITHM* module
+# variables below) were ever actually at risk.
 
 # ------------------------
 # Gramps modules
@@ -122,7 +127,7 @@ LOG = logging.getLogger(__name__)
 _ENCODER_ID_PREFIX = "FuzzyMatchingEncoder:"
 
 
-def _soundex_encode(name: str) -> set[str]:
+def _soundex_encode(name: str) -> Set[str]:
     """
     Return the (single-element) Soundex code set for ``name``.
 
@@ -138,7 +143,7 @@ def _soundex_encode(name: str) -> set[str]:
         return {_core_soundex("")}
 
 
-def _hardcoded_soundex() -> tuple[str, Callable[[str], set[str]], str, str, type]:
+def _hardcoded_soundex() -> Tuple[str, Callable[[str], Set[str]], str, str, type]:
     """
     Build the hardcoded Soundex registry entry - see the module
     docstring for why Soundex specifically is not discovered the way
@@ -156,7 +161,7 @@ def _hardcoded_soundex() -> tuple[str, Callable[[str], set[str]], str, str, type
     return ("soundex", _soundex_encode, "Soundex", description, HasSoundexName)
 
 
-def _discover_addon_rule_modules() -> list[tuple[ModuleType, str, str]]:
+def _discover_addon_rule_modules() -> List[Tuple[ModuleType, str, str]]:
     """
     Ask Gramps' own plugin registry for every ``RULE``-type plugin
     whose ``id`` starts with :data:`_ENCODER_ID_PREFIX`, and import
@@ -258,12 +263,12 @@ def _make_rule_findable_via_import(
 
 
 def _register_encoders(
-    entries: Iterable[tuple[str, Callable[[str], set[str]], str, str, type | None]],
-) -> tuple[
-    dict[str, Callable[[str], set[str]]],
-    dict[str, str],
-    dict[str, str],
-    dict[str, type | None],
+    entries: Iterable[Tuple[str, Callable[[str], Set[str]], str, str, Optional[Type]]],
+) -> Tuple[
+    Dict[str, Callable[[str], Set[str]]],
+    Dict[str, str],
+    Dict[str, str],
+    Dict[str, Optional[Type]],
 ]:
     """
     Register each already-resolved ``(algorithm_id, encode, label,
@@ -284,10 +289,10 @@ def _register_encoders(
         An entry reusing an id an earlier entry already claimed is
         logged and skipped - the rest are still registered.
     """
-    algorithms: dict[str, Callable[[str], set[str]]] = {}
-    labels: dict[str, str] = {}
-    descriptions: dict[str, str] = {}
-    filter_rules: dict[str, type | None] = {}
+    algorithms: Dict[str, Callable[[str], Set[str]]] = {}
+    labels: Dict[str, str] = {}
+    descriptions: Dict[str, str] = {}
+    filter_rules: Dict[str, Optional[Type]] = {}
 
     for algorithm_id, encode, label, description, rule_class in entries:
         if algorithm_id in algorithms:
@@ -306,7 +311,7 @@ def _register_encoders(
 
 
 def _resolve_discovered_entries() -> (
-    list[tuple[str, Callable[[str], set[str]], str, str, type | None]]
+    List[Tuple[str, Callable[[str], Set[str]], str, str, Optional[Type]]]
 ):
     """
     Turn every discovered addon rule module into a
@@ -350,11 +355,11 @@ def _resolve_discovered_entries() -> (
     return entries
 
 
-def _load_encoders() -> tuple[
-    dict[str, Callable[[str], set[str]]],
-    dict[str, str],
-    dict[str, str],
-    dict[str, type | None],
+def _load_encoders() -> Tuple[
+    Dict[str, Callable[[str], Set[str]]],
+    Dict[str, str],
+    Dict[str, str],
+    Dict[str, Optional[Type]],
 ]:
     """
     Assemble the full encoder registry: the hardcoded Soundex entry
@@ -366,7 +371,7 @@ def _load_encoders() -> tuple[
     return _register_encoders(entries)
 
 
-def _choose_default(algorithms: dict[str, Callable[[str], set[str]]]) -> str | None:
+def _choose_default(algorithms: Dict[str, Callable[[str], Set[str]]]) -> Optional[str]:
     """
     Pick the default algorithm id from whatever :func:`_load_encoders`
     found.
@@ -392,18 +397,18 @@ def _choose_default(algorithms: dict[str, Callable[[str], set[str]]]) -> str | N
 #: valid code for a single spelling). Adding a future algorithm needs
 #: no change here: add a new <name>.py/<name>.gpr.py RULE plugin pair
 #: to this addon's own folder instead.
-ALGORITHMS: dict[str, Callable[[str], set[str]]]
+ALGORITHMS: Dict[str, Callable[[str], Set[str]]]
 
 #: Display labels for :data:`ALGORITHMS`, keyed the same way, kept
 #: separate so callers can build UI without importing translation
 #: machinery into this module.
-ALGORITHM_LABELS: dict[str, str]
+ALGORITHM_LABELS: Dict[str, str]
 
 #: Help/description text for :data:`ALGORITHMS`, keyed the same way
 #: (an empty string for a module that does not provide one). Intended
 #: for display as a tooltip on the gramplet's Encoding system dropdown
 #: - see :meth:`FuzzyMatchingGramplet.cb_algorithm_changed`.
-ALGORITHM_DESCRIPTIONS: dict[str, str]
+ALGORITHM_DESCRIPTIONS: Dict[str, str]
 
 #: The Person filter rule class to use for each algorithm's "Define
 #: filter" action, keyed the same way (``None`` if not resolvable).
@@ -411,7 +416,7 @@ ALGORITHM_DESCRIPTIONS: dict[str, str]
 #: the user that action is unavailable rather than silently doing
 #: nothing, or incorrectly reusing a different algorithm's rule, when
 #: this is ``None`` for the currently-selected algorithm.
-ALGORITHM_FILTER_RULES: dict[str, type | None]
+ALGORITHM_FILTER_RULES: Dict[str, Optional[Type]]
 
 ALGORITHMS, ALGORITHM_LABELS, ALGORITHM_DESCRIPTIONS, ALGORITHM_FILTER_RULES = (
     _load_encoders()

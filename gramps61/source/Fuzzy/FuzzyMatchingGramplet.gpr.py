@@ -37,7 +37,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
             "index so it stays fast on large Family Trees"
         ),
         status=STABLE,
-        version="0.3.0",
+        version="0.4.0",
         gramps_target_version=major_version,
         fname="FuzzyMatchingGramplet.py",
         height=300,
