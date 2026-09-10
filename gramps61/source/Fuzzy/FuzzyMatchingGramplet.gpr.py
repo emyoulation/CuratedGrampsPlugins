@@ -47,6 +47,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         navtypes=["Person"],
         authors=["Claude"],
         maintainers=["Brian McCullough"],
-        help_url="https://gramps.discourse.group/t/9951/14",
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Fuzzy/README.md",
+        #help_url="https://gramps.discourse.group/t/9951/14",
         # https://gramps-project.org/wiki/index.php/Gramps_6.0_Wiki_Manual_-_Gramplets#SoundEx
     )

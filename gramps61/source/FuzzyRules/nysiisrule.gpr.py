@@ -48,6 +48,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         fname="nysiisrule.py",
         ruleclass="HasNysiisName",  # must be rule class name
         namespace="Person",  # one of the primary object classes
-        help_url="https://gramps.discourse.group/t/9951/14",
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md",
+        #help_url="https://gramps.discourse.group/t/9951/14",
         #help_url="Fuzzy_Matching_Gramplet",
     )
