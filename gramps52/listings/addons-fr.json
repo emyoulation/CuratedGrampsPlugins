@@ -127,11 +127,11 @@
     "h": "https://gramps.discourse.group/t/9951/14"
   },
   {
-    "n": "Photo Tagging",
+    "n": "Cartographie photographique",
     "i": "Photo Tagging",
     "t": 10,
-    "d": "Gramplet for tagging people in photos",
-    "v": "1.1.3",
+    "d": "Gramplet pour définir les individus dans les photos",
+    "v": "1.2.0",
     "g": "5.2",
     "s": 1,
     "z": "PhotoTaggingGramplet.addon.tgz",

@@ -127,11 +127,11 @@
     "h": "https://gramps.discourse.group/t/9951/14"
   },
   {
-    "n": "Photo Tagging",
+    "n": "Valokuvien merkintä",
     "i": "Photo Tagging",
     "t": 10,
-    "d": "Gramplet for tagging people in photos",
-    "v": "1.1.3",
+    "d": "Gramplet henkilöiden merkintään valokuvissa",
+    "v": "1.2.1",
     "g": "6.1",
     "s": 1,
     "z": "PhotoTaggingGramplet.addon.tgz",
