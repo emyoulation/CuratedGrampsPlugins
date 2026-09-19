@@ -127,6 +127,18 @@
     "h": "https://gramps.discourse.group/t/9951/14"
   },
   {
+    "n": "Note Styling Editor",
+    "i": "Note Styling Editor",
+    "t": 10,
+    "d": "View and strip StyledText markup (bold, color, links, etc.) from a selected Note, or the first Note attached to the active record in any other note-holding category (Citation, Person, Family, Event, Place, Source, Repository, Media)",
+    "v": "0.0.2",
+    "g": "6.1",
+    "s": 1,
+    "z": "NoteStyler.addon.tgz",
+    "h": "https://gramps.discourse.group/t/5396",
+    "a": 0
+  },
+  {
     "n": "Photo Tagging",
     "i": "Photo Tagging",
     "t": 10,
