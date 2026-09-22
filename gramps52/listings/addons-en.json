@@ -24,6 +24,17 @@
     "a": 0
   },
   {
+    "n": "Biography - Complete",
+    "i": "completebiographyquickview",
+    "t": 1,
+    "d": "Display a more extensive biography, combining the events, families, and other details of the Complete Individual Report with the narrative style of the Biography quick view",
+    "v": "0.0.1",
+    "g": "5.2",
+    "s": 1,
+    "z": "BiographyCompleteQuickview.addon.tgz",
+    "h": "Addon:Biography_Quickview#Complete_Biography"
+  },
+  {
     "n": "Config Inspector",
     "i": "Config Inspector",
     "t": 2,
