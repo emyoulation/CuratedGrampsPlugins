@@ -28,7 +28,7 @@
     "i": "completebiographyquickview",
     "t": 1,
     "d": "Display a more extensive biography, combining the events, families, and other details of the Complete Individual Report with the narrative style of the Biography quick view",
-    "v": "0.0.1",
+    "v": "0.0.2",
     "g": "6.1",
     "s": 1,
     "z": "BiographyCompleteQuickview.addon.tgz",
