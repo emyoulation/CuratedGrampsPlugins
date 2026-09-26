@@ -94,48 +94,69 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md"
   },
   {
+    "n": "Fuzzy Match API",
+    "i": "Fuzzy Match API",
+    "t": 6,
+    "d": "Library for other addons: phonetic surname matching (fuzzy_match_index.py), person-display formatting (fuzzy_match_display.py), and a standalone lookup window (FuzzyMatchLookupWindow.py) for a quick 'does someone like this already exist' check from another plugin. See FuzzyMatchAPI.md in this addon's own folder for the calling convention.",
+    "v": "0.5.1",
+    "g": "6.1",
+    "s": 3,
+    "z": "Fuzzy.addon.tgz"
+  },
+  {
     "n": "Fuzzy Matching",
     "i": "Fuzzy Matching",
     "t": 10,
     "d": "Gramplet for finding people in the Family Tree whose surname phonetically matches a given surname, using a cached per-tree index so it stays fast on large Family Trees",
-    "v": "0.4.0",
+    "v": "0.5.2",
     "g": "6.1",
     "s": 3,
     "z": "Fuzzy.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Fuzzy/README.md"
   },
   {
-    "n": "Match Rating Approach match of People with the <surname>",
+    "n": "MRA match of People with the <names>",
     "i": "FuzzyMatchingEncoder:match_rating",
     "t": 13,
-    "d": "Matches people whose primary surname has a specified Match Rating Approach codex",
-    "v": "0.2.0",
+    "d": "Matches people whose selected name fields (preferred surname and call name by default) have the same Match Rating Approach (MRA) codex as the given name",
+    "v": "0.3.1",
     "g": "6.1",
     "s": 3,
     "z": "FuzzyRules.addon.tgz",
-    "h": "https://gramps.discourse.group/t/9951/14"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
   },
   {
-    "n": "Metaphone match of People with the <surname>",
+    "n": "Metaphone match of People with the <names>",
     "i": "FuzzyMatchingEncoder:metaphone",
     "t": 13,
-    "d": "Matches people whose primary surname has a specified Metaphone code",
-    "v": "0.1.0",
+    "d": "Matches people whose selected name fields (preferred surname and call name by default) have the same Metaphone code as the given name",
+    "v": "0.2.1",
     "g": "6.1",
     "s": 3,
     "z": "FuzzyRules.addon.tgz",
-    "h": "https://gramps.discourse.group/t/9951/14"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
   },
   {
-    "n": "NYSIIS match of People with the <surname>",
+    "n": "NYSIIS match of People with the <names>",
     "i": "FuzzyMatchingEncoder:nysiis",
     "t": 13,
-    "d": "Matches people whose primary surname has a specified NYSIIS code",
-    "v": "0.2.0",
+    "d": "Matches people whose selected name fields (preferred surname and call name by default) have the same NYSIIS (New York State Identification and Intelligence System) code as the given name",
+    "v": "0.3.1",
     "g": "6.1",
     "s": 3,
     "z": "FuzzyRules.addon.tgz",
-    "h": "https://gramps.discourse.group/t/9951/14"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
+  },
+  {
+    "n": "Soundex match of People with the <names>",
+    "i": "FuzzyMatchingEncoder:soundex",
+    "t": 13,
+    "d": "Matches people whose selected name fields (preferred surname and call name by default) have the same Soundex code as the given name",
+    "v": "0.1.1",
+    "g": "6.1",
+    "s": 3,
+    "z": "FuzzyRules.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
   },
   {
     "n": "Note Styling Editor",
