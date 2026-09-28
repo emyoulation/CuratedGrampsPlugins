@@ -1,7 +1,7 @@
 #
 # Gramps - a GTK+/GNOME based genealogy program
 #
-# Copyright (C) 2026 Claude Ai (Brian McCullough, wish-coder)
+# Copyright (C) 2026  Phonetic Matching Gramplet contributors
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,36 +21,29 @@ from gramps.version import major_version, VERSION_TUPLE
 
 # ------------------------------------------------------------------------
 #
-# Match Rating Approach person filter rule (standalone, and used by the
-# Fuzzy Matching Gramplet's "Define filter" action when Match Rating
-# Approach is selected)
+# Daitch-Mokotoff Soundex person filter rule with name-field options
+# (the Fuzzy Matching Gramplet's Daitch-Mokotoff encoding system when
+# installed)
 #
 # ------------------------------------------------------------------------
 
 if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
     register(
         RULE,
-        # The "FuzzyMatchingEncoder:" prefix is what the Fuzzy Matching
-        # Gramplet's Encoding system list actually looks for (see
-        # phonetic_codes._ENCODER_ID_PREFIX) - not this file's location.
-        # Any independently packaged/updated addon can use the same
-        # prefix to show up there too; nothing about this id needs to
-        # match a folder or filename.
-        id="FuzzyMatchingEncoder:match_rating",
-        name=_("MRA match of People with the <names>"),
+        # "FuzzyMatchingEncoder:" prefix: see phonetic_codes._ENCODER_ID_PREFIX.
+        id="FuzzyMatchingEncoder:daitch_mokotoff",
+        name=_("D-M match of People with the <names>"),
         description=_(
             "Matches people with a name field having the same "
-            "Match Rating Approach (MRA) phonetic encoding as a test name."
+            "Daitch-Mokotoff phonetic encoding as a test name."
         ),
         version="0.3.2",
         authors=["Claude"],
         maintainers=["Brian McCullough"],
         gramps_target_version=major_version,
         status=STABLE,
-        fname="matchratingrule.py",
-        ruleclass="HasMatchRatingName",  # must be rule class name
+        fname="daitchmokotoffrule.py",
+        ruleclass="HasDaitchMokotoffNames",  # must be rule class name
         namespace="Person",  # one of the primary object classes
         help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md",
-        # help_url="https://gramps.discourse.group/t/9951/14",
-        # help_url="Fuzzy_Matching_Gramplet",
     )

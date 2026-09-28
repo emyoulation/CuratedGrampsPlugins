@@ -1,7 +1,7 @@
 #
 # Gramps - a GTK+/GNOME based genealogy program
 #
-# Copyright (C) 2025  Phonetic Matching Gramplet contributors
+# Copyright (C) 2026 Claude Ai (Brian McCullough, wish-coder)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,11 +36,12 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         # prefix to show up there too; nothing about this id needs to
         # match a folder or filename.
         id="FuzzyMatchingEncoder:nysiis",
-        name=_("NYSIIS match of People with the <surname>"),
+        name=_("NYSIIS match of People with the <names>"),
         description=_(
-            "Matches people whose primary surname has a specified NYSIIS code"
+            "Matches people with a name field having the same NYSIIS (New York State Identification and Intelligence System)"
+            " phonetic encoding as a test name."
         ),
-        version="0.2.0",
+        version="0.3.2",
         authors=["Claude"],
         maintainers=["Brian McCullough"],
         gramps_target_version=major_version,
@@ -49,6 +50,6 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         ruleclass="HasNysiisName",  # must be rule class name
         namespace="Person",  # one of the primary object classes
         help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md",
-        #help_url="https://gramps.discourse.group/t/9951/14",
-        #help_url="Fuzzy_Matching_Gramplet",
+        # help_url="https://gramps.discourse.group/t/9951/14",
+        # help_url="Fuzzy_Matching_Gramplet",
     )
