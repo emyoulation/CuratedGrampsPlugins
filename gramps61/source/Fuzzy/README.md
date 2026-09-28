@@ -1,5 +1,5 @@
 # Fuzzy Matching Gramplet
-[ReadMe](README.md) ● [Change Log](CHANGELOG.md) ● [Phonetic Filter Rules](RulesREADME.md) ● [adding Phonetic systems (for developers)](FuzzyDev.md)
+[ReadMe](README.md) ● [Change Log](CHANGELOG.md) ● [Phonetic Filter Rules](RulesREADME.md) ● [adding Phonetic systems (for developers)](FuzzyDev.md) ● [Fuzzy Match API](FuzzyMatchAPI.md)
 
 Type a surname and find every person in the Family Tree whose surname phonetically matches it — spelling variants, transcription differences, the "Smith vs. Smyth" problem — instead of just being told a code. It grew out of the core Gramps **SoundEx** gramplet (`gramps/plugins/gramplet/soundgen.py`), which only ever computed a single Soundex code for one typed name and rebuilt its surname list in a way that visibly slowed down on large trees; this gramplet keeps the same starting idea and turns it into an actual search tool.
 
@@ -7,6 +7,7 @@ Type a surname and find every person in the Family Tree whose surname phonetical
 * [Matching people, not just a code](#matching-people-not-just-a-code) — see every surname and every person that phonetically matches what you type, with a count of how many people share each surname
 * [Working with a match](#working-with-a-match) — click a person to make them active, double-click to edit them, or drag them elsewhere
 * [Staying in sync](#staying-in-sync) — the gramplet follows along as you navigate the tree elsewhere
+* [Staying current as the tree changes](#staying-current-as-the-tree-changes) — the Matches columns update live as people are added, edited, or deleted
 * [Creating a filter from a match](#creating-a-filter-from-a-match) — turn a code into a reusable People filter
 * [Finding a surname to search](#finding-a-surname-to-search) — nearby-relative suggestions, or browse anyone in the tree
 * [Staying fast on large trees](#staying-fast-on-large-trees) — indexes in the background with visible progress
@@ -14,6 +15,7 @@ Type a surname and find every person in the Family Tree whose surname phonetical
 * [Help](#help) — one click to this document, or to the online guide
 * [Encoding systems](#encoding-systems) — Soundex, NYSIIS, Match Rating Approach, and Metaphone, each catching different spelling variants
 * [What's inherited from the original gramplet](#whats-inherited-from-the-original-gramplet) — the name field and code display still work the way they always did
+* [Using this from another addon](#using-this-from-another-addon) — a "does someone like this already exist" popup other addons can call directly
 
 ## Matching people, not just a code
 Type a surname into the **Surname** field and pick an **Encoding system** (see [Encoding systems](#encoding-systems)). The **Code(s)** list shows the phonetic code(s) for what you typed, and **Matches** shows the results in two columns: every surname in the tree sharing that code on the left — each shown with a count of how many people have that surname, e.g. `Smith (12)` — and every person who has whichever surname you select on the right, as `Display Name (birth year–death year) [Gramps ID]`. The number next to the **Matches:** heading is the total across every matching surname combined, not just whichever one is currently selected — handy for confirming a Custom Filter built from [a match](#creating-a-filter-from-a-match) or [directly](RulesREADME.md) returns the same count.
@@ -25,6 +27,9 @@ Click a person in the right-hand column to make them the active person elsewhere
 
 ## Staying in sync
 The gramplet isn't just a one-way search box: when the active person changes — from this gramplet, the Home button, another view, or another gramplet — their surname and their own row are automatically selected and scrolled into view in both columns, so you can always see where the active person sits among their phonetic namesakes.
+
+## Staying current as the tree changes
+The Matches columns update live as you (or a Tool, or an import) create, edit, or delete people, or change a birth or death event's date or place — without needing to retype the Surname field or reopen the gramplet. This only patches whatever actually changed rather than rescanning the tree, so it stays fast even on a large Family Tree.
 
 ## Creating a filter from a match
 Double-click a surname in the left Matches column to open a "Define filter" dialog, pre-filled with a People filter matching that surname under whichever Encoding system is currently selected, named `Fuzzy match: <surname> (<encoding system>)` with a dated comment. Nothing is saved automatically — the dialog opens exactly as if you had built it by hand, and it's saved only if you click OK. To build a filter combining one of these rules with other conditions, or to use one without the gramplet open at all, see [RulesREADME.md](RulesREADME.md).
@@ -47,6 +52,9 @@ Soundex, NYSIIS, Match Rating Approach, and Metaphone all ship today as an addon
 ## What's inherited from the original gramplet
 Typing a surname and seeing its phonetic code, and having the field pre-filled from the active person when a tree loads, both come from the original SoundEx gramplet and still work the same way — they're just no longer the whole feature.
 
+## Using this from another addon
+The phonetic index and person-formatting this gramplet uses are also available to other addons directly — for example, a Photo Tagging-style gramplet that parsed a Surname/Given Name out of image metadata and wants to check whether that person might already exist. See [FuzzyMatchAPI.md](FuzzyMatchAPI.md), written for another addon's developer (or their AI coding assistant) to read on its own.
+
 ## Files
 | File | Purpose |
 |---|---|
@@ -54,8 +62,14 @@ Typing a surname and seeing its phonetic code, and having the field pre-filled f
 | `FuzzyMatchingGramplet.py` | Gtk gramplet UI, background indexing, and active-person sync |
 | `FuzzyMatchingGramplet.ini` | Generated on first use to remember your layout choices; not shipped |
 | `phonetic_codes.py` | Discovers available Encoding systems via Gramps' own plugin registry (no Gtk/db dependency, unit-testable) |
+| `fuzzy_match_index.py` | The phonetic index itself (build, incremental update, lookup) - no Gtk/db-object dependency beyond `DbReadBase`, shared between the gramplet and `FuzzyMatchLookupWindow.py` |
+| `fuzzy_match_display.py` | Person-display formatting and event-driven row refresh, shared the same way |
+| `FuzzyMatchLookupWindow.py` | Standalone "does someone like this already exist" popup for other addons - see [FuzzyMatchAPI.md](FuzzyMatchAPI.md) |
+| `FuzzyMatchAPI.md` | How another addon (or its AI coding assistant) calls into the three files above |
 | `test/__init__.py` | Empty; required so `unittest discover` (see below) actually finds `test/` |
 | `test/phonetic_codes_test.py` | `unittest` tests for `phonetic_codes.py` |
+| `test/fuzzy_match_index_test.py` | `unittest` tests for `fuzzy_match_index.py`, using fake `Db`/`Person` objects |
+| `test/fuzzy_match_display_test.py` | `unittest` tests for `fuzzy_match_display.py`, using mock-patched Gramps calls |
 
 ## Running the tests
 ```bash

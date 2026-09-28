@@ -119,6 +119,24 @@ not as part of a package. A package-relative import such as
 it looks correct and imports fine under some test runners. The sibling
 module is imported by its bare name below instead, exactly as it will
 be found once the addon folder is on ``sys.path``.
+
+Where the actual logic lives
+-----------------------------
+
+The phonetic index described above (surname <-> code, surname <->
+person handles, and the incremental add/update/delete/rebuild patching
+that keeps it current without a full rescan on every edit) is not
+implemented in this file: it lives in
+:class:`fuzzy_match_index.FuzzyMatchIndex`, a plain-Python, GTK-free
+class shared with :mod:`FuzzyMatchLookupWindow` (this addon's
+standalone "does someone like this already exist" popup, meant to be
+called from other plugins - see that module's own docstring).
+Similarly, formatting a person for display and refreshing a displayed
+row after a birth/death event edit both live in
+:mod:`fuzzy_match_display`, also shared with that same window. This
+gramplet is left holding only the GTK/Gramplet-framework side of
+things: building widgets, driving the shared index's background build
+via :meth:`main`, and wiring the database's signals to it.
 """
 
 # ------------------------
@@ -126,9 +144,9 @@ be found once the addon folder is on ``sys.path``.
 # ------------------------
 import contextlib
 import logging
-import os
 import pickle
 import time
+from bisect import bisect_left
 from typing import List, Set
 
 # Field reports (Gramps 5.2.5 / Python 3.6.9) confirm this addon needs
@@ -145,7 +163,7 @@ from typing import List, Set
 # ------------------------
 # Gtk modules
 # ------------------------
-from gi.repository import Gdk, GLib, Gtk
+from gi.repository import Gdk, Gtk
 
 # ------------------------
 # Gramps modules
@@ -153,11 +171,9 @@ from gi.repository import Gdk, GLib, Gtk
 from gramps.gen.config import config as global_config
 from gramps.gen.const import CUSTOM_FILTERS
 from gramps.gen.const import GRAMPS_LOCALE as glocale
-from gramps.gen.display.name import displayer as name_displayer
 from gramps.gen.errors import HandleError
 from gramps.gen.filters import FilterList, GenericFilterFactory
 from gramps.gen.plug import Gramplet
-from gramps.gen.utils.db import get_birth_or_fallback, get_death_or_fallback
 from gramps.gui.autocomp import fill_combo
 from gramps.gui.ddtargets import DdTargets
 from gramps.gui.dialog import OkDialog
@@ -170,7 +186,11 @@ from gramps.gui.widgets import SimpleButton
 # Gramps specific
 # ------------------------
 # See the module docstring above for why this is a bare, top-level
-# import rather than "from .phonetic_codes import ...".
+# import rather than "from .phonetic_codes import ...". The same
+# reasoning applies to fuzzy_match_index/fuzzy_match_display below -
+# this addon's own sibling modules, factored out so the phonetic
+# indexing and person-display formatting each live in exactly one
+# place, shared with FuzzyMatchLookupWindow.py.
 from phonetic_codes import (
     ALGORITHM_DESCRIPTIONS,
     ALGORITHM_FILTER_RULES,
@@ -178,10 +198,20 @@ from phonetic_codes import (
     ALGORITHMS,
     DEFAULT_ALGORITHM,
 )
+from fuzzy_match_display import format_person, person_sort_key, refresh_matching_person_rows
+from fuzzy_match_index import FuzzyMatchIndex, person_surnames
 
 _ = glocale.translation.sgettext
 
 LOG = logging.getLogger(__name__)
+
+#: Value for a phonetic filter rule's "Match in:" argument meaning
+#: "every name field, in every name" - understood by the Phonetic
+#: Filter Rules addon's ``phonetic_name_parts.ALL_TOKEN``. Spelled out
+#: here rather than imported because that module lives in the
+#: separately installed FuzzyRules addon, not in this one's folder. A
+#: rule that predates the token ignores it and uses its own default.
+_MATCH_IN_ALL = "all"
 
 #: CSS for the "Matches:" row's header bar - a darker background band
 #: giving a clear visual break between the encoding-system controls
@@ -196,13 +226,6 @@ _MATCHES_HEADER_CSS = b"""
     padding: 3px 6px;
 }
 """
-
-#: How long (seconds) the background indexing generator processes
-#: surnames before yielding back to the GTK main loop. Time-based
-#: rather than a fixed item count, since per-surname cost can vary
-#: (encoding algorithm, string length, locale); this keeps the UI
-#: responsive regardless of that variance.
-INDEX_CHUNK_SECONDS = 0.05
 
 #: How many steps of parent/child/spouse traversal from the active
 #: person to include when suggesting nearby surnames in the name
@@ -220,6 +243,18 @@ NEARBY_DEGREES = 2
 #: single words and the person column needs the room for names, life
 #: spans, and Gramps IDs.
 DEFAULT_MATCHES_PANE_FRACTION = 1 / 3
+
+#: Font weights for the right Matches column's hidden weight column
+#: (see :meth:`FuzzyMatchingGramplet._build_matches_box`) - plain
+#: PangoWeight ints (400/700 are the standard "normal"/"bold" values)
+#: rather than an extra ``gi.repository.Pango`` import purely for two
+#: well-known constants. Used to bold-highlight, without selecting, a
+#: "nearest match" row :meth:`FuzzyMatchingGramplet._restore_person_selection`
+#: could not find an exact previous selection for - see that method,
+#: and :meth:`FuzzyMatchingGramplet.cb_person_selected`, which clears
+#: it again once the user actually selects a row.
+_WEIGHT_NORMAL = 400
+_WEIGHT_BOLD = 700
 
 #: This addon's own identity, matching the "id=" registered in
 #: FuzzyMatchingGramplet.gpr.py. Recorded in the persisted .ini's
@@ -291,9 +326,17 @@ class FuzzyMatchingGramplet(Gramplet):
 
     def init(self) -> None:
         """Build the widget tree and wire up the initial signal handlers."""
-        self._surname_index: dict[str, list[str]] = {}
-        self._surname_to_handles: dict[str, list[str]] = {}
-        self._indexed_algorithm: str | None = None
+        # The phonetic index itself (surname <-> code, surname <->
+        # person handles, and the incremental-update logic that keeps
+        # both current without a full rebuild on every edit) lives in
+        # fuzzy_match_index.FuzzyMatchIndex, shared with
+        # FuzzyMatchLookupWindow.py, rather than duplicated here. This
+        # gramplet only ever reads it (find_surnames/find_people/
+        # find_matches) or hands it a signal's handle list to patch
+        # itself (on_person_changed/on_person_deleted/on_rebuild) -
+        # see db_changed, main, cb_person_changed, cb_person_deleted,
+        # cb_person_rebuild, and _reset_phonetic_index.
+        self._index = FuzzyMatchIndex(self.dbstate.db)
 
         self.gui.WIDGET = self.build_gui()
         self.gui.get_container_widget().remove(self.gui.textview)
@@ -422,12 +465,12 @@ class FuzzyMatchingGramplet(Gramplet):
         Build the two-column "Matches" display.
 
         The left column lists surnames phonetically matching the typed
-        surname (from :attr:`_surname_index`); selecting one populates
-        the right column with every person in the tree who has that
-        exact surname (from :attr:`_surname_to_handles`). Selecting a
-        row in the right column makes that person the active person;
-        double-clicking (or activating) a row opens the standard Person
-        editor for them.
+        surname (via :attr:`_index`'s find_surnames); selecting one
+        populates the right column with every person in the tree who
+        has that exact surname (via :attr:`_index`'s find_people).
+        Selecting a row in the right column makes that person the
+        active person; double-clicking (or activating) a row opens the
+        standard Person editor for them.
 
         The two columns sit in a :class:`Gtk.Paned` rather than a
         plain box, so the user can resize them; the starting split is
@@ -450,15 +493,23 @@ class FuzzyMatchingGramplet(Gramplet):
 
         :returns: A :class:`Gtk.Paned` containing both columns.
         """
-        # Columns: (display text, raw surname). The raw-surname column
-        # is never added to the TreeView, so it is not shown to the
-        # user; it exists so the displayed text can carry a "(count)"
+        # Columns: (display text, raw surname, code). The raw-surname
+        # and code columns are never added to the TreeView, so they
+        # are not shown to the user; display text carries a "(count)"
         # suffix (see cb_name_changed) while every other method that
         # matches against a row's actual surname - cb_surname_selected,
         # cb_surname_activated, _focus_active_person - still has the
         # exact, un-annotated string to compare against, the same
         # display/lookup split already used below for person_store.
-        self.surname_store = Gtk.ListStore(str, str)
+        #
+        # This is a two-level Gtk.TreeStore, not a flat Gtk.ListStore:
+        # a top-level "All <code>" row per phonetic code (raw surname
+        # == "" - there is no single surname to filter to), with that
+        # code's individual matching surnames as its children. See
+        # cb_name_changed, which builds this, and cb_surname_selected,
+        # which treats an empty raw-surname as "show every surname
+        # under this code", not "show nobody".
+        self.surname_store = Gtk.TreeStore(str, str, str)
         self.surname_view = Gtk.TreeView(model=self.surname_store)
         self.surname_view.set_headers_visible(False)
         self.surname_view.append_column(
@@ -485,13 +536,19 @@ class FuzzyMatchingGramplet(Gramplet):
         surname_scrolled.set_vexpand(True)
         surname_scrolled.add(self.surname_view)
 
-        # Columns: (display text, person handle). The handle column is
-        # never added to the TreeView, so it is not shown to the user.
-        self.person_store = Gtk.ListStore(str, str)
+        # Columns: (display text, person handle, font weight). The
+        # handle column is never added to the TreeView, so it is not
+        # shown to the user. The weight column drives the "nearest
+        # match" boldface :meth:`_restore_person_selection` sets on a
+        # row it couldn't exactly reselect - see :data:`_WEIGHT_NORMAL`/
+        # :data:`_WEIGHT_BOLD` - and is otherwise always
+        # :data:`_WEIGHT_NORMAL`.
+        self.person_store = Gtk.ListStore(str, str, int)
         self.person_view = Gtk.TreeView(model=self.person_store)
         self.person_view.set_headers_visible(False)
+        person_renderer = Gtk.CellRendererText()
         self.person_view.append_column(
-            Gtk.TreeViewColumn(_("Person"), Gtk.CellRendererText(), text=0)
+            Gtk.TreeViewColumn(_("Person"), person_renderer, text=0, weight=2)
         )
         self._person_selection_handler_id = self.person_view.get_selection().connect(
             "changed", self.cb_person_selected
@@ -620,15 +677,43 @@ class FuzzyMatchingGramplet(Gramplet):
 
         self._reset_phonetic_index()
 
+        # Connected via this Gramplet base class's own connect()
+        # wrapper (gramps.gen.plug._gramplet.Gramplet.connect) - the
+        # same idiom the core LastChangeGramplet addon uses for its
+        # own person-*/family-* hooks - rather than calling
+        # self.dbstate.db.connect(...) directly. dbstate.db is a
+        # brand-new database object every time db_changed runs (a
+        # different Family Tree, or the same one reopened), so these
+        # are (re)connected fresh each time rather than once in
+        # init(); nothing further needs disconnecting first, since
+        # whatever object a previous connection was made on is simply
+        # no longer dbstate.db and nothing will ever emit from it
+        # again. person-add/-update/-delete are handled as a scoped,
+        # limited-size patch keyed off the handles the signal itself
+        # provides (see cb_person_changed/cb_person_deleted) rather
+        # than a full rescan of the tree on every edit; person-rebuild
+        # covers batch operations (import, Tools that run in one
+        # transaction) that fire that signal instead of individual
+        # ones, where there is no handle list to scope a patch to and
+        # a full main() rebuild is the only option; event-update
+        # catches a birth/death event's date or place being edited in
+        # place, which commits only the Event object and so never
+        # fires person-update at all - see cb_event_changed.
+        self.connect(self.dbstate.db, "person-add", self.cb_person_changed)
+        self.connect(self.dbstate.db, "person-update", self.cb_person_changed)
+        self.connect(self.dbstate.db, "person-delete", self.cb_person_deleted)
+        self.connect(self.dbstate.db, "person-rebuild", self.cb_person_rebuild)
+        self.connect(self.dbstate.db, "event-update", self.cb_event_changed)
+
         person = self.get_active_object("Person")
         self._refresh_nearby_combo(person)
         if person:
-            self.name_entry.set_text(person.get_primary_name().get_surname())
+            self.name_entry.set_text(self._primary_surname_text(person))
         else:
             self.name_entry.set_text("")
         self._focus_active_person(person)
 
-    def active_changed(self, handle: str) -> None:
+    def active_changed(self, _handle: str) -> None:
         """
         Update the displayed name and nearby-surname dropdown when the
         active person changes, and select/center their row in both
@@ -645,7 +730,7 @@ class FuzzyMatchingGramplet(Gramplet):
         is not updated to match, there is usually nothing for it to
         select at all.
 
-        :param handle: The handle of the newly-active person, as
+        :param _handle: The handle of the newly-active person, as
             passed by the Gramplet framework. Unused directly, since
             the active object is fetched through
             :meth:`get_active_object`, which is a cheap O(1) handle
@@ -654,8 +739,45 @@ class FuzzyMatchingGramplet(Gramplet):
         person = self.get_active_object("Person")
         self._refresh_nearby_combo(person)
         if person:
-            self.name_entry.set_text(person.get_primary_name().get_surname())
+            self.name_entry.set_text(self._primary_surname_text(person))
         self._focus_active_person(person)
+
+    @staticmethod
+    def _primary_surname_text(person) -> str:
+        """
+        Return the single surname text this gramplet uses wherever it
+        needs *one* representative surname for a person - seeding the
+        Surname field from the active person, a browsed person, or a
+        dropped person (see :meth:`db_changed`, :meth:`active_changed`,
+        :meth:`cb_browse_person_clicked`, :meth:`cb_name_drag_data_received`).
+
+        Deliberately :meth:`~gramps.gen.lib.Name.get_primary_surname`,
+        not :meth:`~gramps.gen.lib.Name.get_surname`: the latter
+        returns a *fully-formatted* string across every
+        :class:`~gramps.gen.lib.Surname` on the name, joined with
+        whatever connector each one has - for a compound/double
+        surname such as "Thompson McCullough", that is the string
+        ``"Thompson McCullough"`` itself. Encoding that whole joined
+        string under a phonetic algorithm other than Soundex (NYSIIS,
+        Metaphone, Match Rating Approach all process the *entire*
+        input as one continuous run, unlike Soundex's fixed-length
+        code) produces a code for the run-on string as a whole, which
+        will not phonetically match "Thompson" alone at all - seeding
+        the field this way would make the very feature this method
+        exists for stop working, for exactly the people it matters
+        most for. The primary surname alone avoids that regardless of
+        algorithm. See :func:`fuzzy_match_index.person_surnames` for
+        the complementary "every piece, for indexing/matching purposes"
+        version this is not a replacement for.
+
+        :param person: The :class:`gramps.gen.lib.Person` to read.
+        :returns: Their primary name's primary surname text, or ``""``
+            if they have no surname at all.
+        """
+        primary_surname = person.get_primary_name().get_primary_surname()
+        if primary_surname is None:
+            return ""
+        return primary_surname.get_surname()
 
     def _refresh_nearby_combo(self, active_person) -> None:
         """
@@ -669,6 +791,12 @@ class FuzzyMatchingGramplet(Gramplet):
         cheap to compute and safe to hand to
         :func:`gramps.gui.autocomp.fill_combo`, regardless of how large
         the tree is.
+
+        Suggests every surname *piece* a nearby relative carries (see
+        :func:`fuzzy_match_index.person_surnames`), not just one
+        representative string per relative - a relative with a
+        compound surname contributes each of its pieces as its own
+        suggestion, so typing either one is offered.
 
         :param active_person: The current active
             :class:`gramps.gen.lib.Person`, or None.
@@ -686,7 +814,7 @@ class FuzzyMatchingGramplet(Gramplet):
         for handle in handles:
             person = db.get_person_from_handle(handle)
             if person is not None:
-                surnames.add(person.get_primary_name().get_surname())
+                surnames.update(person_surnames(person))
         surnames.discard("")
 
         fill_combo(self.name_combo, sorted(surnames, key=glocale.sort_key))
@@ -850,7 +978,7 @@ class FuzzyMatchingGramplet(Gramplet):
         )
         person = selector.run()
         if person:
-            self.name_entry.set_text(person.get_primary_name().get_surname())
+            self.name_entry.set_text(self._primary_surname_text(person))
 
     def _current_algorithm(self) -> str:
         """
@@ -858,21 +986,30 @@ class FuzzyMatchingGramplet(Gramplet):
 
         :returns: An id key from :data:`phonetic_codes.ALGORITHMS`.
         """
-        return self.algo_combo.get_active_id() or DEFAULT_ALGORITHM
+        algorithm_id = self.algo_combo.get_active_id()
+        if algorithm_id is not None:
+            return algorithm_id
+        # phonetic_codes.DEFAULT_ALGORITHM is itself typed Optional[str]
+        # (it could theoretically be None if no algorithm registered at
+        # all) - see phonetic_codes._hardcoded_soundex, which exists
+        # specifically so at least one algorithm is always available,
+        # making the assert below a documented invariant, not a guess.
+        assert DEFAULT_ALGORITHM is not None, (
+            "phonetic_codes registered no algorithms at all - see "
+            "phonetic_codes._hardcoded_soundex"
+        )
+        return DEFAULT_ALGORITHM
 
     def main(self):
         """
-        Rebuild, in the background, the two lookups this gramplet's
-        Matches columns depend on:
-
-        1. code -> surnames (:attr:`_surname_index`), over the
-           database's unique surname list, for the phonetic matching
-           itself.
-        2. surname -> person handles (:attr:`_surname_to_handles`),
-           over every person in the tree, so clicking a surname in the
-           left Matches column can populate the right column with the
-           actual people who have it without a fresh database scan on
-           every click.
+        Rebuild, in the background, :attr:`_index` - the two lookups
+        this gramplet's Matches columns depend on (code -> surnames,
+        and surname -> person handles). The indexing itself
+        (:meth:`fuzzy_match_index.FuzzyMatchIndex.build`) lives in a
+        module shared with :mod:`FuzzyMatchLookupWindow`; this method
+        is just the Gramplet-framework glue around it - reading the
+        currently-selected algorithm, driving the shared generator,
+        and refreshing the display once it finishes.
 
         This is the Gramplet framework's generator hook (see
         :meth:`gramps.gen.plug._gramplet.Gramplet.main`): it is driven
@@ -881,93 +1018,199 @@ class FuzzyMatchingGramplet(Gramplet):
         the calling thread. ``yield True`` hands control back to GTK
         so it can repaint and handle input between chunks; ``yield
         False`` (implicit on ``return``/``StopIteration``) ends the
-        background run. Stage 2 walks every person, not just every
-        unique surname, so it is the heavier of the two stages on a
-        large tree; chunking applies to both for the same reason.
+        background run.
 
         :returns: A generator; see above.
         """
         if not self.dbstate.is_open():
             return
 
-        db = self.dbstate.db
-        algorithm_id = self._current_algorithm()
-
-        yield from self._index_surname_codes(db, algorithm_id)
-        yield from self._index_surname_handles(db)
+        self._index.algorithm_id = self._current_algorithm()
+        yield from self._index.build(progress_callback=self._cb_index_progress)
 
         self._set_busy(False)
 
-        # Both lookups just changed (new database, or new algorithm),
-        # so refresh whatever is currently typed/selected against them.
+        # The index just changed (new database, or new algorithm), so
+        # refresh whatever is currently typed/selected against it.
         self.cb_name_changed(self.name_entry)
         self._focus_active_person(self.get_active_object("Person"))
 
-    def _index_surname_codes(self, db, algorithm_id: str):
+    def _cb_index_progress(self, phase: str, position: int, total: int) -> None:
         """
-        Stage 1 of :meth:`main`: build code -> surnames over the
-        database's unique surname list, yielding periodically per
-        :data:`INDEX_CHUNK_SECONDS`.
+        Drive the busy spinner/progress label from
+        :meth:`fuzzy_match_index.FuzzyMatchIndex.build`'s progress
+        callback. ``phase`` arrives as the plain, untranslated string
+        ``"surnames"`` or ``"people"``; translating it for display is
+        this gramplet's own job, not the shared index module's.
 
-        :param db: The active database.
-        :param algorithm_id: The phonetic algorithm id to index with.
-        :returns: A generator; see :meth:`main`.
+        :param phase: Which phase of the build is running.
+        :param position: Number of items processed so far in this phase.
+        :param total: Total number of items in this phase.
         """
-        encode = ALGORITHMS[algorithm_id]
-        surnames = db.get_surname_list()
-        total = len(surnames)
-        self._set_busy(True, _("surnames"), 0, total)
+        self._set_busy(True, _(phase), position, total)
 
-        code_index: dict[str, list[str]] = {}
-        chunk_deadline = time.perf_counter() + INDEX_CHUNK_SECONDS
-        for position, surname in enumerate(surnames, start=1):
-            for code in encode(surname):
-                code_index.setdefault(code, []).append(surname)
-            if time.perf_counter() >= chunk_deadline:
-                self._update_progress(_("surnames"), position, total)
-                yield True
-                chunk_deadline = time.perf_counter() + INDEX_CHUNK_SECONDS
-
-        self._surname_index = code_index
-        self._indexed_algorithm = algorithm_id
-        LOG.debug(
-            "Fuzzy Matching: indexed %d unique surnames into %d codes using %s",
-            total,
-            len(code_index),
-            algorithm_id,
-        )
-
-    def _index_surname_handles(self, db):
+    def cb_person_changed(self, handles: List[str]) -> None:
         """
-        Stage 2 of :meth:`main`: build surname -> person handles over
-        every person in the tree, yielding periodically per
-        :data:`INDEX_CHUNK_SECONDS`.
+        Patch the surname index in place for one or more added or
+        edited people, instead of waiting for the next full
+        :meth:`main` rebuild.
 
-        :param db: The active database.
-        :returns: A generator; see :meth:`main`.
+        Connected to the database's own ``person-add``/``person-update``
+        signals in :meth:`db_changed`; both fire with the list of
+        affected handles from a single commit or transaction. The
+        patching itself is
+        :meth:`fuzzy_match_index.FuzzyMatchIndex.on_person_changed` -
+        this method is just the GTK side of it: hand it the handles,
+        then refresh whatever is currently on screen if anything it
+        touched could be affected - see :meth:`_refresh_display_if_touched`.
+
+        :param handles: Handles of the people that were added or
+            updated, as passed by the database's signal.
         """
-        person_handles = db.get_person_handles(sort_handles=False)
-        total = len(person_handles)
-        self._update_progress(_("people"), 0, total)
+        touched_surnames = self._index.on_person_changed(handles)
+        self._refresh_display_if_touched(touched_surnames)
 
-        handle_index: dict[str, list[str]] = {}
-        chunk_deadline = time.perf_counter() + INDEX_CHUNK_SECONDS
-        for position, handle in enumerate(person_handles, start=1):
-            person = db.get_person_from_handle(handle)
-            if person is not None:
-                surname = person.get_primary_name().get_surname()
-                handle_index.setdefault(surname, []).append(handle)
-            if time.perf_counter() >= chunk_deadline:
-                self._update_progress(_("people"), position, total)
-                yield True
-                chunk_deadline = time.perf_counter() + INDEX_CHUNK_SECONDS
+    def cb_person_deleted(self, handles: List[str]) -> None:
+        """
+        Patch the surname index in place for one or more deleted
+        people, instead of waiting for the next full :meth:`main`
+        rebuild - see :meth:`cb_person_changed`, which this mirrors,
+        and
+        :meth:`fuzzy_match_index.FuzzyMatchIndex.on_person_deleted`,
+        which does the actual patching.
 
-        self._surname_to_handles = handle_index
-        LOG.debug(
-            "Fuzzy Matching: looked up %d people across %d surnames",
-            total,
-            len(handle_index),
-        )
+        Connected to the database's own ``person-delete`` signal in
+        :meth:`db_changed`, which fires with the list of deleted
+        handles.
+
+        :param handles: Handles of the people that were deleted, as
+            passed by the database's signal.
+        """
+        touched_surnames = self._index.on_person_deleted(handles)
+        self._refresh_display_if_touched(touched_surnames)
+
+    def cb_person_rebuild(self) -> None:
+        """
+        Fall back to a full background reindex when the database emits
+        ``person-rebuild`` - fired instead of individual
+        ``person-add``/``-update``/``-delete`` signals after batch
+        operations (an import, or a Tool that runs in one transaction)
+        that touch more people than it makes sense to enumerate
+        individually. There is no per-handle list to patch the index
+        with here, so this marks it stale
+        (:meth:`fuzzy_match_index.FuzzyMatchIndex.on_rebuild`) and
+        restarts :meth:`main` the same way a newly-opened database or
+        a changed algorithm does.
+        """
+        if not self.dbstate.is_open():
+            return
+        self._index.on_rebuild()
+        self.update()
+
+    def cb_event_changed(self, handles: List[str]) -> None:
+        """
+        Refresh the display text of any person currently shown in the
+        right Matches column whose birth or death event was just
+        edited.
+
+        Connected to the database's own ``event-update`` signal in
+        :meth:`db_changed`. This exists because editing a birth or
+        death event's date or place from the Person editor's Events
+        tab commits only that :class:`~gramps.gen.lib.Event` object
+        (``event-update``) - the person's own event reference list is
+        unchanged, so ``person-update`` never fires and
+        :meth:`cb_person_changed` never runs. The actual row-matching
+        and reformatting is
+        :func:`fuzzy_match_display.refresh_matching_person_rows`,
+        shared with :class:`FuzzyMatchLookupWindow`'s identical need.
+
+        :param handles: Handles of the events that were updated, as
+            passed by the database's signal.
+        """
+        refresh_matching_person_rows(self.dbstate.db, self.person_store, handles)
+
+    def _refresh_display_if_touched(self, touched_surnames: set) -> None:
+        """
+        Re-run the current search against the just-patched index if
+        anything changed, so an add/edit/delete shows up without the
+        user retyping the Surname field or reselecting a row.
+
+        A no-op while the background index has not finished its first
+        pass for the current algorithm (:meth:`main` will show
+        everything current once it does), or if nothing was actually
+        touched.
+
+        :param touched_surnames: Surnames the index says were just
+            added to, changed, or removed (see
+            :meth:`fuzzy_match_index.FuzzyMatchIndex.on_person_changed`/
+            ``on_person_deleted``'s return value).
+        """
+        if (
+            not touched_surnames
+            or not self._index.ready
+            or self._index.algorithm_id != self._current_algorithm()
+        ):
+            return
+
+        selected_surname = self._get_selected_surname()
+        self.cb_name_changed(self.name_entry)
+        if selected_surname is not None and selected_surname in touched_surnames:
+            self._reselect_surname(selected_surname)
+
+    def _get_selected_surname(self) -> str | None:
+        """
+        Return the raw surname (not the "Surname (count)" display
+        text) currently selected in the left Matches column, ``""`` if
+        the selected row is a top-level "All <code>" row, or None if
+        nothing is selected.
+
+        :returns: The selected surname, ``""`` for an "All <code>"
+            row, or None.
+        """
+        model, tree_iter = self.surname_view.get_selection().get_selected()
+        if tree_iter is None:
+            return None
+        return model[tree_iter][1]
+
+    @staticmethod
+    def _iter_tree_rows(store: Gtk.TreeStore):
+        """
+        Yield every row in ``store`` - both top-level "All <code>"
+        rows and their surname children - since a plain ``for row in
+        store`` only ever visits top-level rows on a
+        :class:`Gtk.TreeStore`. Used wherever a specific surname's row
+        needs finding regardless of which code it's nested under (see
+        :meth:`_reselect_surname`, :meth:`_focus_active_person`).
+
+        :param store: The :class:`Gtk.TreeStore` to walk.
+        :returns: A generator yielding each row, parents before their
+            own children, top to bottom.
+        """
+
+        def _walk(tree_iter):
+            while tree_iter is not None:
+                yield store[tree_iter]
+                yield from _walk(store.iter_children(tree_iter))
+                tree_iter = store.iter_next(tree_iter)
+
+        yield from _walk(store.get_iter_first())
+
+    def _reselect_surname(self, surname: str) -> None:
+        """
+        Reselect ``surname``'s row in the left Matches column after
+        :meth:`cb_name_changed` has rebuilt :attr:`surname_store`, so
+        the right column refreshes (via the normal
+        :meth:`cb_surname_selected` selection-changed handler) to
+        reflect whatever just changed. A no-op if ``surname`` is no
+        longer among the current matches - for example, its last
+        person was just deleted.
+
+        :param surname: The raw surname to reselect.
+        """
+        for row in self._iter_tree_rows(self.surname_store):
+            if row[1] == surname:
+                self.surname_view.get_selection().select_path(row.path)
+                return
 
     def _set_busy(
         self, busy: bool, phase: str = "", position: int = 0, total: int = 0
@@ -1041,7 +1284,15 @@ class FuzzyMatchingGramplet(Gramplet):
     def cb_name_changed(self, _entry: Gtk.Entry) -> None:
         """
         Recompute and display the phonetic matches for the typed
-        surname.
+        Surname field.
+
+        The field normally holds a bare surname, but also accepts a
+        full "Surname, Given Name" query (see :meth:`_parse_query`) -
+        only the part before a comma is ever used for the actual
+        phonetic search, so a full name typed here still finds the
+        right code(s). If a given name was supplied this way, the
+        nearest-matching person is selected/centered in the right
+        column once it's populated - see :meth:`_select_nearest_person_by_given_name`.
 
         Looks up the pre-computed code -> surnames index built by
         :meth:`main`, so typing does not trigger a fresh database scan.
@@ -1052,6 +1303,14 @@ class FuzzyMatchingGramplet(Gramplet):
         already running, starts one in the background rather than
         blocking here; :meth:`main` calls back into this method itself
         once the rebuild completes.
+
+        The left column is built as one top-level "All <code>" row per
+        matched code, each with its matching surnames as children (see
+        :attr:`surname_store`'s own docstring in :meth:`_build_matches_box`).
+        The first code's "All <code>" row is selected by default, which
+        populates the right column with everyone under that code,
+        sorted the same way selecting an individual surname would be -
+        see :meth:`cb_surname_selected`.
 
         Also updates :attr:`matches_count_label` with the *total*
         number of people across every matching surname combined - not
@@ -1065,37 +1324,132 @@ class FuzzyMatchingGramplet(Gramplet):
 
         :param _entry: The name entry widget that emitted the signal.
         """
-        if self._indexed_algorithm != self._current_algorithm():
+        if (
+            not self._index.ready
+            or self._index.algorithm_id != self._current_algorithm()
+        ):
             self.code_store.clear()
             self._clear_matches()
             if not self._idle_id:
                 self.update()
             return
 
-        name = self.name_entry.get_text()
+        surname, given_name = self._parse_query(self.name_entry.get_text())
         encode = ALGORITHMS[self._current_algorithm()]
-        codes = encode(name)
+        codes = encode(surname)
         self.code_store.clear()
         for code in sorted(codes):
             self.code_store.append([code])
 
-        matches: set[str] = set()
-        for code in codes:
-            matches.update(self._surname_index.get(code, []))
-
-        total_people = sum(
-            len(self._surname_to_handles.get(surname, [])) for surname in matches
-        )
-
         self._clear_matches()
+        total_handles: Set[str] = set()
+        default_path = None
         with self._blocked_selection_handlers(
             self.surname_view, self._surname_selection_handler_id
         ):
-            for surname in sorted(matches, key=glocale.sort_key):
-                count = len(self._surname_to_handles.get(surname, []))
-                display = _("{surname} ({count})").format(surname=surname, count=count)
-                self.surname_store.append([display, surname])
-        self.matches_count_label.set_text(_("({count})").format(count=total_people))
+            for code in sorted(codes):
+                surnames_for_code = self._index.find_surnames_for_code(code)
+                code_handles: Set[str] = set()
+                for matched_surname in surnames_for_code:
+                    code_handles.update(self._index.find_people(matched_surname))
+                total_handles.update(code_handles)
+
+                all_display = _("All {code} ({count})").format(
+                    code=code, count=len(code_handles)
+                )
+                parent_iter = self.surname_store.append(None, [all_display, "", code])
+                if default_path is None:
+                    default_path = self.surname_store.get_path(parent_iter)
+
+                for matched_surname in sorted(surnames_for_code, key=glocale.sort_key):
+                    count = len(self._index.find_people(matched_surname))
+                    display = _("{surname} ({count})").format(
+                        surname=matched_surname, count=count
+                    )
+                    self.surname_store.append(
+                        parent_iter, [display, matched_surname, code]
+                    )
+        self.surname_view.expand_all()
+        self.matches_count_label.set_text(_("({count})").format(count=len(total_handles)))
+
+        if default_path is not None:
+            # Selecting this row triggers cb_surname_selected (the
+            # handler is unblocked again by now), synchronously
+            # populating person_store with the default "All <code>"
+            # view described above.
+            self.surname_view.get_selection().select_path(default_path)
+
+        if given_name:
+            self._select_nearest_person_by_given_name(given_name)
+
+    @staticmethod
+    def _parse_query(text: str):
+        """
+        Split the Surname field's text into ``(surname, given_name)``.
+
+        A comma is the only signal treated as "this is a full name,
+        not a bare surname" - ``"Surname, Given Name"``, the format
+        Gramps itself uses to display a name - so a multi-word surname
+        typed alone (e.g. "Van Der Berg", with no comma) keeps working
+        exactly as it always has: as one surname to phonetically match,
+        with no given name involved.
+
+        :param text: The Surname field's current text.
+        :returns: ``(surname, given_name)``, both stripped of
+            surrounding whitespace; ``given_name`` is ``""`` unless a
+            comma was present.
+        """
+        if "," in text:
+            surname, _sep, given_name = text.partition(",")
+            return surname.strip(), given_name.strip()
+        return text.strip(), ""
+
+    def _select_nearest_person_by_given_name(self, given_name: str) -> None:
+        """
+        Select and center whichever row currently in the right Matches
+        column has the given name sorting closest to ``given_name``,
+        via the same locale-aware sort key :func:`fuzzy_match_display.
+        person_sort_key` already sorts that column by, and the same
+        ``bisect_left`` "closest at or after this point" approach
+        :meth:`FuzzyMatchLookupWindow._scroll_to_closest_given_name`
+        already uses for its own, separate Given Name field - not a
+        real nearest-neighbor pick (that would sometimes prefer the
+        row just before this point instead), but close enough to be
+        useful without a second string-distance metric on top of the
+        sort key the column already uses.
+
+        Called from :meth:`cb_name_changed` when the Surname field
+        held a full "Surname, Given Name" query - selecting a row here
+        also makes that person the active person, the same as clicking
+        it would (see :meth:`cb_person_selected`), which is the point:
+        typing a full name should jump straight to that person if
+        they're already in the tree.
+
+        A no-op if the right column is currently empty.
+
+        :param given_name: The given name to select/center closest to.
+        """
+        db = self.dbstate.db
+        candidates = []
+        for row in self.person_store:
+            try:
+                person = db.get_person_from_handle(row[1])
+            except HandleError:
+                continue
+            candidates.append(
+                (glocale.sort_key(person.get_primary_name().get_first_name()), row.path)
+            )
+        if not candidates:
+            return
+
+        candidates.sort(key=lambda item: item[0])
+        target = glocale.sort_key(given_name)
+        keys = [key for key, _path in candidates]
+        index = min(bisect_left(keys, target), len(candidates) - 1)
+        path = candidates[index][1]
+
+        self.person_view.get_selection().select_path(path)
+        self.person_view.scroll_to_cell(path, None, True, 0.5, 0.0)
 
     def cb_name_drag_data_received(
         self,
@@ -1150,7 +1504,7 @@ class FuzzyMatchingGramplet(Gramplet):
         except HandleError:
             return
         if person is not None:
-            self.name_entry.set_text(person.get_primary_name().get_surname())
+            self.name_entry.set_text(self._primary_surname_text(person))
 
     def cb_surname_activated(
         self,
@@ -1178,6 +1532,13 @@ class FuzzyMatchingGramplet(Gramplet):
         current algorithm has no rule on file, this tells the user
         that action is unavailable for it rather than silently doing
         nothing or building a filter with the wrong rule.
+
+        A rule with a "Match in:" option (the Phonetic Filter Rules
+        addon's) is created with every name field ticked, in both the
+        preferred and alternate names, so the filter starts as wide as
+        it can be and the user narrows it in the dialog; Gramps'
+        built-in ``HasSoundexName`` fallback has no such option and
+        already searches everything.
 
         The rule is built with the *activated row's* surname as its
         ``<name>`` parameter - not necessarily the Surname field's
@@ -1229,7 +1590,14 @@ class FuzzyMatchingGramplet(Gramplet):
         filter_class = GenericFilterFactory("Person")
         new_filter = filter_class()
         new_filter.set_name(filter_name)
-        new_filter.add_rule(rule_class([surname]))
+        rule_args = [surname]
+        if len(getattr(rule_class, "labels", ())) > 1:
+            # The rule has a "Match in:" option (Gramps' built-in
+            # HasSoundexName, fallback for Soundex, does not): start
+            # with every name field ticked; the user can narrow it in
+            # the dialog before saving.
+            rule_args.append(_MATCH_IN_ALL)
+        new_filter.add_rule(rule_class(rule_args))
         struct_time = time.localtime()
         new_filter.set_comment(
             _(
@@ -1268,13 +1636,13 @@ class FuzzyMatchingGramplet(Gramplet):
         the duration (see the note on the handler ids in
         :meth:`_build_matches_box`).
 
-        Deliberately does not also reset :attr:`_surname_index`/
-        :attr:`_surname_to_handles` - :meth:`cb_name_changed` calls
-        this to clear the *displayed* results while re-populating them
-        (count included) from those same, still-valid dicts moments
-        later. See :meth:`_reset_phonetic_index` for the version that
-        also resets the dicts, used when they actually need discarding
-        (a database switch), not just a display refresh.
+        Deliberately does not also reset :attr:`_index` -
+        :meth:`cb_name_changed` calls this to clear the *displayed*
+        results while re-populating them (count included) from that
+        same, still-valid index moments later. See
+        :meth:`_reset_phonetic_index` for the version that also
+        discards :attr:`_index`, used when it actually needs
+        discarding (a database switch), not just a display refresh.
         """
         with self._blocked_selection_handlers(
             self.surname_view, self._surname_selection_handler_id
@@ -1287,13 +1655,15 @@ class FuzzyMatchingGramplet(Gramplet):
 
     def _reset_phonetic_index(self) -> None:
         """
-        Clear both Matches columns *and* the phonetic index dicts that
-        back them (:attr:`_surname_index`, :attr:`_surname_to_handles`).
+        Clear both Matches columns *and* discard :attr:`_index`,
+        replacing it with a fresh, empty
+        :class:`~fuzzy_match_index.FuzzyMatchIndex` for the
+        now-current database.
 
-        This is what actually fixes a real, reported crash: those two
-        dicts are only ever rebuilt by :meth:`main`'s background
+        This is what actually fixes a real, reported crash: the old
+        index is only ever rebuilt by :meth:`main`'s background
         generator, which does not run synchronously, so switching to a
-        different Family Tree left them holding handles from the
+        different Family Tree left it holding handles from the
         *previous* database until the next background index finished.
         If anything selected a surname row in that window - including
         this gramplet's own :meth:`_focus_active_person`, called from
@@ -1305,15 +1675,14 @@ class FuzzyMatchingGramplet(Gramplet):
         stale left for that to happen to.
 
         Unlike :meth:`_clear_matches` alone, this is only safe to call
-        when the dicts themselves are actually meant to be discarded
-        (a database switch) - not from :meth:`cb_name_changed`'s normal
+        when the index itself is actually meant to be discarded (a
+        database switch) - not from :meth:`cb_name_changed`'s normal
         "re-query the same, still-valid index for a different typed
-        name" path, which would otherwise wipe the very dicts it is
+        name" path, which would otherwise wipe the very index it is
         about to read from moments later.
         """
         self._clear_matches()
-        self._surname_index = {}
-        self._surname_to_handles = {}
+        self._index = FuzzyMatchIndex(self.dbstate.db)
 
     @staticmethod
     @contextlib.contextmanager
@@ -1339,24 +1708,44 @@ class FuzzyMatchingGramplet(Gramplet):
 
     def cb_surname_selected(self, selection: Gtk.TreeSelection) -> None:
         """
-        Populate the right Matches column with every person who has
-        the surname selected in the left column, alphabetically
-        sorted by their formatted display text (locale-aware, via
-        :func:`gramps.gen.const.GRAMPS_LOCALE.sort_key`, the same
-        sort key used for the left column and the nearby-surname
-        dropdown).
+        Populate the right Matches column with every person covered by
+        the row selected in the left column, sorted by given name
+        (locale-aware), then birth date, then death date, then Gramps
+        ID - not by surname text, so people interleave by name/age
+        rather than being grouped apart whenever their surname text
+        happens to differ (most visibly: a compound/double surname vs.
+        a plain one, which would otherwise read as men and women being
+        segregated by which surname line was compound). See
+        :func:`fuzzy_match_display.person_sort_key`.
 
-        Uses the pre-computed surname -> person handles lookup built
-        by :meth:`main`, so this is an O(1) dictionary lookup plus one
-        pass over that surname's own people, not a fresh database scan.
-        The right column's own selection handler is blocked for the
-        duration - see :meth:`_clear_matches` for why clearing/filling
-        a store needs this even when no explicit ``select_path`` call
-        is involved.
+        The selected row is either an individual surname (its own raw
+        surname in column 1) or a top-level "All <code>" row (column 1
+        is ``""``) - in the latter case, every surname :attr:`_index`
+        currently files under that row's code (column 2) is shown
+        together, not just one. Either way this uses the pre-computed
+        surname -> person handles lookup built by :meth:`main`, so this
+        is a dictionary lookup plus one pass over the relevant people,
+        not a fresh database scan. The right column's own selection
+        handler is blocked while it's rebuilt - see :meth:`_clear_matches`
+        for why clearing/filling a store needs this even when no
+        explicit ``select_path`` call is involved.
+
+        Whoever was selected in the right column before this rebuild
+        is restored afterward - exactly, if they're still part of the
+        newly-selected group (e.g. switching from a surname to its
+        "All <code>" parent, or back), otherwise to the closest row by
+        sort position (e.g. switching to a surname that person doesn't
+        carry) - see :meth:`_restore_person_selection`. Without this, a
+        left-column selection change would otherwise leave the right
+        column looking like nobody's selected at all, even though the
+        person you were just looking at is (usually) still right there
+        in the new list.
 
         :param selection: The left column's :class:`Gtk.TreeSelection`
             that emitted the signal.
         """
+        previous_handle, previous_sort_key = self._get_selected_person_info()
+
         model, tree_iter = selection.get_selected()
         with self._blocked_selection_handlers(
             self.person_view, self._person_selection_handler_id
@@ -1366,56 +1755,123 @@ class FuzzyMatchingGramplet(Gramplet):
                 return
 
             surname = model[tree_iter][1]
+            code = model[tree_iter][2]
+            surnames_to_show = (
+                [surname] if surname else self._index.find_surnames_for_code(code)
+            )
+
             db = self.dbstate.db
             rows = []
-            for handle in self._surname_to_handles.get(surname, []):
-                try:
-                    person = db.get_person_from_handle(handle)
-                except HandleError:
-                    # The index can be briefly stale right after a
-                    # database switch, before main() has rebuilt it -
-                    # see db_changed(), which now clears this index
-                    # synchronously for exactly this reason. Kept as a
-                    # defensive fallback (skip this one handle rather
-                    # than crash the whole gramplet) rather than relied
-                    # on as the primary fix, since get_person_from_handle
-                    # raises here rather than returning None, unlike
-                    # what an earlier version of this method assumed.
-                    continue
-                rows.append((self._format_person(person), handle))
-            rows.sort(key=lambda row: glocale.sort_key(row[0]))
-            for display, handle in rows:
-                self.person_store.append([display, handle])
+            for one_surname in surnames_to_show:
+                for handle in self._index.find_people(one_surname):
+                    try:
+                        person = db.get_person_from_handle(handle)
+                    except HandleError:
+                        # The index can be briefly stale right after a
+                        # database switch, before main() has rebuilt it -
+                        # see db_changed(), which now clears this index
+                        # synchronously for exactly this reason. Kept as
+                        # a defensive fallback (skip this one handle
+                        # rather than crash the whole gramplet) rather
+                        # than relied on as the primary fix, since
+                        # get_person_from_handle raises here rather than
+                        # returning None, unlike what an earlier version
+                        # of this method assumed.
+                        continue
+                    rows.append(
+                        (person_sort_key(db, person), format_person(db, person), handle)
+                    )
+            rows.sort(key=lambda row: row[0])
 
-    def _format_person(self, person) -> str:
+            paths_by_handle = {}
+            sort_keys_with_paths = []
+            for sort_key, display, handle in rows:
+                row_iter = self.person_store.append([display, handle, _WEIGHT_NORMAL])
+                path = self.person_store.get_path(row_iter)
+                paths_by_handle[handle] = path
+                sort_keys_with_paths.append((sort_key, path))
+
+        self._restore_person_selection(
+            previous_handle, previous_sort_key, paths_by_handle, sort_keys_with_paths
+        )
+
+    def _get_selected_person_info(self):
         """
-        Format a person for display in the right Matches column, as
-        "Display Name (birth year-death year) [Gramps ID]".
+        Return ``(handle, sort_key)`` for whichever row is currently
+        selected in the right Matches column, or ``(None, None)`` if
+        nothing is. Called by :meth:`cb_surname_selected` before it
+        clears :attr:`person_store` for a newly-selected left-column
+        row, so that selection can be restored afterward - see
+        :meth:`_restore_person_selection`.
 
-        Birth/death years use
-        :func:`gramps.gen.utils.db.get_birth_or_fallback`/
-        :func:`~gramps.gen.utils.db.get_death_or_fallback`, so a
-        baptism/christening or burial/cremation event is used when no
-        exact birth/death event is recorded, matching how Gramps
-        itself handles missing vital events elsewhere. The life-span
-        parenthetical is omitted entirely if neither year is known.
-
-        :param person: The :class:`gramps.gen.lib.Person` to format.
-        :returns: The formatted display string.
+        :returns: ``(handle, sort_key)``; ``sort_key`` is None if the
+            handle no longer resolves to a person (deleted between the
+            click and this call).
         """
-        db = self.dbstate.db
-        birth = get_birth_or_fallback(db, person)
-        death = get_death_or_fallback(db, person)
-        birth_year = birth.get_date_object().get_year() if birth else 0
-        death_year = death.get_date_object().get_year() if death else 0
+        model, tree_iter = self.person_view.get_selection().get_selected()
+        if tree_iter is None:
+            return None, None
+        handle = model[tree_iter][1]
+        try:
+            person = self.dbstate.db.get_person_from_handle(handle)
+        except HandleError:
+            return handle, None
+        return handle, person_sort_key(self.dbstate.db, person)
 
-        name = name_displayer.display(person)
-        gramps_id = f"[{person.get_gramps_id()}]"
-        if not birth_year and not death_year:
-            return f"{name} {gramps_id}"
+    def _restore_person_selection(
+        self, previous_handle, previous_sort_key, paths_by_handle, sort_keys_with_paths
+    ) -> None:
+        """
+        Reselect whichever person was selected in the right Matches
+        column before the left column's selection changed (see
+        :meth:`_get_selected_person_info`, called just before the
+        rebuild), so switching between an "All <code>" row and one of
+        its surnames - or between two different surnames - doesn't
+        lose track of who was selected.
 
-        life_span = f"{birth_year or ''}-{death_year or ''}"
-        return f"{name} ({life_span}) {gramps_id}"
+        If ``previous_handle`` isn't part of the freshly-rebuilt list
+        (the newly-selected surname doesn't include that person), this
+        does *not* select a different person instead - doing so would
+        make that different person the active person too (see
+        :meth:`cb_person_selected`), an unrelated, surprising side
+        effect of merely browsing the left column. Instead, whichever
+        row sorts closest to where they would have been - via the same
+        ``bisect_left`` "closest at or after this point" approach
+        :meth:`_select_nearest_person_by_given_name` uses - is bolded
+        (:data:`_WEIGHT_BOLD`) and centered, without selecting it. That
+        boldface is cleared again the moment the user actually selects
+        a row - see :meth:`cb_person_selected`.
+
+        A no-op if nothing was selected beforehand, or the new list is
+        empty.
+
+        :param previous_handle: The handle that was selected before,
+            or None.
+        :param previous_sort_key: That person's own
+            :func:`fuzzy_match_display.person_sort_key`, or None (also
+            None if they no longer resolve to a person at all).
+        :param paths_by_handle: ``{handle: path}`` for every row just
+            inserted into :attr:`person_store`.
+        :param sort_keys_with_paths: ``[(sort_key, path), ...]`` for
+            every row just inserted, already in the same sorted order
+            as the store itself.
+        """
+        if previous_handle is None:
+            return
+
+        path = paths_by_handle.get(previous_handle)
+        if path is not None:
+            self.person_view.get_selection().select_path(path)
+            self.person_view.scroll_to_cell(path, None, True, 0.5, 0.0)
+            return
+
+        if previous_sort_key is None or not sort_keys_with_paths:
+            return
+        keys = [key for key, _path in sort_keys_with_paths]
+        index = min(bisect_left(keys, previous_sort_key), len(sort_keys_with_paths) - 1)
+        nearest_path = sort_keys_with_paths[index][1]
+        self.person_store[nearest_path][2] = _WEIGHT_BOLD
+        self.person_view.scroll_to_cell(nearest_path, None, True, 0.5, 0.0)
 
     def cb_person_selected(self, selection: Gtk.TreeSelection) -> None:
         """
@@ -1442,9 +1898,20 @@ class FuzzyMatchingGramplet(Gramplet):
            something reselected an already-active person from inside
            an in-progress ``active-changed`` notification.
 
+        Also clears the "nearest match, not exactly selected" boldface
+        :meth:`_restore_person_selection` may have left on a row (see
+        :data:`_WEIGHT_BOLD`) - once the user actually selects a
+        person here (this row or any other), that hint has served its
+        purpose and would be misleading left behind on a row that no
+        longer means anything special.
+
         :param selection: The right column's :class:`Gtk.TreeSelection`
             that emitted the signal.
         """
+        for row in self.person_store:
+            if row[2] != _WEIGHT_NORMAL:
+                row[2] = _WEIGHT_NORMAL
+
         model, tree_iter = selection.get_selected()
         if tree_iter is None:
             return
@@ -1540,12 +2007,21 @@ class FuzzyMatchingGramplet(Gramplet):
         remember to check.
 
         A no-op (returns without changing either selection) if
-        ``active_person`` is None, if their surname is not in the
-        left column (for example: it does not phonetically match
-        whatever is currently typed in the Surname field), or if the
-        background rebuild in :meth:`main` has not populated the
-        Matches columns yet - in the latter two cases, there is
-        nothing yet to select.
+        ``active_person`` is None, if none of their surname pieces
+        (see :func:`fuzzy_match_index.person_surnames`) is in the left
+        column (for example: none phonetically match whatever is
+        currently typed in the Surname field), or if the background
+        rebuild in :meth:`main` has not populated the Matches columns
+        yet - in the latter two cases, there is nothing yet to select.
+
+        Checking every surname piece, not just the Surname field's own
+        primary-surname text (see :meth:`_primary_surname_text`),
+        matters for someone with a compound/double surname: the
+        Surname field only ever holds one piece at a time, but the
+        left column can be showing matches for a *different* piece the
+        same person also carries - typing "McCullough" should still
+        find and select someone whose primary surname piece is
+        "Thompson", if "McCullough" is their other piece.
 
         :param active_person: The current active
             :class:`gramps.gen.lib.Person`, or None.
@@ -1553,15 +2029,20 @@ class FuzzyMatchingGramplet(Gramplet):
         if active_person is None:
             return
 
-        surname = active_person.get_primary_name().get_surname()
+        pieces = person_surnames(active_person)
         surname_path = None
-        for row in self.surname_store:
-            if row[1] == surname:
+        for row in self._iter_tree_rows(self.surname_store):
+            if row[1] in pieces:
                 surname_path = row.path
                 break
         if surname_path is None:
             return
 
+        # surname_store's rows are always left fully expanded (see
+        # cb_name_changed), so a child surname row found above is
+        # already visible/selectable without an explicit expand_row()
+        # call here.
+        #
         # Selecting this row triggers cb_surname_selected, which
         # repopulates person_store synchronously (GTK signal emission
         # is synchronous), so person_store already reflects this

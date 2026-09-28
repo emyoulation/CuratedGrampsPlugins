@@ -59,16 +59,14 @@ satisfying the small module contract below - see
 encoding system's module must satisfy, and ``FuzzyDev.md`` for the
 full walkthrough.
 
-Soundex is the one exception, hardcoded below rather than discovered:
-it already has a built-in Gramps rule (``HasSoundexName``), registered
-by Gramps under an ``id`` this addon does not control and could not
-prefix, and re-registering a duplicate "HasSoundexName"-equivalent
-rule purely to give it a matching id would show up as a second,
-redundant entry in the standard Filter Editor's "Add Rule" dialog.
-Soundex is also always available regardless of what else is
-installed, which a hardcoded entry reflects more honestly than
-routing it through the same "might not be there" discovery path as
-everything else.
+Soundex is discovered like the others when the Phonetic Filter Rules
+addon's ``soundexrule.py`` is installed. That rule adds the "Match in:"
+name-field option; Gramps' built-in ``HasSoundexName`` always searches
+every name field and cannot be narrowed to surnames. When that rule is
+not installed, Soundex falls back to a hardcoded entry that encodes
+with ``gramps.gen.soundex`` and builds filters with the built-in rule,
+so Soundex is always available whatever else is installed. See
+:func:`_load_encoders`.
 
 Discovering a rule module is not quite enough on its own, though - see
 :func:`_make_rule_findable_via_import` for the second half of the
@@ -362,12 +360,20 @@ def _load_encoders() -> Tuple[
     Dict[str, Optional[Type]],
 ]:
     """
-    Assemble the full encoder registry: the hardcoded Soundex entry
-    plus every discovered addon rule module.
+    Assemble the full encoder registry: every discovered addon rule
+    module, with Soundex first - the discovered Soundex rule if one is
+    installed, otherwise the hardcoded fallback to Gramps' built-in
+    ``HasSoundexName``.
 
     :returns: See :func:`_register_encoders`.
     """
-    entries = [_hardcoded_soundex()] + _resolve_discovered_entries()
+    discovered = _resolve_discovered_entries()
+    # A discovered Soundex rule (soundexrule.py, which adds the "Match
+    # in:" name-field option) replaces the hardcoded fallback to Gramps'
+    # built-in HasSoundexName. Soundex stays first in the list either way.
+    soundex_entries = [entry for entry in discovered if entry[0] == "soundex"]
+    others = [entry for entry in discovered if entry[0] != "soundex"]
+    entries = (soundex_entries or [_hardcoded_soundex()]) + others
     return _register_encoders(entries)
 
 
