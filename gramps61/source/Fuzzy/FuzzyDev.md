@@ -1,16 +1,25 @@
 # Developer Notes - Fuzzy Matching gramplet
-[ReadMe](README.md) ● [Change Log](CHANGELOG.md) ● [Phonetic Filter Rules](RulesREADME.md) ● [adding Phonetic systems (for developers)](FuzzyDev.md)
+[ReadMe](README.md) ● [Change Log](CHANGELOG.md) ● [Phonetic Filter Rules](RulesREADME.md) ● [adding Phonetic systems (for developers)](FuzzyDev.md) ● [Fuzzy Match API](FuzzyMatchAPI.md)
 
 This document is for anyone changing the code, not using the gramplet — see [README.md](README.md) for that. It covers how to add a new phonetic encoding system, the shape of the codebase and why a few parts of it look more careful than they might seem to need to be, and how to actually run the test suite.
 
 ## Adding an encoding system
 
-Every encoding system other than Soundex is a self-contained `<name>rule.py` + `<name>rule.gpr.py` pair, registered as an ordinary Gramps `RULE`-type plugin - not a custom scanned folder. This isn't a stepping-stone toward "real" discovery; it's the actual mechanism, and it exists because a "Define filter" action for a new algorithm needs a real, registered Person filter rule anyway (Gramps has no way to auto-discover *those* by scanning a folder - every one needs an explicit `register(RULE, ...)` regardless), so `phonetic_codes.py` just asks Gramps' own plugin registry which `RULE` plugins came from this addon's own folder, rather than maintaining a second, parallel discovery system alongside the one Gramps already provides. See `nysiisrule.py`/`nysiisrule.gpr.py` as the template - copy that pair, rename it, and rewrite the middle. The full contract:
+Every encoding system is a self-contained `<name>rule.py` + `<name>rule.gpr.py` pair (Soundex also has a built-in fallback - see [Soundex](#soundex) below), registered as an ordinary Gramps `RULE`-type plugin - not a custom scanned folder. This isn't a stepping-stone toward "real" discovery; it's the actual mechanism, and it exists because a "Define filter" action for a new algorithm needs a real, registered Person filter rule anyway (Gramps has no way to auto-discover *those* by scanning a folder - every one needs an explicit `register(RULE, ...)` regardless), so `phonetic_codes.py` just asks Gramps' own plugin registry which `RULE` plugins came from this addon's own folder, rather than maintaining a second, parallel discovery system alongside the one Gramps already provides. See `nysiisrule.py`/`nysiisrule.gpr.py` as the template - copy that pair, rename it, and rewrite the middle. The full contract:
 
 ```python
 # myalgorule.py
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gen.filters.rules import Rule
+
+# Shared "Match in:" option - must be in the same folder as this file.
+from phonetic_name_parts import (
+    OPTION_LABEL,
+    name_parts_widget,
+    pad_args,
+    parse_parts,
+    person_matches,
+)
 
 try:
     _trans = glocale.get_addon_translator(__file__)
@@ -27,18 +36,24 @@ def encode(name: str) -> set[str]:
     return {my_algorithm(name)}
 
 class HasMyAlgorithmName(Rule):
-    labels = [_("Surname:")]
-    name = _("My Algorithm match of People with the <surname>")
-    description = _("Matches people whose primary surname has a specified My Algorithm code")
+    labels = [_("Name:"), (OPTION_LABEL, name_parts_widget)]
+    name = _("MyAlgo match of People with the <names>")  # short name or acronym
+    description = _(
+        "Matches people whose selected name fields (primary surname by"
+        " default) have the same My Algorithm code as the given name"
+    )  # full algorithm name here
     category = _("General filters")
+
+    def set_list(self, arg):
+        # Fill in the "Match in:" option for callers passing only a name.
+        super().set_list(pad_args(arg))
 
     def prepare(self, _db, _user):
         self._target_codes = encode(self.list[0]) if self.list and self.list[0] else set()
+        self._parts = parse_parts(self.list[1] if len(self.list) > 1 else "")
 
     def apply_to_one(self, _db, obj) -> bool:
-        if not self._target_codes:
-            return False
-        return bool(encode(obj.get_primary_name().get_surname()) & self._target_codes)
+        return person_matches(obj, self._parts, self._target_codes, encode)
 
     def apply(self, db, obj) -> bool:
         # Required for Gramps 5.2, which calls apply(), not
@@ -60,8 +75,11 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         # phonetic_codes._ENCODER_ID_PREFIX and "How an encoding
         # system's rule gets discovered" below.
         id="FuzzyMatchingEncoder:my_algorithm",
-        name=_("My Algorithm match of People with the <surname>"),
-        description=_("Matches people whose primary surname has a specified My Algorithm code"),
+        name=_("MyAlgo match of People with the <names>"),
+        description=_(
+            "Matches people whose selected name fields (primary surname by"
+            " default) have the same My Algorithm code as the given name"
+        ),
         version="0.1.0",
         gramps_target_version=major_version,
         status=STABLE,
@@ -72,6 +90,16 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
 ```
 
 The encode function and the Rule class live in the same file deliberately: they always travel together (the rule delegates its actual matching to the same `encode()` the gramplet itself calls for its on-screen matches), so there is nothing to keep in sync across files and no cross-module import ordering to reason about.
+
+**Naming.** Rule names follow one pattern, kept short so the Add Rule list stays compact: `<system> match of People with the <names>`, using an acronym where the full name is long (`MRA match of People with the <names>`). The full name of the system goes in the description instead. `<names>` signals that the rule can compare more than the surname; the rule's class name (e.g. `HasMatchRatingName`) is what saved filters store, so it must never change once shipped, while the display name can.
+
+**The "Match in:" option.** Every rule takes a second argument choosing which name fields to compare, shared through `phonetic_name_parts.py`:
+
+* The Filter Editor builds its check boxes through the `(label, factory)` form of a `labels` entry - the factory is called with the database and returns a widget with `get_text()`/`set_text()`. Gramps' Filter Editor supports this on every version from 5.2 through 6.1; GTK is imported only inside the factory, so the rules still run without a GUI.
+* The stored value is a comma-separated list of locale-independent keys: `title`, `given`, `call`, `nick`, `given_alt`, `prefix`, `surname`, `suffix`, `clan`, `surname_alt`. The `*_alt` keys extend the given-name or surname parts of that row to alternate names.
+* A missing or empty value means `surname` - the primary name's surname pieces only. That is exactly what the gramplet's index searches, so the one-argument rule built by "Define filter" returns the same people as the Matches column, and filters saved before the option existed keep their meaning. Gramps prints a one-time "Too few arguments" console warning when loading such an older filter; saving it again stores both arguments.
+* `person_matches()` encodes each surname piece of a compound surname separately (never `Name.get_surname()`'s connector-joined string), and each word of a multi-word given name separately.
+* `phonetic_name_parts.py` is imported by bare name at the top of each rule module. That works because Gramps puts the addon folder on `sys.path` while it imports the rule module itself; a rule moved to a separate addon needs its own copy of the file.
 
 `encode` must:
 
@@ -85,7 +113,11 @@ Add a matching test file directly under `test/` (not a subdirectory - `test/nysi
 
 ### Soundex
 
-Soundex (4-character "Russell", aka "NARA") is the phonetic encoding system bundled with Gramps (`gramps.gen.soundex.soundex`), and it's the one exception to the pattern above: it's hardcoded directly in `phonetic_codes._hardcoded_soundex`, not discovered. It already has a built-in Gramps rule (`HasSoundexName`), registered by Gramps under an id this addon does not control and could not give a matching prefix - so it would never be found by the id-prefix scan even if we wanted it to be, and registering a duplicate "HasSoundexName"-equivalent rule purely to give it a matching id would show up as a second, redundant entry in the standard Filter Editor's "Add Rule" dialog. It's also always available regardless of what else is installed, which a hardcoded entry reflects more honestly than routing it through the same "might not be there" discovery path as everything else.
+Soundex (4-character "Russell", aka "NARA") is the phonetic encoding system bundled with Gramps (`gramps.gen.soundex.soundex`). It follows the same pattern as the others through `soundexrule.py`/`soundexrule.gpr.py` (id `FuzzyMatchingEncoder:soundex`, class `HasSoundexNames`), with a fallback:
+
+* **Why a second Soundex rule.** Gramps' built-in `HasSoundexName` ("Soundex match of People with the <name>") always compares every name field - given, surname, call and nick names in the primary and all alternate names - and cannot be narrowed. A search for the surname "Thomas" also returns everyone whose given name is Thomas, and a filter made from the gramplet's Soundex results could return more people than the gramplet showed. `HasSoundexNames` adds the same "Match in:" option as the other rules; ticking every box reproduces the built-in rule's reach. The cost is a second Soundex entry in the Add Rule dialog; the two are told apart by `<name>` vs `<names>` and by their descriptions.
+* **Class name.** It is deliberately not `HasSoundexName`: discovered rule classes are made findable as `gramps.gen.filters.rules.person.<Class>` (see below), and reusing the built-in class name would replace Gramps' own rule there.
+* **Fallback.** When `soundexrule.py` is not installed, `phonetic_codes._load_encoders` uses the hardcoded `_hardcoded_soundex` entry instead - encoding with `gramps.gen.soundex` and building filters with the built-in `HasSoundexName` - so Soundex is always available. Both entries use the algorithm id `soundex`, so a saved Encoding system choice survives the rule being installed or removed. Soundex stays first in the Encoding system list either way.
 
 ### NYSIIS, Match Rating Approach, and Metaphone
 
@@ -149,6 +181,8 @@ This set is bounded by family structure, not tree size, so it stays cheap on a t
 Double-clicking a row in the **left** (Surname) Matches column (`cb_surname_activated`) builds a `gramps.gen.filters.GenericFilter` and opens it in `gramps.gui.editors.EditFilter`, mirroring the Clipboard module's own "Create a filter from the selected..." feature (`gramps.gui.makefilter.make_filter`) rather than reinventing that flow. `edit_filter_save` (also reused from `makefilter.py`) is passed as the dialog's own save callback, so the filter is written only if the user clicks OK in the dialog - never automatically. It uses the *double-clicked row's* surname, not necessarily whatever is currently typed in the Surname field, since the left column can hold several phonetically-matching surnames at once.
 
 The rule the filter is built from depends on whichever Encoding system is currently selected, looked up via `phonetic_codes.ALGORITHM_FILTER_RULES[algorithm_id]` - **not** hardcoded to `HasSoundexName`. A filter for a NYSIIS or Match Rating Approach result needs a rule that actually tests NYSIIS/Match Rating Approach codes; reusing `HasSoundexName` for those would silently build a filter that doesn't match what the gramplet's own Matches column just showed. If the currently-selected algorithm has no resolvable rule class (its `.gpr.py`'s `ruleclass` doesn't actually name a class present in the module - see `phonetic_codes._resolve_discovered_entries`), `cb_surname_activated` shows an `OkDialog` telling the user so, rather than silently doing nothing or falling back to the wrong rule.
+
+The rule is built with only the surname (`rule_class([surname])`), so its "Match in:" option takes the default - primary surname pieces - which is what the gramplet's own index searches: the filter returns the same people as the Matches column. The user can widen it in the rule editor before saving. The one exception is the Soundex fallback: without `soundexrule.py` installed, the filter uses Gramps' built-in `HasSoundexName`, which also matches given, call, nick and alternate names, so its count can be higher than the gramplet's.
 
 **Known upstream issue, not caused by this code:** clicking "Edit" on the pre-filled rule (or on a rule in *any* filter, built by this gramplet or by hand) can log `Gtk-CRITICAL **: gtk_tree_model_filter_get_path: assertion 'GTK_TREE_MODEL_FILTER (model)->priv->stamp == iter->stamp' failed`. This traces to `EditRule.select_iter()` in `gramps/gui/editors/filtereditor.py`, which passes `Gtk.TreeStore` iterators to a `Gtk.TreeSelection` whose model is actually a `Gtk.TreeModelFilter` wrapping that store - a child/filter iterator mismatch, not anything specific to any one rule or to how this gramplet builds filters. Confirmed reproducible with a manually-created filter too. Worth a Mantis BT report if one doesn't already exist; not fixable from an addon.
 

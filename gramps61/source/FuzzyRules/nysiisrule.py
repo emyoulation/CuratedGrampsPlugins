@@ -22,7 +22,7 @@
 NYSIIS (New York State Identification and Intelligence System) support
 for the Fuzzy Matching Gramplet - both as a Person filter rule usable
 standalone in Gramps' own Filter Editor ("Add Rule" > General filters
-> "NYSIIS match of People with the <surname>"), and as the encoding system
+> "NYSIIS match of People with the <names>"), and as the encoding system
 the gramplet itself offers under that same name.
 
 Both live in this one file because they always travel together: this
@@ -55,8 +55,9 @@ Using this rule directly in a Custom Filter
 This rule is not exclusive to the gramplet: open Edit > Person
 Filter Editor (or the filter side-bar's "Edit" button on the Person
 view), create or edit a filter, "Add Rule...", and it appears under
-*General filters* as "NYSIIS match of People with the <surname>". Give it a
-surname and it matches every person whose primary surname has the
+*General filters* as "NYSIIS match of People with the <names>". Give it a
+name and it matches every person whose selected name fields (by
+default, the preferred name's surname pieces and call name) have the
 same NYSIIS code - the same test the gramplet's own "Define filter"
 double-click action builds for you when NYSIIS is the selected
 Encoding system, so building it by hand here is only useful if you
@@ -109,12 +110,15 @@ from __future__ import annotations
 # Python modules
 # ------------------------
 import logging
+from collections.abc import Callable
+from typing import Any
 
 # ------------------------
 # Gramps modules
 # ------------------------
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gen.filters.rules import Rule
+from gramps.gen.lib import Person
 
 try:
     _trans = glocale.get_addon_translator(__file__)
@@ -122,7 +126,76 @@ except ValueError:
     _trans = glocale.translation
 _ = _trans.gettext
 
+
 LOG = logging.getLogger(__name__)
+
+# ------------------------
+# Gramps specific
+# ------------------------
+# "Match in:" option, from phonetic_name_parts.py in this folder. The
+# import is guarded because Gramps does not survive a rule addon that
+# fails to import: if the file is missing, this rule still loads and
+# compares the preferred surname only, without the option.
+try:
+    # pylint: disable-next=wrong-import-position
+    from phonetic_name_parts import (
+        OPTION_LABEL,
+        name_parts_widget,
+        pad_args,
+        parse_parts,
+        person_matches,
+    )
+
+    _HAVE_NAME_PARTS = True
+except ImportError:
+    _HAVE_NAME_PARTS = False
+    LOG.warning(
+        "phonetic_name_parts.py not found next to %s; the Match in: option "
+        "is unavailable and only the preferred surname is compared",
+        __file__,
+    )
+
+    def pad_args(arg: list[str] | None) -> list[str]:
+        """
+        Fallback: return the rule arguments unchanged.
+
+        :param arg: The rule's argument list as given.
+        :returns: The same arguments, as a list.
+        """
+        return list(arg or [])
+
+    def parse_parts(text: str | None) -> frozenset[str]:
+        """
+        Fallback: no "Match in:" option, so no part keys.
+
+        :param text: Ignored.
+        :returns: An empty set.
+        """
+        del text
+        return frozenset()
+
+    def person_matches(
+        person: Person,
+        keys: frozenset[str],
+        target_codes: set[str],
+        encoder: Callable[[str], set[str]],
+    ) -> bool:
+        """
+        Fallback: compare each surname piece of the preferred name.
+
+        :param person: A :class:`gramps.gen.lib.Person`.
+        :param keys: Ignored.
+        :param target_codes: Codes of the name the rule was given.
+        :param encoder: The module's ``encode`` function.
+        :returns: True on a match.
+        """
+        del keys
+        if not target_codes:
+            return False
+        surnames = person.get_primary_name().get_surname_list()
+        words = [piece.get_surname() for piece in surnames]
+        return any(encoder(w) & target_codes for w in words if w and w.strip())
+
 
 #: Registry key. See the contract in ``phonetic_codes.py`` for why
 #: this should be treated as stable once shipped.
@@ -334,70 +407,92 @@ def encode(name: str) -> set[str]:
 # -------------------------------------------------------------------------
 class HasNysiisName(Rule):
     """
-    Rule that checks for a NYSIIS match of a person's primary surname.
+    Rule that checks for a NYSIIS match on a person's names.
 
-    Deliberately checks the primary name's surname only, unlike
-    Gramps' own ``HasSoundexName`` (which matches across first name,
-    surname, call name, and nickname in both primary and alternate
-    names) - this matches what the Fuzzy Matching Gramplet's own
-    "Surname" field and Matches columns actually search. A rule that
-    searches more fields would need to be kept in sync with a richer
-    contract than the one this file and ``phonetic_codes.py`` document.
+    Which name fields are compared is the rule's second option, "Match
+    in:" (see ``phonetic_name_parts.py``). By default the preferred
+    name's surname pieces (each piece separately) and its call name are
+    compared. Ticking more boxes widens it towards what Gramps' built-in
+    ``HasSoundexName`` always searches (given, call and nick names,
+    alternate names), but only where the user asks for it - so a search
+    for "Johnson" need not also return every John.
     """
 
-    labels = [_("Surname:")]
-    name = _("NYSIIS match of People with the <surname>")
-    description = _("Matches people whose primary surname has a specified NYSIIS code")
+    # Second option: which name parts to match (see
+    # phonetic_name_parts.py). Missing/empty = preferred surname + call name.
+    labels = (
+        [_("Name:"), (OPTION_LABEL, name_parts_widget)]
+        if _HAVE_NAME_PARTS
+        else [_("Name:")]
+    )
+    name = _("NYSIIS match of People with the <names>")
+    description = _(
+        "Matches people whose selected name fields (preferred surname and "
+        "call name by default) have the same NYSIIS (New York State "
+        "Identification and Intelligence System) code as the given name"
+    )
     category = _("General filters")
     allow_regex = False
 
-    def __init__(self, arg, use_regex=False, use_case=False):
+    def __init__(
+        self, arg: list[str], use_regex: bool = False, use_case: bool = False
+    ) -> None:
+        """
+        Create the rule.
+
+        :param arg: ``[name, match_in]``; ``match_in`` may be omitted.
+        :param use_regex: Unused; this rule does not support regexes.
+        :param use_case: Unused.
+        """
         super().__init__(arg, use_regex, use_case)
-        self._target_codes = None
+        self._target_codes: set[str] = set()
+        self._parts: frozenset[str] | None = None
 
-    def prepare(self, _db, _user):
+    def set_list(self, arg: list[str]) -> None:
         """
-        Prepare the rule. Things we only want to do once.
+        Store the rule values, filling in the "Match in:" option for
+        one-argument filters saved by earlier versions (and callers
+        that pass only the name), which then get the default: the
+        preferred name's surname and call name.
 
-        :param _db: The active database. Unused: the target codes only
-            depend on the typed name, not on any database content.
-        :param _user: The active :class:`gramps.gen.user.User`. Unused.
+        :param arg: The rule's argument list.
         """
+        super().set_list(pad_args(arg))
+
+    def prepare(self, db: Any, user: Any) -> None:
+        """
+        Encode the target name and read the "Match in:" option once.
+
+        :param db: The active database. Unused.
+        :param user: The active :class:`gramps.gen.user.User`. Unused.
+        """
+        del db, user
         self._target_codes = (
             encode(self.list[0]) if self.list and self.list[0] else set()
         )
+        self._parts = parse_parts(self.list[1] if len(self.list) > 1 else "")
 
-    def apply_to_one(self, _db, obj) -> bool:
+    def apply_to_one(self, db: Any, obj: Person) -> bool:
         """
         Apply the rule. Return True on a match.
 
-        :param _db: The active database. Unused.
+        :param db: The active database. Unused.
         :param obj: The :class:`gramps.gen.lib.Person` being tested.
-        :returns: True if ``obj``'s primary surname's NYSIIS code
-            intersects the target codes.
+        :returns: True if any selected name field of ``obj`` encodes to
+            one of the target codes.
         """
-        if not self._target_codes:
-            return False
-        surname = obj.get_primary_name().get_surname()
-        return bool(encode(surname) & self._target_codes)
+        if self._parts is None:  # applied without prepare()
+            self.prepare(db, None)
+        return person_matches(
+            obj, self._parts or frozenset(), self._target_codes, encode
+        )
 
-    def apply(self, db, obj) -> bool:
+    def apply(self, db: Any, obj: Person) -> bool:
         """
-        Alias for :meth:`apply_to_one`, needed for Gramps 5.2
-        compatibility: Gramps 5.2's own filter-execution code
-        (``gramps.gen.filters._genericfilter.GenericFilter``) calls
-        ``rule.apply(db, obj)`` throughout - confirmed directly in the
-        Gramps 5.2 source (``maintenance/gramps52`` branch), not
-        assumed - whereas Gramps 6.0+ renamed this to
-        ``apply_to_one`` and calls that instead (also confirmed
-        directly, against the real ``gramps.gen.filters.rules.person``
-        ``HasSoundexName`` on each branch). Defining both, rather than
-        picking one, is what lets this one rule class work correctly
-        across the whole ``(5.2.0, 6.2.0)`` Gramps range this addon's
-        own ``.gpr.py`` declares, without needing separate per-version
-        rule files.
+        Alias for :meth:`apply_to_one`, for Gramps 5.2, whose filters
+        call ``apply``; Gramps 6.0+ calls ``apply_to_one``.
 
-        :param db: The active database. Unused; forwarded as-is.
+        :param db: The active database. Unused.
         :param obj: The :class:`gramps.gen.lib.Person` being tested.
         :returns: See :meth:`apply_to_one`.
         """

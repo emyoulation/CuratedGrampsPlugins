@@ -37,17 +37,60 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
             "index so it stays fast on large Family Trees"
         ),
         status=STABLE,
-        version="0.4.0",
+        version="0.5.3",
         gramps_target_version=major_version,
         fname="FuzzyMatchingGramplet.py",
         height=300,
         expand=True,
         gramplet="FuzzyMatchingGramplet",
         gramplet_title=_("Fuzzy Matching"),
-        navtypes=["Person"],
+        navtypes=["Person", "Media", "Note"],
         authors=["Claude"],
         maintainers=["Brian McCullough"],
         help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Fuzzy/README.md",
         #help_url="https://gramps.discourse.group/t/9951/14",
         # https://gramps-project.org/wiki/index.php/Gramps_6.0_Wiki_Manual_-_Gramplets#SoundEx
+    )
+
+    # ------------------------------------------------------------------
+    #
+    # Fuzzy Match API (library, for other addons)
+    #
+    # ------------------------------------------------------------------
+    # A GENERAL plugin, not a hard-coded "every addon's folder is on
+    # sys.path" assumption: Gramps only adds an addon's own folder to
+    # sys.path *while it is itself importing that addon's registered
+    # module* (see BasePluginManager.import_plugin()'s own docstring),
+    # not permanently for the rest of the session. A bare
+    # `import FuzzyMatchLookupWindow` from a *different* addon has no
+    # such guarantee and does not work reliably. Another addon looks
+    # this up via BasePluginManager.get_instance().get_plugin("Fuzzy
+    # Match API"), then .import_plugin(pdata) to get the module itself
+    # - see FuzzyMatchAPI.md for the full calling convention, and
+    # PhotoTaggingGramplet.py's _get_fuzzy_match_lookup() for a worked
+    # example. load_on_reg is deliberately False: nothing needs this
+    # imported at every Gramps startup regardless of whether any other
+    # installed addon actually calls it - only the one call site above
+    # (via import_plugin) triggers the import, on demand.
+    register(
+        GENERAL,
+        id="Fuzzy Match API",
+        name=_("Fuzzy Match API"),
+        description=_(
+            "Library for other addons: phonetic surname matching "
+            "(fuzzy_match_index.py), person-display formatting "
+            "(fuzzy_match_display.py), and a standalone lookup window "
+            "(FuzzyMatchLookupWindow.py) for a quick 'does someone like "
+            "this already exist' check from another plugin. See "
+            "FuzzyMatchAPI.md in this addon's own folder for the "
+            "calling convention."
+        ),
+        status=STABLE,
+        version="0.5.1",
+        gramps_target_version=major_version,
+        category="FuzzyMatching",
+        fname="FuzzyMatchLookupWindow.py",
+        load_on_reg=False,
+        authors=["Claude"],
+        maintainers=["Brian McCullough"],
     )
