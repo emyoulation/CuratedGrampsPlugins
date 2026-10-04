@@ -1,0 +1,107 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-16 15:10-0800\n"
+"PO-Revision-Date: 2025-03-06 13:57+0000\n"
+"Last-Translator: Yurii Liubymyi <jurchello@gmail.com>\n"
+"Language-Team: Ukrainian <https://hosted.weblate.org/projects/gramps-project/"
+"addons/uk/>\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.10.3-dev\n"
+
+msgid "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
+msgstr "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
+
+msgid "Replace existing references to the person being assigned without asking"
+msgstr "Замінити існуючі посилання на призначену особу без запиту"
+
+msgid "Face detection"
+msgstr "Розпізнавання облич"
+
+msgid "Minimum face width (px)"
+msgstr "Мінімальна ширина обличчя (пікс.)"
+
+msgid "Minimum face height (px)"
+msgstr "Мінімальна висота обличчя (пікс.)"
+
+msgid "Detect faces inside existing boxes"
+msgstr "Розпізнавати обличчя всередині існуючих рамок"
+
+msgid "Sensitivity (1 min .. 20 max)"
+msgstr "Чутливість (1 min .. 20 max)"
+
+msgid "Add Person"
+msgstr "Додати Особу"
+
+msgid "Clear Reference"
+msgstr "Очистити Посилання"
+
+msgid "Remove Selection"
+msgstr "Видалити вибір"
+
+msgid "Edit referenced Person"
+msgstr "Редагувати посилання на Особу"
+
+msgid "Zoom In"
+msgstr "Збільшити"
+
+msgid "Zoom Out"
+msgstr "Зменшити"
+
+msgid "Detect faces"
+msgstr "Розпізнати обличчя"
+
+msgid "Detect faces (OpenCV module required)"
+msgstr "Розпізнати обличчя (потрібен модуль OpenCV)"
+
+msgid "XMP Region Name"
+msgstr "Назва XMP регіону"
+
+msgid "Set as active person"
+msgstr "Встановити як активну особу"
+
+msgid "_Select"
+msgstr "_Вибрати"
+
+#, python-brace-format
+msgid "Replace to {0}"
+msgstr "Замінити на {0}"
+
+msgid "Detecting faces..."
+msgstr "Розпізнавання облич..."
+
+msgid "Detection finished"
+msgstr "Розпізнавання завершено"
+
+#, python-brace-format
+msgid "Another region of this image is associated with {name}. Remove it?"
+msgstr "Інший регіон цього зображення пов'язаний з {name}. Видалити його?"
+
+#, python-brace-format
+msgid ""
+"{count} other regions of this image are associated with {name}. Remove them?"
+msgstr "{count} інші регіони цього зображення пов'язані з {name}. Видалити їх?"
+
+#, python-format
+msgid "Male person|Dead at %s"
+msgstr "Чоловік|Помер у %s"
+
+#, python-format
+msgid "Female person|Dead at %s"
+msgstr "Жінка|Померла у %s"
+
+#, python-format
+msgid "Unknown gender person|Dead at %s"
+msgstr "Невідомої статі|Помер(ла) у %s"
+
+msgid "Photo Tagging"
+msgstr "Позначення на фото"
+
+msgid "Gramplet for tagging people in photos"
+msgstr "Грамплет для позначення людей на фотографіях"

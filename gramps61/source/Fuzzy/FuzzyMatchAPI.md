@@ -9,7 +9,7 @@
 
 | You want... | Use | Needs GTK? |
 |---|---|---|
-| A visible popup the user can interact with (type a surname, see matches, double-click to edit) | `FuzzyMatchLookupWindow.show_fuzzy_lookup()` | Yes |
+| A visible popup the user can interact with (type a surname, see matches, double-click to pick one or edit it) | `FuzzyMatchLookupWindow.show_fuzzy_lookup()` | Yes |
 | Raw `{surname: [handle, ...]}` data, no UI at all | `fuzzy_match_index.FuzzyMatchIndex` | No |
 | To format a `Person` the same way this addon's own UIs do | `fuzzy_match_display.format_person()` | No |
 
@@ -63,15 +63,16 @@ if module is not None:
 **What this does:**
 - Opens a small standalone window (title "Fuzzy Match Lookup") showing every surname in the tree that phonetically matches `surname`, under whichever Encoding system the person last chose in this window this session (Soundex by default) - the window has its own Encoding system selector, independent of `FuzzyMatchingGramplet.py`'s own choice.
 - If `surname` is an exact match among the results, that row is selected automatically — populating the right column with every person carrying it — and the right column is scrolled/selected to whichever person's given name sorts closest to `given_name`. This is deliberately *not* a filter: the right column shows everyone with the surname, not just people whose given name contains `given_name`, specifically so a nickname, initial, or transcription difference between your parsed given name and what's actually recorded doesn't hide the person you're looking for. The Given Name field itself is left blank, not filled in with `given_name` — an earlier version of this did fill it in "for reference", but that left it sitting there as an active filter for whatever the person clicked next, silently emptying the right column again on an ordinary manual surname click. A selection or edit the person actually makes in that field, from that point on, does filter normally.
-- If a Fuzzy Match Lookup window is already open, this re-seeds *that* window's fields/selection and raises it, rather than opening a second one. Calling `show_fuzzy_lookup` again with a new surname is the correct way to update an already-open window — there is no separate "update" method to call.
+- If a Fuzzy Match Lookup window is already open, this re-seeds *that* window's fields/selection and raises it, rather than opening a second one. Calling `show_fuzzy_lookup` again with a new surname is the correct way to update an already-open window — there is no separate "update" method to call. This also re-anchors `on_select` (see below) to the new call, even if you pass the same value as last time — an addon that opens this window for one row/record, then a different one, before the person has picked anything, needs the callback to follow whichever call was most recent, not stay pointed at the first one.
 - The window builds its own index in the background (with a spinner) the first time it opens; a few hundred thousand people takes at most a second or two, not a freeze.
 - The window shows up under Gramps' **Windows** menu as "Fuzzy Match Lookup".
-- This call is fire-and-forget: it does not block, and it does not return a result to inspect. If your addon needs the actual match data programmatically (e.g., to decide whether to even ask the user), use Pattern 2 instead, possibly *in addition to* showing the window.
+- This call itself is fire-and-forget: it does not block, and its own return value is not a result to inspect (see `on_select` below for getting the person the user actually picks, or Pattern 2 if you need match data programmatically without showing a window at all).
+- **Reporting a pick back to your addon:** pass `on_select=your_callback` to have a double-clicked person handed to `your_callback(person)` instead of this window opening that person's own editor. Without `on_select` (the default), double-click still just opens the Person editor, exactly as before this parameter existed — plain, standalone use (e.g. from Gramps' own Windows menu, with no addon-specific row to apply a pick to) is unaffected. Dragging a person out of the right-hand column (already supported, via the standard `PERSON_LINK` drag target) still works either way and is unaffected by `on_select` — it's a second, independent way to get a match out of this window, not a fallback for when `on_select` is unset.
 
 **Function signature:**
 
 ```python
-def show_fuzzy_lookup(dbstate, uistate, track=None, surname="", given_name=""):
+def show_fuzzy_lookup(dbstate, uistate, track=None, surname="", given_name="", on_select=None):
     """
     :param dbstate: The current gramps.gen.dbstate.DbState.
     :param uistate: The current gramps.gui.displaystate.DisplayState.
@@ -82,6 +83,13 @@ def show_fuzzy_lookup(dbstate, uistate, track=None, surname="", given_name=""):
     :param given_name: Given name to scroll/select the closest match
         to in the right column, once populated - not a filter (see
         above).
+    :param on_select: Optional callback, called with the
+        double-clicked gramps.gen.lib.Person instead of this window
+        opening that person's editor. Pass None (the default) for a
+        plain lookup with no caller-specific target. Always re-passed
+        on a re-seed of an already-open window (see above) - your
+        addon should pass its own current target every call, never
+        omit the argument expecting an earlier one to stick.
     :returns: The (now open) FuzzyMatchLookupWindow instance. You
         normally don't need this return value for anything.
     """
@@ -206,7 +214,7 @@ module = pmgr.import_plugin(pdata)            # the FuzzyMatchLookupWindow modul
 
 - **No phonetic given-name matching in the index or the lookup window.** (The filter rules can match given names - see "Building a filter from these rules in code".) `given_name` in `show_fuzzy_lookup` selects/scrolls to the closest match by plain locale-aware sort order (see Pattern 1), and a manual filter afterward is a plain case-insensitive substring match — neither is a phonetic comparison. Reusing `phonetic_codes.ALGORITHMS` against the given name too would be a reasonable addition, but it doesn't exist today — don't write integration code that assumes it does.
 - **No shared/global index.** Each `FuzzyMatchIndex` you construct is independent of the gramplet's own and of any `FuzzyMatchLookupWindow`'s own. There's no registry or singleton to fetch an already-built one from.
-- **No return value carrying match results from `show_fuzzy_lookup`.** It opens a window; it doesn't hand back data. Use Pattern 2 if you need data.
+- **`show_fuzzy_lookup` still has no *return value* carrying match results — you get the person only via `on_select`, or by dragging one out of the window yourself.** There's no way to synchronously get back "here's what the user eventually picked, if anything" from the call itself; `on_select` is called later, asynchronously, whenever (if ever) the user actually double-clicks something. Use Pattern 2 if you need match data programmatically, before or instead of showing a window at all.
 - **No CLI/headless entry point.** `fuzzy_match_index.py` and `fuzzy_match_display.py` have no `gi.repository` import and work fine outside a GUI, but nothing in this addon currently exposes a command-line tool built on them.
 
 ## Version and compatibility notes

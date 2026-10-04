@@ -1,0 +1,102 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: gramps50\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-16 15:10-0800\n"
+"PO-Revision-Date: 2018-12-04 16:36+0300\n"
+"Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Gtranslator 2.91.7\n"
+"X-Poedit-Language: Russian\n"
+"X-Poedit-Country: RUSSIAN FEDERATION\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+
+msgid "Replace existing references to the person being assigned without asking"
+msgstr "Не спрашивать при замене существующих ссылок на человека"
+
+msgid "Face detection"
+msgstr "Определение лиц"
+
+msgid "Minimum face width (px)"
+msgstr "Минимальная ширина лица (px)"
+
+msgid "Minimum face height (px)"
+msgstr "Минимальная высота лица (px)"
+
+msgid "Detect faces inside existing boxes"
+msgstr "Искать лица в уже существующих областях"
+
+msgid "Sensitivity (1 min .. 20 max)"
+msgstr "Чувствительность (1 мин .. 20 макс)"
+
+msgid "Add Person"
+msgstr "Добавить человека"
+
+msgid "Clear Reference"
+msgstr "Удалить ссылку"
+
+msgid "Remove Selection"
+msgstr "Удалить область"
+
+msgid "Edit referenced Person"
+msgstr "Редактировать привязанного человека"
+
+msgid "Zoom In"
+msgstr "Увеличить"
+
+msgid "Zoom Out"
+msgstr "Уменьшить"
+
+msgid "Detect faces"
+msgstr "Найти лица"
+
+msgid "Detect faces (OpenCV module required)"
+msgstr "Определение лиц (требуется модуль OpenCV)"
+
+msgid "Set as active person"
+msgstr "Установить активное лицо"
+
+msgid "_Select"
+msgstr "_Выбрать"
+
+#, python-brace-format
+msgid "Replace to {0}"
+msgstr "Заменить на {0}"
+
+msgid "Detecting faces..."
+msgstr "Определение лиц на фото..."
+
+msgid "Detection finished"
+msgstr "Определение лиц завершено"
+
+#, python-brace-format
+msgid "Another region of this image is associated with {name}. Remove it?"
+msgstr "Другая область на этом фото связана с {name}. Удалить её?"
+
+#, python-brace-format
+msgid ""
+"{count} other regions of this image are associated with {name}. Remove them?"
+msgstr "{count} других областей на этом фото связаны с {name}. Удалить их?"
+
+#, python-format
+msgid "Male person|Dead at %s"
+msgstr "Умер в %s"
+
+#, python-format
+msgid "Female person|Dead at %s"
+msgstr "Умерла в %s"
+
+#, python-format
+msgid "Unknown gender person|Dead at %s"
+msgstr "Смерть в %s"
+
+msgid "Photo Tagging"
+msgstr "Разметка фотографий"
+
+msgid "Gramplet for tagging people in photos"
+msgstr "Грамплет предназначен для выделения людей на фотографиях"

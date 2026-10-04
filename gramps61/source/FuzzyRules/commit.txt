@@ -1,0 +1,17 @@
+Add Soundex rule and Match in name-field option to phonetic rules
+
+The Soundex, NYSIIS, MRA and Metaphone person filter rules can now
+compare any combination of name fields, chosen with a new Match in
+option: given-name parts (Title, Given, Call, Nick), surname parts
+(Prefix, Surname, Suffix, Clan), and whether to search the preferred
+name, alternate names or both. The default compares the preferred
+surname and call name, so a search for "Johnson" no longer returns
+every John. A blank call name counts as the first given name, and each
+piece of a compound surname is compared separately.
+
+A new Soundex rule offers the same option, unlike Gramps' built-in
+Soundex rule. The rules are renamed "<system> match of People with the
+<names>". Filters saved by earlier versions keep working.
+
+Generated-by: Claude Opus 5.5 (Anthropic)
+references 00XXXXX

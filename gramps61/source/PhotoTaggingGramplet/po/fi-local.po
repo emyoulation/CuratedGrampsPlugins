@@ -1,0 +1,107 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: fi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-16 15:10-0800\n"
+"PO-Revision-Date: 2025-09-03 21:58+0000\n"
+"Last-Translator: Matti Niemelä <matti.u.niemela@gmail.com>\n"
+"Language-Team: Finnish <https://hosted.weblate.org/projects/gramps-project/"
+"addons/fi/>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.13.1-rc\n"
+"Generated-By: pygettext.py 1.4\n"
+
+msgid "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
+msgstr "https://www.gramps-project.org/wiki/index.php/Kuvien_merkintä_Gramplet"
+
+msgid "Replace existing references to the person being assigned without asking"
+msgstr "Korvaa nykyiset viittaukset määrittämääsi henkilöön kysymättä"
+
+msgid "Face detection"
+msgstr "Kasvojentunnistus"
+
+msgid "Minimum face width (px)"
+msgstr "Kasvojen minimileveys (px)"
+
+msgid "Minimum face height (px)"
+msgstr "Kasvojen minimikorkeus (px)"
+
+msgid "Detect faces inside existing boxes"
+msgstr "Tunnista kasvot nykyisissä laatikoissa"
+
+msgid "Sensitivity (1 min .. 20 max)"
+msgstr "Herkkyys (1 min .. 20 max)"
+
+msgid "Add Person"
+msgstr "Lisää henkilö"
+
+msgid "Clear Reference"
+msgstr "Tyhjennä viittaus"
+
+msgid "Remove Selection"
+msgstr "Poista valinta"
+
+msgid "Edit referenced Person"
+msgstr "Muokkaa viitattua henkilöä"
+
+msgid "Zoom In"
+msgstr "Lähennä"
+
+msgid "Zoom Out"
+msgstr "Loitonna"
+
+msgid "Detect faces"
+msgstr "Tunnista kasvot"
+
+msgid "Detect faces (OpenCV module required)"
+msgstr "Tunnista kasvot (OpenCV-moduuli vaaditaan)"
+
+msgid "XMP Region Name"
+msgstr "XMP alunimi"
+
+msgid "Set as active person"
+msgstr "Aseta aktiiviseksi henkilöksi"
+
+msgid "_Select"
+msgstr "_Valitse"
+
+#, python-brace-format
+msgid "Replace to {0}"
+msgstr "Vaihda henkilöksi {0}"
+
+msgid "Detecting faces..."
+msgstr "Kasvojentunnistus..."
+
+msgid "Detection finished"
+msgstr "Kasvojentunnistus valmis"
+
+#, python-brace-format
+msgid "Another region of this image is associated with {name}. Remove it?"
+msgstr "Tämän kuvan alue liittyy kuvaan {name}. Poistetaanko se?"
+
+#, python-brace-format
+msgid ""
+"{count} other regions of this image are associated with {name}. Remove them?"
+msgstr "{count} muun kuvan alueet liittyvät kuvaan {name}. Poistetaanko ne?"
+
+#, python-format
+msgid "Male person|Dead at %s"
+msgstr "Mies|Kuollut %s"
+
+#, python-format
+msgid "Female person|Dead at %s"
+msgstr "Nainen | Kuollut %s"
+
+#, python-format
+msgid "Unknown gender person|Dead at %s"
+msgstr "Tuntematon sukupuoli henkilö|Kuollut kohdassa %s"
+
+msgid "Photo Tagging"
+msgstr "Valokuvien merkintä"
+
+msgid "Gramplet for tagging people in photos"
+msgstr "Gramplet henkilöiden merkintään valokuvissa"

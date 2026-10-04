@@ -1,0 +1,111 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gramps 5.x\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-16 15:10-0800\n"
+"PO-Revision-Date: 2026-04-08 15:09+0000\n"
+"Last-Translator: Milo Ivir <mail@milotype.de>\n"
+"Language-Team: Croatian <https://hosted.weblate.org/projects/gramps-project/"
+"addons/hr/>\n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.17-dev\n"
+
+msgid "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
+msgstr "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
+
+msgid "Replace existing references to the person being assigned without asking"
+msgstr "Zamijeni postojeće reference s određenom osobom, bez pitanja"
+
+msgid "Face detection"
+msgstr "Otkrivanje lica"
+
+msgid "Minimum face width (px)"
+msgstr "Minimala širina lica (px)"
+
+msgid "Minimum face height (px)"
+msgstr "Minimala visina lica (px)"
+
+msgid "Detect faces inside existing boxes"
+msgstr "Otkrij lica unutar postojećih okvira"
+
+msgid "Sensitivity (1 min .. 20 max)"
+msgstr "Osjetljivost (1 min. … 20 maks.)"
+
+msgid "Add Person"
+msgstr "Dodaj osobu"
+
+msgid "Clear Reference"
+msgstr "Ukloni referencu"
+
+msgid "Remove Selection"
+msgstr "Ukloni odabir"
+
+msgid "Edit referenced Person"
+msgstr "Uredi referneciranu osobu"
+
+msgid "Zoom In"
+msgstr "Uvećaj prikaz"
+
+msgid "Zoom Out"
+msgstr "Umanji prikaz"
+
+msgid "Detect faces"
+msgstr "Otkrij lica"
+
+msgid "Detect faces (OpenCV module required)"
+msgstr "Otkrij lica (potreban je OpenCV modul)"
+
+msgid "XMP Region Name"
+msgstr "XMP ime regije"
+
+msgid "Set as active person"
+msgstr "Postavi kao aktivnu osobu"
+
+msgid "_Select"
+msgstr "_Odaberi"
+
+#, python-brace-format
+msgid "Replace to {0}"
+msgstr "Zamijeni na {0}"
+
+msgid "Detecting faces..."
+msgstr "Otkrivanje lica …"
+
+msgid "Detection finished"
+msgstr "Otkrivanje je završeno"
+
+#, python-brace-format
+msgid "Another region of this image is associated with {name}. Remove it?"
+msgstr ""
+"Jedno drugo područje ove slike povezano je s osobom {name}. Želiš li ga "
+"ukloniti?"
+
+#, python-brace-format
+msgid ""
+"{count} other regions of this image are associated with {name}. Remove them?"
+msgstr ""
+"{count} druga područja ove slike povezana su s osobom {name}. Želiš li ih "
+"ukloniti?"
+
+#, python-format
+msgid "Male person|Dead at %s"
+msgstr "Umro %s"
+
+#, python-format
+msgid "Female person|Dead at %s"
+msgstr "Umrla %s"
+
+#, python-format
+msgid "Unknown gender person|Dead at %s"
+msgstr "Umro/umrla %s"
+
+msgid "Photo Tagging"
+msgstr "Označavanje slika"
+
+msgid "Gramplet for tagging people in photos"
+msgstr "Gramplet za označavanje osoba u slikama"

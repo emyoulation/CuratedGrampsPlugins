@@ -158,7 +158,7 @@ class FuzzyMatchLookupWindow(ManagedWindow):
     that bookkeeping automatically.
     """
 
-    def __init__(self, dbstate, uistate, track, surname="", given_name=""):
+    def __init__(self, dbstate, uistate, track, surname="", given_name="", on_select=None):
         """
         :param dbstate: The current :class:`~gramps.gen.dbstate.DbState`.
         :param uistate: The current
@@ -169,9 +169,15 @@ class FuzzyMatchLookupWindow(ManagedWindow):
         :param surname: Surname to seed the Surname field with.
         :param given_name: Given name to seed the Given Name filter
             with.
+        :param on_select: Optional callback, called with the
+            double-clicked :class:`~gramps.gen.lib.Person` instead of
+            opening that person's editor - see :meth:`set_on_select`
+            for why this is set/replaced separately from ``__init__``
+            rather than only ever set once here.
         """
         self.dbstate = dbstate
         self.uistate = uistate
+        self._on_select = on_select
 
         algorithm_id = _last_algorithm_id or DEFAULT_ALGORITHM
         self._index = FuzzyMatchIndex(dbstate.db, algorithm_id)
@@ -546,6 +552,35 @@ class FuzzyMatchLookupWindow(ManagedWindow):
 
     # -- query / display ----------------------------------------------------
 
+    def set_on_select(self, on_select) -> None:
+        """
+        Replace this window's on_select callback (see ``__init__``'s
+        own parameter of the same name) - what :func:`show_fuzzy_lookup`
+        calls, alongside :meth:`set_query`, on an already-open window
+        instead of creating a second one.
+
+        This exists as its own method, separate from ``__init__``,
+        specifically for that re-seed case: the whole point of this
+        window re-seeding instead of opening a second copy is that one
+        caller can open it for one row, and a *different* row's lookup
+        (of the same or a different Photo Tagging photo, or any other
+        caller entirely) can re-seed the same window before the person
+        has double-clicked anything in it yet. Each such call is
+        anchored to whichever row asked most recently - a stale
+        callback closed over the *first* row's target, left in place
+        because only :meth:`set_query` got called on re-seed, would
+        silently apply a double-clicked match to the wrong row's data
+        entirely rather than to whatever the window is currently
+        showing.
+
+        :param on_select: The new callback (see ``__init__``), or
+            None to fall back to opening the Person editor again -
+            :func:`show_fuzzy_lookup` always passes its own current
+            value here (including None), it never leaves an old one
+            in place by omitting the argument.
+        """
+        self._on_select = on_select
+
     def set_query(self, surname: str, given_name: str = "") -> None:
         """
         Seed the Surname field, select whichever left-column row is
@@ -714,16 +749,29 @@ class FuzzyMatchLookupWindow(ManagedWindow):
 
     def _cb_person_activated(self, _tree_view, path, _column) -> None:
         """
-        Open the standard Person editor for a double-clicked row.
+        A double-clicked row: if this window was opened (or last
+        re-seeded - see :meth:`set_on_select`) with an ``on_select``
+        callback, calls it with the double-clicked
+        :class:`~gramps.gen.lib.Person` and stops there - this is the
+        "pick this match" gesture for a caller that anchored the
+        lookup to something of its own (e.g. a specific Photo Tagging
+        row), the counterpart to already-supported drag-and-drop out
+        of the right-hand column for the same purpose (see
+        :meth:`_cb_person_drag_data_get`). Otherwise, falls back to
+        this window's original behavior: opening the standard Person
+        editor, for the plain "look someone up" case with no caller to
+        report back to (opened from Gramps' own Windows menu, or by
+        any caller that didn't pass ``on_select``).
 
-        Passes ``[]``, not ``self.track``, as EditPerson's own track:
-        this window registers itself with Gramps' window manager as a
-        leaf, not a branch (see :meth:`build_menu_names`'s ``None``
-        submenu - "a single leaf entry rather than a nested submenu"),
-        and a leaf's own track is not a valid parent node for a further
-        child window in that manager's tree - passing it crashes with
-        ``AssertionError: Gwm: add_item: Incorrect track - Is parent
-        not a leaf?`` the moment a person's edited from here.
+        Passes ``[]``, not ``self.track``, as EditPerson's own track
+        in the fallback case: this window registers itself with
+        Gramps' window manager as a leaf, not a branch (see
+        :meth:`build_menu_names`'s ``None`` submenu - "a single leaf
+        entry rather than a nested submenu"), and a leaf's own track
+        is not a valid parent node for a further child window in that
+        manager's tree - passing it crashes with ``AssertionError:
+        Gwm: add_item: Incorrect track - Is parent not a leaf?`` the
+        moment a person's edited from here.
         ``FuzzyMatchingGramplet.py``'s own equivalent code never hits
         this, since a Gramplet's own ``self.track`` is always ``[]``
         (Gramplets are never window-manager branches at all), not
@@ -735,11 +783,15 @@ class FuzzyMatchLookupWindow(ManagedWindow):
         tree_iter = self.person_store.get_iter(path)
         handle = self.person_store[tree_iter][1]
         person = self.dbstate.db.get_person_from_handle(handle)
-        if person is not None:
-            try:
-                EditPerson(self.dbstate, self.uistate, [], person)
-            except WindowActiveError:
-                pass
+        if person is None:
+            return
+        if self._on_select is not None:
+            self._on_select(person)
+            return
+        try:
+            EditPerson(self.dbstate, self.uistate, [], person)
+        except WindowActiveError:
+            pass
 
 
 # ---------------------------------------------------------------------------
@@ -756,7 +808,9 @@ class FuzzyMatchLookupWindow(ManagedWindow):
 _active_window = None
 
 
-def show_fuzzy_lookup(dbstate, uistate, track=None, surname="", given_name=""):
+def show_fuzzy_lookup(
+    dbstate, uistate, track=None, surname="", given_name="", on_select=None
+):
     """
     Open the Fuzzy Match Lookup window seeded with ``surname`` -
     selecting it in the left column if it's an exact match among the
@@ -765,7 +819,10 @@ def show_fuzzy_lookup(dbstate, uistate, track=None, surname="", given_name=""):
     to ``given_name`` (see :meth:`FuzzyMatchLookupWindow.set_query`
     for exactly how, and why that's not the same as filtering by it).
     Calling this again while a window is already open re-seeds and
-    raises that same window rather than opening a second one.
+    raises that same window rather than opening a second one - see
+    :meth:`FuzzyMatchLookupWindow.set_on_select` for why ``on_select``
+    is *always* passed through on that path too, not just ``surname``/
+    ``given_name``.
 
     :param dbstate: The current :class:`~gramps.gen.dbstate.DbState`.
     :param uistate: The current
@@ -781,16 +838,30 @@ def show_fuzzy_lookup(dbstate, uistate, track=None, surname="", given_name=""):
         applied as a filter, and not shown in the Given Name field
         either, on this initial seed - a manual edit or selection in
         that field, from that point on, does filter normally.
+    :param on_select: Optional callback, called with the
+        double-clicked :class:`~gramps.gen.lib.Person` instead of this
+        window opening that person's editor. Anchors the window's
+        "pick a match" gesture to whatever this specific call cares
+        about (e.g. one particular row in the calling addon) - pass
+        None (the default) for a plain lookup with no caller-specific
+        target, which leaves double-click opening the Person editor,
+        same as before this parameter existed. Since a second call can
+        re-seed an *already open* window rather than creating a new
+        one, this is the caller's only chance to make sure a match
+        picked from here lands back on the right thing - see
+        :meth:`FuzzyMatchLookupWindow.set_on_select` for what happens
+        without it.
     :returns: The (now open) :class:`FuzzyMatchLookupWindow`.
     """
     global _active_window
     if _active_window is not None:
         _active_window.set_query(surname, given_name)
+        _active_window.set_on_select(on_select)
         return _active_window
 
     try:
         _active_window = FuzzyMatchLookupWindow(
-            dbstate, uistate, track or [], surname, given_name
+            dbstate, uistate, track or [], surname, given_name, on_select
         )
     except WindowActiveError:
         # Another ManagedWindow already claims this class/track combo
