@@ -192,6 +192,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
   },
   {
+    "n": "Metadata Inspector",
+    "i": "Metadata Inspector",
+    "t": 10,
+    "d": "Gramplet to view the metadata of a media object: embedded in the file (Exif, IPTC, XMP, PDF, audio/video tags), in its XMP sidecar, and recorded in the current tree",
+    "v": "0.0.1",
+    "g": "5.2",
+    "s": 1,
+    "z": "MetadataInspector.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/MetadataInspector"
+  },
+  {
     "n": "Note Styling Editor",
     "i": "Note Styling Editor",
     "t": 10,
