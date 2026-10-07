@@ -1,0 +1,981 @@
+{| class="wikitable sortable"
+|-
+! Plugin / Documentation
+! Type
+! Image
+! Description
+! Use
+! Rating (out of 4)
+! Contact
+! Download
+|-
+|<!-- Plugin / Documentation -->[[Addon:AddRemoveTagTool|Add/Remove Tag Tool]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:AddRemoveTagTool-GeneralOptionsDialog-51.png|center|150px]]
+|<!-- Description -->The Add/Remove Tag Tool allows you to add or remove one tag from a selected set of filtered objects e.g. people.  
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/RemoveTagTool.addon.tgz?raw=true RemoveTagTool.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:All Names Quickview|All Names of All People]]
+|<!-- Type -->Quickview
+|<!-- Image -->[[File:AllNamesOfAllPeople-Quickview-addon-example-50.png|center|150px]]
+|<!-- Description -->Shows all names for all people
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/AllNamesQuickview.addon.tgz?raw=true AllNamesQuickview.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:AncestorsMap|Ancestors map]]
+|<!-- Type -->View
+|<!-- Image -->[[File:GeographyViewAncestorsMap-51thumb.png|center|150px]]
+|<!-- Description -->A Geography category [[Gramps_Glossary#viewmode|View Mode]] which maps Event Places related to the Ancestors of the Home Person.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->Serge Noiraud<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/GeoAncestor.addon.tgz?raw=true GeoAncestor.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:AttachSourceTool|Attach Source]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:AttachSource-Tool-Options-dialog-addon-example-50.png|center|150px]]
+|<!-- Description -->A tool to attach a source to a group of people.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/AttachSourceTool.addon.tgz?raw=true AttachSourceTool.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:AvatarGenerator|Avatar Generator Tool]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:AvatarGeneratorTool-Before-and-After-example.gif|center|150px]]
+|<!-- Description -->A tool that allows you to add and remove one or several images for a selected set of filtered people. 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/AvatarGenerator.addon.tgz?raw=true AvatarGenerator.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Biography Quickview|Biography]]
+|<!-- Type -->Quickview
+|<!-- Image -->[[File:Biography-Quickview-addon-example-51.png|center|150px]]
+|<!-- Description -->Shows a text biography based on the events of the selected Person
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->A. Guinane
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/BiographyQuickview.addon.tgz?raw=true BiographyQuickview.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:BirthdaysGramplet|Birthdays]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:BirthdaysGramplet-addon-example-with-config-dialog-51.png|center|150px]]
+|<!-- Description -->Display the upcoming birthdays
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:peter017@gmail.com Peter Potrowl]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/BirthdaysGramplet.addon.tgz?raw=true BirthdaysGramplet.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:Calculate Estimated Dates|Calculate Estimated Dates]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:CalculateEstimatedDates-addon-Select-tab-example-50.png|center|150px]] 
+|<!-- Description -->A tool to set estimated birth and death dates.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->2 
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/CalculateEstimatedDates.addon.tgz?raw=true CalculateEstimatedDates.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Check Associations|Check Associations data]]
+|<!-- Type -->Tool
+|<!-- Image -->{{man label|‎Associations state tool}} dialog
+|<!-- Description -->Will [https://sourceforge.net/p/gramps/mailman/message/34996074/ check the data] on [[Gramps_5.1_Wiki_Manual_-_Entering_and_editing_data:_detailed_-_part_1#Associations|Association]] for people.<br />menu {{man menu|Tools -> Utilities -> Check Associations data...}} 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->
+|<!-- Contact -->[mailto:romjerome@yahoo.fr Jérôme Rapinat]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/AssociationsTool.addon.tgz?raw=true AssociationsTool.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Gramplets_development#GUI_Interface|Clock]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:ClockGramplet-addon-example-50.png|center|150px]] 
+|<!-- Description -->A sample Cairo clock gramplet.
+|<!-- Use -->Developer
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ClockGramplet.addon.tgz?raw=true ClockGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:CombinedView|Combined]]
+|<!-- Type -->View
+|<!-- Image -->[[File:CombinedView-Relationships-tab-example-51.png|center|150px]]
+|<!-- Description -->A Relationships category [[Gramps_Glossary#viewmode|View Mode]] showing relationships and events for a person. Like the built-in [[Gramps_5.2_Wiki_Manual_-_Categories#Relationships_Category|Relationships View]] but on steroids.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->Nick Hall<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/CombinedView.addon.tgz?raw=true CombinedView.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Collections_Clipboard_Gramplet|Collections Clipboard]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:ClipboardGramplet-Addon-example-50.png|center|150px]] 
+|<!-- Description -->Allows one to group items together for quick access.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->2
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ClipboardGramplet.addon.tgz?raw=true ClipboardGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->Command Line Merge
+|<!-- Type -->Tool
+|<!-- Image -->N/A
+|<!-- Description -->Merge primary object via the command line. (Note: Used by Gramps project to test its code you can see an example of how it used programmatically [https://github.com/gramps-project/gramps/blob/master/gramps/gen/merge/test/merge_ref_test.py here])
+|<!-- Use -->Developer
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->Michiel D. Nauta<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/CliMerge.addon.tgz?raw=true CliMerge.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:D3 Ancestral and Descendant Charts|D3 Ancestral and Descendant Charts]]
+|<!-- Type -->Web Report
+|<!-- Image -->[[File:D3-AncestralCollapsibleTree-WebReport-Addon-example-50.png|center|150px]]
+|<!-- Description -->Create ancestral/descendant web based interactive D3 charts.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:matt.keenan@gmail.com Matt Keenan]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/D3Charts.addon.tgz?raw=true D3Charts.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Database Differences Report|Database Differences Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:Database-differences-report-example-50.png|center|150px]]
+|<!-- Description -->Allows a mostly complete comparison between the current database and a Gramps XML file
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->2
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Differences.addon.tgz?raw=true Differences.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DataEntryGramplet|Data Entry Gramplet]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:DataEntryGramplet-addon-example-50.png|center|150px]]
+|<!-- Description -->Quick Data Entry for People data
+|<!-- Use -->Expert user
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DataEntryGramplet.addon.tgz?raw=true DataEntryGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DateCalculator|Date Calculator]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:DateCalculatorGramplet-addon-default-52.png|center|150px]]
+|<!-- Description -->Allows you to do date math.
+|<!-- Use -->Normal user
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DateCalculator.addon.tgz?raw=true DateCalculator.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Deep Connections Gramplet|Deep Connections Gramplet]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:DeepConnectionsGramplet-addon-example-50.png|center|150px]]
+|<!-- Description -->Finds deep relationships between home and active people
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3 
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DeepConnectionsGramplet.addon.tgz?raw=true DeepConnectionsGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DenominoViso|DenominoViso]]
+|<!-- Type -->Web report
+|<!-- Image -->[[File:DenominoViso-WebReport-Addon-example-50.png|center|150px]] 
+|<!-- Description -->Creates interactive graphical ancestor/descendant tree on a webpage.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->Michiel D. Nauta<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DenominoViso.addon.tgz?raw=true DenominoViso.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Descendant and Detailed Descendant Book Reports|Descendant Book<br />and<br />Detailed Descendant Book]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:DescendantBook-TextReports-addon-ReportOptions-tab-defaults-50.png|center|150px]]
+|<!-- Description -->Create a book of descendant or detailed descendant reports using a filter.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.keenan@gmail.com Matt Keenan]<br>[mailto:giansalvo.gusinu+gramps2020@gmail.com Giansalvo Gusinu]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DescendantBooks.addon.tgz?raw=true DescendantBooks.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Detailed Descendant Report With All Images|Detailed Descendant Report With All Images]]
+|<!-- Type -->Report
+|<!-- Image -->
+|<!-- Description -->Produces a detailed descendant report with all images and optional todo list.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:jpchewe@mtu.net Jon Schewe]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DetDescendantReport-images.addon.tgz?raw=true DetDescendantReport-images.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Descendant Count Gramplet|Descendant Count]]
+|<!-- Type -->Gramplet and Quickview
+|<!-- Image -->[[File:DescendantCountGramplet-50.png|center|150px]]
+|<!-- Description -->Gives a count of descendants for each person
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DescendantCount.addon.tgz?raw=true DescendantCount.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DescendantsLines|Descendants Lines]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:DescendantsLines_GalileoGenealogy.png|center|150px]]
+|<!-- Description -->Generates a graphical descendants tree using orthogonal edges and routing ("square edges").
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[[User:Lcc]] ([mailto:lcc.mailaddress@gmail.com e-mail])<br>Adam Sampson<br>[mailto:giansalvo.gusinu+gramps2020@gmail.com Giansalvo Gusinu]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DescendantsLines.addon.tgz?raw=true DescendantsLines.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DescendantSpaceTree|Descendant Space Tree web report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:DescendantSpaceTree-WebPage-Addon-example-60.png|center|150px]]
+|<!-- Description --> A Web Pages report with an interactive graphical Descendant "Space Tree" web page for efficient display and navigation, even with large families 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[https://gramps.discourse.group/t/descendantspacetree-addon-initial-development/7764 Tom Poindexter]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DescendantSpaceTree.addon.tgz DescendantSpaceTree.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DNAMatches|DNA Matches]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:DNAMatchesGramplet-addon-example-52.png|center|150px]]
+|<!-- Description -->Gramplet presents the users with a table of people whose DNA has a match with the currently selected person.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->Milan (a.k.a RampantSpirit)<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DNAMAtches.addon.tgz?raw=true DNAMatches.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DNASegmentMapGramplet|DNA Segment Map]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:Addon-DNA-SegmentMap-with-Tooltip.png|center|150px]]
+|<!-- Description -->Gramplet showing a matching DNA segment map (attribute)
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->Nick Hall, Gary Griffin<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DNA.addon.tgz?raw=true DNA.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DoubleCousinReport|Double Cousin]]
+|<!-- Type -->Report
+|<!-- Image -->N/A
+|<!-- Description -->Double Cousin is a text report which lists special multiplicities of cousins like double cousins.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DoubleCousins.addon.tgz?raw=true DoubleCousins.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:DownloadMedia|Download media files from the internet]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:DownloadMediaTool-addon-dialog-50.png|center|150px]]
+|<!-- Description -->Download media from web pages
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DownloadMedia.addon.tgz?raw=true DownloadMedia.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:DynamicWeb report|Dynamic Web Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:DynamicWeb-tree1.png|center|150px]]
+|<!-- Description -->Exports the Family Tree as Web pages that are generated dynamically by client-side Javascript(no server required).
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:pierre.belissent@gmail.com Pierre Bélissent]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/DynamicWeb.addon.tgz?raw=true DynamicWeb.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Edit Image Exif Metadata|Edit Image Exif Metadata]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:EditExifMetadata-Gramplet-detached-example-51.png|center|150px]]
+|<!-- Description -->Gramplet to view, edit, and save image Exif metadata.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[https://gramps-project.org/blog/2012/07/in-memory-of-rob-g-healey/ Rob G. Healey], [mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/EditExifMetadata/editexifmetadata.py?raw=true editexifmetadata.py]
+|-
+|<!-- Plugin / Documentation -->[[Addon:EventDescriptionEditor|Event Description Editor]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:EventDescriptionEditor-defaults-51.png|center|150px]]
+|<!-- Description -->A tool that allows you to find and replace a text string in the event description of multiple events.  
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/EventDescriptionEditor.addon.tgz?raw=true EventDescriptionEditor.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:ExportRaw|Export Raw]]
+|<!-- Type -->Exporter
+|<!-- Image -->[[File:ExportRaw-option-addon-50.png|center|150px]] 
+|<!-- Description -->A Gramps exporter that will dump your BSDDB database into a flat text version (.raw) of the Python objects.
+|<!-- Use -->Developer
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ExportRaw.addon.tgz?raw=true ExportRaw.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:ExtendedAttributesGramplet|Extended Family Attributes Gramplet]]<br>[[Addon:ExtendedAttributesGramplet|Extended Person Attributes Gramplet]]
+|<!-- Type -->Gramplet
+|<!-- Image -->
+|<!-- Description -->Gramplet showing the attributes of a family or person.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->Nick Hall<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ExtendedAttributes.addon.tgz?raw=true ExtendedAttributes.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Extract Place Data from a Place Title|Extract Place Data from a Place Title]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:ExtractPlaceDataFromAPlaceTitle-ExtractPlaceData-result-window-example-51.png|center|150px]] 
+|<!-- Description -->Attempts to extract city and state/province from a place title
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ExtractCity.addon.tgz?raw=true ExtractCity.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:FamilyRelationship|Family Relationship Tool]]
+|<!-- Type -->Tool
+|<!-- Image -->N/A
+|<!-- Description -->A tool that allows editing family relationships of multiple families.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/FamilyRelationshipTool.addon.tgz?raw=true FamilyRelationshipTool.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Family Sheet|Family Sheet]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:FamilySheet-TextReports-Addon-example-50.png|center|150px|Sample Family Sheet]]
+|<!-- Description -->Generates a form with all information about a person, its spouses and its children. (Requires: PIL (Python Imaging Library).)
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->Reinhard Müller<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/FamilySheet.addon.tgz?raw=true FamilySheet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Family Tree|Family Tree]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:FamilyTree-GraphicalReports-Addon-example-50.png|center|150px]]
+|<!-- Description -->Generates a graphical tree of a family with its ancestors and/or descendants.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->Reinhard Müller<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/FamilyTree.addon.tgz?raw=true FamilyTree.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Fix Capitalization of Given Names|Fix Capitalization of Given Names]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:FixCapitalizationOfGivenNames-Addon-dialog-example-50.png|center|150px]]
+|<!-- Description -->Fix Capitalization of Given Names
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->2
+|<!-- Contact -->[mailto:don@gramps-project.org Donald N. Allingham]<br>[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ChangeGivenNames.addon.tgz?raw=true ChangeGivenNames.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Forms_Gramplet|Forms Gramplet]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:Form_Selector-50.png|center|150px]]
+|<!-- Description -->Forms gramplet that allows users to create and edit structured source data in a single form, such as birth, marriage and death certificates and parish register entries.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:nick__hall@hotmail.com Nick Hall]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Form.addon.tgz?raw=true Form.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:GeneanetForGramps|Geneanet import for Gramps]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:GeneanetForGramps.png|center|150px]]
+|<!-- Description -->A tool that allows you to import Geneanet ascendants and descendants of a selected person into Gramps. Requires both the <code>Request</code> and <code>lxml</code> prerequisites to work.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:bruno@victoria.frmug.org Bruno Cornec]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/GeneanetForGramps.addon.tgz?raw=true GeneanetForGramps.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:GetGOV|GetGOV]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:GetGOV-Gramplet-addon-detached-51.png|center|150px]]
+|<!-- Description -->Download places from the [http://gov.genealogy.net/search/index GOV genealogical gazetteer].
+|<!-- Use -->Expert user
+|<!-- Rating (out of 4) -->2
+|<!-- Contact -->[mailto:genealogy@garygriffin.net Gary Griffin]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/GetGOV.addon.tgz?raw=true GetGOV.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:MapService-GoogleEarth|GoogleEarth]]
+|<!-- Type -->Mapservice
+|<!-- Image -->[[File:GoogleEarth-mapservices-selection-dropdown-50.png|center|150px]]
+|<!-- Description -->Show places with GoogleEarth..
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3 
+|<!-- Contact -->[mailto:peter.talken@telia.com Peter Landgren]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/GoogleEarthWriteKML.addon.tgz?raw=true GoogleEarthWriteKML.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:GEDCOM Extensions|GEDCOM Extensions (GED2)]]
+|<!-- Type -->Exporter
+|<!-- Image -->[[File:GEDCOMExtensions-GED2-ChooseTheOutputFormat-tab-ExportAssistant-52.png|center|150px]]
+|<!-- Description -->Collection of unofficial GEDCOM extensions which extend Gramps GedcomWriter to include common non-compliant GEDCOM additions..
+|<!-- Use -->Expert user
+|<!-- Rating (out of 4) -->2
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/GedcomExtensions.addon.tgz?raw=true GedcomExtensions.addon.tgz]
+|- 
+|<!-- Plugin / Documentation -->[[Addon:Generic DB Access lib|Generic DB Access lib]]
+|<!-- Type -->Library
+|<!-- Image -->[[File:Libaccess.jpg|center|150px]]
+|<!-- Description -->The Generic DB Access lib (AKA libaccess) is an experimental library that provides generic access to the database and the gen.lib interface.
+|<!-- Use -->Developer
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/libaccess.addon.tgz?raw=true libaccess.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Gramps Web Sync|Gramps Web Sync]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:GrampWebSync Intro51.png|center|150px]]
+|<!-- Description -->Gramps Web Sync is an addon for Gramps that allows to synchronize your Gramps database on your desktop computer with Gramps Web, including media files. 
+|<!-- Use -->Intermediate user
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->DavidMStraub<br />[https://github.com/DavidMStraub/gramps-web-sync/issues gramps-web-sync issues]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/GrampsWebSync.addon.tgz?raw=true GrampsWebSync.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Graph View|Graph View]]
+|<!-- Type -->View
+|<!-- Image -->[[File:Graph-View-addon-example-52.png|center|150px]] 
+|<!-- Description -->A Graph category [[Gramps_Glossary#viewmode|View Mode]] that can display the active persons ancestor tree and descendant tree. '''Requires PyGoocanvas and Goocanvas.'''
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:gary.burton@zen.co.uk Gary Burton]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/GraphView.addon.tgz?raw=true GraphView.addon.tgz]
+|- 
+|<!-- Plugin / Documentation -->[[Addon:HeadlineNewsGramplet|Headline News]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:HeadlineNewsGramplet--detached-example-52.png|center|150px]]
+|<!-- Description -->Shows Gramps breaking news, once a day. 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/HeadlineNewsGramplet.addon.tgz?raw=true HeadlineNewsGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:HeatmapWebReport|Heatmap]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:Heatmap webreport 51.jpeg|center|150px]]
+|<!-- Description -->Create a heatmap web report.  
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Heatmap.addon.tgz?raw=true Heatmap.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Historical Context|Historical Context]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:HistoricalContext-gramplet-example-52.png|center|150px]]
+|<!-- Description -->Lists relevant historical events during the lifetime of a Person
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->
+|<!-- Contact -->Kaj Mikkelsen<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/HistContext.addon.tgz?raw=true HistContext.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:House Timeline Gramplet|House Timeline]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:HouseTimeline-detached-gramplet.PNG|center|150px]]
+|<!-- Description -->Lists the Residents of an Address by Timeline
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/tree/master/gramps52/download/HouseTimelineGramplet.addon.tgz?raw=true HouseTimelineGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:HtreePedigreeView|H-Tree Pedigree]]
+|<!-- Type -->View
+|<!-- Image -->[[File:HtreePedigreeView-addon-example-52.png|center|150px]]
+|<!-- Description -->A Graph category [[Gramps_Glossary#viewmode|View Mode]] with an H-tree based layout that can be used to display ancestral trees compactly.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/HtreePedigreeView.addon.tgz?raw=true HtreePedigreeView.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Import Merge Tool|Import and Merge tool]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:ImportMerge.png|center|150px]] 
+|<!-- Description -->Compares a Gramps XML database with the current one, and allows merging of the differences.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ImportMerge.addon.tgz?raw=true ImportMerge.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Import_Text_Gramplet|Import Text]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:ImportGramplet-Addon-CSV-example-50.png|center|150px]] 
+|<!-- Description -->Interface to import text directly in the following formats: CSV (spreadsheet input and multiple delimiter dialects), Gramps XML, vCard 3.0.
+|<!-- Use -->Developers
+|<!-- Rating (out of 4) -->2
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ImportGramplet.addon.tgz?raw=true ImportGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:InformationGraph|Information Graph]]
+|<!-- Type -->Report
+|<!-- Image -->N/A
+|<!-- Description -->Generate detailed GraphViz graphs by spidering over the database.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->0
+|<!-- Contact -->[mailto:rah@bash.sh Bob Ham]
+|<!-- Download -->[http://pkl.net/~node/software/GVInformationGraph.py GVInformationGraph.py]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Interactive Family Tree|Interactive Family Tree]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:Addon-Interactive-Family-Tree-Topola-example-51.png|center|150px]]
+|<!-- Description -->Opens an interactive tree in the browser. This tool uses the [https://pewu.github.io/topola-viewer/ Topola Genealogy Viewer] to display the family tree.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[https://github.com/PeWu/topola-viewer/issues GitHub issue tracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Topola.addon.tgz?raw=true Topola.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:JSON_Export_Import|JSON Export<br />JSON Import]]
+|<!-- Type -->Importer/Exporter
+|<!-- Image -->[[File:JSON-Export-addon-52.png|center|150px]] 
+|<!-- Description -->A Gramps exporter and importer that will export/import your Family Tree as a JSON file.
+|<!-- Use -->Expert users
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/JSON.addon.tgz?raw=true JSON.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:LastChange|Last Change]]
+|<!-- Type -->Gramplet and Report
+|<!-- Image -->[[File:LatestChangesGramplet-addon-example-51.png|center|150px]]
+|<!-- Description -->A gramplet and report to display the last ten records changed in the open family tree.  The gramplet only displays persons, while the report can display changed families, places, and events too.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:jmodule@friant.org Jakim Friant]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/LastChange.addon.tgz?raw=true LastChange.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Life Line Chart View|Life Line Ancestor Chart<br />Life Line Descendant Chart]]
+|<!-- Type -->View
+|<!-- Image -->[[File:LifeLineChartViewScreenshot1-51.png|center|150px]] 
+|<!-- Description -->A Graph category [[Gramps_Glossary#viewmode|View Mode]] which shows individuals as lines in an ancestor or descendant chart along a time span.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[[User:CWSchulze|CWSchulze]]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->
+|- 
+|<!-- Plugin / Documentation -->[[Addon:Lines of Descendency Report|Lines of Descendency Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:Lines-of-descendency.jpeg|center|150px]]
+|<!-- Description -->Prints out all descendency lines from a given ancestor to a given descendant in text.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->2.5
+|<!-- Contact -->[[User:Lcc]] ([mailto:lcc.mailaddress@gmail.com e-mail])
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/LinesOfDescendency.addon.tgz?raw=true LinesOfDescendency.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->Liste éclair<br />([[Addon:TinyTafel|Tiny Tafel]])<br />
+|<!-- Type -->Report
+|<!-- Image -->[[File:TinyTafel-ReportOptions-filtered-51.png|center|150px]]
+|<!-- Description -->Provides a compact way of describing the main surnames found in a family genealogy, which can be read by humans and matched by computers using a Tafel Matching System. 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->Eric doutreleau<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Query.addon.tgz?raw=true ListeEclair.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:MediaBrowserGramplet|Media Browser]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:MediaBrowserGramplet-detached-example-51.png|center|150px]]
+|<!-- Description -->Display shows details of a person linked media objects.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[https://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/MediaBrowser.addon.tgz?raw=true MediaBrowser.addon.tgz] 
+|- 
+|<!-- Plugin / Documentation -->[[Addon:MediaReport|Media Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:Media Report Example.png|center|150px]]
+|<!-- Description -->A text report for images, which allows custom headings and custom notes as well as image data like notes, citations, tags, attributes and people references.  
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/MediaReport.addon.tgz?raw=true MediaReport.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Media Verify Tool|Media Verify]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:MediaVerifyTool-default-51.png|center|150px]]
+|<!-- Description -->Verify a one-to-one relationship between media objects and files in the media directory. The main purpose of the tool is to locate files that have been moved and fix the paths. 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/MediaVerify.addon.tgz?raw=true MediaVerify.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:MediaMerge|Merge Media]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:MediaMerge-51.png|center|150px]]
+|<!-- Description -->Searches for Media entries that point to the same media file and merges them together. 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/MediaMerge.addon.tgz?raw=true MediaMerge.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:MongoDB|MongoDB]]
+|<!-- Type -->Database
+|<!-- Image -->N/A<!--[[File:libaccess.jpg|center|150px]]-->
+|<!-- Description -->MongoDB database backend support. For Experts only! This is an Experimental Unreleased addon.
+|<!-- Use -->Developer
+|<!-- Rating (out of 4) -->2 
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/MongoDB.addon.tgz?raw=true MongoDB.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:NetworkChart|Network Chart]]
+|<!-- Type -->Website
+|<!-- Image -->[[File:Shakespeare_network_1_dynamic_url.svg|center|150px]] 
+|<!-- Description -->Generate a single graph showing connectivity between individuals
+|<!-- Use -->Expert user
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:familynetworkchart@gmail.com Mark B.]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/NetworkChart.addon.tgz?raw=true NetworkChart.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:NoteCleanupTool|Note Cleanup]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:Note_Cleanup_Tool.png|center|150px]] 
+|<!-- Description -->A tool to clean up html and convert to Styled Text in notes.  Also converts Web links to Styled text.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/NoteCleanup.addon.tgz?raw=true NoteCleanup.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:NoteGramplet|Note Gramplet]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:NoteGramplet-addon-example-50.png|center|150px]] 
+|<!-- Description -->A data entry gramplet for notes.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/NoteGramplet.addon.tgz?raw=true NoteGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:NumberOfAncestorsQuickView|Number of ancestors]]
+|<!-- Type -->Quickview
+|<!-- Image -->[[File:NumberOfAncestors-QuickView-example-51.png|center|150px]]
+|<!-- Description -->A quickview similar to the [[Gramps_5.2_Wiki_Manual_-_Reports_-_part_6#Number_of_Ancestors_Report|Number of Ancestors text report]].
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/NumberOfAncestorsQuickview.addon.tgz?raw=true NumberOfAncestorsQuickview.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Number of Descendants Quickview|Number of descendants]]
+|<!-- Type -->Quickview
+|<!-- Image -->[[File:NumberOfDescendants-QuickView-Addon-example-50.png|center|150px]]
+|<!-- Description -->Shows the number of descendants of the current active person
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->Reinhard Müller<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/NumberOfDescendantsQuickview.addon.tgz?raw=true NumberOfDescendantsQuickview.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:ParticipantsGramplet|Participants]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:ParticipantsGramplet-detached-example-51.png|center|150px]]
+|<!-- Description -->Display the participants in an event.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[https://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Participants.addon.tgz?raw=true Participants.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:PedigreeChart|Pedigree Chart]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:PedigreeChart-Addon-example-50.png|center|150px]]
+|<!-- Description -->A version of the classic pedigree chart that is suitable for printing. (Can optionally use - numpy if installed)
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:jmodule@friant.org Jakim Friant]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PedigreeChart.addon.tgz?raw=true PedigreeChart.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:PersonEverything Report| PersonEverything Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:PersonEverything-example-html-51.png|center|150px]]
+|<!-- Description -->Show absolutely everything about one person, including all events, notes, citations, sources, attributes, media and the family information about the families they are involved in.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PersonEverything.addon.tgz?raw=true PersonEverything.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Photo Tagging Gramplet|Photo Tagging]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:Photo-Tagging-example-51.png|center|150px]]
+|<!-- Description -->Enables tagging people in photographs, i.e. associating regions of images with Gramps persons. (Requires: OpenCV(for automatic face detection)& Numpy )
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PhotoTaggingGramplet.addon.tgz?raw=true PhotoTaggingGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:PlaceCoordinatesGramplet|Place and Coordinates]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:SearchPlace.gif|center|150px]] 
+|<!-- Description -->Gramplet simplifies setting the coordinates of a place; packaged with an  
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:c.w.schulze@gmail.com Christian Schulze]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PlaceCoordinateGeoView.py?raw=true PlaceCoordinateGeoView.py]
+|-
+|<!-- Plugin / Documentation -->[[Addon:PlaceCoordinatesGramplet#Additional_geography_view_with_a_context_menu|Place Coordinate Gramplet view]]
+|<!-- Type -->View<br />
+|<!-- Image -->[[File:MapClick4.gif|center|150px]] 
+|<!-- Description -->additional Geography category [[Gramps_Glossary#viewmode|View Mode]] packaged with the [[Addon:PlaceCoordinatesGramplet|Place and Coordinates]] Gramplet simplifies setting coordinates interactively.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:c.w.schulze@gmail.com Christian Schulze]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PlaceCoordinateGeoView.py?raw=true PlaceCoordinateGeoView.py]
+|-
+|<!-- Plugin / Documentation -->[[Addon:PlaceCleanupGramplet|Place Cleanup]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:PlaceCleanupMain.png|center|150px]] 
+|<!-- Description -->Place Cleanup Gramplet assists in merging places, as well as completing places from the GeoNames web database.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PlaceCleanup.addon.tgz?raw=true PlaceCleanup.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Place completion tool|PlaceCompletion]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:PlaceCompletion-Tool-Addon-50.png|center|150px]] 
+|<!-- Description -->A tool to fill in places.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PlaceCompletion.addon.tgz?raw=true PlaceCompletion.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:PlaceUpdate Gramplet|PlaceUpdate]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:PlaceUpdate-Gramplet-Addon-103.png|center|150px]] 
+|<!-- Description -->Gramplet to manipulate multiple places.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->Kari Kujansuu<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PlaceUpdate.addon.tgz?raw=true  PlaceUpdate.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Plugin Manager|Plugin Manager Enhanced]]
+|<!-- Type -->Plugin lib and Gramplet
+|<!-- Image -->[[File:PlugInManager-addon-example-50.png|center|150px]] 
+|<!-- Description -->A Plugin manager with additional capabilities
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PluginManager.addon.tgz?raw=true PluginManager.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:PostgreSQL|PostgreSQL]]
+|<!-- Type -->Database
+|<!-- Image -->N/A<!--[[File:libaccess.jpg|center|150px]]-->
+|<!-- Description -->PostgreSQL database backend support.
+|<!-- Use -->Expert User
+|<!-- Rating (out of 4) -->2 
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PostgreSQL.addon.tgz?raw=true PostgreSQL.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Prerequisites Checker Gramplet|Prerequisites Checker]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:PrerequisitesCheckerGramplet-Addon-example-52.png|center|150px]]
+|<!-- Description -->Diagnostic tool to help work out if users have the required prerequisites installed as well as the latest version of Gramps.
+|<!-- Use -->Expert user
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PrerequisitesCheckerGramplet.addon.tgz?raw=true PrerequisitesCheckerGramplet.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:Python Shell Gramplet|Python Shell]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:PythonGramplet-interactive-shell-example-50.png|center|150px]] 
+|<!-- Description -->Interactive Python Shell
+|<!-- Use -->Developer
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/PythonGramplet.addon.tgz?raw=true PythonGramplet.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:QueryGramplet|Query Gramplet]]
+|<!-- Type -->Gramplet and Report
+|<!-- Image -->[[File:QueryGramplet-default-51.png|center|150px]]
+|<!-- Description -->A SQL-like query system.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Query.addon.tgz?raw=true Query.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Quilt Chart|Quilt Chart]]
+|<!-- Type -->View
+|<!-- Image -->[[File:QuiltView-Addon-example-50.png|center|150px]] 
+|<!-- Description -->A Graph category [[Gramps_Glossary#viewmode|View Mode]] that presents your family tree in the form of a grid.
+|<!-- Use -->Expert users
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->Serge Noiraud, Nick Hall<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/QuiltView.addon.tgz?raw=true QuiltView.addon.tgz]
+|- 
+|<!-- Plugin / Documentation -->[[Addon:RelatedRelativesGramplet|Related Relatives]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:RelatedRelativesGramplet-addon-example-50.png|center|150px]]
+|<!-- Description -->Display all persons in the database with a relation to a relative.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:heinzbrinker@yahoo.de Heinz Brinker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/RelatedRelativesGramplet.addon.tgz?raw=true RelatedRelativesGramplet.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:RepositoriesReport|Repositories Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:RepositoriesReport.png|center|150px]]
+|<!-- Description -->A set of Text reports to list repositories and their related sources information, useful when going to a repository (like an archive). 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:romjerome@yahoo.fr Jérôme Rapinat]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/RepositoriesReport.addon.tgz?raw=true RepositoriesReport.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:RestartWhereYouWereLastWorking|Restart where you were last working]]
+|<!-- Type -->Library
+|<!-- Image -->
+|<!-- Description -->This addon causes Gramps to restart on the same view and object where Gramps was previously closed. 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/RestoreHist.addon.tgz?raw=true RestoreHist.addon.tgz]
+|- 
+|<!-- Plugin / Documentation -->[[Addon:SetAttributeTool|Set Attribute]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:SetAttributeTool-gramps50.png|center|150px]]
+|<!-- Description -->A tool for setting attributes and their values on people.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->2
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/SetAttributeTool.addon.tgz?raw=true SetAttributeTool.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:SetPrivacyTool|Set Privacy Tool]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:SetPrivacyTool-51.png|center|150px]]
+|<!-- Description -->The Set Privacy Tool allows you to manage privacy status of people, events and media 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:matt.familienforschung@gmail.com Matthias Kemmer]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/SetPrivacyTool.addon.tgz?raw=true SetPrivacyTool.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:BirthOrderTool|Sort Children in Birth order]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:BirthOrder.png|center|150px]]
+|<!-- Description -->Sort children in families in their birth order
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/BirthOrder.addon.tgz?raw=true BirthOrder.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:SourcesCitationsReport|Sources and Citations Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:SourcesCitationsReport-ReportOptions-tab-defaults-51.png|center|150px]]
+|<!-- Description -->A text report for source and citations with notes.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[https://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/SourcesCitationsReport.addon.tgz?raw=true SourcesCitationsReport.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:SQLite Export Import|SQLite Export<br />SQLite Import]]
+|<!-- Type -->Importer/Exporter
+|<!-- Image -->[[File:SQLite Export addon 51.png|center|150px]] 
+|<!-- Description -->A Gramps exporter and importer that will export/import your Family Tree as a fully-relational SQLite database.
+|<!-- Use -->Expert users
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Sqlite.addon.tgz?raw=true Sqlite.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:SyncAssociation|Sync Associations]]
+|<!-- Type -->Tool
+|<!-- Image -->N/A
+|<!-- Description -->Add reciprocal Associations if missing.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->2
+|<!-- Contact -->[mailto:genealogy@garygriffin.net Gary Griffin]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/SyncAssociations.addon.tgz?raw=true SyncAssociations.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:ThemePreferences|Theme preferences]]
+|<!-- Type -->Settings
+|<!-- Image -->[[File:Preferences-Themes-addon.png|center|150px]]
+|<!-- Description -->An addition to Preferences for simple Theme and Font adjustment.  Especially useful for Windows users.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:paulr2787@gmail.com Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/Themes.addon.tgz?raw=true Themes.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:This Day In Family History|This Day in Family History]]
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:This Day In Family History Gramplet - Sample output with content.png|center|150px]]
+|<!-- Description -->Display the upcoming a concise report of the user defined list of events that happened on this day and month. 
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->Stephen Adams
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ThisDayInFamilyHistory.addon.tgz?raw=true ThisDayInFamilyHistory.addon.tgz] 
+|-
+|<!-- Plugin / Documentation -->[[Addon:ThumbnailGenerator|Thumbnail Generator]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:ThumbnailGeneratorTool-win.png|center|150px]]
+|<!-- Description -->Generates thumbnails for media files.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:nick__hall@hotmail.com Nick Hall]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ThumbnailGenerator.addon.tgz?raw=true ThumbnailGenerator.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Timeline Quickview|Timeline]]
+|<!-- Type -->Quickview
+|<!-- Image -->[[File:Timeline-QuickView-Addon-example-50.png|center|150px]]
+|<!-- Description -->Shows timeline of events in immediate family members' lives
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4 
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/TimelineQuickview.addon.tgz?raw=true TimelineQuickview.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:TimelinePedigreeView|Timeline Pedigree]]
+|<!-- Type -->View
+|<!-- Image -->[[File:TimelinePedigreeView-Addon-example-52.png|center|150px]]
+|<!-- Description -->A Graph category [[Gramps_Glossary#viewmode|View Mode]] showing Pedigree timeline and relationships.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->[mailto:doug.blank@gmail.com Doug Blank]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/TimelinePedigreeView.addon.tgz?raw=true TimelinePedigreeView.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Timeline Pedigree Report|Timeline Pedigree Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:TimePedigreeHTML-Addon-example-52.png|center|150px]]
+|<!-- Description -->A Web Pages report which creates a webpage showing a chart of a Person and their descendants arranged vertically based on birth date.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->
+|<!-- Contact -->[mailto:gramps@ur-ahn.de Manuela Kugel]<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/TimePedigreeHTML.addon.tgz?raw=true TimePedigreeHTML.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:ToDoReport|Todo Report]]
+|<!-- Type -->Report
+|<!-- Image -->[[File:Addon-TodoReport-report-example-50.png|center|150px]]
+|<!-- Description -->Tag notes as ToDo (or anything else) and you can generate a report with the notes and the records they are attached to.  Another way of maintaining a to-do list within Gramps.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->1
+|<!-- Contact -->[mailto:jmodule@friant.org Jakim Friant]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/ToDoReport.addon.tgz?raw=true ToDoReport.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:GenealogyTree|Tree Reports:]]
+*Ancestor Tree<br />
+*Descendant Tree<br />
+*Grandparent Tree<br />
+*Sandclock Tree<br />
+*Sandclock Tree for a Family<br />
+|<!-- Type -->Report
+|<!-- Image -->[[File:GenealogyTree-Addon-AncestorTree-example-50.png|center|150px]]
+|<!-- Description -->A group of 5 Tree reports that use LaTeX genealogytree (the Pedigree and genealogical tree diagrams package) to create professional looking trees for the active person. Four report are available. '''Requires: texlive/texlive-pictures and texlive-fontsextra'''
+|<!-- Use -->Developer<br />Expert user<br />Intermediate user
+|<!-- Rating (out of 4) -->3
+|<!-- Contact -->Nick Hall<br />[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/GenealogyTree.addon.tgz?raw=true GenealogyTree.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Types Cleanup Tool|Type Cleanup]]
+|<!-- Type -->Tool
+|<!-- Image -->[[File:TypesCleanup-Tool-Options-dialog-addon-example-51.png|center|150px]]
+|<!-- Description -->A tool to Remove unneeded custom Types.
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[mailto:paulr2787@gmail.com  Paul Culley]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps52/download/TypeCleanup.addon.tgz?raw=true TypeCleanup.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:Web_Connect_Pack|Web Connect Pack]]<br />DE Web Connect Pack<br />FR Web Connect Pack<br />NL Web Connect Pack<br />RU Web Connect Pack<br />SV Web Connect Pack<br />UK Web Connect Pack<br />US Web Connect Pack
+|<!-- Type -->Library
+|<!-- Image -->[[File:Web-connect-pack-UK-menu-51.png|center|150px]]
+|<!-- Description -->Collection of Web sites for various countries (DE/FR/SV/UK/US) Only install the country you need. (* Requires libwebconnect)
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->[http://gramps-project.org/bugs/my_view_page.php Gramps Bugtracker]
+|<!-- Download -->'''[https://github.com/gramps-project/addons/blob/master/gramps52/download/libwebconnect.addon.tgz?raw=true libwebconnect.addon.tgz]'''<br>[https://github.com/gramps-project/addons/blob/master/gramps52/download/DEWebConnectPack.addon.tgz?raw=true DEWebConnectPack.addon.tgz]<br>[https://github.com/gramps-project/addons/blob/master/gramps52/download/FRWebConnectPack.addon.tgz?raw=true FRWebConnectPack.addon.tgz]<br>[https://github.com/gramps-project/addons/blob/master/gramps52/download/SVWebConnectPack.addon.tgz?raw=true SVWebConnectPack.addon.tgz]<br>[https://github.com/gramps-project/addons/blob/master/gramps52/download/UKWebConnectPack.addon.tgz?raw=true UKWebConnectPack.addon.tgz]<br>[https://github.com/gramps-project/addons/blob/master/gramps52/download/USWebConnectPack.addon.tgz?raw=true USWebConnectPack.addon.tgz]
+|-
+|<!-- Plugin / Documentation -->[[Addon:WebSearch|WebSearch]]
+*People<br />
+*Families<br />
+*Places<br />
+*Sources
+|<!-- Type -->Gramplet
+|<!-- Image -->[[File:WebSearchGramplet-Addon-detached-example-60.png|center|150px]]
+|<!-- Description -->Customized queries for online services based on the active Person, Place, Family, or Source record. Unique ID lookups, QR codes generation, and AI search support.  
+|<!-- Use -->All
+|<!-- Rating (out of 4) -->4
+|<!-- Contact -->Yurii Liubymyi<br /><br />[https://github.com/jurchello/WebSearch/issues WebSearch Issues (GitHub)]
+|<!-- Download -->[https://github.com/gramps-project/addons/blob/master/gramps60/download/WebSearch.addon.tgz?raw=true WebSearch.addon.tgz]
+|-<!-- Copy this section and list your Addon -->
+|<!-- Plugin / Documentation -->
+|<!-- Type -->
+|<!-- Image -->
+|<!-- Description -->
+|<!-- Use -->
+|<!-- Rating (out of 4) -->
+|<!-- Contact -->
+|<!-- Download -->
+|-
+|}
+
+[[Category:Plugins]]
+[[Category:Developers/General]]
+[[Category:Gramplets|*]]
+[[Category:Tools|*]]
+[[Category:Views|*]]

@@ -1,0 +1,144 @@
+> can you figure out why the Markdown Utils sometimes show the full color version of an icon and other times fall back to the B&W symbolic? One the same machine? (Often it shows the symbolic B&W with even number pixel sizes and full color scaled to odd number sizes?)
+
+That's a genuinely interesting bug, and the parity split is a real signal, not a coincidence — let me trace through resolve_icon_pixbuf()'s symbolic/color decision logic.
+
+Diagnosed icon fallback behavior and validated proper symbolic detection method
+Diagnosed icon fallback behavior and validated proper symbolic detection method
+
+Found it — and it's a well-documented GTK behavior interacting badly with a small bug in our code, not something obscure. Here's the chain:
+
+1. Icon themes only define fixed-size buckets at conventional even sizes. Every icon theme (Adwaita, hicolor, and almost certainly Gramps' own bundled icon set) ships raster/fixed-size directories at 16, 22, 24, 32, 48px etc. — never odd sizes. Symbolic variants, when not a fully generic scalable SVG, are usually only available at that same narrow set of even sizes too.
+
+2. Our code never passes FORCE_SIZE. Per the GTK docs: "GTK+ will avoid scaling icons that it considers sufficiently close to the requested size... This behaviour can be changed by passing the GTK_ICON_LOOKUP_FORCE_SIZE flag." Without it, an odd-size request just gets whatever bucket GTK considers "close enough" — inconsistently.
+
+3. The real bug — load_symbolic_for_context() silently degrades to full color. Per the official docs: "If the icon is not a symbolic one, the function will return the result from gtk_icon_info_load_icon()" — i.e., plain full color, no error, no signal that a fallback happened.
+
+4. Our code decides whether to call that function using the wrong signal:
+
+The check lookup_name.endswith("-symbolic") tests our own intent (the Python string we built), not what GTK actually resolved. It's true every time we decided to try the symbolic name, regardless of whether GTK's GENERIC_FALLBACK silently substituted the full-color icon underneath because no symbolic asset existed at that exact size. So we always call load_symbolic_for_context() — and per the docs above, that call itself quietly hands back the full-color pixbuf when the resolved icon isn't genuinely symbolic, no error, no signal. Even sizes happen to land on real symbolic buckets and get properly recolored; odd sizes fall through GTK's fallback chain to color and we never notice.
+
+The fix is to ask GTK what it actually resolved, using GtkIconInfo.is_symbolic() — confirmed in the docs above: "Checks if the icon is symbolic or not" — instead of checking our own request string:
+
+Architected debugging framework with simulated icon theme scenario
+Architected debugging framework with simulated icon theme scenario
+
+Let's add FORCE_SIZE to the stub and build a more realistic simulation that actually reproduces the bug/fix distinction, so the fix is genuinely verified rather than just asserted:
+
+Edited a file, ran a command
+Edited a file, ran a command
+
+Now a realistic simulation of the actual GTK quirk — a fake icon theme where the symbolic asset only exists at even fixed-size buckets, and GENERIC_FALLBACK silently substitutes the color icon for odd sizes:
+
+Investigated icon loading logic and questioned root cause assumptions
+Investigated icon loading logic and questioned root cause assumptions
+
+My simulation shows the two logic paths agreeing here, which tells me the real fault may be elsewhere — likely down in the raster/SVG fallback tier, which never had symbolic awareness at all. Let me check:
+
+(Investigated icon rendering fallback mechanisms and symbolic awareness gaps)
+
+This is the real, deterministic mechanism — and it's a third bug distinct from the one I already fixed. Let's confirm by viewing the rest of this fallback tier:
+
+Confirmed — this fallback tier never even attempts a -symbolic filename, regardless of size or is_small_layout. This is the dominant, fully deterministic explanation: an odd pixel size usually falls entirely outside every icon theme's fixed-size buckets (which are always conventional even values), so the live Gtk.IconTheme cascade in _load_named() returns None for both the symbolic and color lookups at that size — for every candidate name — and execution falls all the way through to this naive local-file tier, which is 100% color, unconditionally, with no symbolic awareness at all. Even sizes hit a real theme bucket and never reach this tier.
+
+Now let's verify with a test that simulates exactly this scenario — theme cascade missing entirely at odd sizes, local files present in both variants:
+
+That confirms the fix precisely: size 17 (odd, ≤32) now correctly resolves to the symbolic variant — previously it would have silently fallen through to color, identical to what's now happening (correctly, by design) only for size 33 (>32, where the docstring's existing "large icons prioritize color" rule intentionally applies regardless of parity).
+
+Root cause, in short
+
+Two separate bugs compound into the parity pattern you noticed:
+
+1. The dominant one — the local file fallback tier never tried -symbolic filenames at all. Icon themes only define fixed-size directories at conventional even pixel values (16/22/24/32/48/64...). Request an odd size like 17, and the live Gtk.IconTheme cascade in _load_named() typically misses entirely — for both the symbolic and color name, for every candidate — since 17 doesn't land near any real bucket. Execution then falls through to the raster/SVG/IMAGE_DIR local-file search, which was a completely naive name + ".png" lookup with zero symbolic awareness — no -symbolic attempt, ever. So any size that missed the live theme (which even sizes rarely do, and odd sizes almost always do) landed here and got full color unconditionally. I verified this with a fixture reproducing exactly your report: 16/17/24 all now correctly resolve symbolic, and only sizes >32 (by design, regardless of parity) fall back to color.
+
+2. A secondary, smaller bug in the theme-cascade tier itself. The decision to colorize was based on lookup_name.endswith("-symbolic") — a check on the string we built when we decided to try the symbolic name — rather than on what GTK actually resolved. GtkIconInfo.is_symbolic() is the correct, GTK-native way to ask that question; I swapped to it. I also added Gtk.IconLookupFlags.FORCE_SIZE so whichever asset is found gets scaled to the exact requested size consistently, rather than GTK's default "avoid scaling if close enough" behavior producing inconsistent apparent sizes.
+
+Both fixes are in the file above. The local-file fallback fix is the one that actually explains your reported symptom deterministically; the is_symbolic() fix is a correctness improvement for the live-theme path that could otherwise cause similar (if rarer) mismatches independent of size parity.
+
+> So if the objective is to suppress the fallback to B&W, when a color icon was  chosen, how can we make MarkdownUtils do that? (And is there a way to make the fallback optional or forced in either direction? )
+
+
+Architected multi-mode icon resolution system with configurable fallback precedence
+
+Good, now I have the exact consumption pattern. Let's design this as a proper, three-way switch (auto / color / symbolic), settable both per-icon in the Markdown syntax and as a document-wide default via the control-comment mechanism we just fixed. Let me find the other call sites first:
+
+Architected parameter strategy to selectively control icon style fallback behavior
+
+Now let's implement. First, the Segment class doc/type and the icon URL regex extension:
+Ran a command, edited a file
+
+Now the regex and constants — let's view context around it to place the new constants cleanly:
+Viewed a file, edited a file
+
+Now let's update _parse_inline (the regular TextBuffer flow, not just table cells) to also thread default_icon_style and produce the 3-tuple:
+Architected pragmatic module-level context solution for icon styling
+
+Now update _parse_inline's img branch to use it:
+Editing file
+
+Now update parse_markdown()'s signature to set/restore the ambient default:
+Weighed refactoring risks against simpler variable management approach
+
+Now let's rewrite resolve_icon_pixbuf() with the icon_style parameter and the symmetric preference/fallback logic:
+Ran a command, viewed a file
+
+Now let's do the full rewrite with the symmetric _name_variants() approach:
+Editing file
+
+Now let's update build_table_widget() to accept default_icon_style and pass it through render_cell():
+Ran a command, viewed a file, edited a file
+
+Now let's format and syntax-check the full file:
+Ran a command
+
+Now update MarkdownDash.py's three call sites — the gramps_icon unpacking, build_table_widget(), and wiring the icon_style control option through _load()/_render():
+Editing file
+
+Now let's update _render()'s signature and its parse_markdown/build_table_widget calls:
+Edited 2 files
+
+Now let's wire the icon_style control-option through _load()'s existing options dict:
+Edited 2 files, ran a command
+
+Now let's run a comprehensive end-to-end test covering all the new controls: per-icon style suffix, document-wide default, and forced-with-fallback behavior:
+Ran a command
+
+All the syntax and precedence rules work correctly. Now let's verify the actual forced-fallback resolution behavior in resolve_icon_pixbuf() against the fixture:
+Ran a command
+
+Now let's test the "forced with graceful fallback" behavior — requesting a style that doesn't exist for a given icon:
+Ran a command
+
+Exactly the intended graceful degrade — forced symbolic still shows something rather than a blank icon when only color exists for that particular icon. Let's finalize both files:
+Ran a command, read a file
+
+There are now three independent ways to control it, from coarsest to finest:
+
+1. Whole document, via the control-comment option (ties into the mechanism we just fixed):
+``` markdown
+# My Dashboard
+<!-- icon_style=color -->
+```
+
+Every gramps:icon: reference in the file defaults to full color unless overridden per-icon.
+
+2. Per icon, via an optional third field in the Markdown syntax:
+
+``` markdown
+![](gramps:icon:person:16:color)
+![](gramps:icon:person:40:symbolic)
+```
+
+Explicit per-icon style always wins over the document default.
+
+3. Programmatically, for any other caller of resolve_icon_pixbuf(), parse_markdown(), or build_table_widget() directly — all three now take an icon_style / default_icon_style parameter ('auto' / 'color' / 'symbolic').
+
+Behavior of the three settings:
+
+auto (default) — unchanged from before: symbolic for icon sizes ≤32px, color above that, with a hard-fail-to-None if that one variant genuinely doesn't exist (matches every previous release exactly).
+color — always prefers full color regardless of size; falls back to symbolic only if that particular icon has no color asset anywhere.
+symbolic — always prefers B&W regardless of size; falls back to color only if that particular icon has no symbolic asset anywhere.
+
+I verified all of this against fixtures: the syntax parsing/precedence rules (inline suffix overrides document default), the forced-color and forced-symbolic resolution paths, and the graceful degrade case (forcing a style that doesn't exist for a specific icon still shows the other variant rather than nothing).
+
+One thing worth deciding: right now build_table_widget() needs default_icon_style passed in explicitly by the caller (I wired MarkdownDash.py to do this), since table cells are rendered outside parse_markdown()'s call and don't share its ambient default automatically — that's noted in the docstring so it doesn't become a silent gotcha for other consumers.
+

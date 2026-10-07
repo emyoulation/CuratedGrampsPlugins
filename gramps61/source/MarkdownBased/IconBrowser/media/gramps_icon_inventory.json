@@ -1,0 +1,1442 @@
+{
+  "schema": 2,
+  "generated": "2026-09-02T16:02:49",
+  "gramps_version": "5.2.2",
+  "source": "IMAGE_DIR/hicolor + gui|plugins icon-name usage scan",
+  "icons": [
+    {
+      "name": "100px-Lighting",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/100px-Lighting.png",
+      "bundled": true
+    },
+    {
+      "name": "180px-Bad-buttonizing",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/180px-Bad-buttonizing.png",
+      "bundled": true
+    },
+    {
+      "name": "180px-Bad-polarizing",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/180px-Bad-polarizing.png",
+      "bundled": true
+    },
+    {
+      "name": "add",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/add.svg",
+      "bundled": true
+    },
+    {
+      "name": "add-parent-existing-family",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/add-parent-existing-family.svg",
+      "bundled": true
+    },
+    {
+      "name": "custom-filter",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/custom-filter.svg",
+      "bundled": true
+    },
+    {
+      "name": "dialog-password",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "document-new",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "document-print",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "document-revert",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "edit-clear",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "edit-redo",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "edit-undo",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "event-document-seal",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/event-document-seal.svg",
+      "bundled": true
+    },
+    {
+      "name": "format-text-bold",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "format-text-italic",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "format-text-strikethrough",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "format-text-subscript",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "format-text-superscript",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "format-text-underline",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "Gartoon_actions_convert",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/Gartoon_actions_convert.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-fixed-zoom",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-fixed-zoom.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-free-zoom",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-free-zoom.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-place-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-place-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-place-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-place-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-place-link",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-place-link.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-show-event",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-show-event.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-show-family",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-show-family.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-show-family-down",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-show-family-down.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-show-family-up",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-show-family-up.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-show-person",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-show-person.svg",
+      "bundled": true
+    },
+    {
+      "name": "geo-show-place",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/geo-show-place.svg",
+      "bundled": true
+    },
+    {
+      "name": "Gnome-help",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/Gnome-help.svg",
+      "bundled": true
+    },
+    {
+      "name": "gnome-mime-application-x-csv",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gnome-mime-application-x-csv.svg",
+      "bundled": true
+    },
+    {
+      "name": "gnome-mime-application-x-gedcom",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gnome-mime-application-x-gedcom.svg",
+      "bundled": true
+    },
+    {
+      "name": "gnome-mime-application-x-geneweb",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gnome-mime-application-x-geneweb.svg",
+      "bundled": true
+    },
+    {
+      "name": "gnome-mime-application-x-gramps",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gnome-mime-application-x-gramps.svg",
+      "bundled": true
+    },
+    {
+      "name": "gnome-mime-application-x-gramps-package",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gnome-mime-application-x-gramps-package.svg",
+      "bundled": true
+    },
+    {
+      "name": "gnome-mime-application-x-gramps-xml",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gnome-mime-application-x-gramps-xml.svg",
+      "bundled": true
+    },
+    {
+      "name": "Gnome-preferences-system",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/Gnome-preferences-system.svg",
+      "bundled": true
+    },
+    {
+      "name": "go-down",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/go-down.svg",
+      "bundled": true
+    },
+    {
+      "name": "go-home",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/go-home.svg",
+      "bundled": true
+    },
+    {
+      "name": "go-jump",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/go-jump.svg",
+      "bundled": true
+    },
+    {
+      "name": "go-next",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/go-next.svg",
+      "bundled": true
+    },
+    {
+      "name": "go-previous",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/go-previous.svg",
+      "bundled": true
+    },
+    {
+      "name": "go-up",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/go-up.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps",
+      "context": "Apps",
+      "path": "gramps.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-addon",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-addon.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-address",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-address.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-address1",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-address1.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-allstars",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-allstars.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-book",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-book.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-bookmark",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-bookmark.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-bookopen",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-bookopen.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-chain",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-chain.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-clip",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-clip.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-cog",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-cog.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-mag",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-mag.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-pencil",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-pencil.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-pencil2",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-pencil2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-person-grey",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-person-grey.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-screwwrench",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-screwwrench.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-asset-star",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/gramps-asset-star.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-attribute",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-attribute.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-attribute-important",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-attribute-important.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-avatars-boy",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-avatars-boy.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-avatars-girl",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-avatars-girl.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-avatars-gramp",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-avatars-gramp.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-avatars-gran",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-avatars-gran.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-avatars-man",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-avatars-man.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-avatars-woman",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-avatars-woman.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-bookmark",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-bookmark.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-bookmark-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-bookmark-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-bookmark-edit",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-bookmark-edit.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-bookmark-link",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-bookmark-link.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-bookmark-new",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-bookmark-new.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-books-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-books-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-boomarks-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-boomarks-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-child-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-child-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-citation",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-citation.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-citation--all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-citation--all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-citation-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-citation-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-citation-edit",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-citation-edit.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-citation-important",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-citation-important.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-citation-new",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-citation-new.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-citation-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-citation-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-colour-palette",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/gramps-colour-palette.png",
+      "bundled": true
+    },
+    {
+      "name": "gramps-config",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-config.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-couple-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-couple-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-date",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-date.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-date-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-date-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-date-edit",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-date-edit.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-desktopicon-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-desktopicon-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-documents-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-documents-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-envelopeid-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-envelopeid-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-event",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-event.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-event-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-event-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-event-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-event-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-event-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-event-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-event-important",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-event-important.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-event-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-event-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-export",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-export.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-family",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-family.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-fanchart",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-fanchart.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-fanchart-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-fanchart-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-fanchart2",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-fanchart2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-fanchart2way",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-fanchart2way.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-fanchartdesc",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-fanchartdesc.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-fanchartdesc2",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-fanchartdesc2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-female",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-female.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-font",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-font.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-font-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-font-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-font-bgcolor",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-font-bgcolor.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-font-color",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-font-color.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-geo-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-altmap",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-altmap.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-altmap0",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-altmap0.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-altmap2",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-geo-altmap2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-altmap3",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-geo-altmap3.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-birth",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-birth.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-birth0",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-birth0.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-birth2",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-geo-birth2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-death",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-death.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-death0",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-death0.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-death2",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-geo-death2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-link",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-link.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-mainmap",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-mainmap.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-mainmap0",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-mainmap0.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-mainmap2",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-geo-mainmap2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-marriage",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-marriage.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-marriage0",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-geo-marriage0.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geo-marriage2",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-geo-marriage2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-geopins-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-geopins-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-gramplet",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-gramplet.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-help-browser",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-help-browser.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-icon-ios",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-icon-ios.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-icon-template",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gramps-icon-template.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-icon-windows",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-icon-windows.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-import",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-import.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-linked-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-linked-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-linkedview-concept-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-linkedview-concept-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-linkedview1",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/linkedview/gramps-linkedview1.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-linkedview2",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/linkedview/gramps-linkedview2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-linkedview3",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/linkedview/gramps-linkedview3.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-linkedview4",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/linkedview/gramps-linkedview4.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-linkedview5",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/linkedview/gramps-linkedview5.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-lock",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-lock.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-locks-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-locks-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-male",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-male.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-math-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-math-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-media",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-media.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-media-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-media-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-media-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-media-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-media-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-media-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-media-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-media-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-merge",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-merge.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-mime-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-mime-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-notes",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-notes.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-notes1",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-notes1.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-notes2",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-notes2.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-notes2-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-notes2-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-notes2-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-notes2-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-notes2-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-notes2-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-parents",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-parents.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-parents-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-parents-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-parents-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-parents-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-parents-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-parents-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-parents-open",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-parents-open.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-pedigree",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-pedigree.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-person",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-person.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-person-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-person-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-person-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-person-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-person-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-person-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-person-name",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-person-name.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-person-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-person-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-place",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-place.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-place-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-place-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-place-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-place-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-preferences",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-preferences.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-printer",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-printer.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-relation",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-relation.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-relation-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-relation-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-repo-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-repo-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-repo-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-repo-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-repo-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-repo-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-repo-ref",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-repo-ref.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-reports",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-reports.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-repository",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-repository.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-screens-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-screens-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-source",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-source.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-source-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-source-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-source-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-source-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-spouse",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-spouse.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-spouse-add",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-spouse-add.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-spouse-delete",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-spouse-delete.svg",
+      "bundled": true
+    },
+    {
+      "name": "Gramps-Stencil-001",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/Gramps-Stencil-001.svg",
+      "bundled": true
+    },
+    {
+      "name": "Gramps-Stencil-002",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/Gramps-Stencil-002.svg",
+      "bundled": true
+    },
+    {
+      "name": "Gramps-Stencil-003",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/Gramps-Stencil-003.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tag",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-tag.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tag-green",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-tag-green.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tag-grey",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-tag-grey.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tag-new",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-tag-new.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tag-orange",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-tag-orange.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tag-red",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/concept/gramps-tag-red.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tags-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-tags-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-temple",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-temple.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tools",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-tools.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tree-group",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-tree-group.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tree-list",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-tree-list.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-tree-select",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-tree-select.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-unlock",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-unlock.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-url",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-url.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-view",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-view.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-viewmedia",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-viewmedia.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-zoom-all",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/gtheme-icons/grouped/gramps-zoom-all.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-zoom-best-fit",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-zoom-best-fit.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-zoom-fit-width",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-zoom-fit-width.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-zoom-in",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-zoom-in.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps-zoom-out",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps-zoom-out.svg",
+      "bundled": true
+    },
+    {
+      "name": "gramps_new-html",
+      "context": "Actions",
+      "path": "hicolor/scalable/actions/gramps_new-html.svg",
+      "bundled": true
+    },
+    {
+      "name": "gtk-edit",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "gtk-index",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "list-add",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "list-remove",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "On-the-shelf-perspective",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/On-the-shelf-perspective.png",
+      "bundled": true
+    },
+    {
+      "name": "subtract",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/subtract.svg",
+      "bundled": true
+    },
+    {
+      "name": "Table-perspective",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/Table-perspective.png",
+      "bundled": true
+    },
+    {
+      "name": "tilted-table-perspective",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/tilted-table-perspective.png",
+      "bundled": true
+    },
+    {
+      "name": "Unify-icon-elements",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/Unify-icon-elements.png",
+      "bundled": true
+    },
+    {
+      "name": "User-info",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/assets/User-info.svg",
+      "bundled": true
+    },
+    {
+      "name": "view-refresh",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "view-sort-ascending",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "window-close",
+      "context": "System",
+      "path": null,
+      "bundled": false
+    },
+    {
+      "name": "x-directory-normal-drag-accept",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/x-directory-normal-drag-accept.png",
+      "bundled": true
+    },
+    {
+      "name": "x-directory-normal-drag-accept1",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/x-directory-normal-drag-accept1.png",
+      "bundled": true
+    },
+    {
+      "name": "x-directory-normal-drag-accept2",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/x-directory-normal-drag-accept2.png",
+      "bundled": true
+    },
+    {
+      "name": "x-directory-normal-drag-accept3",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/x-directory-normal-drag-accept3.png",
+      "bundled": true
+    },
+    {
+      "name": "x-directory-normal-drag-accept4",
+      "context": "Other",
+      "path": "hicolor/GTheme-main/Gramps_Icon_Theme_Guidelines/x-directory-normal-drag-accept4.png",
+      "bundled": true
+    }
+  ]
+}
