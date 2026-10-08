@@ -57,7 +57,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6,2,0):
             " listing import, and a locally-cached wiki addon catalog"
             " (with thumbnails) shared by installed and available addons."
         ),
-        version="2.0.3",
+        version="2.0.4",
         gramps_target_version=major_version,
         status=BETA,
         fname="PluginManagerPlusLoad.py",

@@ -263,6 +263,10 @@ R_HAS_HELP = 10
 _STABLE_PREVIEW_ICON = "gramps-addon"
 _DEVEL_PREVIEW_ICON = "org.gnome.Extensions.Devel"
 
+# Preview images larger than this are not loaded or thumbnailed; the
+# Preview pane shows a complaint instead (see _render_preview).
+_MAX_PREVIEW_IMAGE_BYTES = 5 * 1024 * 1024
+
 # Left padding (px) for the Type column's second-line icon strip, so it
 # lines up with the "\n  " (2-space) indent used for the Tool/Report
 # sub-category text line instead of GtkCellAreaBox's default centering.
@@ -1474,20 +1478,30 @@ class PluginStatus(tool.Tool, ManagedWindow):
             return None
         return pdata.fpath
 
-    _CAPTURE_FILENAMES = ("screenshot.png", "screenshot.webp")
+    # Relative paths inside a plugin's own folder, in priority order: the
+    # Gramps wiki's ``screenshots/1.png`` convention wins over this
+    # addon's own ``media/screenshot.*`` convention.
+    _CAPTURE_FILENAMES = (
+        os.path.join("screenshots", "1.png"),
+        os.path.join("screenshots", "1.webp"),
+        os.path.join("media", "screenshot.png"),
+        os.path.join("media", "screenshot.webp"),
+    )
 
     def _find_capture_image(self, plugin_dir: str) -> str | None:
         """
-        Look for a bundled screenshot in a plugin's ``media`` subfolder.
+        Look for a bundled screenshot inside a plugin's own folder.
 
         :param plugin_dir: a plugin's own registered directory
-        :returns: full path to ``media/screenshot.png`` or
-                  ``media/screenshot.webp`` (checked in that order), or
-                  ``None`` if neither exists
+        :returns: full path of the first existing file among
+                  ``screenshots/1.png``, ``screenshots/1.webp``,
+                  ``media/screenshot.png`` and ``media/screenshot.webp``
+                  (checked in that order), or ``None`` if none exists
         """
-        media_dir = os.path.join(plugin_dir, "media")
-        for filename in self._CAPTURE_FILENAMES:
-            candidate = os.path.join(media_dir, filename)
+        if not plugin_dir:
+            return None
+        for rel_path in self._CAPTURE_FILENAMES:
+            candidate = os.path.join(plugin_dir, rel_path)
             if os.path.isfile(candidate):
                 return candidate
         return None
@@ -1542,6 +1556,22 @@ class PluginStatus(tool.Tool, ManagedWindow):
             _("Return to the selected plugin's registration details")
         )
 
+    @staticmethod
+    def _oversized_image_size(image_path: str) -> int | None:
+        """
+        Report the size of a preview image if it is too big to thumbnail.
+
+        :param image_path: full path of the candidate preview image
+        :returns: the file size in bytes if it exceeds
+                  ``_MAX_PREVIEW_IMAGE_BYTES``, otherwise ``None`` (also
+                  when the size cannot be read)
+        """
+        try:
+            size = os.path.getsize(image_path)
+        except OSError:
+            return None
+        return size if size > _MAX_PREVIEW_IMAGE_BYTES else None
+
     def _render_preview(self, pdata: object, image_path: str | None = None) -> None:
         """Render the selected plugin's name, preview, then description.
 
@@ -1554,7 +1584,21 @@ class PluginStatus(tool.Tool, ManagedWindow):
         capture_path = self._find_capture_image(plugin_dir) if plugin_dir else None
         if capture_path:
             image_path = capture_path
-        if image_path:
+        oversized = self._oversized_image_size(image_path) if image_path else None
+        if oversized is not None:
+            preview = (
+                "![](gramps:icon:dialog-warning:48)\n\n"
+                + _(
+                    "**Preview image too large** (%(size).1f MB; limit is "
+                    "%(limit).0f MB): `%(name)s`"
+                )
+                % {
+                    "size": oversized / (1024 * 1024),
+                    "limit": _MAX_PREVIEW_IMAGE_BYTES / (1024 * 1024),
+                    "name": os.path.basename(image_path),
+                }
+            )
+        elif image_path:
             preview = "![](%s)" % image_path
         else:
             statustext = getattr(pdata, "statustext", None)

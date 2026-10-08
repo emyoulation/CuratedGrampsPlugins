@@ -192,6 +192,16 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
   },
   {
+    "n": "Markdown Utils",
+    "i": "MarkdownUtils",
+    "t": 6,
+    "d": "Shared Markdown rendering and icon-resolution library used by Markdown Dash, Plugin Manager plus, and other addons. Not a tool or gramplet itself -- installed so those addons can import it.",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "MarkdownBased.addon.tgz"
+  },
+  {
     "n": "Metadata Inspector",
     "i": "Metadata Inspector",
     "t": 10,
