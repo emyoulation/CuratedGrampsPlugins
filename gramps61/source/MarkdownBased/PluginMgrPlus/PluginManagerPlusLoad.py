@@ -44,6 +44,21 @@ import sys
 import os
 
 
+def _lazy_plugin_status(*args, **kwargs):
+    """
+    Open Plugin Manager plus, importing its module on first use.
+
+    Gramps core only ever calls ``PluginWindows.PluginStatus(dbstate,
+    uistate, [])`` (gramps/gui/viewmanager.py, Help -> Plugin Manager),
+    so a plain function works in place of the class. This keeps the large
+    PluginManagerPlus module (and MarkdownUtils, urllib, its ini file)
+    out of Gramps startup until the dialog is actually opened.
+    """
+    from PluginManagerPlus import PluginStatus
+
+    return PluginStatus(*args, **kwargs)
+
+
 def load_on_reg(dbstate, uistate, plugin):
     """
     Runs when plugin is registered.
@@ -52,7 +67,8 @@ def load_on_reg(dbstate, uistate, plugin):
         # It is necessary to avoid load GUI elements when run under CLI mode.
         # So we just don't load it at all.
         sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-        from PluginManagerPlus import PluginStatus
         import gramps.gui.viewmanager
+
         gramps.gui.viewmanager.__dict__[
-            'PluginWindows'].PluginStatus = PluginStatus
+            "PluginWindows"
+        ].PluginStatus = _lazy_plugin_status

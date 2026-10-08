@@ -11,68 +11,22 @@
 #   MarkdownDash/layouts/*.csv
 #   MarkdownDash/README.md
 
-MarkdownDash/media/*
-MarkdownDash/*/media/*
-MarkdownDash/*.md
+*.md
+*.py
+MANIFES*
+po/*
+media/*
+
+PluginMgrPlus/*.py
+PluginMgrPlus/*.md
+PluginMgrPlus/media/*
 MarkdownDash/*.py
-MarkdownDash/*/*.py
-MarkdownDash/MANIF*
+MarkdownDash/*.md
+MarkdownDash/locale/*
+MarkdownDash/media/*
+MarkdownDash/test/*
+IconBrowser/*.py
+IconBrowser/*.md
+IconBrowser/media/*
+GrampsGlossary/*
 
-
-# Full directory listing of MarkdownBased/  —  2026-06-22
-# [auto]  = already included automatically in this build mode
-# [add?]  = NOT yet included — uncomment/copy to entries section above to add
-# [skip]  = intentionally excluded (temp/cache file)
- 
-  MarkdownBased/MANIFEST.beta
-  MarkdownBased/MarkdownUtils.py
-  MarkdownBased/README-test2.md
-  MarkdownBased/README.md
-  MarkdownBased/ToDo_note_reader.md
-  MarkdownBased/GrampsGlossary/Gramps_Glossary.md
-  MarkdownBased/IconBrowser/IconBrowserGramplet.gpr.py
-  MarkdownBased/IconBrowser/IconBrowserGramplet.py
-  MarkdownBased/IconBrowser/README.md
-  MarkdownBased/IconBrowser/media/Add.png
-  MarkdownBased/IconBrowser/media/Install.png
-  MarkdownBased/IconBrowser/media/PngSvgMix.png
-  MarkdownBased/IconBrowser/media/Project.png
-  MarkdownBased/MarkdownDash/MarkdownDash.gpr.py
-  MarkdownBased/MarkdownDash/MarkdownDash.py
-  MarkdownBased/MarkdownDash/MarkdownUtils.py
-  MarkdownBased/MarkdownDash/README.md
-  MarkdownBased/MarkdownDash/locale/en/API.md
-  MarkdownBased/MarkdownDash/locale/fi/README.md
-  MarkdownBased/MarkdownDash/media/gui.png
-  MarkdownBased/MarkdownDash/media/logo-claude-official.png
-  MarkdownBased/MarkdownDash/media/logo-icon.png
-  MarkdownBased/MarkdownDash/media/logo-light.png
-  MarkdownBased/MarkdownDash/media/logo-pill.png
-  MarkdownBased/MarkdownDash/media/logo-text.png
-  MarkdownBased/MarkdownDash/media/logo.png
-  MarkdownBased/MarkdownDash/media/logo.svg
-# [auto]  ← this file  MarkdownBased/PluginMgrPlus/MANIFEST.beta
-# [auto]  ← .py/.glade/.xml always packed  MarkdownBased/PluginMgrPlus/PluginManagerLoad.py
-# [auto]  ← .py/.glade/.xml always packed  MarkdownBased/PluginMgrPlus/PluginManagerPlus.gpr.py
-# [auto]  ← .py/.glade/.xml always packed  MarkdownBased/PluginMgrPlus/PluginManagerPlus.py
-# [auto]  ← *.md auto-included in β Beta  MarkdownBased/PluginMgrPlus/Plugin_Manager_plus.md
-# [add?]  MarkdownBased/PluginMgrPlus/media/PluginMgrPlus.xcf
-# [add?]  MarkdownBased/PluginMgrPlus/media/PluginMgr_buttons.png
-# [add?]  MarkdownBased/PluginMgrPlus/media/PluginMgr_capture.png
-# [add?]  MarkdownBased/PluginMgrPlus/media/Template_Addons5.1.txt
-# [add?]  MarkdownBased/PluginMgrPlus/media/Template_Addons5.2.txt
-# [add?]  MarkdownBased/PluginMgrPlus/media/Template_Addons6.0.txt
- MarkdownBased/Welcome/Welcome_to_Gramps.md
- MarkdownBased/Welcome/media/AddonManual.png
- MarkdownBased/Welcome/media/Gramps50_gui.png
- MarkdownBased/Welcome/media/GrampsAddons.png
- MarkdownBased/Welcome/media/GrampsManual.png
- MarkdownBased/Welcome/media/GrampsPackage.png
- MarkdownBased/Welcome/media/GrampsPackagePlus.png
- MarkdownBased/Welcome/media/UserManual.png
- MarkdownBased/Welcome/media/background-homepage-2015.jpg
- MarkdownBased/media/AddFamily_en.png
- MarkdownBased/media/Claude_Icon.md
- MarkdownBased/media/README.md
- MarkdownBased/media/Welcome.en.md
- MarkdownBased/po/template.pot

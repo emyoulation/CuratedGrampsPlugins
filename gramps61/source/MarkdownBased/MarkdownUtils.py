@@ -2238,7 +2238,9 @@ def resolve_icon_pixbuf(
     using the theme's active palette (preventing dark-on-dark invisible renderings).
 
     Resolution order:
-    1. Exact GTK named icon via current theme cascade, parsing variants dynamically.
+    1. Exact GTK named icon via current theme cascade, parsing variants
+       dynamically -- first *without* GTK's generic fallback, then with it
+       (see ``_load_any`` for why).
     2. All candidate names from :data:`GRAMPS_ICONS` alias list.
     3. Raster PNG fallback from Gramps installation ``DATA_DIR``.
     4. Scalable SVG fallback from Gramps installation ``DATA_DIR``.
@@ -2282,11 +2284,8 @@ def resolve_icon_pixbuf(
         # PRESENTATION HEURISTIC: symbolic for small layouts only.
         prefer_symbolic = size <= 32
 
-    _FLAGS = (
-        Gtk.IconLookupFlags.GENERIC_FALLBACK
-        | Gtk.IconLookupFlags.USE_BUILTIN
-        | Gtk.IconLookupFlags.FORCE_SIZE
-    )
+    _EXACT_FLAGS = Gtk.IconLookupFlags.USE_BUILTIN | Gtk.IconLookupFlags.FORCE_SIZE
+    _FLAGS = _EXACT_FLAGS | Gtk.IconLookupFlags.GENERIC_FALLBACK
 
     def _name_variants(name: str) -> list[str]:
         """Return [name] candidates for *name*, in style-preference order.
@@ -2305,10 +2304,12 @@ def resolve_icon_pixbuf(
             return [symbolic_name] if prefer_symbolic else [name]
         return [symbolic_name, name] if prefer_symbolic else [name, symbolic_name]
 
-    def _load_named(lookup_name: str, px_size: int) -> GdkPixbuf.Pixbuf | None:
+    def _load_named(
+        lookup_name: str, px_size: int, flags: Gtk.IconLookupFlags = _FLAGS
+    ) -> GdkPixbuf.Pixbuf | None:
         """Try to load *lookup_name* verbatim from the theme cascade at *px_size*."""
         try:
-            info = icon_theme.lookup_icon(lookup_name, px_size, _FLAGS)
+            info = icon_theme.lookup_icon(lookup_name, px_size, flags)
             if info:
                 # CONTEXT SYNCHRONIZATION: colorize only when GTK actually
                 # resolved a genuine symbolic asset. Icon theme fixed-size
@@ -2331,11 +2332,25 @@ def resolve_icon_pixbuf(
         return None
 
     def _load_any(name: str, px_size: int) -> GdkPixbuf.Pixbuf | None:
-        """Try each style variant of *name*, in preference order, via the theme cascade."""
-        for variant in _name_variants(name):
-            pb = _load_named(variant, px_size)
-            if pb:
-                return pb
+        """Try each style variant of *name*, in preference order, via the theme cascade.
+
+        Every variant is tried as an exact name first, and only then with
+        GTK's ``GENERIC_FALLBACK`` (which retries with dash-separated parts
+        dropped from the end: ``gramps-quilt`` -> ``gramps``). GTK searches
+        all *themed* icons for every fallback name before it looks at
+        *unthemed* icons -- loose files in a folder added with
+        ``append_search_path()``, which is how Gramps registers a plugin's
+        own icons (see ``GuiPluginManager.load_plugin``). With the fallback
+        on from the start, a plugin icon such as ``gramps-quilt`` would
+        lose to any themed ``gramps`` icon and the wrong picture would be
+        shown.
+        """
+        variants = _name_variants(name)
+        for flags in (_EXACT_FLAGS, _FLAGS):
+            for variant in variants:
+                pb = _load_named(variant, px_size, flags)
+                if pb:
+                    return pb
         return None
 
     # Step 1 & 2: Process through the synchronized theme cascade

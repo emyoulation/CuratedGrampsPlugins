@@ -57,7 +57,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
             "tool or gramplet itself -- installed so those addons can "
             "import it."
         ),
-        version="0.1.0",
+        version="0.1.1",
         gramps_target_version=major_version,
         status=STABLE,
         fname="MarkdownUtils.py",

@@ -33,7 +33,6 @@ metadata and optional wiki thumbnails are cached under ``media/``.
 # ------------------------
 # Python modules
 # ------------------------
-import difflib
 import json
 import logging
 import os
@@ -42,7 +41,6 @@ import re
 import shutil
 import threading
 import time
-import urllib.request
 from operator import itemgetter
 
 # ------------------------
@@ -54,6 +52,7 @@ from gi.repository.GLib import markup_escape_text
 from gramps.cli.grampscli import CLIManager
 from gramps.gen.config import config
 from gramps.gen.const import GRAMPS_LOCALE as glocale
+from gramps.gen.const import PLUGINS_DIR
 from gramps.gen.plug import (
     AUDIENCETEXT,
     PluginRegister,
@@ -128,8 +127,6 @@ TITLE = _("Plugin Manager plus")
 # never for a real, installed "own" entry) and should still match the
 # `id=` this addon registers under in PluginManagerPlus.gpr.py.
 OWN_PLUGIN_ID = "PluginManagerPlus"
-static = sys.modules[__name__]
-static.panel = 0
 
 # Dedicated ConfigManager for this addon's own persisted UI state (pane
 # divider positions and plugin-list column widths — the "Show"
@@ -205,13 +202,14 @@ WIKI_TABLE_URL = (
     "https://gramps-project.org/wiki/index.php?" "title=Template:Addons5.2&action=raw"
 )
 
+# Set once a background fetch of the wiki table has been tried in this
+# Gramps session, so an offline machine does not retry on every open.
+_wiki_table_fetch_started = False
+
 # Required keys for a valid addon-listing record (one line of
 # new_addons.txt / any future JSON-lines addon listing). See
 # _parse_addon_listing_line().
 _ADDON_RECORD_REQUIRED_KEYS = ("i", "n", "d", "t", "v", "z")
-
-UPDATE_RES = 666
-IGNORE_RES = 888
 
 # Status bit mask values
 INSTALLED = 1
@@ -266,6 +264,15 @@ _DEVEL_PREVIEW_ICON = "org.gnome.Extensions.Devel"
 # Preview images larger than this are not loaded or thumbnailed; the
 # Preview pane shows a complaint instead (see _render_preview).
 _MAX_PREVIEW_IMAGE_BYTES = 5 * 1024 * 1024
+
+# True brings back the old centering-on-open workaround (re-sort the list
+# by Name descending, then ascending); see the end of PluginStatus.__init__.
+_CENTER_ON_OPEN_VIA_SORT_TOGGLE = False
+
+# A plugin's own icon is shown at this size before its preview thumbnail,
+# on the same line. 128 px matches the placeholder icon size; the
+# thumbnail beside it is narrowed to fit (see _render_preview).
+_PREVIEW_PLUGIN_ICON_SIZE = 128
 
 # Left padding (px) for the Type column's second-line icon strip, so it
 # lines up with the "\n  " (2-space) indent used for the Tool/Report
@@ -371,6 +378,155 @@ def _subcategory_label(ptype: object, category: object) -> str | None:
     return entry[1] if entry else None
 
 
+def _plugin_icon_name(pdata: object, size: int) -> str | None:
+    """
+    Return the name of a plugin's own icon, if it registers one.
+
+    A View's ``stock_icon`` is used when set; otherwise the first entry
+    of ``icons`` (a list of ``(icon_name, label)`` tuples). Whenever
+    ``icons`` is registered, the plugin's icon folder is added to the
+    icon theme search path the same way
+    :meth:`gramps.gui.pluginmanager.GuiPluginManager.load_plugin` does,
+    so the icon can be found even if the plugin is not loaded yet.
+
+    The name is only returned if MarkdownUtils can resolve it at *size*,
+    because the Preview pane hands it to MarkdownUtils as a
+    ``gramps:icon:`` reference; an unresolvable name would otherwise show
+    as bracketed text.
+
+    :param pdata: a registry ``PluginData`` entry (or stand-in)
+    :param size: the pixel size the icon will be shown at
+    :returns: the icon name, or ``None``
+    """
+    if not _MARKDOWN_AVAILABLE:
+        return None
+    icons = getattr(pdata, "icons", None) or []
+    if icons:
+        icondir = getattr(pdata, "icondir", None)
+        folder = (
+            icondir
+            if icondir and os.path.isdir(icondir)
+            else getattr(pdata, "directory", None) or getattr(pdata, "fpath", None)
+        )
+        if folder:
+            theme = Gtk.IconTheme.get_default()
+            if folder not in theme.get_search_path():
+                theme.append_search_path(folder)
+
+    name = None
+    if getattr(pdata, "ptype", None) == VIEW:
+        name = getattr(pdata, "stock_icon", None)
+    if not name and icons:
+        first = icons[0]
+        name = first[0] if isinstance(first, (tuple, list)) else first
+    if not name:
+        return None
+    try:
+        if resolve_icon_pixbuf(str(name), size) is None:
+            return None
+    except Exception:  # pylint: disable=broad-except
+        return None
+    return str(name)
+
+
+# Gramps' own built-in plugin folder, resolved once; see _is_builtin_path.
+_PLUGINS_DIR_REAL = os.path.realpath(PLUGINS_DIR)
+
+
+def _is_builtin_path(fpath: str | None) -> bool:
+    """
+    Decide whether a plugin folder is part of Gramps itself.
+
+    Uses Gramps' own ``gramps.gen.const.PLUGINS_DIR`` as a path prefix,
+    instead of searching for the text "gramps/plugins" anywhere in the
+    path.
+
+    :param fpath: a plugin's registered folder (``pdata.fpath``)
+    :returns: ``True`` if the folder is inside Gramps' built-in plugins
+    """
+    if not fpath:
+        return False
+    real = os.path.realpath(fpath)
+    return real == _PLUGINS_DIR_REAL or real.startswith(_PLUGINS_DIR_REAL + os.sep)
+
+
+def _readme_path(fpath: str | None) -> str | None:
+    """
+    Return a plugin folder's ``README.md`` path, if that file exists.
+
+    :param fpath: a plugin's registered folder (``pdata.fpath``)
+    :returns: the full path, or ``None``
+    """
+    if not fpath:
+        return None
+    path = os.path.join(fpath, "README.md")
+    return path if os.path.isfile(path) else None
+
+
+def _status_text(pdata: object) -> str:
+    """
+    Return Gramps' own status label (e.g. Experimental) for a plugin.
+
+    Guarded so stand-ins without ``statustext()`` (see
+    :class:`_RemotePluginView`) still give a label.
+
+    :param pdata: a registry ``PluginData`` entry (or stand-in)
+    :returns: the translated status label, or "Unknown"
+    """
+    statustext = getattr(pdata, "statustext", None)
+    return str(statustext()) if callable(statustext) else _("Unknown")
+
+
+def _view_category_label(pdata: object) -> str | None:
+    """
+    Return a View's translated category label, e.g. "Relationships".
+
+    A View's ``category`` is a ``(codename, translated label)`` pair.
+
+    :param pdata: a registry ``PluginData`` entry
+    :returns: the label, or ``None`` if there is none
+    """
+    category = getattr(pdata, "category", None)
+    if isinstance(category, (tuple, list)) and len(category) > 1 and category[1]:
+        return str(category[1])
+    return None
+
+
+def _interface_label(pdata: object) -> str | None:
+    """
+    Describe where a plugin appears in the Gramps GUI.
+
+    Reuses the same live registry lookups as the List panel:
+
+    * Tool:    ``Tools ▶ <submenu> ▼ <name>...``
+    * Report:  ``Reports ▶ <submenu> ▼ <name>...``
+    * View:    ``<category> ▶ <name>``
+    * Gramplet: the comma-joined names of the views it is restricted to
+
+    :param pdata: a registry ``PluginData`` entry (or stand-in)
+    :returns: the label, or ``None`` when the plugin type has no known
+              location or its category cannot be resolved (for example a
+              Quick View, a not-yet-installed addon, or an unrestricted
+              Gramplet)
+    """
+    ptype = getattr(pdata, "ptype", None)
+    name = getattr(pdata, "name", None) or ""
+    if ptype in (TOOL, REPORT):
+        submenu = _subcategory_label(ptype, getattr(pdata, "category", None))
+        if not submenu:
+            return None
+        top = _("Tools") if ptype == TOOL else _("Reports")
+        return "%s \u25b6 %s \u25bc %s..." % (top, submenu, name)
+    if ptype == VIEW:
+        label = _view_category_label(pdata)
+        return "%s \u25b6 %s" % (label, name) if label else None
+    if ptype == GRAMPLET:
+        canon = _canonical_navtypes(getattr(pdata, "navtypes", None))
+        labels = [label for key, label, _icon in _GRAMPLET_VIEW_ICONS if key in canon]
+        return ", ".join(labels) if labels else None
+    return None
+
+
 def _canonical_navtypes(navtypes: object) -> list[str]:
     """
     Normalise a gramplet's ``navtypes`` into canonical, ordered keys.
@@ -391,15 +547,37 @@ def _canonical_navtypes(navtypes: object) -> list[str]:
     return [key for key, _label, _icon in _GRAMPLET_VIEW_ICONS if key in matched]
 
 
+# Session caches for list-panel icons: the same few icons (README/help
+# indicators, category strips) repeat on hundreds of rows. Pixbufs are
+# shared read-only by the cell renderers, so one copy each is enough.
+_ICON_CACHE: dict = {}
+_STRIP_CACHE: dict = {}
+
+
 def _load_named_icon_pixbuf(icon_name: str, size: int) -> "GdkPixbuf.Pixbuf | None":
+    """
+    Cached wrapper around :func:`_load_named_icon_pixbuf_uncached`.
+
+    :param icon_name: a themed icon name (e.g. ``gramps-person``)
+    :param size: the desired pixel size (square)
+    :returns: a pixbuf, or ``None`` if the icon could not be resolved
+    """
+    key = (icon_name, size)
+    if key not in _ICON_CACHE:
+        _ICON_CACHE[key] = _load_named_icon_pixbuf_uncached(icon_name, size)
+    return _ICON_CACHE[key]
+
+
+def _load_named_icon_pixbuf_uncached(
+    icon_name: str, size: int
+) -> "GdkPixbuf.Pixbuf | None":
     """
     Resolve a themed/Gramps icon name to a pixbuf at the given size.
 
-    Prefers :func:`MarkdownUtils.resolve_icon_pixbuf` (the same resolver
+    Uses only :func:`MarkdownUtils.resolve_icon_pixbuf` (the same resolver
     used for ``gramps:icon:name:size`` images in the Markdown-rendered
-    detail pane) for consistent results; falls back to the default
-    :class:`Gtk.IconTheme` directly if MarkdownUtils is unavailable or
-    doesn't know the icon.
+    panes) whenever MarkdownUtils is installed, so every pane agrees; a
+    plain :class:`Gtk.IconTheme` lookup is used only when it is not.
 
     Always requests the *color* icon style, never
     :mod:`MarkdownUtils`'s own default ``'auto'`` — its own
@@ -416,12 +594,15 @@ def _load_named_icon_pixbuf(icon_name: str, size: int) -> "GdkPixbuf.Pixbuf | No
     :returns: a pixbuf, or ``None`` if the icon could not be resolved
     """
     if _MARKDOWN_AVAILABLE:
+        # MarkdownUtils.resolve_icon_pixbuf is the single icon resolver
+        # whenever it is installed, so the List panel, the Details pane and
+        # the Preview pane can never disagree about an icon.
         try:
-            pixbuf = resolve_icon_pixbuf(icon_name, size, icon_style=ICON_STYLE_COLOR)
-            if pixbuf:
-                return pixbuf
+            return resolve_icon_pixbuf(icon_name, size, icon_style=ICON_STYLE_COLOR)
         except Exception:  # pylint: disable=broad-except
             LOG.debug("resolve_icon_pixbuf failed for '%s'", icon_name, exc_info=True)
+            return None
+    # Without MarkdownUtils: plain theme lookup, so the list still has icons.
     try:
         return Gtk.IconTheme.get_default().load_icon(icon_name, size, 0)
     except GLib.Error:
@@ -446,12 +627,16 @@ def _compose_icon_strip(
     :returns: the composited strip, or ``None`` if no icon in
               ``icon_names`` could be resolved
     """
+    key = (tuple(icon_names), size, gap)
+    if key in _STRIP_CACHE:
+        return _STRIP_CACHE[key]
     pixbufs = [
         pb
         for pb in (_load_named_icon_pixbuf(name, size) for name in icon_names)
         if pb is not None
     ]
     if not pixbufs:
+        _STRIP_CACHE[key] = None
         return None
     total_w = sum(pb.get_width() for pb in pixbufs) + gap * (len(pixbufs) - 1)
     max_h = max(pb.get_height() for pb in pixbufs)
@@ -475,6 +660,7 @@ def _compose_icon_strip(
             255,
         )
         x += width + gap
+    _STRIP_CACHE[key] = strip
     return strip
 
 
@@ -498,18 +684,11 @@ def _set_btn_icon_label(
         btn.remove(existing)
 
     hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-    theme = Gtk.IconTheme.get_default()
-    if theme.has_icon(icon_name):
-        try:
-            pb = theme.load_icon(
-                icon_name,
-                Gtk.icon_size_lookup(Gtk.IconSize.BUTTON)[1],
-                Gtk.IconLookupFlags.FORCE_SIZE,
-            )
-            img = Gtk.Image.new_from_pixbuf(pb)
-        except Exception:
-            img = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
-        hbox.pack_start(img, False, False, 0)
+    # Same resolver as every other icon in this dialog (MarkdownUtils when
+    # installed); no image at all if the icon cannot be found.
+    pb = _load_named_icon_pixbuf(icon_name, Gtk.icon_size_lookup(Gtk.IconSize.BUTTON)[1])
+    if pb is not None:
+        hbox.pack_start(Gtk.Image.new_from_pixbuf(pb), False, False, 0)
 
     if label_text:
         if use_mnemonic:
@@ -528,7 +707,6 @@ class _MdInfoPane:
 
     def __init__(self, uistate) -> None:
         self._uistate = uistate
-        self._tags: dict = {}
         self._link_uris: dict = {}
         self.image_max_width = 560
         self.center_images = False
@@ -615,11 +793,11 @@ class _MdInfoPane:
             show_image_captions=self.show_image_captions,
             image_adds_newline=self.image_adds_newline,
         )
-        self._tags = result["tags"]
         self._link_uris = result["link_uris"]
 
     def _on_motion(self, widget: Gtk.TextView, event: Gdk.EventMotion) -> bool:
-        if not widget.get_realized():
+        # Without MarkdownUtils the pane holds plain text with no links.
+        if not _MARKDOWN_AVAILABLE or not widget.get_realized():
             return False
         style, _uri = markdown_link_at(
             self.textview, self._link_uris, int(event.x), int(event.y)
@@ -633,7 +811,7 @@ class _MdInfoPane:
     def _on_click(self, widget: Gtk.TextView, event: Gdk.EventButton) -> bool:
         if event.type == Gdk.EventType._2BUTTON_PRESS:
             return True
-        if event.button != 1:
+        if event.button != 1 or not _MARKDOWN_AVAILABLE:
             return False
         style, uri = markdown_link_at(
             self.textview, self._link_uris, int(event.x), int(event.y)
@@ -714,11 +892,6 @@ class _MdInfoPane:
         :param uri: the URI to open
         """
         try:
-            import gi as _gi
-
-            _gi.require_version("Gio", "2.0")
-            from gi.repository import Gio
-
             Gio.AppInfo.launch_default_for_uri(uri, None)
         except Exception:  # pylint: disable=broad-except
             try:
@@ -812,13 +985,8 @@ class PluginStatus(tool.Tool, ManagedWindow):
         self.dbstate = dbstate
         self._show_builtins = None
         self._show_hidden = None
-        self._show_available = None
         self._show_addons = None
         self.addons = []
-        self.infodata = ""
-        self.name = ""
-        self.help = ""
-        self.helpname = ""
 
         self.options = PluginManagerOptions("pluginmanager")
         self.options.load_previous_values()
@@ -869,7 +1037,19 @@ class PluginStatus(tool.Tool, ManagedWindow):
         self._search_debounce_generation = 0
         self._applied_filter_text = ""
         self._wiki_addon_index: dict[str, dict] | None = None
+        # Per-plugin-id wiki match results and the display-name map used
+        # for fuzzy matching; both reset whenever the index is reset.
+        self._wiki_match_cache: dict[str, dict | None] = {}
+        self._wiki_name_map: dict[str, dict] | None = None
+        # Per-plugin-id lower-cased search text; cleared on repopulate.
+        self._search_text_cache: dict[str, str] = {}
         self._wiki_image_lock = threading.Lock()
+        # Wiki image names with a download in progress, and names whose
+        # download failed this session; both guarded by _wiki_image_lock.
+        # They stop scrolling through the list from starting the same
+        # (or a known-bad) download again and again.
+        self._wiki_image_pending: set[str] = set()
+        self._wiki_image_failed: set[str] = set()
         # Active "major type" (plain R_TYPE value) filter, toggled by
         # clicking the Type cell of the already-selected row a second
         # time — see button_press_reg / _apply_filter. None = no filter.
@@ -1061,7 +1241,6 @@ class PluginStatus(tool.Tool, ManagedWindow):
         self._action_btn_box.hide()
         self._action_sep.hide()
 
-        self.restart_needed = False
         self.window.connect("response", self.done)
 
         # Show the dialog, but freeze the GDK window's actual on-screen
@@ -1124,11 +1303,21 @@ class PluginStatus(tool.Tool, ManagedWindow):
             # the same way a real header click does. This also means
             # centering-on-open reuses the sort-change centering code
             # rather than duplicating a second, separate attempt at it.
-            sortable = self._list_reg.get_model()
-            sortable.set_sort_column_id(R_NAME, Gtk.SortType.DESCENDING)
-            while Gtk.events_pending():
-                Gtk.main_iteration()
-            sortable.set_sort_column_id(R_NAME, Gtk.SortType.ASCENDING)
+            #
+            # _wait_for_stable_window_size's docstring names the real root
+            # cause (centering against a provisional window size), and its
+            # blocking wait can no longer stall (2.1.0), so centering is
+            # now called directly. Set _CENTER_ON_OPEN_VIA_SORT_TOGGLE to
+            # True to bring back the old two-re-sort workaround if
+            # centering on open misbehaves again.
+            if _CENTER_ON_OPEN_VIA_SORT_TOGGLE:
+                sortable = self._list_reg.get_model()
+                sortable.set_sort_column_id(R_NAME, Gtk.SortType.DESCENDING)
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
+                sortable.set_sort_column_id(R_NAME, Gtk.SortType.ASCENDING)
+            else:
+                self._recenter_on_selection()
             while Gtk.events_pending():
                 Gtk.main_iteration()
         finally:
@@ -1313,58 +1502,53 @@ class PluginStatus(tool.Tool, ManagedWindow):
 
     def _network_worker_thread(self, name: str, url: str) -> None:
         """
-        Background thread: fetch the addon listings for one project.
+        Background thread: fetch the addon listing for one project.
 
-        Delegates to :func:`gramps.gen.plug.utils.available_updates`,
-        which checks the currently configured ``behavior.addons-url`` and
-        returns the new/updated addon metadata as an in-memory list — it
-        does **not** write anything to disk itself. This method persists
-        that list into this addon's own cached ``new_addons.txt`` so
-        :meth:`__populate_reg_list` can find it afterwards. Progress is
-        approximated with a pulse animation since the exact byte count is
-        not available at this level.
+        Uses core :func:`gramps.gen.plug.utils.get_addons`, which fetches
+        the listing of exactly this one project (each enabled project gets
+        its own thread, see :meth:`_initiate_async_polling`). The earlier
+        call to ``available_updates()`` fetched *every* enabled project
+        on each thread, so with N projects every listing was downloaded N
+        times and every entry written N times to ``new_addons.txt``.
 
-        :param name: human-readable project name (used only for logging)
+        ``get_addons`` returns every addon in the listing, not only new or
+        updated ones; :meth:`__populate_reg_list` already compares versions
+        itself to decide Available / Update Available, so that is fine.
+
+        :param name: the project name from ``behavior.addons-projects``
         :param url: the project base URL from ``behavior.addons-projects``
-                    (note: :func:`available_updates` does not currently
-                    accept a URL argument and always checks the single
-                    globally configured ``behavior.addons-url``)
         """
         try:
-            # Pulse the bar while work is in progress
             GLib.idle_add(self._update_pbar_pulse, url)
 
-            from gramps.gen.plug.utils import available_updates
+            from gramps.gen.plug.utils import get_addons
 
-            addon_update_list = available_updates()
-            self._append_addons_cache(addon_update_list)
+            addon_list = get_addons(name, url)
+            self._append_addons_cache(addon_list)
 
             GLib.idle_add(self._finalize_project_safe, url, True, None)
         except Exception as err:  # pylint: disable=broad-except
             LOG.warning("Addon fetch failed for '%s': %s", name, err)
             GLib.idle_add(self._finalize_project_safe, url, False, str(err))
 
-    def _append_addons_cache(self, addon_update_list: list) -> None:
+    def _append_addons_cache(self, addon_list: list) -> None:
         """
-        Append newly discovered/updated addon metadata to the local cache.
+        Append one project's addon metadata to the local cache.
 
         Thread-safe: guarded by ``self._addons_file_lock`` since several
         background worker threads may call this concurrently.
 
-        :param addon_update_list: the ``(status, download_url, plugin_dict)``
-                                   tuples returned by
-                                   :func:`gramps.gen.plug.utils.available_updates`
+        :param addon_list: the plugin dicts returned by
+                           :func:`gramps.gen.plug.utils.get_addons`
         """
-        if not addon_update_list:
+        if not addon_list:
             LOG.info(
-                "PluginManagerPlus: available_updates() returned no entries; "
+                "PluginManagerPlus: get_addons() returned no entries; "
                 "nothing to write to '%s'",
                 self._addons_cache_path(),
             )
             return
-        lines = [
-            repr(plugin_dict) for (_status, _dl_url, plugin_dict) in addon_update_list
-        ]
+        lines = [repr(plugin_dict) for plugin_dict in addon_list]
         cache_path = self._addons_cache_path()
         LOG.info(
             "PluginManagerPlus: writing %d addon entries to '%s'",
@@ -1521,17 +1705,16 @@ class PluginStatus(tool.Tool, ManagedWindow):
         selected_dir = self._selected_plugin_dir()
         md_text = None
         render_dir = selected_dir
-        if selected_dir:
-            readme_path = os.path.join(selected_dir, "README.md")
-            if os.path.isfile(readme_path):
-                try:
-                    with open(readme_path, "r", encoding="utf-8") as fh:
-                        md_text = fh.read()
-                except OSError:
-                    LOG.debug(
-                        "Could not load README.md for the selected plugin",
-                        exc_info=True,
-                    )
+        readme_path = _readme_path(selected_dir)
+        if readme_path:
+            try:
+                with open(readme_path, "r", encoding="utf-8") as fh:
+                    md_text = fh.read()
+            except OSError:
+                LOG.debug(
+                    "Could not load README.md for the selected plugin",
+                    exc_info=True,
+                )
 
         if md_text is None:
             render_dir = self._own_plugin_dir()
@@ -1585,6 +1768,7 @@ class PluginStatus(tool.Tool, ManagedWindow):
         if capture_path:
             image_path = capture_path
         oversized = self._oversized_image_size(image_path) if image_path else None
+        plugin_icon = None
         if oversized is not None:
             preview = (
                 "![](gramps:icon:dialog-warning:48)\n\n"
@@ -1600,9 +1784,15 @@ class PluginStatus(tool.Tool, ManagedWindow):
             )
         elif image_path:
             preview = "![](%s)" % image_path
+            plugin_icon = _plugin_icon_name(pdata, _PREVIEW_PLUGIN_ICON_SIZE)
+            if plugin_icon:
+                preview = "![](gramps:icon:%s:%d) %s" % (
+                    plugin_icon,
+                    _PREVIEW_PLUGIN_ICON_SIZE,
+                    preview,
+                )
         else:
-            statustext = getattr(pdata, "statustext", None)
-            status = str(statustext() if callable(statustext) else _("Unknown"))
+            status = _status_text(pdata)
             raw_status = getattr(pdata, "status", None)
             is_stable = raw_status in (0, "stable", "STABLE") or status.casefold() in (
                 "stable",
@@ -1610,12 +1800,85 @@ class PluginStatus(tool.Tool, ManagedWindow):
             )
             icon_name = _STABLE_PREVIEW_ICON if is_stable else _DEVEL_PREVIEW_ICON
             preview = "![](gramps:icon:%s:128)" % icon_name
+            # The plugin's own icon sits beside the placeholder too, just as
+            # it does beside a real thumbnail.
+            own_icon = _plugin_icon_name(pdata, _PREVIEW_PLUGIN_ICON_SIZE)
+            if own_icon:
+                preview = "![](gramps:icon:%s:%d) %s" % (
+                    own_icon,
+                    _PREVIEW_PLUGIN_ICON_SIZE,
+                    preview,
+                )
 
-        self._preview_pane.render(
-            "## %s\n%s\n\n%s"
-            % (getattr(pdata, "name", ""), preview, getattr(pdata, "description", ""))
-        )
+        # Narrow the thumbnail while it shares its line with the icon, so
+        # both fit side by side in the pane.
+        full_width = self._preview_pane.image_max_width
+        if plugin_icon:
+            self._preview_pane.image_max_width = max(
+                120, full_width - _PREVIEW_PLUGIN_ICON_SIZE - 12
+            )
+        try:
+            self._preview_pane.render(
+                "## %s\n%s\n\n%s"
+                % (
+                    getattr(pdata, "name", ""),
+                    preview,
+                    getattr(pdata, "description", ""),
+                )
+            )
+        finally:
+            self._preview_pane.image_max_width = full_width
+        if preview.startswith("![](gramps:icon:"):
+            # Thumbnails are centered by MarkdownUtils (center_images), but
+            # gramps:icon placeholders render inline; center that line too
+            # so scrolling between plugins does not jump left and right.
+            self._center_first_image_line(self._preview_pane.textview)
         self._preview_stack.set_visible_child_name("preview")
+
+    @staticmethod
+    def _first_image_iter(buf: Gtk.TextBuffer) -> "Gtk.TextIter | None":
+        """
+        Return an iter at the first embedded image in a buffer.
+
+        :param buf: the TextBuffer to search
+        :returns: the iter, or ``None`` if the buffer holds no image
+        """
+        it = buf.get_start_iter()
+        while it.get_pixbuf() is None and it.get_child_anchor() is None:
+            if not it.forward_char():
+                return None
+        return it
+
+    @staticmethod
+    def _center_first_image_line(textview: Gtk.TextView) -> None:
+        """
+        Center the paragraph holding the first image in a TextView.
+
+        Finds the first embedded pixbuf (or child widget) in the buffer and
+        applies a centering tag to its whole line. A no-op if the buffer
+        holds no image.
+
+        :param textview: the TextView to adjust
+        """
+        buf = textview.get_buffer()
+        it = PluginStatus._first_image_iter(buf)
+        if it is None:
+            return
+        start = it.copy()
+        start.set_line_offset(0)
+        end = it.copy()
+        if not end.ends_line():
+            end.forward_to_line_end()
+        table = buf.get_tag_table()
+        tag = table.lookup("pmp-center-image")
+        if tag is None:
+            tag = buf.create_tag(
+                "pmp-center-image", justification=Gtk.Justification.CENTER
+            )
+        # Highest priority, so it wins over any justification MarkdownUtils
+        # applied to the same paragraph.
+        tag.set_priority(table.get_size() - 1)
+        buf.apply_tag(tag, start, end)
 
     def _set_update_btn_stale(self, stale: bool) -> None:
         """
@@ -1727,6 +1990,7 @@ class PluginStatus(tool.Tool, ManagedWindow):
         Build the plugin list from registry data and the cached addon file.
         """
         self.addons = []
+        self._search_text_cache.clear()
         new_addons_file = self._addons_cache_path()
         _addons_stale = not os.path.isfile(new_addons_file)
         LOG.info(
@@ -1825,7 +2089,7 @@ class PluginStatus(tool.Tool, ManagedWindow):
                 if _is_own_plugin_data(pdata, own_dir):
                     self._own_pdata = pdata
                 hidden = pdata.id in self.hidden
-                is_builtin = "gramps/plugins" in pdata.fpath.replace("\\", "/")
+                is_builtin = _is_builtin_path(pdata.fpath)
                 category_active = (
                     self._show_builtins if is_builtin else self._show_addons
                 )
@@ -1913,12 +2177,8 @@ class PluginStatus(tool.Tool, ManagedWindow):
                     )
                     if category_icon_name is None:
                         category_icon_name = getattr(pdata, "stock_category_icon", None)
-                    if (
-                        category_icon_name is None
-                        and isinstance(category, (tuple, list))
-                        and len(category) > 1
-                        and category[1]
-                    ):
+                    view_label = _view_category_label(pdata)
+                    if category_icon_name is None and view_label:
                         # Category not one of Gramps' own recognised
                         # codenames, and this View's own .gpr.py doesn't
                         # supply a stock_category_icon override either —
@@ -1929,13 +2189,11 @@ class PluginStatus(tool.Tool, ManagedWindow):
                         # category has no icon Gramps itself would show
                         # either — e.g. CardView's "Tags" — rather than
                         # silently hiding that it's unrecognised.
-                        label = str(category[1])
-                        type_display += "\n  " + markup_escape_text(label)
+                        type_display += "\n  " + markup_escape_text(view_label)
 
                     # Sort/group by the category's own translated label
                     # regardless of whether an icon was found for it.
-                    if isinstance(category, (tuple, list)) and len(category) > 1:
-                        type_sort_extra = str(category[1] or "")
+                    type_sort_extra = view_label or ""
 
                     mode_icon_name = getattr(pdata, "stock_icon", None)
                     # De-duplicated, order-preserving: a View whose own
@@ -1966,9 +2224,7 @@ class PluginStatus(tool.Tool, ManagedWindow):
                 type_sort_key = typestr + "\x01" + type_sort_extra
 
                 readme_icon = None
-                if pdata.fpath and os.path.isfile(
-                    os.path.join(pdata.fpath, "README.md")
-                ):
+                if _readme_path(pdata.fpath):
                     readme_icon = _load_named_icon_pixbuf(
                         "document-page-setup", _INDICATOR_ICON_SIZE
                     )
@@ -1994,8 +2250,16 @@ class PluginStatus(tool.Tool, ManagedWindow):
                     ]
                 )
 
-        for row in sorted(addons, key=itemgetter(R_TYPE_SORT, R_NAME)):
-            self._model_reg.append(row)
+        # Detach the view while filling, so it does not re-validate and
+        # redraw for every one of several hundred appended rows; the
+        # filter and sort models stay connected and keep their state.
+        view_model = self._list_reg.get_model()
+        self._list_reg.set_model(None)
+        try:
+            for row in sorted(addons, key=itemgetter(R_TYPE_SORT, R_NAME)):
+                self._model_reg.append(row)
+        finally:
+            self._list_reg.set_model(view_model)
 
         if self._own_pdata is None:
             # Diagnostic aid: if this ever fires, _select_own_plugin_row
@@ -2254,7 +2518,11 @@ class PluginStatus(tool.Tool, ManagedWindow):
             last_size = size
             # Block for the next event (e.g. a delayed WM configure)
             # rather than spinning — nothing left pending right now
-            # doesn't mean nothing more is coming.
+            # doesn't mean nothing more is coming. The one-shot 20 ms
+            # timeout guarantees this blocking call returns even when no
+            # event arrives at all (with screen updates frozen, few do),
+            # so the deadline above is always re-checked.
+            GLib.timeout_add(20, lambda: False)
             Gtk.main_iteration()
 
     def _collect_plugin_debug_info(self) -> dict:
@@ -2335,8 +2603,7 @@ class PluginStatus(tool.Tool, ManagedWindow):
                         "depends_on": list(getattr(pdata, "depends_on", []) or []),
                         "icons": list(getattr(pdata, "icons", []) or []),
                         "icondir": getattr(pdata, "icondir", None),
-                        "is_builtin": "gramps/plugins"
-                        in pdata.fpath.replace("\\", "/"),
+                        "is_builtin": _is_builtin_path(pdata.fpath),
                         "is_hidden": pdata.id in self.hidden,
                         "is_failed": pdata.id in fail_ids,
                     }
@@ -2417,6 +2684,73 @@ class PluginStatus(tool.Tool, ManagedWindow):
         dialog.run()
         dialog.destroy()
 
+    def _add_text_column(
+        self,
+        model_col: int,
+        width: int,
+        title: str = "",
+        header: Gtk.Widget | None = None,
+    ) -> tuple[Gtk.TreeViewColumn, Gtk.CellRendererText]:
+        """
+        Build one wrapped-text, fixed-width, resizable, sortable column.
+
+        The renderer is top-aligned (rather than the default
+        vertical-center) so its text lines up with the top of the row
+        instead of floating in the middle whenever a taller neighboring
+        cell (wrapped Type or Description) makes the row taller. FIXED
+        sizing gives the column a known width on the very first layout
+        pass (see the Type column's comment for why that matters).
+
+        :param model_col: the model column holding the cell markup, also
+                          used as the sort column
+        :param width: the column's fixed width and the text wrap width
+        :param title: the header title (ignored when *header* is given)
+        :param header: a custom header widget, e.g. a label with a tooltip
+        :returns: the column and its text renderer (already appended)
+        """
+        renderer = Gtk.CellRendererText(wrap_mode=2, wrap_width=width)
+        renderer.set_alignment(0.0, 0.0)
+        column = Gtk.TreeViewColumn(cell_renderer=renderer, markup=model_col)
+        if header is not None:
+            column.set_widget(header)
+        else:
+            column.set_title(title)
+        column.set_sort_column_id(model_col)
+        column.set_resizable(True)
+        column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
+        column.set_fixed_width(width)
+        self._list_reg.append_column(column)
+        return column, renderer
+
+    def _add_indicator_column(
+        self, model_col: int, icon_name: str, tooltip: str
+    ) -> Gtk.TreeViewColumn:
+        """
+        Build one narrow icon column (README or help indicator).
+
+        The cell icon is top-aligned for the same reason as the text
+        columns: a small icon otherwise floats vertically centered in a
+        much taller wrapped row. The header is a 16 px icon with a tooltip.
+
+        :param model_col: the model column holding the cell pixbuf, also
+                          used as the sort column
+        :param icon_name: the header icon
+        :param tooltip: the header tooltip
+        :returns: the appended column
+        """
+        renderer = Gtk.CellRendererPixbuf()
+        renderer.set_alignment(0.5, 0.0)
+        column = Gtk.TreeViewColumn(cell_renderer=renderer, pixbuf=model_col)
+        header = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.MENU)
+        header.set_pixel_size(16)
+        header.show()
+        header.set_tooltip_text(tooltip)
+        column.set_widget(header)
+        column.set_resizable(False)
+        column.set_sort_column_id(model_col)
+        self._list_reg.append_column(column)
+        return column
+
     def registered_plugins_panel(self, obj: object | None) -> tuple[str, Gtk.Widget]:
         """
         Build and return the plugin-list TreeView widget.
@@ -2494,15 +2828,6 @@ class PluginStatus(tool.Tool, ManagedWindow):
         # Status is pinned as the leftmost column so it stays visible
         # without needing to scroll right, ahead of the higher-detail
         # columns (Type, Name, the two indicator icons, Description).
-        _status_col_width = _ini_manager.get("spacing.status-column-width")
-        status_renderer = Gtk.CellRendererText(
-            wrap_mode=2, wrap_width=_status_col_width
-        )
-        status_renderer.set_alignment(0.0, 0.0)  # top-align; see name_renderer
-        col1 = Gtk.TreeViewColumn(
-            cell_renderer=status_renderer,
-            markup=R_STAT_S,
-        )
         lbl1 = Gtk.Label(label=_("Status"))
         lbl1.show()
         lbl1.set_tooltip_markup(
@@ -2511,17 +2836,15 @@ class PluginStatus(tool.Tool, ManagedWindow):
                 "<s>strikeout</s> plug-ins are hidden"
             )
         )
-        col1.set_widget(lbl1)
-        col1.set_resizable(True)
         # 108px default (20% wider than the original 90px; still
         # user-resizable, and whatever width the user drags it to is
         # persisted — see "spacing.status-column-width" in
         # _ini_manager).
-        col1.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
-        col1.set_fixed_width(_status_col_width)
-        col1.set_sort_column_id(R_STAT_S)
-        self._list_reg.append_column(col1)
-        self._col_status = col1
+        self._col_status, _renderer = self._add_text_column(
+            R_STAT_S,
+            _ini_manager.get("spacing.status-column-width"),
+            header=lbl1,
+        )
 
         # Custom vertical CellArea so the Type column can stack a second
         # line under the type name: either a Tool/Report sub-category
@@ -2572,94 +2895,38 @@ class PluginStatus(tool.Tool, ManagedWindow):
         # the Type column, for the click-to-filter-by-major-type feature.
         self._col_type = col0
 
-        _name_col_width = _ini_manager.get("spacing.name-column-width")
-        name_renderer = Gtk.CellRendererText(wrap_mode=2, wrap_width=_name_col_width)
-        # Top-align (rather than the default vertical-center) so Name
-        # lines up with the top of the row instead of floating in the
-        # middle whenever a taller neighboring cell (wrapped Type or
-        # Description) makes the row taller than Name's own content
-        # needs — same reasoning as type_text_renderer's alignment,
-        # above.
-        name_renderer.set_alignment(0.0, 0.0)
-        col2 = Gtk.TreeViewColumn(
-            title=_("Name"),
-            cell_renderer=name_renderer,
-            markup=R_NAME,
-        )
-        col2.set_sort_column_id(R_NAME)
-        col2.set_resizable(True)
         # 50% wider than the original ~150px default (still user-resizable,
         # and whatever width the user drags it to is persisted — see
         # "spacing.name-column-width" in _ini_manager).
-        col2.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
-        col2.set_fixed_width(_name_col_width)
-        self._list_reg.append_column(col2)
-        self._col_name = col2
+        self._col_name, _renderer = self._add_text_column(
+            R_NAME, _ini_manager.get("spacing.name-column-width"), title=_("Name")
+        )
 
         # Notes indicator: a 24px icon if the plugin has its own
         # README.md, blank otherwise. Double-click selects the row and
         # shows the README, same as clicking the Help button.
-        readme_renderer = Gtk.CellRendererPixbuf()
-        # Top-align for the same reason as name_renderer, above — a
-        # 16px icon otherwise floats vertically centered in a much
-        # taller wrapped row.
-        readme_renderer.set_alignment(0.5, 0.0)
-        col_readme = Gtk.TreeViewColumn(
-            cell_renderer=readme_renderer,
-            pixbuf=R_HAS_README,
+        self._col_readme = self._add_indicator_column(
+            R_HAS_README,
+            "document-page-setup",
+            _("Has its own README.md — double-click to view it"),
         )
-        lbl_readme = Gtk.Image.new_from_icon_name(
-            "document-page-setup", Gtk.IconSize.MENU
-        )
-        lbl_readme.set_pixel_size(16)
-        lbl_readme.show()
-        lbl_readme.set_tooltip_text(
-            _("Has its own README.md — double-click to view it")
-        )
-        col_readme.set_widget(lbl_readme)
-        col_readme.set_resizable(False)
-        col_readme.set_sort_column_id(R_HAS_README)
-        self._list_reg.append_column(col_readme)
-        self._col_readme = col_readme
 
         # web-browser/help indicator: a 24px icon if the plugin has a
         # help_url, blank otherwise. Double-click selects the row and
         # opens the help link, same as clicking the "Help:" link.
-        help_renderer = Gtk.CellRendererPixbuf()
-        help_renderer.set_alignment(0.5, 0.0)  # top-align; see readme_renderer
-        col_help = Gtk.TreeViewColumn(
-            cell_renderer=help_renderer,
-            pixbuf=R_HAS_HELP,
+        self._col_help = self._add_indicator_column(
+            R_HAS_HELP,
+            "web-browser",
+            _("Has a help_url — double-click to open the help link"),
         )
-        lbl_help = Gtk.Image.new_from_icon_name("web-browser", Gtk.IconSize.MENU)
-        lbl_help.set_pixel_size(16)
-        lbl_help.show()
-        lbl_help.set_tooltip_text(
-            _("Has a help_url — double-click to open the help link")
-        )
-        col_help.set_widget(lbl_help)
-        col_help.set_resizable(False)
-        col_help.set_sort_column_id(R_HAS_HELP)
-        self._list_reg.append_column(col_help)
-        self._col_help = col_help
 
-        _desc_col_width = _DESC_COL_MIN_WIDTH
-        # Kept as its own reference (rather than an anonymous renderer
-        # passed straight to the TreeViewColumn constructor, as the
-        # other columns do) so _cb_desc_column_resized can update its
+        # The renderer is kept as its own reference (unlike the other
+        # columns) so _cb_desc_column_resized can update its
         # "wrap-width" property live as the column's actual on-screen
         # width changes — see that method.
-        self._desc_renderer = Gtk.CellRendererText(
-            wrap_mode=2, wrap_width=_desc_col_width
+        col3, self._desc_renderer = self._add_text_column(
+            R_DESC, _DESC_COL_MIN_WIDTH, title=_("Description")
         )
-        self._desc_renderer.set_alignment(0.0, 0.0)  # top-align; see name_renderer
-        col3 = Gtk.TreeViewColumn(
-            title=_("Description"),
-            cell_renderer=self._desc_renderer,
-            markup=R_DESC,
-        )
-        col3.set_sort_column_id(R_DESC)
-        col3.set_resizable(True)
         # Same reasoning as col0 (Type), above: FIXED sizing avoids a
         # deferred, model-wide natural-width measurement that could
         # settle after the first paint and retroactively change how
@@ -2669,10 +2936,7 @@ class PluginStatus(tool.Tool, ManagedWindow):
         # the other (persisted, user-resizable) columns is what this
         # column gets, recalculated on every resize rather than
         # reloaded from a stale saved value — see _DESC_COL_MIN_WIDTH.
-        col3.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
-        col3.set_fixed_width(_desc_col_width)
         col3.set_expand(True)
-        self._list_reg.append_column(col3)
         self._col_desc = col3
         # The renderer's own "wrap-width" is otherwise fixed at
         # construction time and never revisited, so as this column
@@ -3058,6 +3322,49 @@ class PluginStatus(tool.Tool, ManagedWindow):
         """
         self._recenter_on_selection()
 
+    @staticmethod
+    def _registration_search_fields(pdata: object) -> list[str]:
+        """
+        Collect the registration values the search box should match.
+
+        Mirrors the fields shown by :meth:`_show_plugin_details`: version,
+        type, category, target Gramps version, status (e.g. Experimental),
+        audience, authors, maintainers, their emails, file name, directory
+        path and help link.
+
+        :param pdata: a registry ``PluginData`` entry
+        :returns: a list of text values, one per field (blanks omitted)
+        """
+        values: list[str] = []
+        for attr in (
+            "fname",
+            "fpath",
+            "version",
+            "gramps_target_version",
+            "version_supported",
+            "help_url",
+        ):
+            val = getattr(pdata, attr, None)
+            if val:
+                values.append(str(val))
+        for attr in ("authors", "authors_email", "maintainers", "maintainers_email"):
+            values.extend(str(v) for v in getattr(pdata, attr, None) or [] if v)
+
+        values.append(_status_text(pdata))
+        audience = getattr(pdata, "audience", None)
+        if audience is not None:
+            values.append(str(AUDIENCETEXT.get(audience, audience)))
+
+        ptype = getattr(pdata, "ptype", None)
+        values.append(str(PTYPE_STR.get(ptype, ptype)))
+        category = getattr(pdata, "category", None)
+        subcategory = _subcategory_label(ptype, category)
+        if subcategory:
+            values.append(str(subcategory))
+        elif ptype == VIEW and _view_category_label(pdata):
+            values.append(_view_category_label(pdata))
+        return values
+
     def _apply_filter(
         self, model: Gtk.ListStore, tr_iter: Gtk.TreeIter, _data: object
     ) -> bool:
@@ -3087,19 +3394,17 @@ class PluginStatus(tool.Tool, ManagedWindow):
         filter_str = self._applied_filter_text.lower()
         if not filter_str:
             return True
-        pdata = self._preg.get_plugin(model.get_value(tr_iter, R_ID))
-        p_txt = ""
-        if pdata:
-            p_txt += pdata.fname or ""
-            p_txt += " ".join(getattr(pdata, "authors", []) or [])
-            p_txt += " ".join(getattr(pdata, "authors_email", []) or [])
-            p_txt += " ".join(getattr(pdata, "maintainers", []) or [])
-            p_txt += " ".join(getattr(pdata, "maintainers_email", []) or [])
-        for col in (R_TYPE, R_STAT_S, R_NAME, R_DESC, R_ID):
-            val = model[tr_iter][col]
-            if val:
-                p_txt += val
-        p_txt = p_txt.lower()
+        pid = model.get_value(tr_iter, R_ID)
+        p_txt = self._search_text_cache.get(pid)
+        if p_txt is None:
+            pdata = self._preg.get_plugin(pid)
+            parts = self._registration_search_fields(pdata) if pdata else []
+            for col in (R_TYPE, R_STAT_S, R_NAME, R_DESC, R_ID):
+                val = model[tr_iter][col]
+                if val:
+                    parts.append(val)
+            p_txt = "\n".join(parts).lower()
+            self._search_text_cache[pid] = p_txt
         for word in filter_str.split():
             if word not in p_txt:
                 return False
@@ -3133,16 +3438,8 @@ class PluginStatus(tool.Tool, ManagedWindow):
 
             has_fpath = bool(getattr(pdata, "fpath", None))
             if self._readme_showing:
-                is_builtin = (
-                    "gramps/plugins" in pdata.fpath.replace("\\", "/")
-                    if has_fpath
-                    else False
-                )
-                has_readme = (
-                    os.path.isfile(os.path.join(pdata.fpath, "README.md"))
-                    if has_fpath
-                    else False
-                )
+                is_builtin = _is_builtin_path(pdata.fpath) if has_fpath else False
+                has_readme = bool(_readme_path(pdata.fpath)) if has_fpath else False
                 if is_builtin or not has_readme:
                     # Revert to details mode before refreshing layout elements
                     self._readme_showing = False
@@ -3230,15 +3527,35 @@ class PluginStatus(tool.Tool, ManagedWindow):
         If ``table_path`` is already present, this is a no-op (the bundled
         copy is used as-is; refreshing it is a separate, explicit action,
         not something that happens implicitly on every dialog open). If it
-        is missing, this fetches the current table from
-        :data:`WIKI_TABLE_URL` and saves it locally so future runs need no
-        network access.
+        is missing, a background fetch from :data:`WIKI_TABLE_URL` is
+        started (at most once per Gramps session) and ``False`` is
+        returned at once, so a slow or absent network can never freeze
+        the dialog. When the fetch succeeds, :meth:`_cb_wiki_table_ready`
+        refreshes the current selection.
 
         :param table_path: local path the raw wikitext should live at
-        :returns: ``True`` if a usable local file exists after this call
+        :returns: ``True`` if a usable local file exists right now
         """
+        global _wiki_table_fetch_started  # pylint: disable=global-statement
         if os.path.isfile(table_path):
             return True
+        if not _wiki_table_fetch_started:
+            _wiki_table_fetch_started = True
+            threading.Thread(
+                target=self._fetch_wiki_table_thread,
+                args=(table_path,),
+                daemon=True,
+            ).start()
+        return False
+
+    def _fetch_wiki_table_thread(self, table_path: str) -> None:
+        """
+        Background thread: download and save the raw wiki addon table.
+
+        :param table_path: local path to save the raw wikitext to
+        """
+        import urllib.request  # deferred: only needed for this fetch
+
         try:
             with urllib.request.urlopen(WIKI_TABLE_URL, timeout=10) as resp:
                 raw_bytes = resp.read()
@@ -3248,7 +3565,7 @@ class PluginStatus(tool.Tool, ManagedWindow):
                 WIKI_TABLE_URL,
                 err,
             )
-            return False
+            return
         try:
             os.makedirs(os.path.dirname(table_path), exist_ok=True)
             with open(table_path, "wb") as filep:
@@ -3260,13 +3577,32 @@ class PluginStatus(tool.Tool, ManagedWindow):
                 table_path,
                 err,
             )
-            return False
+            return
         LOG.info(
             "PluginManagerPlus: fetched wiki addon table from '%s' to '%s'",
             WIKI_TABLE_URL,
             table_path,
         )
-        return True
+        GLib.idle_add(self._cb_wiki_table_ready)
+
+    def _cb_wiki_table_ready(self) -> bool:
+        """
+        Main-thread callback: a freshly fetched wiki table is now on disk.
+
+        Drops the (empty) in-memory catalog so the next lookup parses the
+        new table, then refreshes the selected plugin's panes.
+
+        :returns: ``False`` so GLib does not repeat this idle callback
+        """
+        self._wiki_addon_index = None
+        self._wiki_match_cache.clear()
+        self._wiki_name_map = None
+        try:
+            self._cursor_changed(None)
+        except Exception:  # pylint: disable=broad-except
+            # The dialog may have been closed while the fetch ran.
+            LOG.debug("Could not refresh after wiki table fetch", exc_info=True)
+        return False
 
     def _load_wiki_addon_table(self) -> dict[str, dict]:
         """
@@ -3303,7 +3639,10 @@ class PluginStatus(tool.Tool, ManagedWindow):
             return self._wiki_addon_index
 
         table_path, catalog_json_path = self._wiki_table_paths()
-        self._ensure_local_wiki_table_file(table_path)
+        if not self._ensure_local_wiki_table_file(table_path):
+            # Not cached and no catalog JSON written: a background fetch
+            # may still supply the table (see _cb_wiki_table_ready).
+            return {}
 
         # Reuse a previously-parsed JSON catalog if it is at least as new
         # as the source table (avoids re-parsing on every dialog open).
@@ -3442,23 +3781,37 @@ class PluginStatus(tool.Tool, ManagedWindow):
         if not index:
             return None
 
+        pid = getattr(pdata, "id", None)
+        if pid in self._wiki_match_cache:
+            return self._wiki_match_cache[pid]
+
+        result = None
         candidates = []
-        if getattr(pdata, "id", None):
-            candidates.append(pdata.id.lower())
+        if pid:
+            candidates.append(pid.lower())
         if getattr(pdata, "fname", None):
             candidates.append(os.path.splitext(pdata.fname)[0].lower())
         for key in candidates:
             if key in index:
-                return index[key]
+                result = index[key]
+                break
 
-        if getattr(pdata, "name", None):
-            names = {v["display_name"].lower(): v for v in index.values()}
+        if result is None and getattr(pdata, "name", None):
+            if self._wiki_name_map is None:
+                self._wiki_name_map = {
+                    v["display_name"].lower(): v for v in index.values()
+                }
+            import difflib  # deferred: only needed for fuzzy matching
+
             close = difflib.get_close_matches(
-                pdata.name.lower(), names.keys(), n=1, cutoff=0.8
+                pdata.name.lower(), self._wiki_name_map.keys(), n=1, cutoff=0.8
             )
             if close:
-                return names[close[0]]
-        return None
+                result = self._wiki_name_map[close[0]]
+
+        if pid:
+            self._wiki_match_cache[pid] = result
+        return result
 
     def _show_preview(self, pdata: object) -> None:
         """Render the selected plugin's Preview pane, fetching wiki art if needed."""
@@ -3483,8 +3836,16 @@ class PluginStatus(tool.Tool, ManagedWindow):
             self._render_preview(pdata, cache_path)
             return
 
-        # Not cached yet — show a placeholder now, fetch in the background.
+        # Not cached yet — show a placeholder now, fetch in the background
+        # unless that image is already downloading or failed earlier.
         self._render_preview(pdata)
+        with self._wiki_image_lock:
+            if (
+                image_file in self._wiki_image_pending
+                or image_file in self._wiki_image_failed
+            ):
+                return
+            self._wiki_image_pending.add(image_file)
         thread = threading.Thread(
             target=self._fetch_wiki_image_thread,
             args=(pid, image_file, cache_dir, cache_path),
@@ -3503,7 +3864,16 @@ class PluginStatus(tool.Tool, ManagedWindow):
         :param cache_dir: local directory to cache downloaded images in
         :param cache_path: full local path to write the downloaded image to
         """
-        url = "https://gramps-project.org/wiki/Special:FilePath/" + image_file
+        # Wiki file names may contain spaces and other characters that are
+        # not allowed in a URL; MediaWiki uses underscores for spaces.
+        # Deferred: only needed for this background download.
+        import http.client
+        import urllib.parse
+        import urllib.request
+
+        url = "https://gramps-project.org/wiki/Special:FilePath/" + urllib.parse.quote(
+            image_file.replace(" ", "_")
+        )
         try:
             with urllib.request.urlopen(url, timeout=10) as resp:
                 data = resp.read()
@@ -3516,9 +3886,14 @@ class PluginStatus(tool.Tool, ManagedWindow):
                 image_file,
                 cache_path,
             )
-        except (OSError, ValueError) as err:
+        except (OSError, ValueError, http.client.HTTPException) as err:
             LOG.debug("Could not fetch wiki image '%s': %s", image_file, err)
+            with self._wiki_image_lock:
+                self._wiki_image_failed.add(image_file)
             return
+        finally:
+            with self._wiki_image_lock:
+                self._wiki_image_pending.discard(image_file)
         GLib.idle_add(self._apply_fetched_wiki_image, pid, cache_path)
 
     def _apply_fetched_wiki_image(self, pid: str, cache_path: str) -> bool:
@@ -3566,28 +3941,13 @@ class PluginStatus(tool.Tool, ManagedWindow):
             "**%s:** %s" % (_("Type"), PTYPE_STR.get(pdata.ptype, str(pdata.ptype)))
         )
 
-        # Tool/Report sub-category (e.g. a Tool's Isotammi-style custom
-        # submenu, or a Report's "Text Reports"/"Graphs"/etc.) — the same
-        # lookup used for the List panel's Type-column second line, see
-        # _subcategory_label. Not shown when unset/unrecognised
-        # (Gramplets, Rules, and other plugin types either don't have a
-        # comparable sub-category or already show their own
-        # navtypes/namespace detail elsewhere in the List panel).
-        subcategory = _subcategory_label(pdata.ptype, getattr(pdata, "category", None))
-        if subcategory:
-            lines.append("**%s:** %s" % (_("Category"), subcategory))
-        elif pdata.ptype == VIEW:
-            # A View's `category` is its own (codename, translated
-            # label) pair rather than a _subcategory_label-recognised
-            # value — same data driving the List panel's category icon,
-            # see the VIEW branch of __populate_reg_list.
-            category = getattr(pdata, "category", None)
-            if (
-                isinstance(category, (tuple, list))
-                and len(category) > 1
-                and category[1]
-            ):
-                lines.append("**%s:** %s" % (_("Category"), category[1]))
+        # Where this plugin lives in the Gramps GUI (menu path, view
+        # category, or the views a gramplet is offered in). This replaced a
+        # separate "Category:" line, which showed the same submenu or view
+        # category under exactly the same conditions.
+        interface = _interface_label(pdata)
+        if interface:
+            lines.append("**%s:** %s" % (_("Interface"), interface))
 
         # Target version
         target_version = getattr(pdata, "gramps_target_version", None) or getattr(
@@ -3610,8 +3970,7 @@ class PluginStatus(tool.Tool, ManagedWindow):
         # _RemotePluginView (a not-yet-installed addon; see its own
         # statustext()) already provides a fallback, but this stays
         # tolerant of any other pdata-like stand-in that might not.
-        statustext = getattr(pdata, "statustext", None)
-        status_display = statustext() if callable(statustext) else _("Unknown")
+        status_display = _status_text(pdata)
         lines.append("**%s:** %s" % (_("Status"), status_display))
 
         # Audience — AUDIENCETEXT is Gramps' own mapping for this (mirrors
@@ -3898,8 +4257,8 @@ class PluginStatus(tool.Tool, ManagedWindow):
         pdata = self._preg.get_plugin(pid)
         if pdata is None or not pdata.fpath:
             return
-        readme_path = os.path.join(pdata.fpath, "README.md")
-        if not os.path.isfile(readme_path):
+        readme_path = _readme_path(pdata.fpath)
+        if not readme_path:
             return
 
         # Prepended (top of menu) rather than appended: this is the
@@ -4103,9 +4462,6 @@ class PluginStatus(tool.Tool, ManagedWindow):
             )
             return
         self.__rebuild_reg_list(path)
-        pdata = self._pmgr.get_plugin(pid)
-        if pdata and (status & UPDATE) and pdata.ptype in (VIEW, GRAMPLET):
-            self.restart_needed = True
 
     def __uninstall(self, pid: str, path: object) -> None:
         """
@@ -4133,7 +4489,6 @@ class PluginStatus(tool.Tool, ManagedWindow):
                 parent=self.window,
             )
         self.__rebuild_reg_list(path)
-        self.restart_needed = True
 
     def __rebuild_reg_list(self, path: object = None, rescan: bool = True) -> None:
         """
