@@ -1,202 +1,84 @@
 # MarkdownUtils — consolidated status and staged plan
 
-Written to close out a long design conversation. Answers the question asked
-directly: **no full redesign — a staged sequence of surgical changes.** The
-existing `MarkdownUtils.py` already has the right internal shape for
-everything discussed below (a flat `Segment` list that `render_markdown()`
-only ever consumes, never the parser's own internals); the work is mostly
-extraction and wiring, not rewriting working code. Given the whole family
-has only ever shipped "experimental," now is the right time to do this
-before there's a broader install base to stay compatible with.
+[README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md) ● [MarkdownUtils_PLAN.md](MarkdownUtils_PLAN.md) ● [MarkdownUtils_DEVELOPER.md](MarkdownUtils_DEVELOPER.md) ● [HelpDocButton.md](HelpDocButton.md)
+
+Updated 8 October 2026, after the MarkdownUtils 0.2.0 work. The original answer still stands: **no full redesign — a staged sequence of surgical changes.** `parse_markdown()` → `list[Segment]` → `render_markdown()` is still the right shape, and every change since has fit into it.
+
+Two facts changed the context since this plan was first written:
+- **Packaging:** for Gramps 5.2 to 6.1, MarkdownUtils ships bundled in a parent folder (`plugins/MarkdownBased/`) together with the Markdown-based addons, each in its own subfolder. The `lib/` layout of the old Phase 0 is set aside.
+- **Gramps core:** MarkdownUtils is being evaluated for inclusion in Gramps core from 6.2. The proposal is too preliminary to act on: no core module path yet, so no import changes in anticipation.
 
 ## Why staged, not a rewrite
+- `parse_markdown()` → `list[Segment]` → `render_markdown()` is a clean two-stage pipeline. A pluggable backend only needs a second producer of that same `Segment` list.
+- The Gramps-specific syntax is isolated to a few URL checks in `_parse_inline` (now `gramps:nav:`, `gramps:edit:` and `gramps:view:` links, plus `gramps:icon:` images), not woven through the parser.
+- Thumbnailing for unusual formats needs no MarkdownUtils changes: the Gramps thumbnailer registry already dispatches by mime type, and MarkdownUtils now calls into it (see Phase 3).
+- Verify each change in Gramps, in the order it is built, rather than in batches.
 
-- `parse_markdown()` → `list[Segment]` → `render_markdown()` is already a
-  clean two-stage pipeline. A pluggable backend only needs a second producer
-  of that same `Segment` list — the consumer half doesn't change at all.
-- The Gramps-specific syntax (`gramps:icon:`, `gramps:nav:`, `gramps:edit:`)
-  is already isolated to two regex checks inside `_parse_inline`, not woven
-  through the whole parser. Extracting them is a small, low-risk change.
-- Several things discussed turned out not to need any MarkdownUtils change
-  at all (WebP/AVIF thumbnailers, non-image mime dispatch) — the existing
-  Gramps thumbnailer/plugin registries already generalize correctly.
-- Nothing proposed here has been tested against the real file yet except
-  the original help-button fix, which the user already verified live in
-  Gramps across all four fallback branches. Everything below should be
-  verified the same way, in the same order it's built, rather than batched.
+## Phase 0 — Packaging (revised)
+- [x] **The `lib/` layout is set aside.** MarkdownUtils sits in `plugins/MarkdownBased/`. Each consuming addon puts that parent folder on `sys.path` and imports MarkdownUtils inside `try`/`except ImportError`, falling back to plain text (or a small stand-in) when it is missing.
+- [x] **Finding: `requires_mod=["MarkdownUtils"]` cannot be used with this layout.** Gramps checks `requires_mod` during its startup registration scan (`Requirements.check_mod()` in `gramps/gen/utils/requirements.py`, called from `gramps/gen/plug/_pluginreg.py`, using `find_spec()`). At that moment `plugins/MarkdownBased/` is not yet on `sys.path`, so the check fails and Gramps silently drops the addon. Checked in the source of Gramps 5.2.4, 6.0.6 and the `maintenance/gramps61` branch.
+- [ ] **When a core module path is settled:** change every consumer to try the core module first and fall back to the bundled copy (Plugin Manager plus, Markdown Dash, Icon Browser, `help_doc_button.py`, Note Styling Editor), and end the version range of the bundled `MarkdownUtils.gpr.py` below 6.2. Core inclusion also means the full AGENTS.md treatment, and the module must live under `gramps/gui/` because it uses GTK.
 
-## Phase 0 — Verify what's already drafted (do this first, nothing else depends on skipping it)
+## Phase 1 — Correctness fixes to MarkdownUtils.py itself
+- [ ] **Titled-link parsing bug — still present** (re-checked 8 October). `_INLINE_RE` takes everything inside the parentheses as the URL, so `[text](https://x.org "A title")` gets the URL `https://x.org "A title"`. The regex, or a small split after matching, must separate an optional quoted title.
+- **Gramps link dispatch — partly done:**
+  - [x] `gramps:view:` links were classified as ordinary web links, so clicking one in Markdown Dash asked the desktop to open the address and failed. They are now Gramps links (`gramps_link`), like `gramps:edit:` and `gramps:nav:`.
+  - [x] Markdown Dash resolves `gramps:edit:` and `gramps:nav:` with the Gramps table of object editors (`gramps.gui.editors.EDITORS`) and `db.method()`, instead of `NAMESPACE_MAP`. Object types now match regardless of capitals, and an editor that is already open is brought forward without a traceback.
+  - [ ] **Plugin Manager plus still hands `gramps:` links to the desktop**, which cannot open them. Revised recommendation: move the handler of Markdown Dash (`_handle_gramps_uri` and its helpers) into MarkdownUtils as one shared `open_gramps_link(uri, dbstate, uistate, ...)`, built on core `EDITORS` and `db.method()` (not on `NAMESPACE_MAP`), and have both Markdown Dash and Plugin Manager plus call it. Plugin Manager plus is a Tool and has `dbstate`.
+- [ ] **`inline_to_pango()` duplicates `_parse_inline()`** for table cells — a second regex-driven walk over the same constructs. Collapse onto `_parse_inline()` plus a small `segments_to_pango()`. Not urgent; no visible change.
 
-The `.gpr.py`/`lib/` packaging redesign has not been tested yet.
+## Phase 2 — Isolate the Gramps extension layer
+Still open. Extract the Gramps URL checks into standalone functions on a `(url, label)` pair: `classify_image_url(url)` for `gramps:icon:` (and later `gramps:media:`), and `classify_link_url(url)` for link styles. Pure refactor; regression-check against a representative document before and after.
 
-- [ ] Place `MarkdownUtils.py` + the drafted `MarkdownUtils.gpr.py` under
-      `USER_PLUGINS/lib/` (not its own addon subfolder).
-- [ ] Confirm it registers: appears in Plugin Manager as "Markdown Utils",
-      category "Plugin library" (GENERAL ptype).
-- [ ] Confirm `PluginManagerPlus.gpr.py`'s new `requires_mod=["MarkdownUtils"]`
-      actually gates registration: temporarily remove `lib/MarkdownUtils.py`,
-      rescan/restart, confirm Plugin Manager plus disappears entirely (not
-      just a warning icon) — this is the "refuse to register" behavior found
-      in `gramps/gen/plug/_pluginreg.py`, worth seeing happen for real once.
-      Restore the file, confirm it reappears.
-- [ ] Confirm `PluginManagerPlus.py`'s dropped `sys.path` hack still resolves
-      `from MarkdownUtils import (...)` now that `lib/` is the real source
-      (it should — `LIB_PATH` is unconditionally on `sys.path` from Gramps
-      startup — but this hasn't been run yet).
+New detail found on 8 October: link styles are decided in **two** places today — `_parse_inline()` (which sets the `gramps_link` attribute that Markdown Dash uses to route clicks) and the URL checks in `render_markdown()` (which treat any `gramps:` prefix as a Gramps link). `classify_link_url()` should serve both, so they cannot disagree again; that disagreement is exactly how `gramps:view:` links broke.
 
-## Phase 1 — Correctness fixes to MarkdownUtils.py itself (single-file, no architecture change)
+## Phase 3 — Media and thumbnail integration
+Done on 8 October, as part of 0.2.0:
+- [x] **All image loading goes through one function, `_load_scaled_image()`.** Scaled images are cached in `THUMB_MARKDOWN` (a `markdown` folder inside the Gramps `THUMB_DIR`), at fixed widths of 128, 260, 400 and 560 px. Files are named by an MD5 checksum of the source path plus the width, following the Gramps naming scheme, and rebuilt when the source file is newer. Measured with a 1920 × 1080 PNG: about 12 ms uncached, 0.2 ms cached.
+- [x] **Formats GdkPixbuf cannot read** go to `get_thumbnail_path(..., size=SIZE_LARGE)`; a generic icon from `IMAGE_DIR` is treated as a failure, so the bracketed alt text still appears.
+- **Why MarkdownUtils keeps its own cache for larger images:** the Gramps framework only makes 96 px (`normal`) and 180 px (`large`) thumbnails, and readable 260 px previews matter for screenshots. Asking core for a third size was considered and not pursued: Gramps 5.2 core will not change, and existing thumbnailers treat the size argument as a two-value code (`imagethumb.py` and `gnomethumb.py` test `size == SIZE_LARGE`), so a new size code would quietly produce 96 px images. The base docstring of `Thumbnailer.run()` claims the size is in pixels; that mismatch is worth reporting to Gramps on its own.
 
-Two concrete bugs found while reading the real file, independent of
-everything else below — worth fixing regardless of which later phases
-happen:
+Revised resolver contract for `gramps:media:`: a `resolve_media` implementation finds the source file of the Media object and hands its path to the same loading path (`_load_scaled_image()`, which already uses `get_thumbnail_path()` where it helps). It must never build another cache or reimplement hashing, mime detection or thumbnail generation.
 
-- [ ] **Titled-link parsing bug**: `_INLINE_RE`'s link group
-      (`\[(?P<link_label>[^\]]+)\]\((?P<link_url>[^)]+)\)`) swallows a
-      Markdown title into the URL — `[text](url "title")` breaks the
-      actual link target. Needs the regex (or a small post-match split) to
-      separate an optional quoted title from the URL.
-- [ ] **`gramps:nav:`/`gramps:edit:` dispatch is currently a dead end.**
-      MarkdownUtils classifies and styles these links (`gramps_link`,
-      `NAMESPACE_MAP`/`VIEW_NAMES` provided as lookup tables) but never
-      resolves them, and the one real consumer read so far
-      (`PluginManagerPlus.py`'s `_MdInfoPane.open_uri`) treats `gramps_link`
-      identically to a plain external hyperlink — handing
-      `gramps:nav:Person:I0044` to `Gio.AppInfo.launch_default_for_uri()`,
-      which has no handler for that scheme and will just fail silently.
-      Recommend: add a shared `open_gramps_link(uri, dbstate, uistate)` (or
-      similar) helper *in MarkdownUtils itself*, built on `NAMESPACE_MAP`,
-      that any consumer with `dbstate` access calls instead of reinventing
-      the dispatch — then fix `PluginManagerPlus.py` to call it.
+Still open:
+- [ ] Add `Segment.gramps_media`: `(id_or_handle, size)`, parallel to `gramps_icon`.
+- [ ] Add a `resolve_media` parameter to `render_markdown()`, default `None`, so MarkdownUtils never imports `dbstate` and still renders with no tree open.
+- [ ] Recognize `gramps:media:<id>[:size]` in Phase 2's `classify_image_url()`.
+- [ ] Wire a real `resolve_media` in Markdown Dash, which has `dbstate`.
+- Page selection inside a PDF stays at the Media-curation layer, as before; `gramps:media:` never needs a page argument.
 
-Lower priority, same phase or later:
-- [ ] `inline_to_pango()` duplicates `_parse_inline()`'s logic for table-cell
-      rendering (same constructs, a second regex-driven walk). Worth
-      collapsing onto `_parse_inline()` + a small `segments_to_pango()`
-      eventually — not urgent, no external behavior change, just removes a
-      "keep two parsers in sync by hand" liability.
+## Phase 4 — Optional 3rd-party parser backend (do last)
+Unchanged: no `requires_mod` on a parser in the MarkdownUtils registration, never vendor a parser into MarkdownUtils, an optional companion addon whose only job is `requires_mod=["marko"]`, `marko` preferred over `markdown-it-py`, one adapter contract calling Phase 2's classifiers, and tables staying on `build_table_widget()`. Revisit this phase if MarkdownUtils enters Gramps core, since core has its own rules for optional dependencies.
 
-## Phase 2 — Isolate the Gramps extension layer (unlocks everything below)
+## Phase 5 — Documentation
+- [x] **End-user README revised** (8 October): a section on how the language of the Gramps interface selects the README, and a section on the additions to GitHub-Flavored Markdown (icons, Gramps links, links within the document, images, hidden comments, limits). Rendered with MarkdownUtils itself to confirm it displays correctly.
+- [x] **CHANGELOG.md** written for the 0.2.0 public release.
+- [ ] **`MarkdownUtils_DEVELOPER.md`**: still to revise. Its "NEEDS VERIFICATION" sections are now confirmed, and it should cover today's additions: the image cache, `VIEW_NAMES` aliases, the comment rule inside code, and the deprecation of `NAMESPACE_MAP`. Best done right after Phase 2.
+- [ ] AI-generated-code disclosure in each phase at commit time.
 
-Extract the two Gramps-specific URL checks out of `_parse_inline` into
-standalone functions operating purely on a `(url, label)` pair:
+## Other open items
+- [ ] Delete `NAMESPACE_MAP` once the new Markdown Dash (which no longer uses it) has shipped. It is marked deprecated in 0.2.0.
+- [ ] Markdown Dash: its notes say a fallback document is shown with an invitation to translate, but the code shows the invitation only on the "File Not Found" page. Show it under fallback documents, or correct the notes.
+- [ ] Plugin Manager plus: its README pane, README column and "Open documentation reader" look only for a file named exactly `README.md` (`_readme_path()`). It should call `resolve_localized_path()`, as `help_doc_button.py` already does.
+- [ ] Markdown Dash README: examples such as `gramps:nav:people:I0001` fail, because `people` is a view name, not an object type. Fix the examples or make the links accept view names.
+- [ ] Markdown Dash keeps its own copy of the link colors in `make_link_tag`, duplicating the MarkdownUtils color table.
+- [ ] Watch for: the pixman "Invalid rectangle" message during scrolling (not seen since the 8 October fixes), and a missing Windows-menu entry for the reader window opened from Plugin Manager plus (seen once, not reproduced after a restart).
 
-- `classify_image_url(url) -> gramps_icon tuple | None` (the
-  `gramps:icon:NAME[:SIZE[:STYLE]]` check, currently inline in the `img`
-  branch)
-- `classify_link_url(url) -> style_name` (the `gramps:nav:`/`gramps:edit:`
-  prefix check, currently inline in the `link` branch)
+## What is done and verified
+Earlier, verified live in Gramps across every fallback branch:
+- `help_doc_button.py` and its inlining into `PhotoTaggingGramplet.py`: the icon-fallback bug, the URL-encoding bug, the `GENERIC_FALLBACK` → `FORCE_REGULAR` correction, and the hidden or deactivated plugin bug in both `resolve_markdown_dash_opener()` and `_cb_open_doc_reader` of Plugin Manager plus.
 
-No behavior change expected — this is a pure refactor. Regression-check
-against a representative test document before and after. This is what
-makes the extension layer engine-agnostic: any future alternate parser's
-adapter calls these same two functions for every link/image it encounters,
-so the Gramps-specific syntax can't get out of sync between backends.
+8 October, **verified live in Gramps:**
+- Scrolling past tables no longer prints `gtk_widget_size_allocate()` warnings (table frame margins replaced by line spacing).
+- Plugin Manager plus shows the icon of a plugin beside its preview thumbnail or placeholder, resolved by MarkdownUtils.
 
-## Phase 3 — Media/thumbnail integration (`gramps:media:`)
-
-Confirmed against the real `gramps/gen/utils/thumbnails.py` and
-`gramps/gen/plug/_thumbnailer.py`:
-
-- Thumbnail filenames are `md5(source_path + optional_rectangle)`, not
-  handle-based — but callers never compute this; `get_thumbnail_image()` /
-  `get_thumbnail_path()` do it internally and never crash (fall back to a
-  generic `document.png`/`image-missing.png`/`gramps-url.png`).
-- Non-image mime types (PDFs, etc.) already flow through the same function
-  via the pluggable `Thumbnailer` registry (`imagethumb` + `gnomethumb`
-  built in). A future WebP/AVIF thumbnailer addon needs zero MarkdownUtils
-  changes — `get_reg_thumbnailers()`/`run_thumbnailer()` already dispatch
-  generically by mime type.
-- `Thumbnailer.run(mime_type, src_file, dest_file, size, rectangle)` has no
-  page/frame parameter, and the cache-key hash has no room for one either —
-  a real Gramps-core gap for a "one PDF, many on-demand page thumbnails"
-  design. **Does not block this work**: page selection will be handled at
-  the Media-object-curation layer (Citation galleries, extract-page-as-its-
-  own-Media-object), not as a live parameter on the Markdown reference — so
-  `gramps:media:` never needs a page argument.
-
-Concrete steps:
-- [ ] Add `Segment.gramps_media` field: `(id_or_handle, size)`, parallel to
-      the existing `gramps_icon` field.
-- [ ] Add a `resolve_media: Callable[[str, str], str | None] | None`
-      parameter to `render_markdown()`, mirroring the existing `resolve_path`
-      pattern — default `None` (no-op / falls back to plain text), so
-      MarkdownUtils itself never imports `dbstate` or `gramps.gen.lib`, and
-      still renders correctly in a context with no open family tree (e.g.
-      Plugin Manager plus's own README pane).
-- [ ] Recognize `gramps:media:<id>[:size]` in Phase 2's `classify_image_url`.
-- [ ] Document the resolver contract explicitly: implementations must call
-      `gramps.gen.utils.thumbnails.get_thumbnail_path()` /
-      `get_thumbnail_image()` — never reimplement hashing, mime detection,
-      or thumbnail generation. This was the specific requirement raised
-      mid-conversation ("should leverage Gramps thumbnailing, not
-      circumvent it") and is the main risk of a first-pass implementation
-      quietly re-deriving its own thumbnail cache instead.
-- [ ] Wire an actual `resolve_media` in whichever consumer has `dbstate` —
-      almost certainly Markdown Dash (not `PluginManagerPlus.py`, which has
-      no open family tree to resolve against).
-
-## Phase 4 — Optional 3rd-party parser backend (do last; lowest urgency)
-
-Only after 1-3 are stable and live-verified. Confirmed viable via the real
-Gramps source (`gramps/gen/utils/pypi.py`, the Addon Manager install flow
-in `gramps/gui/plug/_windows.py`):
-
-- MarkdownUtils's own `.gpr.py` must **not** declare `requires_mod` on a
-  3rd-party parser — that would make the dependency-free base layer's
-  availability depend on an optional upgrade, backwards. Keep it internal:
-  `try: import marko ... except ImportError: _BACKEND = None` inside
-  `MarkdownUtils.py` itself.
-- Licensing/bundling constraint (since this is a core-bundling candidate):
-  never vendor a 3rd-party parser's source into MarkdownUtils.py. Optional
-  backends are always the *user's own* PyPI install, kept at arm's length.
-- For discoverable installation (not everyone will `pip install` by hand):
-  a separate, thin, optional companion addon whose entire job is
-  `requires_mod=["marko"]` — installing/updating *that* addon is what
-  triggers Gramps' own Addon Manager to pull the dependency into `lib/` via
-  its existing pip/stdlib-installer flow. MarkdownUtils itself stays
-  untouched either way.
-- `marko` is the best-fit candidate found: pure-Python, active GFM
-  extension, and its import name matches its PyPI name (no
-  `_IMPORT_TO_PYPI` mapping gap). **Avoid `markdown-it-py` for now** — its
-  import name (`markdown_it`) doesn't match its PyPI name
-  (`markdown-it-py`) closely enough for Gramps' existing name-resolution
-  table to bridge automatically; using it today would silently fail to
-  auto-install until Gramps core's own mapping table gets a new entry.
-- Design: one canonical adapter contract,
-  `_segments_from_<backend>(md_text) -> list[Segment]`, calling Phase 2's
-  `classify_image_url`/`classify_link_url` for every link/image the
-  backend's own AST produces — so the Gramps extension layer never
-  duplicates itself per backend.
-- Tables stay on the existing `build_table_widget()` regardless of
-  backend — GTK `Gtk.TreeView` embedding is not something any of the
-  candidate libraries give you, so this part of the pipeline doesn't
-  change no matter which parser is active.
-
-## Phase 5 — Documentation catch-up (ongoing, not just at the end)
-
-- [ ] Revise `MarkdownUtils_DEVELOPER.md` — it was written before the real
-      `MarkdownUtils.py` had been shared, so several sections are marked
-      "NEEDS VERIFICATION" that are now fully confirmed (the `Segment` IR,
-      exact `gramps:` syntax, `NAMESPACE_MAP`/`VIEW_NAMES`,
-      `ICON_STYLE_*` constants, the real link-style taxonomy including
-      `md_link`/`anchor_link`). Should happen right after Phase 2, since
-      that's when the extension-layer contract stabilizes into its final
-      shape.
-- [ ] `MarkdownUtils_README.md` (end-user) was written at a superficial
-      enough level that it likely doesn't need changes from any of this —
-      re-check once Phase 3 (media/thumbnails) lands, since that's the
-      concrete feature the README already alludes to.
-- [ ] Each phase's own docstrings/comments should carry its own disclosure
-      per Gramps' AI-generated-code policy at commit time, same as the
-      help-button work earlier in this effort.
-
-## What's already done and verified (no action needed)
-
-- `help_doc_button.py` reference snippet + its inlining into
-  `PhotoTaggingGramplet.py`: icon-fallback bug, URL-encoding bug,
-  `GENERIC_FALLBACK`→`FORCE_REGULAR` correction, and the hidden/deactivated-
-  plugin bug in both `resolve_markdown_dash_opener()` and
-  `PluginManagerPlus.py`'s `_cb_open_doc_reader` — all fixed and confirmed
-  live in real Gramps across every fallback branch (README+viewer, README
-  missing, viewer not installed, viewer deactivated/re-enabled without
-  restart).
+8 October, **tested outside Gramps** (GTK 3 under a virtual display with the Gramps 5.2.4 package, or unit tests); confirm in Gramps:
+- Icon lookup tries exact names before the GTK generic fallback (reproduced the wrong-icon case and the fix).
+- The scaled-image cache: first view, cached view, a narrower pane, a changed source file, an unreadable file.
+- Table columns line up from row to row (one `Gtk.SizeGroup` per column; 0 px drift in all 5 tables of the icon inventory).
+- Comments inside code are shown, and hidden elsewhere (10 cases; two real documents parse identically).
+- `gramps:view:` links classified as Gramps links; unresolvable icons shown as `[name]` in widget tables.
+- The shared table helpers produce byte-identical output in both table styles.
+- `VIEW_NAMES` with the new aliases gives the same results as the old private table of Plugin Manager plus (33 cases).
+- Markdown Dash `gramps:edit:` and `gramps:nav:` links through core `EDITORS` and `db.method()` (7 cases).
+- The Icon Browser lists icons through `list_icons_by_context()` with results identical to its old code (12 lists, 981 icons).

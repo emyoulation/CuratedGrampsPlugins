@@ -20,23 +20,25 @@
 """Registration for MarkdownUtils, a shared Markdown-rendering/icon-resolution
 library used by Markdown Dash, Plugin Manager plus, and other addons.
 
-Ships in ``lib/`` (alongside this file) rather than its own addon folder,
-so it lands on ``sys.path`` automatically via Gramps' own
-``USER_PLUGINS/lib`` convention (unconditionally added to ``sys.path`` in
-``gramps/gen/const.py``) instead of requiring each consuming addon to
-locate it with its own relative-path sys.path hack. GENERAL is Gramps'
-own "Plugin library" category (see ``PTYPE_STR`` in
-``gramps/gen/plug/_pluginreg.py``) -- there is nothing here for a user to
-launch; this registration exists so Gramps' addon installer
-(``load_addon_file()``) has a valid ``.gpr.py`` to find in this package,
-and so MarkdownUtils appears, versioned, in Plugin Manager like any other
-addon it distributes alongside.
+Ships bundled in a parent folder (plugins/MarkdownBased/) together with
+the Markdown-based addons that use it, each in its own subfolder. Each
+consuming addon puts that parent folder on ``sys.path`` before importing
+``MarkdownUtils``. GENERAL is Gramps' own "Plugin library" category (see
+``PTYPE_STR`` in ``gramps/gen/plug/_pluginreg.py``) -- there is nothing
+here for a user to launch; this registration exists so Gramps' addon
+installer (``load_addon_file()``) has a valid ``.gpr.py`` to find in this
+package, and so MarkdownUtils appears, versioned, in Plugin Manager like
+any other addon it distributes alongside.
 
 DO NOT set requires_mod here -- MarkdownUtils does not depend on itself.
-Each *consuming* addon (Markdown Dash, Plugin Manager plus, ...) should
-instead declare requires_mod=["MarkdownUtils"] in its own .gpr.py, so
-Gramps' registration scan excludes that addon entirely if MarkdownUtils
-isn't present -- see PluginManagerPlus.gpr.py for the pattern.
+Consuming addons cannot use requires_mod=["MarkdownUtils"] either, with
+this layout: Gramps checks requires_mod during its startup registration
+scan (``Requirements.check_mod()`` in ``gramps/gen/utils/requirements.py``,
+called from ``gramps/gen/plug/_pluginreg.py``), before any addon has put
+plugins/MarkdownBased/ on ``sys.path``, so the check would fail and
+Gramps would silently drop the addon. Consuming addons instead import
+MarkdownUtils inside ``try``/``except ImportError`` and fall back to
+plain text (or a small stand-in) when it is missing.
 """
 
 from gramps.version import major_version, VERSION_TUPLE
@@ -57,7 +59,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
             "tool or gramplet itself -- installed so those addons can "
             "import it."
         ),
-        version="0.1.1",
+        version="0.2.0",  # build 20261009.2042
         gramps_target_version=major_version,
         status=STABLE,
         fname="MarkdownUtils.py",
@@ -66,4 +68,5 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         maintainers=["Brian McCullough"],
         maintainers_email=["emyoulation@yahoo.com"],
         include_in_listing=True,
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/MarkdownBased",
     )

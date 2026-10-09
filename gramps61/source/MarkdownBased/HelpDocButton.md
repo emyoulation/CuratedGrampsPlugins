@@ -1,9 +1,10 @@
 # help_doc_button.py -- recipe and notes
 
+[README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md) ● [MarkdownUtils_PLAN.md](MarkdownUtils_PLAN.md) ● [MarkdownUtils_DEVELOPER.md](MarkdownUtils_DEVELOPER.md) ● [HelpDocButton.md](HelpDocButton.md)
+
 **Reference material, for the developer and for any AI assistant. Neither this file nor `help_doc_button.py` ships inside an addon.** The Help button is pasted into the host module as a block, so an addon's folder gains no extra files beyond the `README.md` it should have anyway.
 
 ## Recipe: add a Help button to a gramplet or tool
-
 1. **Paste the block.** Copy everything from the `BEGIN HELP BUTTON BLOCK` marker to the `END HELP BUTTON BLOCK` marker of `help_doc_button.py` into the host module, after the host's own imports. Add whichever of the imports at the top of `help_doc_button.py` the host lacks. If the host already defines `_` and `LOG`, delete the block's two definitions and use the host's. If the host already has a function named `resolve_help_icon`, `find_local_readme`, `resolve_markdown_dash_opener`, `open_help_url`, `cb_show_help` or `add_help_button`, rename the *host's* clash rather than duplicating either.
 2. **Make one call**, where the host builds its buttons:
    ```python
@@ -22,14 +23,13 @@
 
 **What a click does:** a README present and Markdown Dash active -> the README opens (in the user's language if a translation exists, otherwise the English baseline) in an undocked Markdown Dash window registered in the Gramps **Windows** menu, parented to the main Gramps window. Otherwise -> the `help_url` opens in the desktop browser. Otherwise -> a short "no documentation" notice.
 
-**Localization (one implementation, in `MarkdownUtils`).** The lookup convention lives in `MarkdownUtils.resolve_localized_path()`; Markdown Dash, Plugin Manager Plus and this block all call it rather than keeping their own copies. The block always hands Markdown Dash the canonical `<addon folder>/README.md` path, and `open_markdown_file()` resolves it. For a user whose Gramps language is `fr_FR`, the order is: `locale/fr_FR/README.md`, then `locale/fr/README.md`, then `README.md` (the English baseline, shown with a translation-invitation notice when the user's language isn't English). An addon written in another language can instead ship only `README_<lang>.md` (e.g. `README_fi.md`), which is treated as the source language. `find_local_readme()` asks the same function whether any variant exists, so an addon with only translated files still gets the viewer rather than a browser. If `MarkdownUtils` can't be imported (no Markdown Dash, or a version from before this function existed) only a literal `README.md` counts, which is harmless because the browser fallback is used then anyway.
+**Localization (one implementation, in `MarkdownUtils`).** The lookup convention lives in `MarkdownUtils.resolve_localized_path()`; Markdown Dash (including the reader that Plugin Manager plus opens) and this block call it rather than keeping their own copies. The README pane of Plugin Manager plus does not call it yet (an open item in [MarkdownUtils_PLAN.md](MarkdownUtils_PLAN.md)). The block always hands Markdown Dash the canonical `<addon folder>/README.md` path, and `open_markdown_file()` resolves it. For a user whose Gramps language is `fr_FR`, the order is: `locale/fr_FR/README.md`, then `locale/fr/README.md`, then `README.md` (the English baseline). Markdown Dash documents a translation-invitation notice for that case, but as of 8 October 2026 the code shows the invitation only on its "File Not Found" page, not under a document that loaded as a fallback (an open item). An addon written in another language can instead ship only `README_<lang>.md` (e.g. `README_fi.md`), which is treated as the source language. `find_local_readme()` asks the same function whether any variant exists, so an addon with only translated files still gets the viewer rather than a browser. If `MarkdownUtils` can't be imported (not installed, or its parent folder `plugins/MarkdownBased/` not yet on `sys.path`) only a literal `README.md` counts, which is harmless because the browser fallback is used then anyway. `cb_show_help()` loads Markdown Dash before looking for the README for this reason: loading it puts the parent folder on `sys.path`.
 
 **Also covered by the same code:** a popup built directly on `MarkdownUtils` (see "Using MarkdownUtils directly" below) gets the same behavior by calling `resolve_localized_path(readme_path).path` before `render_markdown()`, and `resolve_localized_asset(base_dir, rel_path)` for localized images.
 
 **After pasting:** re-run Black and Pylint on the *host* file, and carry the AI-disclosure section below into the commit message (the merged code loses this document).
 
 ## What it does, and the gotchas it works around
-
 Adds a color "Help" button to a gramplet/report/tool dialog. Clicking it opens a plugin's own local `README.md` in an undocked, Windows-menu-registered Markdown Dash window when one exists and Markdown Dash is available, parented to the main Gramps window (never the calling dialog); otherwise it falls back to opening the plugin's registered `help_url` in the desktop's default browser.
 
 Beyond the feature itself, this snippet exists as a worked example of several things that reliably bite developers new to GTK/Gramps. Each is called out below with the function that demonstrates the fix.
@@ -41,10 +41,10 @@ Beyond the feature itself, this snippet exists as a worked example of several th
 - **The icon size default is 16 px, not 48.** An earlier revision defaulted to 48 px (sized for a dialog's action area), and the first real gramplet host (`NoteStylingEditor.py`) had to override it to 16 so the button didn't dwarf its neighbours. 16 is now the default; pass a larger `size` only deliberately.
 - **A `Gtk.Image`'s own tooltip does not show once it's inside a `Gtk.Button`.** `Gtk.Image.set_tooltip_text()` only works if the image itself can receive pointer/focus events, which it generally can't as a button's child widget. `add_help_button()` therefore calls `button.set_tooltip_text(...)` on the *button*, after `button.set_image(...)`, not on the image returned by `resolve_help_icon()` -- setting it on the image would silently produce no visible tooltip at all, a common source of "I set a tooltip but nothing shows up" confusion.
 - **"Not hidden", "registered", "loadable", and "has this function" are four different questions.** A plugin can appear in `PluginRegister` (its `.gpr.py` was found and parsed) yet still fail to import (a broken install, a missing dependency), import fine but be an older version that predates the API you want to call -- or, distinctly, be registered and perfectly loadable but *deliberately turned off* by the user via the Plugin Manager's Deactivate button. `resolve_markdown_dash_opener()` checks all four, in order, precisely because collapsing them into one boolean check ("is it in the registry?") produces confusing failures later, when `load_plugin()` returns `None` or `getattr(mod, "open_markdown_file", None)` is `None` and the caller has no idea why.
-- **`GuiPluginManager.load_plugin()` does not itself respect a user's "Deactivate" choice -- confirmed by a live test, and traced to a matching gap in the very source this was modeled on.** `GuiPluginManager.get_hidden_plugin_ids()` (see `PluginManagerPlus.py`'s own `self.hidden = self._pmgr.get_hidden_plugin_ids()`) is how Gramps' own UI tracks which plugins the user has hidden/deactivated -- but it is only *consulted* by that UI's own listing/filtering and by Gramps' startup autoload. `load_plugin()` itself will happily import and return a hidden plugin's module if called directly, which is exactly what a live test against this addon found: Markdown Dash registered-but-deactivated in Plugin Manager was still used to open the README. Tracing this back, `PluginManagerPlus.py`'s own `_cb_open_doc_reader` (the method `resolve_markdown_dash_opener()` was modeled on) has the same gap -- it calls `self._pmgr.load_plugin(pdata)` with no hidden-state check either. `resolve_markdown_dash_opener()` now checks `_MARKDOWNDASH_ID in GuiPluginManager.get_instance().get_hidden_plugin_ids()` first and falls back to `help_url` if so, treating "the user turned this off" the same as "not installed" rather than silently overriding that choice. `_cb_open_doc_reader` in `PluginManagerPlus.py` was not changed here (out of scope for this snippet) but has the identical bug and would benefit from the same fix.
+- **`GuiPluginManager.load_plugin()` does not itself respect a user's "Deactivate" choice -- confirmed by a live test, and traced to a matching gap in the very source this was modeled on.** `GuiPluginManager.get_hidden_plugin_ids()` (see `PluginManagerPlus.py`'s own `self.hidden = self._pmgr.get_hidden_plugin_ids()`) is how Gramps' own UI tracks which plugins the user has hidden/deactivated -- but it is only *consulted* by that UI's own listing/filtering and by Gramps' startup autoload. `load_plugin()` itself will happily import and return a hidden plugin's module if called directly, which is exactly what a live test against this addon found: Markdown Dash registered-but-deactivated in Plugin Manager was still used to open the README. Tracing this back, `PluginManagerPlus.py`'s own `_cb_open_doc_reader` (the method `resolve_markdown_dash_opener()` was modeled on) has the same gap -- it calls `self._pmgr.load_plugin(pdata)` with no hidden-state check either. `resolve_markdown_dash_opener()` now checks `_MARKDOWNDASH_ID in GuiPluginManager.get_instance().get_hidden_plugin_ids()` first and falls back to `help_url` if so, treating "the user turned this off" the same as "not installed" rather than silently overriding that choice. `_cb_open_doc_reader` in `PluginManagerPlus.py` was not changed here (out of scope for this snippet) but has the identical bug and would benefit from the same fix. Re-checked 8 October 2026: it still calls `load_plugin()` without a hidden-state check.
 - **`PluginData.fpath` can be `None` or empty even for a real, registered id.** This happens for built-in plugins with no on-disk addon folder, and for entries left over from a previous scan whose files have since been removed. Code that does `os.path.join(pdata.fpath, "README.md")` without checking `pdata.fpath` first will raise on `None`, or silently build a bogus path.
 - **A `Gtk.Dialog` opened as a plain object is invisible to Gramps' own window management.** Gramps tracks its top-level windows through `uistate.gwm` (the `GrampsWindowManager`), which is what populates the **Windows** menu, handles click-to-restore, and lets Gramps enumerate/close its own windows on shutdown. A dialog built without going through `ManagedWindow` never registers with any of that -- it can still work as a window, but it won't appear in the Windows menu and Gramps has no way to know it exists. `open_markdown_file()` (in `MarkdownDash.py`, not reproduced here) wraps its reader in a `ManagedWindow` subclass specifically so this snippet's dialog gets that Windows-menu presence for free.
-- **`ManagedWindow` wrapping alone is not sufficient for correct Windows-menu behavior -- a plain `Gtk.Dialog`'s own default window-manager type hint is a separate, additional problem.** Found the hard way, in a *different* addon (`GtkDiagnosticsToolkit`) built on this exact same pattern: a `Gtk.Dialog` defaults to the `DIALOG` type hint, which on many window managers is what actually breaks correct Windows-menu tracking, appearance, and restore -- independently of whether the window is a proper `ManagedWindow`, and independently of `build_menu_names()`'s own leaf/branch setting (a detour chased first, before landing on this). The fix, confirmed against `PluginManagerPlus.py`'s own working code and its own comment on precisely this: `self.window.set_type_hint(Gdk.WindowTypeHint.NORMAL)`, called once, right after constructing the `Gtk.Dialog`. **This has not been verified one way or the other in `open_markdown_file()`'s own `Gtk.Dialog` construction in `MarkdownDash.py`** -- if that dialog doesn't already set this hint, every addon using this snippet inherits the same Windows-menu misbehavior silently, with nothing in this doc's own worked example to point at why. Confirming (and, if missing, adding) this hint in `open_markdown_file()` itself is on the integration checklist below.
+- **`ManagedWindow` wrapping alone is not sufficient for correct Windows-menu behavior -- a plain `Gtk.Dialog`'s own default window-manager type hint is a separate, additional problem.** Found the hard way, in a *different* addon (`GtkDiagnosticsToolkit`) built on this exact same pattern: a `Gtk.Dialog` defaults to the `DIALOG` type hint, which on many window managers is what actually breaks correct Windows-menu tracking, appearance, and restore -- independently of whether the window is a proper `ManagedWindow`, and independently of `build_menu_names()`'s own leaf/branch setting (a detour chased first, before landing on this). The fix, confirmed against `PluginManagerPlus.py`'s own working code and its own comment on precisely this: `self.window.set_type_hint(Gdk.WindowTypeHint.NORMAL)`, called once, right after constructing the `Gtk.Dialog`. **Checked 8 October 2026: the reader window that `open_markdown_file()` builds in `MarkdownDash.py` does not set this hint** (no `set_type_hint` call anywhere in that file), so every addon using this snippet inherits the same Windows-menu risk. Adding the hint in `MarkdownDash.py` itself is item 9 of the integration checklist below.
 - **Parenting a spawned window to the wrong widget closes it prematurely, or never closes it.** The natural-looking `parent=self.window` (the calling Tool/Report dialog) means the reader window is destroyed the moment that dialog closes -- surprising for a "documentation" window someone may want to keep open while browsing other plugins. `cb_show_help()` passes `parent=uistate.window` (Gramps' own main window) instead, so the reader survives the calling dialog closing, exactly the same convention Gramps' own top-level windows use.
 - **A bare `except Exception` around a GTK/GIO call hides the actual failure mode.** `Gio.AppInfo.launch_default_for_uri()` raises `GLib.Error`, a specific, catchable type; `open_help_url()` catches that specifically (and logs it) rather than swallowing every possible exception, which would also mask real bugs elsewhere in the same `try` block.
 - **`help_url` is not always a URL.** Gramps' plugin registration lets `help_url` be either a full `http(s)://` URL or a bare wiki page title (resolved against gramps-project.org by convention). Code that always treats it as a ready-to-open URL will send people to a 404 for any plugin using the short form; `open_help_url()` checks the prefix and resolves accordingly.
@@ -52,7 +52,6 @@ Beyond the feature itself, this snippet exists as a worked example of several th
 - **User-visible strings need `_()`, and the translator lookup itself can fail.** `glocale.get_addon_translator(__file__)` raises `ValueError` for an addon with no translation catalog registered yet (e.g. during early development) -- the `try`/`except ValueError: _trans = glocale.translation` fallback avoids a hard crash for that ordinary, temporary state rather than assuming every addon always has translations wired up already.
 
 ## AI-generated-code disclosure
-
 Per the ["AI generated code"](https://www.gramps-project.org/wiki/index.php/Howto:_Contribute_to_Gramps#AI_generated_code) section of the Gramps contribution guide:
 
 - **Tool, provider, version:** Claude (Anthropic), model "Claude Sonnet 5", web chat (claude.ai). Generated 2026-09-02.
@@ -69,52 +68,32 @@ Per the ["AI generated code"](https://www.gramps-project.org/wiki/index.php/Howt
 - **Fifth follow-up revision (2026-09-19):** Claude (Anthropic), model "Claude Sonnet 5", web chat (claude.ai). Prompted to check whether localized-README support with an English fallback exists before integrating the button into `NoteStylingEditor`. Found: it exists in `MarkdownDash.py` (`resolve_localized_path()`, called by `open_markdown_file()`), not in `MarkdownUtils.py`, so it is inherited by callers of `open_markdown_file()` but not by a MarkdownUtils-direct popup. Found a gap in this block: `find_local_readme()` required a literal `README.md`, so an addon shipping only `README_<lang>.md` or `locale/<lang>/README.md` was sent to `help_url` instead of the viewer. Changes: `find_local_readme()` now counts those variants (file-name patterns mirrored from Markdown Dash); added BEGIN/END markers to the block; added the "Localization" paragraph to the recipe. Verified with Black and a mocked-dependency test of nine README layouts; the localization behavior itself was read from `MarkdownDash.py`, **not** run in a live Gramps.
 - **Sixth follow-up revision (2026-09-19):** Claude (Anthropic), model "Claude Sonnet 5", web chat (claude.ai). Prompted to move the localization support into `MarkdownUtils` so it can be trimmed out of the other modules. The lookup code (`locale_lang`, `PathResolution`, `LANG_SUFFIX_RE`, `resolve_localized_path`) was moved verbatim from `MarkdownDash.py` into `MarkdownUtils.py`; `resolve_localized_asset()` and `PathResolution.exists()` were added. In this block, `find_local_readme()` now delegates to `resolve_localized_path()` instead of mirroring its file-name patterns (its own regex and `re` import were removed), and `cb_show_help()` loads Markdown Dash before looking for the README so that `MarkdownUtils` is importable. Verified with a mocked-dependency equivalence test (63 layout/locale comparisons of old `MarkdownDash.py` code against new `MarkdownUtils.py` code, plus asset lookup; 0 mismatches) and a routing test of this block; **not** run in a live Gramps.
 
-## Where each piece came from
+- **Seventh follow-up revision (2026-10-08):** Claude (Anthropic), model "Claude Opus 5.5", web chat (claude.ai). Prompted to freshen this document after a day of MarkdownUtils 0.2.0 work. Documentation only; `help_doc_button.py` itself was not changed. Checked against the current `MarkdownUtils.py`, `MarkdownDash.py` and `PluginManagerPlus.py`: corrected which addons call `resolve_localized_path()` (not the README pane of Plugin Manager plus); recorded that the translation invitation of Markdown Dash appears only on its "File Not Found" page; recorded that the reader window of Markdown Dash does not set `Gdk.WindowTypeHint.NORMAL` (checklist item 9 is now a confirmed gap, not an unverified one); re-confirmed the missing hidden-state check in `_cb_open_doc_reader`; described the bundled `plugins/MarkdownBased/` layout and the preliminary core proposal; and reformatted the "Using MarkdownUtils directly" section to one line per paragraph.
 
+## Where each piece came from
 - **README discovery** (`find_local_readme`) -- the `pdata.fpath`/`README.md` check from `doc_reader_integration.md` section 1, also used in `PluginManagerPlus.py`'s `_cb_populate_info_pane_popup`.
 - **Markdown Dash verification chain** (`resolve_markdown_dash_opener`) -- the registered -> loadable -> API-present sequence from `doc_reader_integration.md` section 2 / `PluginManagerPlus.py`'s `_cb_open_doc_reader`, and the `parent=uistate.window` convention that keeps the reader window a child of the *Gramps main window*, not the calling dialog.
 - **`help_url` fallback** (`open_help_url`) -- mirrors `PluginManagerPlus.py`'s `_MdInfoPane.resolve_help_full_url` / `_cb_open_help_url`: a bare wiki page title is resolved against gramps-project.org, a full URL is used as-is.
 - **Color icon resolution** (`resolve_help_icon`) -- the "Forcing the color variant over the symbolic fallback" pattern from `gramps_icon_inventory.md`.
 
 ## Why resolve the icon by name, not a hardcoded path
-
 The original ask named a literal path: `/usr/share/icons/gnome/48x48/apps/help-browser.png`. That path only exists if the GNOME icon theme specifically is installed, at that exact size. `resolve_help_icon()` instead asks the active `Gtk.IconTheme` for `"help-browser"` by name, color variant preferred -- the same 48x48, full-color "apps" asset the hardcoded path was reaching for, but found correctly under whatever theme is actually active, on any platform.
 
 ## If Markdown Dash merges into Gramps core
-
-`_MARKDOWNDASH_ID` / `resolve_markdown_dash_opener()` assume Markdown Dash is a registered *addon*, found via `PluginRegister.get_instance().get_plugin("markdowndash")`. There is discussion of folding MarkdownUtils/Markdown Dash into Gramps core for 6.2/7.0. If that happens, `PluginRegister` will no longer have this id at all -- `resolve_markdown_dash_opener()` will keep returning `None` (its normal "not available" result), so every caller falls back to `help_url` forever. That is not a crash, and matches this function's designed degrade-gracefully behavior -- but it silently mistakes "now built into Gramps" for "never installed," permanently losing the in-app README viewer without any error to notice by. Confirmed working against the real `MarkdownDash.gpr.py` (id `"markdowndash"`) via a live integration test on 2026-09-03, so this note only applies from whenever that core migration lands. Whoever does that migration should replace this addon-id lookup with however the core module is actually detected/imported at that point, in every host module this snippet has been inlined into -- not just here.
+`_MARKDOWNDASH_ID` / `resolve_markdown_dash_opener()` assume Markdown Dash is a registered *addon*, found via `PluginRegister.get_instance().get_plugin("markdowndash")`. MarkdownUtils is being evaluated for inclusion in Gramps core from 6.2; as of 8 October 2026 the proposal is preliminary, with no core module path yet, and for 5.2 to 6.1 the Markdown-based addons ship bundled with MarkdownUtils in `plugins/MarkdownBased/`. If that happens, `PluginRegister` will no longer have this id at all -- `resolve_markdown_dash_opener()` will keep returning `None` (its normal "not available" result), so every caller falls back to `help_url` forever. That is not a crash, and matches this function's designed degrade-gracefully behavior -- but it silently mistakes "now built into Gramps" for "never installed," permanently losing the in-app README viewer without any error to notice by. Confirmed working against the real `MarkdownDash.gpr.py` (id `"markdowndash"`) via a live integration test on 2026-09-03, so this note only applies from whenever that core migration lands. Whoever does that migration should replace this addon-id lookup with however the core module is actually detected/imported at that point, in every host module this snippet has been inlined into -- not just here.
 
 ## Why there's no rescan-retry
-
 `PluginRegister` is always the authoritative answer to "does Gramps currently know about Markdown Dash" -- but it only *learns* that from an on-disk scan that runs once at Gramps startup, and otherwise only on explicit request (e.g. Plugin Manager's own "Load"/"Update" actions, or an addon tool that triggers a rescan). An earlier version of this snippet added an automatic rescan-and-retry for the case where Markdown Dash was installed mid-session without one of those being used. That was removed: it pulled in `dbstate`/`CLIManager`-adjacent plumbing for a genuinely rare case Gramps' own GUI already covers, and the cost of getting it wrong (falling back to `help_url` instead of the in-app README) is minor and self-correcting -- the button works correctly again on the very next lookup after any rescan.
 
 <a id="markdownutils-direct"></a>
 ## Using MarkdownUtils directly, without Markdown Dash
+Every pattern above assumes going through Markdown Dash's own `open_markdown_file()` -- the right choice when the full reader (editor mode, switching between other `.md` files in the same folder, folder navigation) is wanted, or already available as a dependency. Not every host addon wants that: a small tool or gramplet that just needs to render one `README.md` in a plain popup, without taking on a dependency on the whole Markdown Dash reader gramplet, can instead import `MarkdownUtils` (the shared rendering *library* the two addons are built on) directly. `GtkDiagnosticsToolkit` is a real, worked example of this alternative -- its own Help button renders `README.md` with `MarkdownUtils.render_markdown()`/`markdown_link_at()` inside a small popup it builds and owns itself, only falling back to `open_help_url()`-equivalent behavior when MarkdownUtils itself isn't usable.
 
-Every pattern above assumes going through Markdown Dash's own
-`open_markdown_file()` -- the right choice when the full reader
-(editor mode, switching between other `.md` files in the same folder,
-folder navigation) is wanted, or already available as a dependency.
-Not every host addon wants that: a small tool or gramplet that just
-needs to render one `README.md` in a plain popup, without taking on a
-dependency on the whole Markdown Dash reader gramplet, can instead
-import `MarkdownUtils` (the shared rendering *library* the two
-addons are built on) directly. `GtkDiagnosticsToolkit` is a real,
-worked example of this alternative -- its own Help button renders
-`README.md` with `MarkdownUtils.render_markdown()`/`markdown_link_at()`
-inside a small popup it builds and owns itself, only falling back to
-`open_help_url()`-equivalent behavior when MarkdownUtils itself isn't
-usable.
+With the bundled layout, the host must first put the parent folder `plugins/MarkdownBased/` on `sys.path` before importing `MarkdownUtils`; see the "Packaging and importing" section of [MarkdownUtils_DEVELOPER.md](MarkdownUtils_DEVELOPER.md).
 
-This is a genuinely different shape from every pattern above, not
-just a smaller version of the same one, in three specific ways:
+This is a genuinely different shape from every pattern above, not just a smaller version of the same one, in three specific ways:
 
-- **The hidden-state check is against a different id.**
-  `resolve_markdown_dash_opener()` checks whether *Markdown Dash* is
-  hidden. An addon importing MarkdownUtils directly never touches
-  Markdown Dash at all, so that check tells it nothing -- it needs its
-  own check, against MarkdownUtils' own registered id, since the two
-  addons can be independently activated/deactivated:
+- **The hidden-state check is against a different id.** `resolve_markdown_dash_opener()` checks whether *Markdown Dash* is hidden. An addon importing MarkdownUtils directly never touches Markdown Dash at all, so that check tells it nothing -- it needs its own check, against MarkdownUtils' own registered id, since the two addons can be independently activated/deactivated:
 
   ```python
   def markdown_utils_usable() -> bool:
@@ -136,47 +115,17 @@ just a smaller version of the same one, in three specific ways:
           return True  # can't confirm hidden state; don't disable a working import over it
   ```
 
-  Checked live on every call, not cached at import time, for the same
-  reason `resolve_markdown_dash_opener()` is: a user can toggle
-  MarkdownUtils' active state in Plugin Manager mid-session, and that
-  needs to take effect immediately, not after a restart.
+  Checked live on every call, not cached at import time, for the same reason `resolve_markdown_dash_opener()` is: a user can toggle MarkdownUtils' active state in Plugin Manager mid-session, and that needs to take effect immediately, not after a restart.
 
-- **None of the Windows-menu handling comes for free.** The whole
-  point of `open_markdown_file()`'s own `ManagedWindow` wrapping (see
-  above) is that every *caller* of it gets Windows-menu presence
-  without doing anything themselves. An addon rendering with
-  MarkdownUtils directly is building its own popup from scratch, so it
-  needs its *own* `ManagedWindow` subclass, its own distinct
-  `build_window_key()`/`build_menu_names()` (a second window sharing
-  the *calling* window's own key/instance will compete for one menu
-  slot rather than each getting its own -- confirmed live), and its
-  own `Gdk.WindowTypeHint.NORMAL` fix (see this doc's own note on that,
-  above) -- none of it inherited from anywhere.
-- **The title has to come from the document itself, not be invented.**
-  `open_markdown_file()` already titles its reader from the opened
-  file's own first heading. A hand-built popup needs to do the same
-  itself, deliberately -- extracting the document's own first `#`
-  heading and using it verbatim, with nothing prepended or appended --
-  rather than hardcoding a title string, which quietly limits what the
-  README's own author can put there.
+- **None of the Windows-menu handling comes for free.** The whole point of `open_markdown_file()`'s own `ManagedWindow` wrapping (see above) is that every *caller* of it gets Windows-menu presence without doing anything themselves. An addon rendering with MarkdownUtils directly is building its own popup from scratch, so it needs its *own* `ManagedWindow` subclass, its own distinct `build_window_key()`/`build_menu_names()` (a second window sharing the *calling* window's own key/instance will compete for one menu slot rather than each getting its own -- confirmed live), and its own `Gdk.WindowTypeHint.NORMAL` fix (see this doc's own note on that, above) -- none of it inherited from anywhere.
+- **The title has to come from the document itself, not be invented.** `open_markdown_file()` already titles its reader from the opened file's own first heading. A hand-built popup needs to do the same itself, deliberately -- extracting the document's own first `#` heading and using it verbatim, with nothing prepended or appended -- rather than hardcoding a title string, which quietly limits what the README's own author can put there.
 
 **Localization is available here too.** Call `MarkdownUtils.resolve_localized_path(readme_path)` to pick the file (its `.is_fallback` and `.source_lang` fields tell you whether to show a translation invitation), and `resolve_localized_asset()` for images; both are the same code Markdown Dash uses.
 
-If the host addon might later want the fuller reader experience,
-structure the fallback as a real cascade rather than an either/or:
-prefer `open_markdown_file()` when Markdown Dash is genuinely usable
-(registered, not hidden, loadable, has the expected function -- the
-four-question check `resolve_markdown_dash_opener()` already does),
-fall back to a MarkdownUtils-direct popup when only that is usable,
-and fall back to `open_help_url()` only when neither is. `add_help_button()`
-above doesn't do this today -- it only ever tries Markdown Dash, then
-`open_help_url()` -- so a host wanting the three-way cascade needs to
-write that routing itself, following `cb_show_help()`'s own shape as
-the starting point.
+If the host addon might later want the fuller reader experience, structure the fallback as a real cascade rather than an either/or: prefer `open_markdown_file()` when Markdown Dash is genuinely usable (registered, not hidden, loadable, has the expected function -- the four-question check `resolve_markdown_dash_opener()` already does), fall back to a MarkdownUtils-direct popup when only that is usable, and fall back to `open_help_url()` only when neither is. `add_help_button()` above doesn't do this today -- it only ever tries Markdown Dash, then `open_help_url()` -- so a host wanting the three-way cascade needs to write that routing itself, following `cb_show_help()`'s own shape as the starting point.
 
 <a id="integration-checklist"></a>
 ## Integration checklist (the fuller version behind the recipe's step 1)
-
 The snippet is inlined into the host file; it is not imported as a module and nothing is copied into the addon folder alongside it. The recipe above is the short path. Use this list when a merge is unusual or something misbehaves:
 
 1. **Check for name collisions before copying anything in.** The host module very likely already defines a translator (`_`), a module logger (`LOG`), and possibly its own icon/id constants. Search the host file for `_ =`, `LOG = logging.getLogger`, `_HELP_ICON_NAME`, and `_MARKDOWNDASH_ID` first. If the host already has a translator and logger, delete this snippet's copies and use the host's; do not leave two loggers or two `_` bindings in the same file. If the host has no translator/logger yet, keep this snippet's versions but verify they don't shadow anything the host adds later in the same file.
@@ -187,41 +136,33 @@ The snippet is inlined into the host file; it is not imported as a module and no
 6. **Re-run Black and Pylint on the merged file**, not just on the snippet in isolation -- merging can reintroduce the same import-grouping, line-length, or duplicate-definition issues this snippet was already checked against on its own.
 7. **Carry the AI-generated-code disclosure into the merge commit message, regardless of whether this `.md` travels with the merged file.** Per step 3, `HelpDocButton.md` may not survive the merge -- but the tool/provider/version, prompts, and constraint documents recorded in its "AI-generated-code disclosure" section above are still required by Gramps' AI-generated-code policy at the point that actually matters: the commit that introduces this code into the host module. Copy that section's content (or a summary of it) into the commit message's `Generated-by:` tag rather than letting it exist only in a document that gets dropped.
 8. **Add tests for the merge's pure logic**, per AGENTS.md's per-flow testing requirement, which this snippet's own "Verification" note (Black/Pylint only) does not satisfy on its own. `find_local_readme()` and the URL-vs-title branch of `open_help_url()` do not need a running GTK/Gramps environment to test -- `gi.repository` and `gramps.gui.dialog.OkDialog` can be stubbed/mocked so those two functions' branches (present/missing README; `http(s)://` URL vs. bare title, including a title needing percent-encoding) are exercised directly. Name the test file `<host_module>_test.py` in a `test/` subdirectory alongside the host module, per AGENTS.md.
-9. **Confirm `open_markdown_file()`'s own `Gtk.Dialog`, in `MarkdownDash.py`, sets `set_type_hint(Gdk.WindowTypeHint.NORMAL)`.** See this doc's own note above, under the `ManagedWindow`/Windows-menu bullet: a plain `Gtk.Dialog` defaults to the `DIALOG` type hint, which breaks correct Windows-menu behavior on many window managers independently of whether the window is otherwise a proper `ManagedWindow`. This has not been checked one way or the other as of this writing. If it's missing there, add it, once, in `MarkdownDash.py` itself -- every host module using this snippet inherits the fix for free the same way it already inherits the `ManagedWindow` wrapping itself, rather than each host needing to notice and patch around the gap independently.
+9. **Confirm `open_markdown_file()`'s own `Gtk.Dialog`, in `MarkdownDash.py`, sets `set_type_hint(Gdk.WindowTypeHint.NORMAL)`.** See this doc's own note above, under the `ManagedWindow`/Windows-menu bullet: a plain `Gtk.Dialog` defaults to the `DIALOG` type hint, which breaks correct Windows-menu behavior on many window managers independently of whether the window is otherwise a proper `ManagedWindow`. Checked 8 October 2026: it is missing. Add it, once, in `MarkdownDash.py` itself -- every host module using this snippet inherits the fix for free the same way it already inherits the `ManagedWindow` wrapping itself, rather than each host needing to notice and patch around the gap independently.
 
 ## Function parameter reference
-
 <a id="constants"></a>
 ### Module constants
-
 `_MARKDOWNDASH_ID` is the registered id of the Markdown Dash gramplet (see `MarkdownDash.gpr.py`). `_HELP_ICON_NAME` is `"help-browser"`, resolved through the active `Gtk.IconTheme` by name rather than a hardcoded path -- see "Why resolve the icon by name" above.
 
 <a id="resolve_help_icon-parameters"></a>
 ### `resolve_help_icon(size=16)`
-
 Returns a `Gtk.Image` showing the color `"help-browser"` icon at `size`. **size** -- desired pixel size (square). **Returns** a `Gtk.Image` showing the resolved icon.
 
 <a id="find_local_readme-parameters"></a>
 ### `find_local_readme(pdata)`
-
 Returns the canonical path `<plugin folder>/README.md`, or `None` if the plugin has no README of any kind. "Any kind" is decided by `MarkdownUtils.resolve_localized_path()` (a `README_<lang>.md` or a `locale/<lang>/README.md` also counts, and the returned path then need not exist on disk, because Markdown Dash resolves it to the best variant); if `MarkdownUtils` can't be imported, only a literal `README.md` counts. **pdata** -- the plugin's `PluginData`; `None` is tolerated so a `PluginRegister.get_plugin(pid)` result can be passed straight through without an extra caller-side check. **Returns** the canonical path, or `None`.
 
 <a id="resolve_markdown_dash_opener-parameters"></a>
 ### `resolve_markdown_dash_opener()`
-
 Returns Markdown Dash's `open_markdown_file()`, or `None`. Verifies the gramplet is not user-hidden, is registered, is loadable, and still exposes the expected API -- each a distinct failure mode (deactivated / not installed / broken install / outdated install), collapsed here to a single `None` since every caller does the same thing either way: fall back to `open_help_url`. Takes no parameters. **Returns** the `open_markdown_file` callable, or `None` if Markdown Dash has been deactivated via Plugin Manager, is not registered, fails to load, or does not (yet) provide that function.
 
 <a id="open_help_url-parameters"></a>
 ### `open_help_url(pdata, parent)`
-
 Opens `pdata`'s registered `help_url` in the desktop's default browser; a bare wiki page title is resolved against gramps-project.org, a full URL is used as-is. **pdata** -- the `PluginData` whose `help_url` should be opened. **parent** -- transient parent for the "nothing to show" notice.
 
 <a id="cb_show_help-parameters"></a>
 ### `cb_show_help(_button, uistate, pdata)`
-
 Shows the closest documentation available for `pdata`: local `README.md` via Markdown Dash when available, else `open_help_url`. **_button** -- the clicked `Gtk.Button` (unused). **uistate** -- the Gramps `UiState`, used for window parenting. **pdata** -- the calling plugin's own `PluginData`.
 
 <a id="add_help_button-parameters"></a>
 ### `add_help_button(container, uistate, plugin, *, size=16)`
-
 Packs a color "Help" button (icon plus a "Help" text label, `always_show_image` forced on -- see the gotchas above) into `container` for a gramplet/report/tool. **container** -- the `Gtk.Box` to pack the button into: a report/tool dialog's action-area box, or a gramplet's toolbar box. **uistate** -- the Gramps `UiState`, passed through to Markdown Dash. **plugin** -- the calling plugin's own registered id string (preferred), or its `PluginData`, e.g. `PluginRegister.get_instance().get_plugin(my_id)`. **size** -- icon pixel size (square); defaults to `16`, which suits a compact row of text buttons. **Returns** the created, already-packed `Gtk.Button`.

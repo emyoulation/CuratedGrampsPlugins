@@ -99,14 +99,19 @@ Revised 20 Aug 2026  for bug fixes.
 - Better support for image inset in tables
 - enhanced to reduce redundant Markdown Rendering Code in Plugin Manager plus
 
+Fixed 8 Oct 2026:
+- "gtk_widget_size_allocate(): attempt to allocate widget with ... height
+  -7" warnings while scrolling past tables: the table Frame no longer has
+  margins (see the end of build_table_widget); confirmed in Gramps.
+- Table columns drifting out of line from row to row: one Gtk.SizeGroup
+  per column.
+
 Next target for fixes:
-- reduction of endless warnings messages to console during scrolling:
+- console warnings during scrolling, if they still appear (not reproduced
+  since the fixes above):
     *** BUG ***
     In pixman_region32_init_rect: Invalid rectangle passed
     Set a breakpoint on '_pixman_log_error' to debug
-
-    (gramps:1945501): Gtk-WARNING **: 19:30:30.532: gtk_widget_size_allocate():
-    attempt to allocate widget with width 313 and height -7
 
 Wishlist:
     search for string in Markdown text (stripped of formatting, lower case forced)
@@ -129,9 +134,10 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 gi.require_version("GdkPixbuf", "2.0")
 gi.require_version("Pango", "1.0")
-from gi.repository import Gdk, GdkPixbuf, Gtk, Pango
+from gi.repository import Gdk, GdkPixbuf, GLib, Gtk, Pango
 
 from gramps.gen.const import GRAMPS_LOCALE as glocale
+from gramps.gen.const import IMAGE_DIR, THUMB_DIR
 
 # ---------------------------------------------------------------------------
 # Module-level logger
@@ -439,31 +445,82 @@ _INLINE_RE = re.compile(
     re.DOTALL | re.IGNORECASE,
 )
 
-# Matches an HTML comment block, single- or multi-line: <!-- ... -->
-_COMMENT_RE = re.compile(r"<!--(.*?)-->", re.DOTALL)
+
+
+#: A fenced code block opening line: up to 3 spaces, then 3+ backticks
+#: or 3+ tildes (GFM). The block runs to a line of the same character,
+#: at least as long.
+_FENCE_OPEN_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+
+#: One left-to-right scan for whichever comes first: an inline code span
+#: (a run of backticks, its content on one line, and a matching run) or a
+#: comment. Scanning both together means a comment that itself contains
+#: backticks is still hidden whole, and a comment inside a code span is
+#: still shown.
+_CODE_SPAN_OR_COMMENT_RE = re.compile(
+    r"(?P<code>(?P<ticks>`+)[^\n]*?(?<!`)(?P=ticks)(?!`))|(?P<comment><!--.*?-->)",
+    re.DOTALL,
+)
+
+
+def _strip_comments_outside_code_spans(text: str) -> str:
+    """Hide ``<!-- ... -->`` comments in *text*, keeping inline code spans.
+
+    :param text: Markdown text containing no fenced code blocks.
+    :returns: *text* with comments outside code spans removed.
+    """
+    return _CODE_SPAN_OR_COMMENT_RE.sub(
+        lambda m: "" if m.group("comment") is not None else m.group(0), text
+    )
 
 
 def _strip_hidden_comments(md_text: str) -> str:
     """Remove ``<!-- ... -->`` comment blocks from *md_text* before parsing.
 
-    All HTML comments -- single- or multi-line -- are removed entirely so
-    they never reach the TextBuffer. This is a *document-body* concern
-    only: MarkdownDash's own leading title (``# Title`` on line 1) and
-    layout-options directive (``<!-- key=value ... -->`` on line 2) are a
-    separate, file-header convention consumed by that gramplet's own
-    ``_parse_directives()`` *before* the remaining text is ever handed to
-    :func:`parse_markdown` -- so this function never sees, and does not
-    need to special-case, that directive line.
+    Comments -- single- or multi-line -- are hidden from the rendered
+    document, as GitHub hides them, so authors can leave notes in a file.
+    Only the display is affected: the file on disk is never changed.
+
+    Comments inside a fenced code block (three or more backticks or
+    tildes) or an inline code span are shown exactly as written, as on
+    GitHub, so a document can show comment syntax as an example (such as
+    Markdown Dash's own layout-options comment).
+
+    This is a *document-body* concern only: MarkdownDash's own leading
+    title (``# Title`` on line 1) and layout-options directive
+    (``<!-- key=value ... -->`` on line 2) are a separate, file-header
+    convention consumed by that gramplet's own ``_parse_directives()``
+    *before* the remaining text is ever handed to :func:`parse_markdown`
+    -- so this function never sees, and does not need to special-case,
+    that directive line.
 
     :param md_text: Raw Markdown document text, before block parsing.
-    :returns: *md_text* with all HTML comments removed.
+    :returns: *md_text* with comments outside code removed.
     """
-
-    def _replace(match: re.Match) -> str:
-        del match  # unused; every comment is hidden unconditionally
-        return ""
-
-    return _COMMENT_RE.sub(_replace, md_text)
+    out: list[str] = []
+    plain: list[str] = []  # lines outside fenced blocks, not yet processed
+    fence = None  # the opening fence string while inside a fenced block
+    for line in md_text.splitlines(keepends=True):
+        if fence is None:
+            m = _FENCE_OPEN_RE.match(line)
+            if m:
+                out.append(_strip_comments_outside_code_spans("".join(plain)))
+                plain = []
+                fence = m.group(1)
+                out.append(line)
+            else:
+                plain.append(line)
+        else:
+            out.append(line)
+            closing = line.strip()
+            if (
+                len(closing) >= len(fence)
+                and closing.startswith(fence[0])
+                and set(closing) == {fence[0]}
+            ):
+                fence = None
+    out.append(_strip_comments_outside_code_spans("".join(plain)))
+    return "".join(out)
 
 
 #: Accepted values for icon color-fallback control, used both by
@@ -737,7 +794,11 @@ def _parse_inline(text: str, base_attrs: tuple = ()) -> list[Segment]:
                 for seg in inner:
                     seg.url = url
                 segments.extend(inner)
-            elif url.startswith("gramps:nav:") or url.startswith("gramps:edit:"):
+            # gramps:view: is a Gramps link too: a consumer such as Markdown
+            # Dash routes "gramps_link" clicks to its own Gramps handler but
+            # hands every other link to the desktop, which cannot open a
+            # gramps: address.
+            elif url.startswith(("gramps:nav:", "gramps:edit:", "gramps:view:")):
                 inner = _parse_inline(label, base + ["gramps_link"])
                 for seg in inner:
                     seg.url = url
@@ -1189,6 +1250,156 @@ _LINK_STYLE_COLOURS: dict[str, tuple[str, str | None]] = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Scaled-image disk cache
+# ---------------------------------------------------------------------------
+
+#: Folder for images scaled by this module, beside Gramps' own ``normal``
+#: (96 px) and ``large`` (180 px) thumbnail folders inside ``THUMB_DIR``.
+THUMB_MARKDOWN = os.path.join(THUMB_DIR, "markdown")
+
+#: Widths images are cached at. ``render_markdown`` narrows the requested
+#: width to fit the pane, so the exact width changes whenever a pane is
+#: resized; caching at a few fixed steps (then shrinking in memory, which
+#: is cheap) avoids one cached file per pane width. 560 is the default
+#: ``max_width`` of :func:`_insert_image_into_buffer`.
+_THUMB_WIDTH_STEPS = (128, 260, 400, 560)
+
+
+def _scale_to_width(pixbuf: GdkPixbuf.Pixbuf, width: int) -> GdkPixbuf.Pixbuf:
+    """
+    Shrink *pixbuf* to *width* pixels wide, keeping its proportions.
+
+    :param pixbuf: the image
+    :param width: the new width; must be smaller than the current width
+    :returns: the scaled image
+    """
+    # max(1, ...): an extreme-aspect-ratio source image could
+    # otherwise round down to a *zero*-height scaled pixbuf --
+    # a degenerate anchor size for the TextView to lay out, the
+    # same broad class of bug as the negative heights this
+    # module's docstring lists under "Next target for fixes"
+    # (see also render_markdown's own live-viewport-width
+    # clamping of max_width, which addresses the other half:
+    # an image that fits max_width but not the actual, possibly
+    # narrower, live view).
+    height = max(1, int(pixbuf.get_height() * width / pixbuf.get_width()))
+    return pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+
+
+def _cached_image_path(img_path: str, width: int) -> str:
+    """
+    Return the cache file path for *img_path* scaled to *width*.
+
+    Named the way Gramps names its own thumbnails (an MD5 checksum of the
+    source path, see ``__build_thumb_path`` in
+    ``gramps/gen/utils/thumbnails.py``), plus the width. The name does not
+    depend on the file date, so a new revision of an image overwrites its
+    old cached copy instead of adding another file.
+
+    :param img_path: the source image path
+    :param width: the cached width step
+    :returns: the full path of the cached PNG
+    """
+    import hashlib  # deferred: only needed when an image is shown
+
+    key = ("%s?w=%d" % (os.path.abspath(img_path), width)).encode("utf-8")
+    return os.path.join(THUMB_MARKDOWN, hashlib.md5(key).hexdigest() + ".png")
+
+
+def _load_with_gramps_thumbnailer(img_path: str) -> GdkPixbuf.Pixbuf | None:
+    """
+    Get a 180 px image from Gramps' own thumbnail framework.
+
+    Used only for files GdkPixbuf cannot read itself (video, PDF and other
+    formats), so thumbnailer plugins installed in Gramps can still supply
+    a picture. Uses :func:`gramps.gen.utils.thumbnails.get_thumbnail_path`
+    with ``SIZE_LARGE``, the same in Gramps 5.2, 6.0 and 6.1.
+
+    :param img_path: the source file path
+    :returns: the thumbnail, or ``None`` if Gramps could only offer one of
+              its generic icons (it returns those from ``IMAGE_DIR``
+              instead of raising an error)
+    """
+    try:
+        # Deferred: needs Gramps' plugin manager, and is rarely used.
+        from gramps.gen.const import SIZE_LARGE
+        from gramps.gen.utils.thumbnails import get_thumbnail_path
+
+        thumb_path = get_thumbnail_path(img_path, size=SIZE_LARGE)
+        if not thumb_path or os.path.abspath(thumb_path).startswith(
+            os.path.abspath(IMAGE_DIR) + os.sep
+        ):
+            return None
+        return GdkPixbuf.Pixbuf.new_from_file(thumb_path)
+    except Exception:  # pylint: disable=broad-except
+        LOG.debug("Gramps thumbnailer failed for %s", img_path, exc_info=True)
+        return None
+
+
+def _load_scaled_image(img_path: str, max_width: int) -> GdkPixbuf.Pixbuf | None:
+    """
+    Load *img_path* no wider than *max_width*, using a disk cache.
+
+    The image is decoded and scaled once per revision of the source file,
+    to the smallest width step (:data:`_THUMB_WIDTH_STEPS`) that is at
+    least *max_width* (or *max_width* itself above the largest step), and
+    saved in :data:`THUMB_MARKDOWN`. Later calls load that small cached
+    PNG and shrink it to the exact width in memory. The cached copy is
+    rebuilt when the source file is newer, the same rule Gramps uses for
+    its own thumbnails. Images are never enlarged.
+
+    Files GdkPixbuf cannot read are passed to Gramps' thumbnail framework
+    (180 px, see :func:`_load_with_gramps_thumbnailer`); those results are
+    not cached here, because Gramps caches them itself.
+
+    :param img_path: local path of the source image
+    :param max_width: the widest the result may be, in pixels
+    :returns: the image, or ``None`` if it could not be loaded
+    """
+    step = next((w for w in _THUMB_WIDTH_STEPS if w >= max_width), max_width)
+    cache_path = _cached_image_path(img_path, step)
+    try:
+        src_mtime = os.path.getmtime(img_path)
+    except OSError:
+        return None
+
+    pixbuf = None
+    try:
+        if os.path.getmtime(cache_path) >= src_mtime:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(cache_path)
+    except (OSError, GLib.Error):
+        pixbuf = None  # no usable cached copy yet
+
+    if pixbuf is None:
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(img_path)
+        except GLib.Error:
+            pixbuf = _load_with_gramps_thumbnailer(img_path)
+            if pixbuf is None:
+                return None
+        else:
+            if pixbuf.get_width() > step:
+                pixbuf = _scale_to_width(pixbuf, step)
+            # Write to a temporary file, then rename it into place, so a
+            # second Gramps window never reads a half-written PNG.
+            tmp_path = "%s.%d.tmp" % (cache_path, os.getpid())
+            try:
+                os.makedirs(THUMB_MARKDOWN, exist_ok=True)
+                pixbuf.savev(tmp_path, "png", [], [])
+                os.replace(tmp_path, cache_path)
+            except (OSError, GLib.Error):
+                LOG.debug("Could not cache scaled image %s", cache_path, exc_info=True)
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
+
+    if pixbuf.get_width() > max_width:
+        pixbuf = _scale_to_width(pixbuf, max_width)
+    return pixbuf
+
+
 def _insert_image_into_buffer(
     buf: Gtk.TextBuffer,
     it: Gtk.TextIter,
@@ -1237,21 +1448,9 @@ def _insert_image_into_buffer(
                failure (caller falls back to a text placeholder)
     """
     try:
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(img_path)
-        width, height = pixbuf.get_width(), pixbuf.get_height()
-        if width > max_width:
-            # max(1, ...): an extreme-aspect-ratio source image could
-            # otherwise round down to a *zero*-height scaled pixbuf --
-            # a degenerate anchor size for the TextView to lay out, the
-            # same broad class of bug as the negative heights this
-            # module's docstring lists under "Next target for fixes"
-            # (see also render_markdown's own live-viewport-width
-            # clamping of max_width, which addresses the other half:
-            # an image that fits max_width but not the actual, possibly
-            # narrower, live view).
-            height = max(1, int(height * max_width / width))
-            width = max_width
-            pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+        pixbuf = _load_scaled_image(img_path, max_width)
+        if pixbuf is None:
+            raise ValueError("image could not be loaded")
         image_start = buf.create_mark(None, it, True)
         buf.insert_pixbuf(it, pixbuf)
         if center:
@@ -1422,9 +1621,20 @@ def render_markdown(
                     sep_widths,
                     default_icon_style=default_icon_style,
                 )
+                anchor_start = buf.create_mark(None, it, True)
                 anchor = buf.create_child_anchor(it)
                 textview.add_child_at_anchor(tbl_widget, anchor)
                 tbl_widget.show_all()
+                # Space above and below the table, as line spacing on the
+                # anchor's own line rather than as widget margins (see
+                # the comment at the end of build_table_widget).
+                spacing_tag = buf.get_tag_table().lookup("table_spacing")
+                if spacing_tag is None:
+                    spacing_tag = buf.create_tag(
+                        "table_spacing", pixels_above_lines=4, pixels_below_lines=4
+                    )
+                buf.apply_tag(spacing_tag, buf.get_iter_at_mark(anchor_start), it)
+                buf.delete_mark(anchor_start)
 
             if table_has_uninteractive_links(columns, body_rows):
                 emit_enhanced_renderer_notice(buf, it, tags, make_link_tag)
@@ -1678,6 +1888,63 @@ def _ensure_table_css_provider() -> None:
     _TABLE_CSS_PROVIDER = provider
 
 
+def _pad_table_specs(
+    align: list[str], sep_widths: list[int] | None, ncols: int, default_width: int
+) -> tuple[list[str], list[int]]:
+    """Pad a table's alignment and separator-width lists to *ncols* entries.
+
+    Shared by :func:`build_table_widget` and :func:`build_table_text`.
+
+    :param align: per-column alignment strings (``'left'`` pads)
+    :param sep_widths: per-column separator dash counts, or ``None``
+    :param ncols: the number of columns the table really has
+    :param default_width: the dash count used for missing entries (and for
+                          every column when *sep_widths* is ``None``)
+    :returns: ``(align, sep_widths)``, each at least *ncols* long
+    """
+    if sep_widths is None:
+        sep_widths = [default_width] * ncols
+    if len(align) < ncols:
+        align = align + ["left"] * (ncols - len(align))
+    if len(sep_widths) < ncols:
+        sep_widths = sep_widths + [default_width] * (ncols - len(sep_widths))
+    return align, sep_widths
+
+
+def _strip_pango(markup_str: str) -> str:
+    """Strip Pango tags from *markup_str*, leaving the visible text.
+
+    Used for a table cell's tooltip text and approximate display length
+    (:func:`build_table_widget`) and for its on-screen character count
+    (:func:`build_table_text`).
+    """
+    return re.sub(r"<[^>]+>", "", markup_str)
+
+
+def _split_cell_icon(
+    raw: str, default_icon_style: str
+) -> tuple["GdkPixbuf.Pixbuf | None", str, str | None]:
+    """Split one table cell into its leading icon and its remaining markup.
+
+    Shared start of both table builders' ``render_cell``.
+
+    :param raw: the cell's raw Markdown
+    :param default_icon_style: style for a ``gramps:icon`` reference that
+                               does not name its own
+    :returns: ``(pixbuf, markup, icon_name)`` -- *pixbuf* is the resolved
+              leading icon or ``None``; *markup* is the rest of the cell
+              as Pango markup; *icon_name* is the leading icon's name when
+              there was one (so a caller can show it in brackets if
+              *pixbuf* is ``None``), otherwise ``None``
+    """
+    icon_info, remaining = _extract_leading_icon(raw, default_icon_style)
+    markup = inline_to_pango(remaining)
+    if icon_info is None:
+        return None, markup, None
+    icon_name, size, icon_style = icon_info
+    return resolve_icon_pixbuf(icon_name, size, icon_style=icon_style), markup, icon_name
+
+
 def build_table_widget(
     columns: list[str],
     align: list[str],
@@ -1754,8 +2021,6 @@ def build_table_widget(
     _ensure_table_css_provider()
 
     ncols = len(columns)
-    if sep_widths is None:
-        sep_widths = [5] * ncols
     # Defensive backstop, independent of the header/separator mismatch
     # check parse_markdown now performs before ever building table_data:
     # this function is itself public and reusable, so pad align/
@@ -1764,15 +2029,10 @@ def build_table_widget(
     # caller that hands in mismatched lists directly, the same way
     # parse_markdown's own flush_table already pads header_row/body_rows
     # -- rather than raising IndexError below when this loop reaches an
-    # index neither list actually has.
-    if len(align) < ncols:
-        align = align + ["left"] * (ncols - len(align))
-    if len(sep_widths) < ncols:
-        sep_widths = sep_widths + [5] * (ncols - len(sep_widths))
-
-    def plain(markup_str: str) -> str:
-        """Strip basic Pango tags to get approximate display length."""
-        return re.sub(r"<[^>]+>", "", markup_str)
+    # index neither list actually has. (Shared with build_table_text via
+    # _pad_table_specs, which also supplies the default when sep_widths
+    # is None.)
+    align, sep_widths = _pad_table_specs(align, sep_widths, ncols, 5)
 
     # A throwaway, never-shown Gtk.Label used purely to ask Pango for a
     # markup string's *actual* rendered pixel width in the active font
@@ -1794,12 +2054,12 @@ def build_table_widget(
 
     def render_cell(raw: str) -> tuple:
         """Split *raw* cell Markdown into (pixbuf-or-None, Pango markup)."""
-        icon_info, remaining = _extract_leading_icon(raw, default_icon_style)
-        pixbuf = None
-        if icon_info is not None:
-            icon_name, size, icon_style = icon_info
-            pixbuf = resolve_icon_pixbuf(icon_name, size, icon_style=icon_style)
-        return pixbuf, inline_to_pango(remaining)
+        pixbuf, markup, icon_name = _split_cell_icon(raw, default_icon_style)
+        if icon_name is not None and pixbuf is None:
+            # Same bracketed alt-text convention as build_table_text and
+            # broken images, rather than silently dropping the icon.
+            markup = f"[{_esc(icon_name)}] {markup}".strip()
+        return pixbuf, markup
 
     header_cells = [render_cell(c) for c in columns]
     body_cells = [[render_cell(str(cell)) for cell in row] for row in body_rows]
@@ -1875,6 +2135,17 @@ def build_table_widget(
     grid.set_column_spacing(2 * _CELL_XPAD)
     grid.set_row_spacing(4)
 
+    # One horizontal Gtk.SizeGroup per column, holding that column's cell
+    # in every row. Each row is its own Box (see build_row_box), and a Box
+    # shares out spare width according to each cell's own natural width
+    # -- which differs from row to row whenever one row's cell has an
+    # icon, or longer or shorter text, than another's. Equal minimum
+    # widths alone (col_min_px) therefore did not keep columns aligned:
+    # columns drifted by up to ~40 px between rows. A size group makes
+    # every cell in a column report the same minimum *and* natural width,
+    # so every row divides its width identically.
+    col_size_groups = [Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL) for _ in range(ncols)]
+
     def build_cell_content(col: int, pixbuf, markup: str, xalign: float, bold: bool) -> Gtk.Box:
         """Build one cell's own icon+label content (no background of its own)."""
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
@@ -1892,7 +2163,7 @@ def build_table_widget(
         # doesn't recover the missing part, because the text was never
         # selectable to begin with).
         label.set_selectable(True)
-        label.set_tooltip_text(plain(markup))
+        label.set_tooltip_text(_strip_pango(markup))
         box.pack_start(label, True, True, 0)
         return box
 
@@ -1919,6 +2190,7 @@ def build_table_widget(
             col_align = align[ci] if ci < len(align) else "left"
             pb, markup = cells[ci] if ci < len(cells) else (None, "")
             cell_box = build_cell_content(ci, pb, markup, _xalign.get(col_align, 0.0), bold)
+            col_size_groups[ci].add_widget(cell_box)
             row_box.pack_start(cell_box, True, True, 0)
         return row_box
 
@@ -1937,8 +2209,14 @@ def build_table_widget(
     frame = Gtk.Frame()
     frame.set_shadow_type(Gtk.ShadowType.NONE)
     frame.add(grid)
-    frame.set_margin_top(4)
-    frame.set_margin_bottom(4)
+    # No margins on this Frame: it is placed in a Gtk.TextView child
+    # anchor, and while its line is scrolled out of view GtkTextView
+    # gives the anchored widget a provisional height of a pixel or two.
+    # GTK subtracts a widget's margins from whatever height it is given,
+    # so the former 4 px top + 4 px bottom margins produced
+    # "gtk_widget_size_allocate(): ... height -7" (1 - 8) warnings while
+    # scrolling. render_markdown adds the same 4 px of space above and
+    # below with a "table_spacing" text tag on the anchor's line instead.
     # Halign START (not FILL, GTK's own default) is what actually keeps
     # this Frame from being stretched to match whatever width its own
     # parent has available -- a Gtk.TextView child anchor easily offers
@@ -2057,20 +2335,11 @@ def build_table_text(
         the caller must not skip or reorder any of them.
     """
     ncols = len(columns)
-    if sep_widths is None:
-        sep_widths = [3] * ncols
-    if len(align) < ncols:
-        align = align + ["left"] * (ncols - len(align))
-    if len(sep_widths) < ncols:
-        sep_widths = sep_widths + [3] * (ncols - len(sep_widths))
+    align, sep_widths = _pad_table_specs(align, sep_widths, ncols, 3)
 
     # Approximate character-width contribution of one rendered icon, for
     # column-width/padding purposes only -- see the docstring above.
     _ICON_CHAR_WIDTH_ESTIMATE = 2
-
-    def plain(markup_str: str) -> str:
-        """Strip Pango tags to get the actual on-screen character count."""
-        return re.sub(r"<[^>]+>", "", markup_str)
 
     def render_cell(raw: str) -> tuple["GdkPixbuf.Pixbuf | None", str, int]:
         """
@@ -2082,20 +2351,17 @@ def build_table_text(
             makes), and already includes a single leading space to
             separate it from the icon when one is present.
         """
-        icon_info, remaining = _extract_leading_icon(raw, default_icon_style)
-        markup = inline_to_pango(remaining)
-        if icon_info is None:
-            return None, markup, len(plain(markup))
-        icon_name, size, icon_style = icon_info
-        pixbuf = resolve_icon_pixbuf(icon_name, size, icon_style=icon_style)
+        pixbuf, markup, icon_name = _split_cell_icon(raw, default_icon_style)
+        if icon_name is None:
+            return None, markup, len(_strip_pango(markup))
         if pixbuf is None:
             # Icon failed to resolve -- fall back to the same bracketed
             # alt-text convention used throughout this module for a
             # broken image reference, rather than silently dropping it.
             markup = f"[{_esc(icon_name)}] {markup}".strip()
-            return None, markup, len(plain(markup))
+            return None, markup, len(_strip_pango(markup))
         markup = (" " + markup) if markup else markup
-        return pixbuf, markup, _ICON_CHAR_WIDTH_ESTIMATE + len(plain(markup))
+        return pixbuf, markup, _ICON_CHAR_WIDTH_ESTIMATE + len(_strip_pango(markup))
 
     # Headers get explicit <b> wrapping here -- unlike build_table_widget,
     # which bolds its header via a separate Gtk.Label markup call outside
@@ -2477,6 +2743,11 @@ def list_icons_by_context(
 
 #: Mapping from Gramps object-type name to
 #: ``(gramps_id_getter, handle_getter, editor_class_name)``.
+#:
+#: Deprecated: no current addon uses it. Markdown Dash now uses Gramps'
+#: own ``gramps.gui.editors.EDITORS`` table and ``db.method()`` instead.
+#: Kept for one release so an older Markdown Dash, installed alongside
+#: this version, still imports cleanly; remove it after that.
 NAMESPACE_MAP: dict[str, tuple[str, str, str]] = {
     "Person": ("get_person_from_gramps_id", "get_person_from_handle", "EditPerson"),
     "Family": ("get_family_from_gramps_id", "get_family_from_handle", "EditFamily"),
@@ -2501,6 +2772,8 @@ NAMESPACE_MAP: dict[str, tuple[str, str, str]] = {
 VIEW_NAMES: dict[str, str] = {
     "people": "People",
     "person": "People",
+    "relationships": "Relationships",
+    "relationship": "Relationships",
     "families": "Families",
     "family": "Families",
     "events": "Events",
@@ -2517,6 +2790,16 @@ VIEW_NAMES: dict[str, str] = {
     "notes": "Notes",
     "note": "Notes",
     "geography": "Geography",
+    "geo": "Geography",
     "charts": "Charts",
+    "chart": "Charts",
+    "pedigree": "Charts",
+    # Gramps' own Pedigree/Fan/Descendant/etc. View plugins still register
+    # under the legacy internal codename "Ancestry" (see
+    # gramps/plugins/view/view.gpr.py -- category=("Ancestry", _("Charts"))
+    # -- even though the user-facing category was renamed to "Charts"), so
+    # it must resolve to the same name as "charts"/"chart". (Moved here
+    # from Plugin Manager plus, which keeps no alias table of its own.)
+    "ancestry": "Charts",
     "dashboard": "Dashboard",
 }

@@ -98,11 +98,15 @@ try:
         markdown_link_at,
         render_markdown,
         resolve_icon_pixbuf,
+        VIEW_NAMES,
     )
 
     _MARKDOWN_AVAILABLE = True
 except ImportError:
     _MARKDOWN_AVAILABLE = False
+    # Without MarkdownUtils there is no alias table, so gramplets and
+    # rules simply show no view-restriction icons in the Type column.
+    VIEW_NAMES = {}
 
 # ---------------------------------------------------------------------------
 # Internationalisation
@@ -282,69 +286,36 @@ _TYPE_ICON_INDENT_PX = 16
 # Pixel size for the Notes/Source indicator-icon columns.
 _INDICATOR_ICON_SIZE = 25
 
-# Ordered (canonical_key, label, icon_name) tuples for a gramplet's
-# navtypes view restrictions. Always rendered in this fixed order in the
+# Ordered (canonical_name, label, icon_name) tuples for a gramplet's
+# navtypes view restrictions. The canonical names are the values of
+# MarkdownUtils.VIEW_NAMES. Always rendered in this fixed order in the
 # plugin list's Type column, regardless of the order navtypes lists them
 # in, so the icon strip reads consistently row to row.
 _GRAMPLET_VIEW_ICONS = [
-    ("dashboard", _("Dashboard"), "gramps-gramplet"),
-    ("people", _("People"), "gramps-person"),
-    ("relationship", _("Relationship"), "gramps-relation"),
-    ("families", _("Families"), "gramps-family"),
-    ("charts", _("Charts"), "gramps-pedigree"),
-    ("events", _("Events"), "gramps-event"),
-    ("places", _("Places"), "gramps-place"),
-    ("geography", _("Geography"), "gramps-geo"),
-    ("sources", _("Sources"), "gramps-source"),
-    ("citations", _("Citations"), "gramps-citation"),
-    ("repositories", _("Repositories"), "gramps-repository"),
-    ("media", _("Media"), "gramps-media"),
-    ("notes", _("Notes"), "gramps-notes"),
+    ("Dashboard", _("Dashboard"), "gramps-gramplet"),
+    ("People", _("People"), "gramps-person"),
+    ("Relationships", _("Relationship"), "gramps-relation"),
+    ("Families", _("Families"), "gramps-family"),
+    ("Charts", _("Charts"), "gramps-pedigree"),
+    ("Events", _("Events"), "gramps-event"),
+    ("Places", _("Places"), "gramps-place"),
+    ("Geography", _("Geography"), "gramps-geo"),
+    ("Sources", _("Sources"), "gramps-source"),
+    ("Citations", _("Citations"), "gramps-citation"),
+    ("Repositories", _("Repositories"), "gramps-repository"),
+    ("Media", _("Media"), "gramps-media"),
+    ("Notes", _("Notes"), "gramps-notes"),
 ]
 
-# Maps every raw navtypes value Gramps is known to use — singular
-# primary-object names ("Person"), plural category names ("People"), and
-# likely spelling variants for the non-object categories ("Charts",
-# "Geography", "Relationship(s)") — to one of the canonical keys above,
-# case-insensitively. Gramps' documented navtypes values are the
-# singular primary-object forms; the plural/category forms are included
-# defensively in case a gramplet registers with those instead.
-_NAVTYPE_ALIASES = {
-    "dashboard": "dashboard",
-    "person": "people",
-    "people": "people",
-    "relationship": "relationship",
-    "relationships": "relationship",
-    "family": "families",
-    "families": "families",
-    "chart": "charts",
-    "charts": "charts",
-    "pedigree": "charts",
-    # Gramps' own Pedigree/Fan/Descendant/etc. View plugins still register
-    # under the legacy internal codename "Ancestry" (see
-    # gramps/plugins/view/view.gpr.py — category=("Ancestry", _("Charts"))
-    # — even though the user-facing category was renamed to "Charts"), so
-    # it must resolve to the same canonical key as "charts"/"chart" above,
-    # or those built-in Views fall through to the unrecognised-category
-    # text fallback in __populate_reg_list's VIEW branch instead of
-    # showing the "gramps-pedigree" icon.
-    "ancestry": "charts",
-    "event": "events",
-    "events": "events",
-    "place": "places",
-    "places": "places",
-    "geography": "geography",
-    "geo": "geography",
-    "source": "sources",
-    "sources": "sources",
-    "citation": "citations",
-    "citations": "citations",
-    "repository": "repositories",
-    "repositories": "repositories",
-    "media": "media",
-    "note": "notes",
-    "notes": "notes",
-}
+# Raw navtypes values -- singular primary-object names ("Person"), plural
+# category names ("People"), and spelling variants for the non-object
+# categories ("Charts", "Geography", "Relationship(s)", the legacy
+# "Ancestry") -- are mapped to the canonical names above by
+# MarkdownUtils.VIEW_NAMES, case-insensitively. Gramps' documented
+# navtypes values are the singular primary-object forms; the plural and
+# category forms are included defensively in case a gramplet registers
+# with those instead. (This addon kept its own copy of that table until
+# 2.1.4; MarkdownUtils is now the single source.)
 
 
 def _subcategory_label(ptype: object, category: object) -> str | None:
@@ -533,7 +504,7 @@ def _canonical_navtypes(navtypes: object) -> list[str]:
 
     :param navtypes: the plugin's ``navtypes`` attribute value (a list of
                       strings), or ``None``/empty if unrestricted
-    :returns: canonical keys (see :data:`_GRAMPLET_VIEW_ICONS`) present in
+    :returns: canonical names (see :data:`_GRAMPLET_VIEW_ICONS`) present in
               ``navtypes``, in the fixed display order — empty if
               ``navtypes`` is falsy or none of its values are recognised
     """
@@ -541,36 +512,21 @@ def _canonical_navtypes(navtypes: object) -> list[str]:
         return []
     matched = set()
     for raw in navtypes:
-        key = _NAVTYPE_ALIASES.get(str(raw).strip().lower())
+        key = VIEW_NAMES.get(str(raw).strip().lower())
         if key:
             matched.add(key)
     return [key for key, _label, _icon in _GRAMPLET_VIEW_ICONS if key in matched]
 
 
-# Session caches for list-panel icons: the same few icons (README/help
-# indicators, category strips) repeat on hundreds of rows. Pixbufs are
-# shared read-only by the cell renderers, so one copy each is enough.
-_ICON_CACHE: dict = {}
+# Session cache for composited category icon strips in the list panel:
+# the same few strips repeat on hundreds of rows, and composing one is
+# real work. Single icons are not cached here: GTK already caches icon
+# lookups (measured at about 0.02 ms each), so an extra cache of our own
+# gained nothing.
 _STRIP_CACHE: dict = {}
 
 
 def _load_named_icon_pixbuf(icon_name: str, size: int) -> "GdkPixbuf.Pixbuf | None":
-    """
-    Cached wrapper around :func:`_load_named_icon_pixbuf_uncached`.
-
-    :param icon_name: a themed icon name (e.g. ``gramps-person``)
-    :param size: the desired pixel size (square)
-    :returns: a pixbuf, or ``None`` if the icon could not be resolved
-    """
-    key = (icon_name, size)
-    if key not in _ICON_CACHE:
-        _ICON_CACHE[key] = _load_named_icon_pixbuf_uncached(icon_name, size)
-    return _ICON_CACHE[key]
-
-
-def _load_named_icon_pixbuf_uncached(
-    icon_name: str, size: int
-) -> "GdkPixbuf.Pixbuf | None":
     """
     Resolve a themed/Gramps icon name to a pixbuf at the given size.
 
@@ -3105,6 +3061,28 @@ class PluginStatus(tool.Tool, ManagedWindow):
                     return True
         return None
 
+    @staticmethod
+    def _run_after_menu_closes(_menu_item: Gtk.MenuItem, action, *args) -> None:
+        """
+        Menu "activate" handler: run *action* once the menu has closed.
+
+        Every menu entry here that opens a window or dialog goes through
+        this. Opening one inside the menu's own "activate" handler, while
+        the menu is still the topmost popup, makes GTK's Wayland backend
+        report "Gdk-WARNING: Tried to map a popup with a non-top most
+        parent".
+
+        :param _menu_item: the chosen menu item (unused)
+        :param action: the callable to run
+        :param args: arguments for *action*
+        """
+
+        def _run() -> bool:
+            action(*args)
+            return False
+
+        GLib.idle_add(_run)
+
     def _show_list_context_menu(self, event: Gdk.EventButton) -> None:
         """Show List-panel actions formerly provided by bottom-bar buttons."""
         menu = Gtk.Menu()
@@ -3112,13 +3090,13 @@ class PluginStatus(tool.Tool, ManagedWindow):
         refresh_item = Gtk.MenuItem.new_with_label(
             _("Refresh plugin registry and Addons Project lists")
         )
-        refresh_item.connect("activate", lambda _item: self.cb_check_for_updates())
+        refresh_item.connect("activate", self._run_after_menu_closes, self.cb_check_for_updates)
         menu.append(refresh_item)
 
         export_item = Gtk.MenuItem.new_with_label(
             _("Download Plugin list to a JSON file")
         )
-        export_item.connect("activate", lambda _item: self.cb_export_plugin_list())
+        export_item.connect("activate", self._run_after_menu_closes, self.cb_export_plugin_list)
         menu.append(export_item)
 
         menu.show_all()
@@ -4274,7 +4252,14 @@ class PluginStatus(tool.Tool, ManagedWindow):
 
         item = Gtk.MenuItem(label=_("Open documentation reader"))
         item.show()
-        item.connect("activate", self._cb_open_doc_reader, readme_path, pdata.name)
+        item.connect(
+            "activate",
+            self._run_after_menu_closes,
+            self._cb_open_doc_reader,
+            None,
+            readme_path,
+            pdata.name,
+        )
         popup.prepend(item)
 
     def _cb_open_doc_reader(
