@@ -35,6 +35,7 @@ import sys
 import os
 import re
 import json
+import math
 import pickle
 import logging
 import tempfile
@@ -92,7 +93,7 @@ from gramps.gen.lib import (
 )
 from gramps.gen.lib.date import Today
 from gramps.gui.dialog import OkDialog
-from gramps.gui.editors import EditNote, EditObject
+from gramps.gui.editors import EditFamily, EditNote, EditObject
 from gramps.gui.editors.editperson import EditPerson
 from gramps.gui.selectors import SelectorFactory
 from gramps.gen.plug.menu import BooleanOption, EnumeratedListOption, NumberOption
@@ -362,6 +363,41 @@ REORDER_ATOM = Gdk.atom_intern(REORDER_TARGET_NAME, False)
 # Person-drop payloads the same treeview also accepts.
 TEXT_TARGET_INFO = 100
 
+# Drag types that carry a *reference* to a Person rather than the
+# Person itself, accepted on the photo and the list alongside
+# PERSON_LINK/HANDLE_LIST. Their payload is the usual Gramps 4-tuple
+# (drag_type, source id, obj, row), where obj is a ChildRef (Family
+# editor Children tab) or PersonRef (Person editor Associations tab)
+# -- resolved to the Person it points at by person_handle_from_drop().
+# CHILD and SPOUSE carry a plain Person handle in the same slot.
+PERSON_REFERENCE_DD_TYPES = (
+    DdTargets.CHILDREF,
+    DdTargets.PERSONREF,
+    DdTargets.CHILD,
+    DdTargets.SPOUSE,
+)
+
+
+def person_handle_from_drop(data):
+    """
+    Returns the Person handle carried by a Gramps 4-tuple drag payload
+    -- either a plain handle string (PERSON_LINK, CHILD, SPOUSE), or a
+    reference object pointing at a Person (ChildRef, PersonRef) -- or
+    None if there is none.
+
+    :param data: The unpickled drag payload.
+    :returns: A Person handle string, or None.
+    """
+    if not isinstance(data, (tuple, list)) or len(data) != 4:
+        return None
+    _drag_type, _source_id, obj, _row = data
+    if isinstance(obj, str):
+        return obj or None
+    get_ref = getattr(obj, "get_reference_handle", None)
+    if callable(get_ref):
+        return get_ref() or None
+    return None
+
 
 # The 3 states cycled through by the "show ID" toolbar button.
 ID_MODE_ROW = "row"
@@ -510,6 +546,58 @@ def get_region_data_text(media):
     return attr.get_value() if attr is not None else ""
 
 
+def read_stored_region_entries(media):
+    """
+    Returns the list of entry dicts in `media`'s "PhotoTagging
+    Regions" attribute, or None if there is no usable attribute (none
+    at all, unparseable, or empty) -- in which case the original
+    metadata is read instead.
+
+    :param media: A Media object.
+    """
+    attr = get_region_data_attribute(media)
+    if attr is None:
+        return None
+    try:
+        entries = json.loads(attr.get_value())["regions"]
+    except (json.JSONDecodeError, KeyError, TypeError):
+        return None
+    if not isinstance(entries, list):
+        return None
+    entries = [e for e in entries if isinstance(e, dict)]
+    return entries or None
+
+
+def clue_fields(region) -> dict:
+    """
+    The part of a stored entry that records what the original
+    metadata said about `region`, kept even after the row is renamed
+    or linked to a Person -- so the attribute holds the whole clue,
+    not only the person's current answer (the basis for matching the
+    same person across a group of photos):
+
+    - ``clue``: the name as read from the metadata
+    - ``clue_source``: where it was read from (a CLUE_SOURCE_* key)
+    - ``clue_id``: the source's own id for the person, if it has one
+      (Picasa's contact id)
+    - ``whole_image``: true for a position-less keyword clue
+
+    :param region: A gramplet Region.
+    :returns: A dict, empty if the region has no clue.
+    """
+    clue = getattr(region, "xmp_person", "") or ""
+    if not clue:
+        return {}
+    fields = {"clue": clue}
+    if getattr(region, "xmp_source", ""):
+        fields["clue_source"] = region.xmp_source
+    if getattr(region, "xmp_clue_id", ""):
+        fields["clue_id"] = region.xmp_clue_id
+    if getattr(region, "xmp_whole_image", False):
+        fields["whole_image"] = True
+    return fields
+
+
 def get_legacy_order_attribute(media):
     for attr in media.get_attribute_list():
         if str(attr.get_type()) == LEGACY_ORDER_ATTR_TYPE:
@@ -630,6 +718,10 @@ def parse_region_data(text, db):
             return {}, {}, False
         source = entry.get("source")
         if source == SOURCE_GRAMPS:
+            handle = entry.get("person_handle")
+            if handle and db.has_person_handle(handle):
+                order_by_handle[handle] = row
+                continue
             gramps_id = entry.get("gramps_ref")
             if not gramps_id:
                 continue
@@ -866,6 +958,114 @@ _UNSET_REGION = object()
 # zoom level, only to catch an outright-collapsed marquee.
 MIN_MARQUEE_SIZE = 10
 
+# -------------------------------------------------------------------------
+#
+# Precise rectangles
+#
+# -------------------------------------------------------------------------
+# Gramps' own MediaRef rectangle is four whole-number percentages (its
+# JSON schema, XML importer and Media Reference editor all require
+# integers), which is 60-pixel steps on a 6000-pixel scan. This addon
+# keeps two copies of each linked box:
+#
+# - the MediaRef gets a whole-number copy, rounded OUTWARD so it always
+#   contains the real box (see outward_int_rect()) -- everything else
+#   in Gramps keeps working on it unchanged;
+# - the "PhotoTagging Regions" attribute keeps the precise copy, as
+#   MWG-style normalized floats (see region_to_mwg_area()).
+#
+# On load the precise copy is used only while it still rounds outward
+# to exactly the MediaRef's current numbers (see
+# precise_rect_matches()). If they differ, the MediaRef was edited
+# somewhere else (e.g. the Media Reference editor) and wins. Data
+# written before this change was itself derived from whole numbers, so
+# it either matches (same box) or falls back to the MediaRef (same
+# box) -- old photos load exactly as before.
+
+# Decimal places kept for the normalized 0.0-1.0 MWG area values in
+# the attribute: 6 places is 0.0001% of the image, finer than a pixel
+# on any real photo.
+MWG_AREA_DECIMALS = 6
+
+# Tolerance (in percent) when rounding a precise box outward, so float
+# noise -- including the center-plus-size round trip at
+# MWG_AREA_DECIMALS -- doesn't push an edge to the next whole number.
+# 0.001% is still under a pixel on a 100,000-pixel-wide image.
+OUTWARD_ROUNDING_EPSILON = 1e-3
+
+# TEMPORARY: logs every marquee draw/resize/release to the terminal
+# (as WARNING, so it shows with Gramps' default log level) to track
+# down the "big box mirrored around the image center" report. Set to
+# False, or remove with the logging calls, once that is found.
+DEBUG_MARQUEE_DRAW = True
+
+
+def outward_int_rect(rect):
+    """
+    Rounds a (left, top, right, bottom) rectangle in 0-100 proportional
+    space to whole numbers for a Gramps MediaRef, outward: left/top
+    down, right/bottom up, so the whole-number box always contains the
+    precise one.
+
+    :param rect: A 4-tuple of numbers, 0-100.
+    :returns: A 4-tuple of ints, clamped to 0-100.
+    """
+    left, top, right, bottom = rect
+    eps = OUTWARD_ROUNDING_EPSILON
+    return (
+        max(0, math.floor(left + eps)),
+        max(0, math.floor(top + eps)),
+        min(100, math.ceil(right - eps)),
+        min(100, math.ceil(bottom - eps)),
+    )
+
+
+def precise_rect_matches(precise_rect, mediaref_rect) -> bool:
+    """
+    Whether a precise (float) rectangle is still the one behind a
+    MediaRef's whole-number rectangle -- i.e. it rounds outward to
+    exactly those numbers. False means the MediaRef has been changed
+    since the precise copy was saved, so the MediaRef wins.
+
+    :param precise_rect: A 4-tuple, 0-100 floats.
+    :param mediaref_rect: The MediaRef's rectangle, or None.
+    :returns: True if the precise rectangle can be used.
+    """
+    if mediaref_rect is None:
+        return False
+    return outward_int_rect(precise_rect) == tuple(mediaref_rect)
+
+
+# -------------------------------------------------------------------------
+#
+# PreciseSelectionWidget
+#
+# -------------------------------------------------------------------------
+class PreciseSelectionWidget(SelectionWidget):
+    """
+    Gramps' SelectionWidget, without its whole-percent rounding.
+
+    The core widget converts every drag point to whole percent and back
+    (_truncate_to_image_size() goes through _real_to_proportional()),
+    so a marquee snaps to a 1% grid while it is being drawn, and
+    real_to_proportional_rect() returns whole numbers. Overriding the
+    two point converters below makes both lossless: pixel coordinates
+    stay pixels, and proportional coordinates are floats. Nothing else
+    about the widget changes, and no core file is patched.
+    """
+
+    def _proportional_to_real(self, coord):
+        width, height = self.original_image_size
+        return (
+            int(round(coord[0] * width / 100)),
+            int(round(coord[1] * height / 100)),
+        )
+
+    def _real_to_proportional(self, coord):
+        width, height = self.original_image_size
+        return (coord[0] * 100 / width, coord[1] * 100 / height)
+
+
 # The toolbar buttons live in a plain Gtk.HBox rather than a Gtk.Toolbar.
 # Gtk.ToolButton silently re-resolves a stock/icon-name icon to its own
 # ambient icon size when realized (24px by default outside of a real
@@ -991,6 +1191,24 @@ def sidecar_xmp_path(image_path: str) -> str | None:
     return sidecar_path if os.path.isfile(sidecar_path) else None
 
 
+# Where a Metadata clue came from, shown in the Metadata clues column
+# (see PhotoTaggingGramplet.metadata_clue_text_for()).
+# The keys are what get stored in the "PhotoTagging Regions" attribute
+# (so they must never be translated or renamed); CLUE_SOURCE_LABELS
+# maps each to the text shown.
+CLUE_SOURCE_XMP_EMBEDDED = "xmp-embedded"
+CLUE_SOURCE_XMP_SIDECAR = "xmp-sidecar"
+CLUE_SOURCE_KEYWORDS_EMBEDDED = "xmp-keywords-embedded"
+CLUE_SOURCE_KEYWORDS_SIDECAR = "xmp-keywords-sidecar"
+CLUE_SOURCE_PICASA = "picasa-sidecar"
+CLUE_SOURCE_LABELS = {
+    CLUE_SOURCE_XMP_EMBEDDED: _("XMP - embedded"),
+    CLUE_SOURCE_XMP_SIDECAR: _("XMP - sidecar"),
+    CLUE_SOURCE_KEYWORDS_EMBEDDED: _("XMP keywords - embedded"),
+    CLUE_SOURCE_KEYWORDS_SIDECAR: _("XMP keywords - sidecar"),
+    CLUE_SOURCE_PICASA: _("Picasa - sidecar"),
+}
+
 # Picasa's per-folder metadata file, in the spellings seen in the wild
 # (Windows Picasa writes "Picasa.ini" or "picasa.ini"; Picasa for
 # Linux wrote ".picasa.ini"). Matched case-insensitively.
@@ -1019,8 +1237,8 @@ def picasa_ini_path(image_path: str) -> str | None:
                 full_path = os.path.join(folder, entry)
                 if os.path.isfile(full_path):
                     return full_path
-    except OSError:
-        LOG.debug("PhotoTagging: could not list %s", folder)
+    except OSError as err:
+        LOG.debug("PhotoTagging: could not list %r: %s", folder, err)
     return None
 
 
@@ -1071,12 +1289,14 @@ def read_picasa_ini_text(ini_path: str) -> str:
         return raw.decode("latin-1")
 
 
-def read_picasa_faces(image_path: str) -> list[tuple[str, tuple]]:
+def read_picasa_faces(image_path: str) -> list[tuple[str, tuple, str]]:
     """
     Returns the named faces Picasa recorded for `image_path` in the
-    picasa.ini beside it, as a list of ``(name, rect)`` pairs where
-    ``rect`` is (left, top, right, bottom) in 0-100 space (see
-    parse_picasa_rect64()).
+    picasa.ini beside it, as a list of ``(name, rect, contact_id)``
+    triples where ``rect`` is (left, top, right, bottom) in 0-100 space
+    (see parse_picasa_rect64()) and ``contact_id`` is Picasa's own
+    16-digit hex id for that person -- the same id in every photo of
+    the folder, so a stable key for matching one person across photos.
 
     The file is a flat INI: a ``[Contacts2]`` section maps contact ids
     to display names (``id=Name;email;``), and a section per image
@@ -1090,7 +1310,7 @@ def read_picasa_faces(image_path: str) -> list[tuple[str, tuple]]:
     [Contacts2], is skipped -- there is no clue to show for it.
 
     :param image_path: Path to the image file on disk.
-    :returns: A (possibly empty) list of (name, rect) pairs.
+    :returns: A (possibly empty) list of (name, rect, contact_id) triples.
     """
     ini_path = picasa_ini_path(image_path)
     if ini_path is None:
@@ -1131,7 +1351,7 @@ def read_picasa_faces(image_path: str) -> list[tuple[str, tuple]]:
         name = contacts.get(contact_id)
         rect = parse_picasa_rect64(rect_text)
         if name and rect:
-            result.append((name, rect))
+            result.append((name, rect, contact_id))
     return result
 
 
@@ -1545,7 +1765,7 @@ class CaptionTextEditor(StyledTextEditor):
         separator = Gtk.SeparatorMenuItem()
         separator.show()
         menu.append(separator)
-        font_item = Gtk.MenuItem.new_with_mnemonic(_("Caption _Font..."))
+        font_item = Gtk.MenuItem.new_with_label(_("Caption Font..."))
         font_item.connect("activate", self.cb_choose_font)
         font_item.show()
         menu.append(font_item)
@@ -1861,7 +2081,7 @@ class SettingsDialog(PluginWindows.ToolManagedWindowBase):
             self, dbstate, uistate, None, "SettingsDialog"
         )
 
-        self.ok.set_label(_("_OK"))
+        self.ok.set_label(_("OK"))
 
     def get_title(self):
         return self.title
@@ -1981,6 +2201,13 @@ class PhotoTaggingGramplet(Gramplet):
         # a *successful* resize's own new size becomes what the next
         # one is compared against, not the region's original size.
         self._selected_region_coords = None
+        # Set by region_created()/region_modified(), which SelectionWidget
+        # emits from inside its own button-release handling -- before
+        # cb_preview_panel_button_release() runs for that same release.
+        # Tells that callback the release ended a drag (a new or
+        # resized marquee), not a click on empty space, so it must not
+        # restore an old selection or count it toward a double click.
+        self._release_ended_drag = False
         # GLib.get_monotonic_time() timestamp, and (event.x, event.y),
         # of the previous button release handled by
         # cb_preview_panel_button_release(), used to recognize a
@@ -2080,6 +2307,52 @@ class PhotoTaggingGramplet(Gramplet):
         self.gui.get_container_widget().remove(self.gui.textview)
         self.gui.get_container_widget().add(self.gui.WIDGET)
         self.top.show_all()
+
+    def cb_main_pane_sensitive(self, pane, _pspec) -> None:
+        """
+        Saves this photo's unsaved tagging (order, placeholder names,
+        precise marquees -- see flush_region_order()) the moment the
+        main Gramps window's content pane is made insensitive.
+
+        Gramps' own quit sequence (ViewManager.quit(), the same in 5.2
+        and 6.0) closes the database *before* it calls on_save() on
+        each gramplet, so on_save() alone can never save anything at
+        quit -- the database is already closed by then. Gramps has no
+        "about to close" signal, but the very first step of quit is
+        uistate.set_sensitive(False), which makes this pane
+        insensitive while the database is still open (and before the
+        backup-on-exit runs, so the backup includes the change).
+        Gramps also makes the pane insensitive at a few other times;
+        saving then as well is harmless.
+
+        :param pane: The main window's content Gtk.Paned.
+        :param _pspec: unused (the "sensitive" property spec)
+        """
+        if not pane.get_sensitive():
+            self.flush_region_order()
+
+    def cb_database_closing(self, *_args) -> None:
+        """
+        Saves this photo's unsaved tagging before the Family Tree is
+        closed or another one is loaded -- DbState emits "no-database"
+        just before it closes the current database (in 5.2 and 6.0).
+        Without this, switching trees lost the same changes quitting
+        did (see cb_main_pane_sensitive()).
+        """
+        self.flush_region_order()
+
+    def cb_top_destroyed(self, _widget) -> None:
+        """
+        Disconnects cb_main_pane_sensitive() and cb_database_closing()
+        when this gramplet is removed, so Gramps does not keep calling
+        into it.
+        """
+        if self._main_pane is not None and self._main_pane_handler_id is not None:
+            self._main_pane.disconnect(self._main_pane_handler_id)
+        self._main_pane_handler_id = None
+        if self._no_database_key is not None:
+            self.dbstate.disconnect(self._no_database_key)
+            self._no_database_key = None
 
     def on_save(self):
         self.flush_region_order()
@@ -2337,7 +2610,7 @@ class PhotoTaggingGramplet(Gramplet):
 
         self.top.pack_start(button_panel, expand=False, fill=True, padding=5)
 
-        self.selection_widget = SelectionWidget()
+        self.selection_widget = PreciseSelectionWidget()
         self.selection_widget.set_size_request(200, -1)
         self.selection_widget.connect("region-modified", self.region_modified)
         self.selection_widget.connect("region-created", self.region_created)
@@ -2394,6 +2667,11 @@ class PhotoTaggingGramplet(Gramplet):
             DdTargets.HANDLE_LIST.target_flags,
             DdTargets.HANDLE_LIST.app_id,
         )
+        # Can drop a child (Family editor Children tab) or an
+        # association (Person editor Associations tab) here -- see
+        # PERSON_REFERENCE_DD_TYPES.
+        for dd_type in PERSON_REFERENCE_DD_TYPES:
+            tglist.add(dd_type.atom_drag_type, dd_type.target_flags, dd_type.app_id)
 
         # Drag and Drop for selection widget:
         self.selection_widget.event_box.drag_dest_set(
@@ -2457,6 +2735,7 @@ class PhotoTaggingGramplet(Gramplet):
         self.treeview.connect("cursor-changed", self.cursor_changed)
         self.treeview.connect("row-activated", self.row_activated)
         self.treeview.connect("button-press-event", self.row_mouse_click)
+        self.treeview.connect("button-release-event", self.cb_row_button_release)
         # The Name column has its own inline cell editor for a
         # placeholder name (see cb_name_cell_data()/
         # cb_name_cell_editing_started()) -- GtkTreeView's own default
@@ -2597,6 +2876,10 @@ class PhotoTaggingGramplet(Gramplet):
             DdTargets.HANDLE_LIST.target_flags,
             DdTargets.HANDLE_LIST.app_id,
         )
+        for dd_type in PERSON_REFERENCE_DD_TYPES:
+            tree_tglist.add(
+                dd_type.atom_drag_type, dd_type.target_flags, dd_type.app_id
+            )
         tree_tglist.add(REORDER_ATOM, Gtk.TargetFlags.SAME_WIDGET, 0)
         # Accepts plain text dropped from elsewhere -- e.g. a name
         # selected and dragged straight out of the Caption panel,
@@ -2613,6 +2896,8 @@ class PhotoTaggingGramplet(Gramplet):
         )
         self.treeview.drag_dest_set_target_list(tree_tglist)
         self.treeview.connect("drag_data_received", self.drag_data_received)
+        self.treeview.connect("drag-motion", self.cb_tree_drag_motion)
+        self.treeview.connect("drag-leave", self.cb_tree_drag_leave)
         self.treeview.drag_source_set(
             Gdk.ModifierType.BUTTON1_MASK,
             [Gtk.TargetEntry.new(REORDER_TARGET_NAME, Gtk.TargetFlags.SAME_WIDGET, 0)],
@@ -2634,6 +2919,23 @@ class PhotoTaggingGramplet(Gramplet):
 
         self.top.connect("key-press-event", self.on_key_press_event)
         self.top.connect("hierarchy-changed", self.on_hierarchy_changed)
+
+        # Save unsaved tagging when Gramps quits -- see
+        # cb_main_pane_sensitive() for why this is the hook.
+        self._main_pane = getattr(
+            getattr(self.uistate, "viewmanager", None), "hpane", None
+        )
+        self._main_pane_handler_id = None
+        if self._main_pane is not None:
+            self._main_pane_handler_id = self._main_pane.connect(
+                "notify::sensitive", self.cb_main_pane_sensitive
+            )
+        # And before the tree is closed or switched: DbState emits
+        # "no-database" just before it closes the current database.
+        self._no_database_key = self.dbstate.connect(
+            "no-database", self.cb_database_closing
+        )
+        self.top.connect("destroy", self.cb_top_destroyed)
 
         # NameDisplay itself has no "format changed" signal to connect
         # to (verified against its actual source: none of
@@ -2929,37 +3231,38 @@ class PhotoTaggingGramplet(Gramplet):
                             if person:
                                 people.append(person)
                                 break
-            elif sel_data.get_data_type() == DdTargets.PERSON_LINK.atom_drag_type:
-                drag_type, idval, handle, val = data
-                person = self.dbstate.db.get_person_from_handle(handle)
+            else:
+                # PERSON_LINK (People view, spouse boxes in the Family
+                # editor) and the reference types in
+                # PERSON_REFERENCE_DD_TYPES (children, associations).
+                handle = person_handle_from_drop(data)
+                person = (
+                    self.dbstate.db.get_person_from_handle(handle)
+                    if handle and self.dbstate.db.has_person_handle(handle)
+                    else None
+                )
                 if person:
                     people.append(person)
-            else:  # other formats work like this:
-                handle = None
-                try:
-                    drag_type, idval, handle, val = data
-                except:
-                    pass
-                if handle:
-                    person = self.dbstate.db.get_person_from_handle(handle)
-                    if person:
-                        people.append(person)
                 else:
-                    LOG.warn(
-                        "Can't handle this type of drop: '%s'"
-                        % sel_data.get_data_type()
+                    LOG.warning(
+                        "PhotoTagging: can't use this drop: '%s'",
+                        sel_data.get_data_type(),
                     )
                     return
             for person in people:
                 if on_image:  # drop on image
-                    region = self.selection_widget.find_region(x, y)
-                    current = self.selection_widget.get_current()
-                    if region and (current is None or current == region):
+                    region = self._image_drop_region(x, y)
+                    self._log_drop_debug(on_image, x, y, region, person)
+                    if region is not None:
                         self.ask_and_set_person(region, person)
                         self.selection_widget.clear_selection()
                         GLib.idle_add(self._cb_refresh_after_drop)
                 else:  # drop on list
+                    self.treeview.set_drag_dest_row(
+                        None, Gtk.TreeViewDropPosition.BEFORE
+                    )
                     drop_info = self.treeview.get_dest_row_at_pos(x, y)
+                    self._log_drop_debug(on_image, x, y, drop_info, person)
                     if drop_info:
                         path, _position = drop_info
                         index = path.get_indices()[0]
@@ -2967,6 +3270,88 @@ class PhotoTaggingGramplet(Gramplet):
                             self.ask_and_set_person(self.regions[index], person)
                             self.selection_widget.clear_selection()
                             GLib.idle_add(self._cb_refresh_after_drop)
+
+    def _image_drop_region(self, x, y):
+        """
+        The marquee a Person dropped on the photo at (x, y) should be
+        linked to: the selected marquee if the drop is inside it (when
+        a marquee is selected, it is the only one drawn), otherwise
+        the smallest marquee under the pointer. An earlier version
+        ignored the drop entirely whenever any *other* marquee was
+        selected, which made dropping onto the photo seem to fail at
+        random.
+
+        :param x: Drop x, in the photo event box coordinates.
+        :param y: Drop y, in the photo event box coordinates.
+        :returns: A Region, or None if the drop missed every marquee.
+        """
+        widget = self.selection_widget
+        current = widget.get_current()
+        if current is not None and current in self.regions:
+            point = widget._screen_to_image(  # pylint: disable=protected-access
+                (x, y)
+            )
+            if current.contains(*point):
+                return current
+        region = widget.find_region(x, y)
+        return region if region in self.regions else None
+
+    def cb_tree_drag_motion(self, treeview, context, x, y, time) -> bool:
+        """
+        Highlights the row a Person drop would land on while dragging
+        over the list, so it is clear which row receives the drop
+        (nothing showed before, and a drop between rows or past the
+        last one silently did nothing). Skipped for a row-reorder drag
+        within the list, which shows its own insertion point.
+
+        :returns: ``False``, so the default drag-motion handling
+            (Gtk.DestDefaults.MOTION) still decides the drag status.
+        """
+        if self._is_reorder_drag(context):
+            return False
+        drop_info = treeview.get_dest_row_at_pos(x, y)
+        if drop_info:
+            treeview.set_drag_dest_row(
+                drop_info[0], Gtk.TreeViewDropPosition.INTO_OR_BEFORE
+            )
+        else:
+            treeview.set_drag_dest_row(None, Gtk.TreeViewDropPosition.BEFORE)
+        return False
+
+    @staticmethod
+    def _is_reorder_drag(context) -> bool:
+        """
+        Whether a drag over the list is one of its own rows being
+        moved (see REORDER_TARGET_NAME), compared by atom name since
+        Gdk.Atom objects do not reliably compare equal in Python.
+        """
+        return any(
+            atom.name() == REORDER_TARGET_NAME for atom in context.list_targets()
+        )
+
+    def cb_tree_drag_leave(self, treeview, context, time) -> None:
+        """
+        Clears the drop-row highlight set by cb_tree_drag_motion().
+        """
+        if not self._is_reorder_drag(context):
+            treeview.set_drag_dest_row(None, Gtk.TreeViewDropPosition.BEFORE)
+
+    def _log_drop_debug(self, on_image, x, y, target, person) -> None:
+        """
+        TEMPORARY diagnostic (see DEBUG_MARQUEE_DRAW): logs where a
+        Person drop landed and what it resolved to, to track down
+        drops from the Family editor that do not attach.
+        """
+        if not DEBUG_MARQUEE_DRAW:
+            return
+        LOG.warning(
+            "PhotoTagging drop-debug: on_%s at (%.1f, %.1f) -> %s, person=%s",
+            "image" if on_image else "list",
+            x,
+            y,
+            target.coords() if hasattr(target, "coords") else target,
+            person.get_gramps_id() if person else None,
+        )
 
     def _cb_refresh_after_drop(self) -> bool:
         """
@@ -3033,55 +3418,71 @@ class PhotoTaggingGramplet(Gramplet):
         self.context_menu = Gtk.Menu()
         self.context_menu.set_reserve_toggle_size(False)
 
-        self.context_button_details = Gtk.MenuItem.new_with_mnemonic(
-            _("_See the person details")
+        self.context_button_details = Gtk.MenuItem.new_with_label(
+            _("See the person details")
         )
         self.context_button_details.connect("activate", self.edit_person_clicked)
 
-        self.context_button_active = Gtk.MenuItem.new_with_mnemonic(
+        self.context_button_ancestor_family = Gtk.MenuItem.new_with_label(
+            _("See ancestor family details")
+        )
+        self.context_button_ancestor_family.connect(
+            "activate", self.cb_edit_ancestor_families
+        )
+
+        self.context_button_descendant_family = Gtk.MenuItem.new_with_label(
+            _("See descendant family details")
+        )
+        self.context_button_descendant_family.connect(
+            "activate", self.cb_edit_descendant_families
+        )
+
+        self.context_button_active = Gtk.MenuItem.new_with_label(
             _("Make the person active")
         )
         self.context_button_active.connect("activate", self.set_active_person)
 
-        self.context_button_select = Gtk.MenuItem.new_with_mnemonic(
-            "_" + LINK_PERSON_TEXT
+        self.context_button_select = Gtk.MenuItem.new_with_label(
+            LINK_PERSON_TEXT
         )
         self.context_button_select.connect("activate", self.sel_person_clicked)
 
-        self.context_button_add = Gtk.MenuItem.new_with_mnemonic(
-            "_" + ADD_NEW_PERSON_TEXT
+        self.context_button_add = Gtk.MenuItem.new_with_label(
+            ADD_NEW_PERSON_TEXT
         )
         self.context_button_add.connect("activate", self.add_person_clicked)
 
-        self.context_button_clear = Gtk.MenuItem.new_with_mnemonic(
-            "_" + CLEAR_REFERENCE_TEXT
+        self.context_button_clear = Gtk.MenuItem.new_with_label(
+            CLEAR_REFERENCE_TEXT
         )
         self.context_button_clear.connect("activate", self.clear_ref_clicked)
 
-        self.context_button_fuzzy_lookup = Gtk.MenuItem.new_with_mnemonic(
-            _("_Fuzzy Match Lookup…")
+        self.context_button_fuzzy_lookup = Gtk.MenuItem.new_with_label(
+            _("Fuzzy Match Lookup…")
         )
         self.context_button_fuzzy_lookup.connect(
             "activate", self.cb_fuzzy_lookup_clicked
         )
 
-        self.context_button_remove = Gtk.MenuItem.new_with_mnemonic(_("_Remove"))
+        self.context_button_remove = Gtk.MenuItem.new_with_label(_("Remove"))
         self.context_button_remove.connect("activate", self.del_region_clicked)
 
-        self.context_button_move_up = Gtk.MenuItem.new_with_mnemonic(_("Move _Up"))
+        self.context_button_move_up = Gtk.MenuItem.new_with_label(_("Move Up"))
         self.context_button_move_up.connect("activate", self.move_up_clicked)
 
-        self.context_button_move_down = Gtk.MenuItem.new_with_mnemonic(_("Move _Down"))
+        self.context_button_move_down = Gtk.MenuItem.new_with_label(_("Move Down"))
         self.context_button_move_down.connect("activate", self.move_down_clicked)
 
-        self.context_button_transcribe = Gtk.MenuItem.new_with_mnemonic(
-            _("_Transcribe list to a Note")
+        self.context_button_transcribe = Gtk.MenuItem.new_with_label(
+            _("Transcribe list to a Note")
         )
         self.context_button_transcribe.connect(
             "activate", self.transcribe_list_to_note_clicked
         )
 
         self.context_menu.append(self.context_button_details)
+        self.context_menu.append(self.context_button_ancestor_family)
+        self.context_menu.append(self.context_button_descendant_family)
         self.context_menu.append(self.context_button_active)
         self.context_menu.append(self.context_button_select)
         self.context_menu.append(self.context_button_add)
@@ -3187,9 +3588,12 @@ class PhotoTaggingGramplet(Gramplet):
                     self.update()
                     return
                 self.flush_region_order()
+                entering_new_media = new_handle != self._loaded_media_handle
                 self._loaded_media_handle = new_handle
                 if is_image:
                     self.load_image(media)
+                    if entering_new_media:
+                        self._set_quick_draw_for_loaded_photo()
                     # Re-read rather than reuse current_text:
                     # load_image() can itself rewrite the attribute
                     # (see sort_regions_by_stored_order()'s self-repair
@@ -3358,6 +3762,12 @@ class PhotoTaggingGramplet(Gramplet):
     def load_image(self, media):
         self.regions = []
         self.xmp_regions = []
+        # Every Region object is rebuilt below, so nothing remembered
+        # about the previous photo's (or previous load's) selection
+        # may be reused -- see cb_preview_panel_button_release().
+        self._last_selected_region = None
+        self._selected_region_coords = None
+        self._release_ended_drag = False
         image_path = media_path_full(self.dbstate.db, media.get_path())
         self._cleanup_rotated_temp_file()
         self.rotation_degrees = read_rotation_degrees(image_path)
@@ -3381,26 +3791,38 @@ class PhotoTaggingGramplet(Gramplet):
         self.selection_widget.load_image(display_path)
         if self.selection_widget.loaded:
             self.retrieve_backrefs()
-            if not self.get_xmp_regions(image_path):
-                # No MWG regions in the file or its .xmp sidecar --
-                # try the folder's picasa.ini. Same "one source or the
-                # other, never merged" rule as the sidecar.
-                self.get_picasa_regions(image_path)
-            self.get_manual_regions(media)
-            if not self.regions and not self.xmp_regions:
-                # Last resort: no Gramps-linked region and no
-                # Xmp.mwg-rs region for this photo at all -- whether
-                # because the file genuinely has none, or because they
-                # exist but can't be decoded (some GExiv2/exiv2
-                # version combinations fail silently on this specific
-                # structured tag). Xmp.dc.subject is a much simpler,
-                # far more commonly supported flat tag that at least
-                # carries the names, even with no position -- see
-                # get_xmp_keyword_regions() for the trade-offs of
-                # surfacing it this way.
-                self.get_xmp_keyword_regions(image_path)
+            stored_entries = read_stored_region_entries(media)
+            if stored_entries is not None:
+                # The attribute is the authority while it exists: what
+                # it holds -- including the clues it recorded from XMP,
+                # a sidecar or picasa.ini -- is used as-is, and the
+                # original files are NOT consulted again. Deleting the
+                # attribute is how to make them be read afresh.
+                self.restore_stored_regions(stored_entries)
+            else:
+                if not self.get_xmp_regions(image_path):
+                    # No MWG regions in the file or its .xmp sidecar --
+                    # try the folder's picasa.ini. Same "one source or
+                    # the other, never merged" rule as the sidecar.
+                    self.get_picasa_regions(image_path)
+                if not self.regions and not self.xmp_regions:
+                    # Last resort: no Gramps-linked region and no
+                    # Xmp.mwg-rs / picasa.ini region for this photo
+                    # at all. Xmp.dc.subject is a much simpler, far
+                    # more commonly supported flat tag that at least
+                    # carries the names, even with no position -- see
+                    # get_xmp_keyword_regions() for the trade-offs of
+                    # surfacing it this way.
+                    self.get_xmp_keyword_regions(image_path)
+            clues_read_live = stored_entries is None and bool(self.xmp_regions)
             self.regions = self.regions + self.xmp_regions
             self.sort_regions_by_stored_order(media)
+            if clues_read_live:
+                # First time this photo's metadata has been read:
+                # snapshot all of it into the attribute right away
+                # (not only once the person next edits something), so
+                # the attribute holds the full record from then on.
+                self.persist_region_order(media)
             self.sync_selection_widget_regions()
 
     def sort_regions_by_stored_order(self, media):
@@ -3501,6 +3923,7 @@ class PhotoTaggingGramplet(Gramplet):
         has_regions = metadata is not None and (
             get_xmp_tag_string(metadata, region_name % 1) is not None
         )
+        clue_source = CLUE_SOURCE_XMP_EMBEDDED
         if not has_regions:
             sidecar_path = sidecar_xmp_path(image_path)
             if sidecar_path is not None:
@@ -3509,6 +3932,7 @@ class PhotoTaggingGramplet(Gramplet):
                     get_xmp_tag_string(sidecar_metadata, region_name % 1) is not None
                 ):
                     metadata = sidecar_metadata
+                    clue_source = CLUE_SOURCE_XMP_SIDECAR
 
         if metadata is None:
             return False
@@ -3563,6 +3987,7 @@ class PhotoTaggingGramplet(Gramplet):
             xmp_region = Region(*coords)
             xmp_region.xmp_person = name
             xmp_region.xmp_type = rtype or "Face"
+            xmp_region.xmp_source = clue_source
 
             # Per-region cascade (see REGION_DATA_ATTR_TYPE): an
             # embedded region is only suppressed by a Gramps region
@@ -3576,7 +4001,7 @@ class PhotoTaggingGramplet(Gramplet):
             i += 1
         return i > 1
 
-    def get_picasa_regions(self, image_path: str) -> None:
+    def get_picasa_regions(self, image_path: str) -> int:
         """
         Get named face regions from the folder's picasa.ini (see
         read_picasa_faces()) and add them as unlinked Metadata clues,
@@ -3591,15 +4016,21 @@ class PhotoTaggingGramplet(Gramplet):
         the same rotate_proportional_rect() treatment.
 
         :param image_path: Absolute path to the image file on disk.
+        :returns: How many regions were added.
         """
-        for name, rect in read_picasa_faces(image_path):
+        added = 0
+        for name, rect, contact_id in read_picasa_faces(image_path):
             rect = rotate_proportional_rect(rect, self.rotation_degrees)
             coords = self.selection_widget.proportional_to_real_rect(rect)
             picasa_region = Region(*coords)
             picasa_region.xmp_person = name
             picasa_region.xmp_type = "Face"
+            picasa_region.xmp_source = CLUE_SOURCE_PICASA
+            picasa_region.xmp_clue_id = contact_id
             if not self.intersects_any(picasa_region):
                 self.xmp_regions.append(picasa_region)
+                added += 1
+        return added
 
     def get_xmp_keyword_regions(self, image_path: str) -> None:
         """
@@ -3623,12 +4054,14 @@ class PhotoTaggingGramplet(Gramplet):
         """
         metadata = open_gexiv2_metadata(image_path)
         names = read_xmp_subject_tag(metadata, image_path) if metadata else None
+        clue_source = CLUE_SOURCE_KEYWORDS_EMBEDDED
         if not names:
             sidecar_path = sidecar_xmp_path(image_path)
             if sidecar_path is not None:
                 sidecar_metadata = open_gexiv2_metadata(sidecar_path)
                 if sidecar_metadata is not None:
                     names = read_xmp_subject_tag(sidecar_metadata, sidecar_path)
+                    clue_source = CLUE_SOURCE_KEYWORDS_SIDECAR
 
         if not names:
             return
@@ -3642,67 +4075,72 @@ class PhotoTaggingGramplet(Gramplet):
             keyword_region = Region(*whole_image_rect)
             keyword_region.xmp_person = name
             keyword_region.xmp_whole_image = True
+            keyword_region.xmp_source = clue_source
             keyword_region.xmp_type = "Face"
             self.xmp_regions.append(keyword_region)
 
-    def get_manual_regions(self, media):
+    def regions_nearly_equal(self, coords_a, coords_b) -> bool:
         """
-        Reconstructs any purely manual placeholder regions -- a
-        hand-drawn marquee given a typed-in name (see
-        cb_name_cell_edited()) but never linked to a Person --
-        SOURCE_MANUAL entries in `media`'s "PhotoTagging Regions"
-        attribute (see REGION_DATA_ATTR_TYPE).
-
-        Unlike a SOURCE_GRAMPS or SOURCE_EMBEDDED region, a manual one
-        has no other source it can be rediscovered from on the next
-        load: it isn't a Person's own MediaRef (retrieve_backrefs())
-        and it isn't in the image's own embedded/sidecar XMP
-        (get_xmp_regions()) -- the persisted attribute is the *only*
-        record that it ever existed. Without this, serialize_region_
-        data() was already writing these out faithfully (name,
-        given/surname, and geometry, same as any other entry), but
-        load_image() never read them back in -- a manually drawn,
-        manually named marquee (e.g. a "third man" someone drew and
-        labelled "Unknown" pending further research) would silently
-        vanish, position and all, the moment the photo was closed and
-        reopened, even though it had genuinely been saved.
-
-        Every SOURCE_MANUAL entry found is reconstructed unconditionally
-        -- there is deliberately no overlap check against already-
-        discovered regions here. An earlier version of this method
-        suppressed a manual entry whose stored area intersected one
-        already found by retrieve_backrefs()/get_xmp_regions(), on the
-        reasoning that get_xmp_regions() needs exactly that check (the
-        same XMP file is rescanned every load, so it can legitimately
-        rediscover a face that's since been linked, and should defer
-        to the confirmed link rather than show a redundant duplicate).
-        A manual placeholder has no such twin source to defer to,
-        though, so the same check just meant: in any photo where faces
-        sit shoulder to shoulder -- a school class photo, a group
-        portrait, anything not loosely spaced -- adjacent marquees
-        legitimately touch or share an edge by construction, and the
-        very next manual placeholder in that row would be silently
-        dropped on every single reload, forcing it to be redrawn from
-        scratch each time. A manual entry's presence in this attribute
-        already unambiguously means someone deliberately drew and
-        named it; there's nothing left to deduplicate.
-
-        :param media: The Media object being loaded.
+        True when two real-pixel rectangles are the same box to within
+        about a pixel -- used instead of an overlap test when restoring
+        stored regions, so neighbours that merely touch in a tight
+        group photo are never mistaken for each other.
         """
-        attr = get_region_data_attribute(media)
-        if attr is None:
-            return
-        try:
-            regions_data = json.loads(attr.get_value())["regions"]
-        except (json.JSONDecodeError, KeyError, TypeError):
-            return
-        if not isinstance(regions_data, list):
-            return
-        for entry in regions_data:
-            if not isinstance(entry, dict) or entry.get("source") != SOURCE_MANUAL:
-                continue
-            name = entry.get("name")
-            if not name:
+        return all(abs(a - b) <= 1.5 for a, b in zip(coords_a, coords_b))
+
+    def restore_stored_regions(self, entries):
+        """
+        Rebuilds this photo's regions from its "PhotoTagging Regions"
+        attribute instead of re-reading XMP / a sidecar / picasa.ini.
+        While the attribute exists it is the authority; deleting it
+        makes the next load read the original metadata again.
+
+        Linked regions still come from the Persons' MediaRefs
+        (retrieve_backrefs(), which must already have run); each one
+        gets its original metadata clue back from its stored "gramps"
+        entry. Every unlinked entry ("embedded" or "manual") becomes a
+        placeholder region with its clue, clue source and typed name
+        restored. A "gramps" entry that no longer has a live link but
+        remembers a clue comes back as an unlinked clue.
+
+        An entry is skipped only if a linked region already sits on
+        the very same box (the person was linked from elsewhere).
+
+        :param entries: The list of entry dicts (see
+            read_stored_region_entries()).
+        """
+        pending_links = [e for e in entries if e.get("source") == SOURCE_GRAMPS]
+        for region in self.regions:
+            handle = region.person.get_handle()
+            gramps_id = region.person.get_gramps_id()
+            match = None
+            for entry in pending_links:
+                if entry.get("person_handle") == handle:
+                    match = entry
+                    break
+            if match is None:
+                # Entries written before person_handle existed.
+                for entry in pending_links:
+                    if not entry.get("person_handle") and (
+                        entry.get("gramps_ref") == gramps_id
+                    ):
+                        match = entry
+                        break
+            if match is not None:
+                pending_links.remove(match)
+                self.apply_stored_clue(region, match)
+                self.apply_stored_precise_rect(region, match)
+
+        candidates = [
+            e for e in entries if e.get("source") in (SOURCE_EMBEDDED, SOURCE_MANUAL)
+        ] + [e for e in pending_links if e.get("clue")]
+        for entry in candidates:
+            name = entry.get("name") or ""
+            clue = entry.get("clue") or ""
+            is_manual = entry.get("source") == SOURCE_MANUAL
+            if not clue and not is_manual:
+                clue = name
+            if not clue and not name:
                 continue
             try:
                 area = {key: float(entry[key]) for key in ("x", "y", "w", "h")}
@@ -3711,23 +4149,73 @@ class PhotoTaggingGramplet(Gramplet):
             rect = self.mwg_area_to_proportional_rect(area)
             rect = rotate_proportional_rect(rect, self.rotation_degrees)
             coords = self.selection_widget.proportional_to_real_rect(rect)
-            manual_region = Region(*coords)
-            manual_region.xmp_person = ""
-            manual_region.manual_name = name
-            manual_region.xmp_type = entry.get("type", "Face")
-            self.xmp_regions.append(manual_region)
+            if any(
+                self.regions_nearly_equal(r.coords(), coords)
+                for r in self.regions
+                if r.person is not None
+            ):
+                continue
+            stored_region = Region(*coords)
+            self.apply_stored_clue(stored_region, entry, clue)
+            if is_manual:
+                # A typed name (even a deliberately emptied one), as
+                # opposed to a clue shown as it was read.
+                stored_region.manual_name = name
+            self.xmp_regions.append(stored_region)
 
+    def apply_stored_precise_rect(self, region, entry):
+        """
+        Replaces a linked region's whole-number box (as built from its
+        MediaRef by retrieve_backrefs()) with the precise box stored in
+        its "gramps" entry -- but only if that precise box still rounds
+        outward to the MediaRef's current numbers (see
+        precise_rect_matches()). If not, the MediaRef was changed
+        elsewhere since, and its box is kept as it is.
+
+        :param region: A linked Region with a mediaref.
+        :param entry: Its stored "gramps" entry dict.
+        """
+        mediaref = getattr(region, "mediaref", None)
+        if mediaref is None:
+            return
+        try:
+            area = {key: float(entry[key]) for key in ("x", "y", "w", "h")}
+        except (KeyError, TypeError, ValueError):
+            return
+        precise = self.mwg_area_to_proportional_rect(area)
+        if not precise_rect_matches(precise, mediaref.get_rectangle()):
+            return
+        rect = rotate_proportional_rect(precise, self.rotation_degrees)
+        region.set_coords(*self.selection_widget.proportional_to_real_rect(rect))
+
+    def apply_stored_clue(self, region, entry, clue=None):
+        """
+        Copies the metadata-clue fields of a stored entry onto
+        `region` (see clue_fields() for what is stored).
+
+        :param region: The Region to update.
+        :param entry: The stored entry dict.
+        :param clue: The clue text, if the caller worked it out;
+            defaults to the entry's own "clue".
+        """
+        region.xmp_person = clue if clue is not None else entry.get("clue", "")
+        region.xmp_type = entry.get("type") or "Face"
+        region.xmp_source = entry.get("clue_source", "")
+        region.xmp_clue_id = entry.get("clue_id", "")
+        if entry.get("whole_image"):
+            region.xmp_whole_image = True
 
     # ======================================================
     # managing regions
     # ======================================================
 
     def check_and_translate_to_proportional(self, mediaref, rect):
-        if mediaref:
-            return mediaref.get_rectangle()
-        else:
-            display_rect = self.selection_widget.real_to_proportional_rect(rect)
-            return unrotate_proportional_rect(display_rect, self.rotation_degrees)
+        # Always from the region's own (precise) pixel coords, never
+        # from the old MediaRef's whole numbers -- the region's coords
+        # are where the box actually is on screen. `mediaref` is kept
+        # in the signature for existing callers.
+        display_rect = self.selection_widget.real_to_proportional_rect(rect)
+        return unrotate_proportional_rect(display_rect, self.rotation_degrees)
 
     def intersects_any(self, region):
         for r in self.regions:
@@ -3742,9 +4230,13 @@ class PhotoTaggingGramplet(Gramplet):
         return None
 
     def regions_referencing_person(self, person):
+        # By handle, not object identity -- see prepare_context_menu().
         result = []
+        if person is None:
+            return result
+        handle = person.get_handle()
         for r in self.regions:
-            if r.person == person:
+            if r.person is not None and r.person.get_handle() == handle:
                 result.append(r)
         return result
 
@@ -3796,99 +4288,115 @@ class PhotoTaggingGramplet(Gramplet):
     def _handle_row_id_double_click(self, path):
         """
         Handles a double-click on the Row ID column (see
-        row_mouse_click()): opens a small modal dialog asking for a
-        new row number for that row -- a keyboard-driven alternative
-        to drag-and-drop reordering (see move_region_up()/
-        move_region_down()/move_region()), for a move too fussy to
-        land precisely by dragging.
+        row_mouse_click()): opens a small popover, pointing at that
+        row number, asking for the row number to move the row to -- a
+        keyboard-driven alternative to drag-and-drop reordering, for a
+        move too fussy to land precisely by dragging.
 
-        Deliberately a separate Gtk.Dialog rather than making the Row
-        ID cell itself inline-editable the way the Name cell is (see
-        cb_name_cell_edited()): an earlier version of this feature did
-        exactly that -- cell1.set_property("editable", True) plus an
-        "edited" handler calling move_region() -- and reproduced the
-        same SIGSEGV (inside gtk_tree_view_size_allocate ->
-        _gtk_tree_path_new_from_rbtree) already diagnosed once before
-        for the Name column, despite deferring the actual reorder via
-        GLib.idle_add the same proven way that fixed it there. Worse,
-        the "edited" signal itself never seemed to fire at all for
-        Tab/Enter/focus-out on that particular cell, so the reorder
-        never even ran. Rather than keep guessing at increasingly
-        subtle GtkTreeView cell-editing reentrancy with no way to run
-        and test it directly, a plain modal dialog sidesteps that
-        whole class of hazard: it's a separate widget entirely, with
-        nothing of this treeview's own editing/teardown state for it
-        to reenter.
+        Enter applies the number, and so does clicking anywhere
+        outside the popover after changing it; Esc cancels.
 
-        A number <= 0 moves the row to the very top (row 1); a number
-        greater than the current row count moves it to the very
-        bottom (the last row) -- both clamped by the dialog's own
-        Gtk.Adjustment bounds rather than needing validation here.
+        A popover rather than a dialog: the earlier modal Move Row
+        dialog was a child of the main Gramps window, so when another
+        window (e.g. an Edit Person editor opened by a mis-aimed
+        double-click) was already on top, the dialog opened *behind*
+        it while still blocking it -- Gramps looked locked up unless
+        you thought to press Esc. A popover belongs to this gramplet
+        itself, always appears where it was opened, and blocks
+        nothing. It also avoids running a nested dialog.run() loop
+        from inside this button-press handler.
 
-        See move_region()'s own docstring for the row_from/row_to
-        convention this converts the dialog's typed number into:
-        row_to is a slot in the list as it stands *before* the move,
-        not the row's desired *final* position (the natural way to
-        describe "make this row number N") -- row_to equals the
-        desired final 0-based index unchanged when moving the row
-        earlier (or leaving it in place), but final index + 1 when
-        moving it later, since removing the row from its own earlier
-        position shifts everything after it back by one once the
-        insert has already happened at the further-along slot.
+        Still not an inline edit of the Row ID cell itself: that was
+        tried twice and crashed inside GtkTreeView (see
+        cb_name_cell_edited() for the same class of crash). The move
+        itself is deferred to idle, after the popover has closed, for
+        the same reason.
+
+        :param path: The Gtk.TreePath of the double-clicked row.
+        :returns: ``True``, so the double-click goes no further.
         """
         index = path.get_indices()[0]
         if not 0 <= index < len(self.regions):
             return True
         region = self.regions[index]
         current_row = index + 1
-        row_count = len(self.regions)
 
-        # self (this Gramplet) is not itself a Gtk.Widget, so it has no
-        # get_toplevel() of its own -- self.uistate.window (the main
-        # Gramps window) is what the rest of this file already uses
-        # for a dialog's parent from inside this same class.
-        dialog = Gtk.Dialog(
-            title=_("Move Row"),
-            transient_for=self.uistate.window,
-            modal=True,
+        cell = self.treeview.get_cell_area(path, self.column_row_id)
+        cell_x, cell_y = self.treeview.convert_bin_window_to_widget_coords(
+            cell.x, cell.y
         )
-        dialog.add_buttons(
-            Gtk.STOCK_CANCEL,
-            Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OK,
-            Gtk.ResponseType.OK,
-        )
-        dialog.set_default_response(Gtk.ResponseType.OK)
+        pointing_to = Gdk.Rectangle()
+        pointing_to.x = cell_x
+        pointing_to.y = cell_y
+        pointing_to.width = cell.width
+        pointing_to.height = cell.height
 
-        content = dialog.get_content_area()
-        content.set_spacing(6)
-        content.set_border_width(12)
-        label = Gtk.Label(
-            label=_("Move row %(current)d to row number:")
-            % {"current": current_row}
-        )
-        label.set_xalign(0)
-        content.pack_start(label, False, False, 0)
+        popover = Gtk.Popover.new(self.treeview)
+        popover.set_pointing_to(pointing_to)
+        popover.set_position(Gtk.PositionType.RIGHT)
 
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        box.set_border_width(6)
+        box.pack_start(Gtk.Label(label=_("Move to row:")), False, False, 0)
         adjustment = Gtk.Adjustment(
-            value=current_row, lower=1, upper=row_count, step_increment=1
+            value=current_row, lower=1, upper=len(self.regions), step_increment=1
         )
         spin = Gtk.SpinButton(adjustment=adjustment, climb_rate=1, digits=0)
-        spin.set_activates_default(True)
-        content.pack_start(spin, False, False, 0)
-        dialog.show_all()
+        spin.set_numeric(True)
+        box.pack_start(spin, False, False, 0)
+        popover.add(box)
 
-        response = dialog.run()
-        new_number = spin.get_value_as_int()
-        dialog.destroy()
-        if response != Gtk.ResponseType.OK:
-            return True
+        state = {"cancelled": False}
 
-        final_index = max(0, min(new_number - 1, row_count - 1))
+        def cb_spin_activate(_spin):
+            popover.popdown()
+
+        def cb_key_press(_widget, event):
+            if event.keyval == Gdk.KEY_Escape:
+                state["cancelled"] = True
+            return False
+
+        def cb_closed(_popover):
+            spin.update()
+            number = spin.get_value_as_int()
+            if state["cancelled"] or number == current_row:
+                number = None
+            GLib.idle_add(self._cb_apply_row_move, popover, region, number)
+
+        spin.connect("activate", cb_spin_activate)
+        popover.connect("key-press-event", cb_key_press)
+        popover.connect("closed", cb_closed)
+        popover.show_all()
+        popover.popup()
+        spin.grab_focus()
+        return True
+
+    def _cb_apply_row_move(self, popover, region, number) -> bool:
+        """
+        The deferred half of _handle_row_id_double_click(): destroys
+        the closed popover and, if a new row number was chosen, moves
+        `region` there.
+
+        A number below 1 or above the row count is clamped to the
+        first or last row. See move_region() for the row_from/row_to
+        convention: row_to is a slot in the list as it stands before
+        the move, so it is the final index when moving a row earlier,
+        and final index + 1 when moving it later.
+
+        :param popover: The closed Gtk.Popover.
+        :param region: The Region whose row number was double-clicked.
+        :param number: The 1-based row number to move it to, or None.
+        :returns: ``GLib.SOURCE_REMOVE``.
+        """
+        popover.destroy()
+        if number is None or region not in self.regions:
+            return GLib.SOURCE_REMOVE
+        index = self.regions.index(region)
+        final_index = max(0, min(number - 1, len(self.regions) - 1))
         if final_index != index:
             row_to = final_index if final_index <= index else final_index + 1
             self.move_region(index, row_to, region)
-        return True
+        return GLib.SOURCE_REMOVE
 
     def region_order_changed(self, region):
         """
@@ -4002,25 +4510,27 @@ class PhotoTaggingGramplet(Gramplet):
         Returns `region`'s rectangle as (left, top, right, bottom) in
         the same 0-100 proportional space used throughout this file
         for MediaRef rectangles and Xmp.mwg-rs Area math (see
-        get_xmp_regions()). Prefers a linked region's own persisted
-        MediaRef rectangle -- the Gramps-authoritative value -- over
-        re-deriving one from the SelectionWidget's current on-screen
-        coordinates, which only differ if the widget hasn't been kept
-        in sync (it should always have been, but this is the more
-        trustworthy source when both exist).
+        get_xmp_regions()).
+
+        Uses the region's own precise pixel coordinates. For a linked
+        region, those are only trusted while they still round outward
+        to the MediaRef's whole-number rectangle (see
+        precise_rect_matches()); otherwise the MediaRef -- the
+        Gramps-authoritative value -- is returned, as before.
 
         :param region: A gramplet Region -- see retrieve_backrefs(),
             get_xmp_regions(), and get_xmp_keyword_regions() for how
             these are constructed.
         :returns: A 4-tuple of floats.
         """
+        display_rect = self.selection_widget.real_to_proportional_rect(region.coords())
+        precise = unrotate_proportional_rect(display_rect, self.rotation_degrees)
         mediaref = getattr(region, "mediaref", None)
         if mediaref is not None:
             rect = mediaref.get_rectangle()
-            if rect is not None:
+            if rect is not None and not precise_rect_matches(precise, rect):
                 return rect
-        display_rect = self.selection_widget.real_to_proportional_rect(region.coords())
-        return unrotate_proportional_rect(display_rect, self.rotation_degrees)
+        return precise
 
     def region_to_mwg_area(self, region):
         """
@@ -4040,10 +4550,10 @@ class PhotoTaggingGramplet(Gramplet):
         width = (right - left) / 100
         height = (bottom - top) / 100
         return {
-            "x": round((left / 100) + width / 2, 4),
-            "y": round((top / 100) + height / 2, 4),
-            "w": round(width, 4),
-            "h": round(height, 4),
+            "x": round((left / 100) + width / 2, MWG_AREA_DECIMALS),
+            "y": round((top / 100) + height / 2, MWG_AREA_DECIMALS),
+            "w": round(width, MWG_AREA_DECIMALS),
+            "h": round(height, MWG_AREA_DECIMALS),
             "unit": "normalized",
         }
 
@@ -4102,12 +4612,16 @@ class PhotoTaggingGramplet(Gramplet):
                         "type": "Face",
                         "source": SOURCE_GRAMPS,
                         "gramps_ref": gramps_id,
+                        # Handles never change; Gramps IDs can be
+                        # renumbered. Older versions ignore this field.
+                        "person_handle": region.person.get_handle(),
                         **area,
+                        **clue_fields(region),
                     }
                 )
             else:
                 name = effective_placeholder_name(region)
-                if not name:
+                if not name and not getattr(region, "xmp_person", ""):
                     continue
                 given, surname = split_placeholder_name(name)
                 is_manual = getattr(region, "manual_name", None) is not None
@@ -4119,6 +4633,7 @@ class PhotoTaggingGramplet(Gramplet):
                         "type": getattr(region, "xmp_type", "Face"),
                         "source": SOURCE_MANUAL if is_manual else SOURCE_EMBEDDED,
                         **area,
+                        **clue_fields(region),
                     }
                 )
         if not entries:
@@ -4342,8 +4857,12 @@ class PhotoTaggingGramplet(Gramplet):
         """
         mediaref = MediaRef()
         mediaref.ref = self.get_current_handle()
-        mediaref.set_rectangle(rect)
+        # Whole numbers for Gramps; the precise box is kept in the
+        # region's own pixel coords and persisted to the attribute
+        # (see "Precise rectangles" near the top of this file).
+        mediaref.set_rectangle(outward_int_rect(rect))
         person.add_media_reference(mediaref)
+        self._order_dirty = True
         self.commit_person(person)
         return mediaref
 
@@ -4634,6 +5153,20 @@ class PhotoTaggingGramplet(Gramplet):
         """
         if event.button != 1:
             return False
+        self._log_marquee_debug(
+            "button-release at screen (%.1f, %.1f)" % (event.x, event.y),
+            self.selection_widget.get_current(),
+        )
+        if self._release_ended_drag:
+            # This release finished drawing or resizing a marquee (see
+            # _release_ended_drag in __init__). Without this check it
+            # was treated as a click on empty space: the old selection
+            # was restored over the new marquee -- even one remembered
+            # from a previous photo, drawn at that photo's coordinates
+            # -- and a drag ending in the gutter toggled the marquees.
+            self._release_ended_drag = False
+            self._preview_last_release_us = 0
+            return False
         if self._click_is_in_preview_gutter(event.x, event.y):
             self.button_marquees.set_active(not self.button_marquees.get_active())
             return False
@@ -4666,7 +5199,9 @@ class PhotoTaggingGramplet(Gramplet):
         if is_double_click:
             self.apply_selected_region(None)
             self.edit_media_clicked(None)
-        else:
+        elif self._last_selected_region in self.regions:
+            # Only a region that is still part of this photo -- never a
+            # leftover from a previous photo or a reload.
             self.apply_selected_region(self._last_selected_region)
         return False
 
@@ -4822,6 +5357,7 @@ class PhotoTaggingGramplet(Gramplet):
                 region.person is not None
                 and region.person.get_handle() == person_handle
             ):
+                self._leave_quick_draw()
                 self.apply_selected_region(region)
                 return
 
@@ -5038,6 +5574,35 @@ class PhotoTaggingGramplet(Gramplet):
         self.sync_selection_widget_regions()
         self.selection_widget.refresh()
 
+    def _set_quick_draw_for_loaded_photo(self) -> None:
+        """
+        Called once each time a different photo is loaded: Quick Draw
+        mode is switched on only for a photo with nothing on it yet --
+        no linked people, no saved placeholders, and no clues read
+        from its metadata -- and off for any photo that already has
+        marquees, where selecting and reviewing them is the more
+        likely task.
+
+        The list selection is cleared first: turning the mode off
+        re-applies whichever row is selected (see
+        quick_draw_toggled()), and at this point that would still be
+        a row index from the previous photo.
+        """
+        want = not self.regions
+        if self.button_quick_draw.get_active() == want:
+            return
+        self.treeview.get_selection().unselect_all()
+        self.button_quick_draw.set_active(want)
+
+    def _leave_quick_draw(self) -> None:
+        """
+        Switches Quick Draw mode off, if it is on -- used when the
+        person selects a specific marquee from the list or the
+        Caption panel, which means reviewing rather than drawing.
+        """
+        if self.button_quick_draw.get_active():
+            self.button_quick_draw.set_active(False)
+
     def update_quick_draw_button(self):
         if self.quick_draw_mode:
             tooltip = _(
@@ -5191,23 +5756,87 @@ class PhotoTaggingGramplet(Gramplet):
         probably means by 'the selected row' right now", and using
         this fallback in any of them would be wrong.
 
+        SelectionWidget's "current" region is only trusted while it is
+        still one of self.regions: load_image() rebuilds every Region
+        object on a reload, but SelectionWidget.set_regions() does not
+        reset its own current region, so it can still point at a stale
+        Region from before the reload. In quick draw mode the focused
+        list row is checked first, since cursor_changed() deliberately
+        does not push row clicks to SelectionWidget in that mode -- a
+        right-clicked row would otherwise lose to a stale or unrelated
+        image selection (the cause of a "list.remove(x): x not in list"
+        crash in prepare_context_menu()).
+
         :returns: A Region, or None if nothing is meaningfully
             selected either way.
         """
-        selected = self.selection_widget.get_current()
-        if selected is not None:
-            return selected
+        current = self.selection_widget.get_current()
+        if current is not None and current not in self.regions:
+            current = None
+        row_region = None
         model, tree_iter = self.treeview.get_selection().get_selected()
-        if tree_iter is None:
-            return None
-        index = model.get_path(tree_iter).get_indices()[0]
-        return self.regions[index] if 0 <= index < len(self.regions) else None
+        if tree_iter is not None:
+            index = model.get_path(tree_iter).get_indices()[0]
+            if 0 <= index < len(self.regions):
+                row_region = self.regions[index]
+        if self.quick_draw_mode:
+            return row_region if row_region is not None else current
+        return current if current is not None else row_region
+
+    def cb_edit_ancestor_families(self, _menu_item) -> None:
+        """
+        "See ancestor family details": opens a Family editor for every
+        family the selected person is a child in (birth, adoptive, and
+        any other parent family), in the order Gramps lists them.
+
+        :param _menu_item: unused (the context-menu item itself)
+        """
+        region = self._effective_selected_region()
+        if region is None or region.person is None:
+            return
+        self._edit_families(region.person.get_parent_family_handle_list())
+
+    def cb_edit_descendant_families(self, _menu_item) -> None:
+        """
+        "See descendant family details": opens a Family editor for
+        every family the selected person is a parent/spouse in (one
+        per spouse or partnership), in the order Gramps lists them.
+
+        :param _menu_item: unused (the context-menu item itself)
+        """
+        region = self._effective_selected_region()
+        if region is None or region.person is None:
+            return
+        self._edit_families(region.person.get_family_handle_list())
+
+    def _edit_families(self, family_handles) -> None:
+        """
+        Opens a Family editor for each handle in `family_handles`. A
+        family whose editor is already open is skipped (Gramps raises
+        WindowActiveError and brings that window forward instead).
+
+        :param family_handles: A list of Family handles.
+        """
+        for handle in family_handles:
+            family = self.dbstate.db.get_family_from_handle(handle)
+            if family is None:
+                continue
+            try:
+                EditFamily(self.dbstate, self.uistate, self.track, family)
+            except WindowActiveError:
+                pass
 
     def prepare_context_menu(self):
         selected = self._effective_selected_region()
         has_person = selected is not None and selected.person is not None
 
         self.context_button_details.set_sensitive(has_person)
+        self.context_button_ancestor_family.set_sensitive(
+            has_person and bool(selected.person.get_parent_family_handle_list())
+        )
+        self.context_button_descendant_family.set_sensitive(
+            has_person and bool(selected.person.get_family_handle_list())
+        )
         self.context_button_active.set_sensitive(has_person)
         self.context_button_add.set_sensitive(selected is not None)
         self.context_button_select.set_sensitive(selected is not None)
@@ -5230,9 +5859,14 @@ class PhotoTaggingGramplet(Gramplet):
         self.additional_items = []
 
         # populate the context menu
+        # Compared by handle, not by object: the same Person can be
+        # held as two different Python objects (e.g. one fetched before
+        # a reload, one after), and list.remove() raised ValueError
+        # when they were not the identical object.
         persons = self.all_referenced_persons()
         if selected is not None and selected.person is not None:
-            persons.remove(selected.person)
+            selected_handle = selected.person.get_handle()
+            persons = [p for p in persons if p.get_handle() != selected_handle]
         if persons:
             media = self.get_current_object()
             name_as_of_date = self.name_as_of_date_for(media)
@@ -5268,8 +5902,50 @@ class PhotoTaggingGramplet(Gramplet):
     # selection event handlers
     # ======================================================
 
+    def _log_marquee_debug(self, what, region) -> None:
+        """
+        TEMPORARY diagnostic for the "mirrored big box" report -- see
+        DEBUG_MARQUEE_DRAW. Logs the SelectionWidget's drawing state
+        so one bad draw shows which number goes wrong: the drag start
+        point (screen), the selection being built (image pixels), the
+        region's resulting coords, and the scale/size values used to
+        convert between them.
+
+        :param what: Which event this is, for the log line.
+        :param region: The Region involved, or None.
+        """
+        if not DEBUG_MARQUEE_DRAW:
+            return
+        widget = self.selection_widget
+        try:
+            alloc = widget.get_allocation()
+            LOG.warning(
+                "PhotoTagging draw-debug: %s | start_screen=%s selection=%s "
+                "region=%s | scale=%s scaled_size=%s original_size=%s "
+                "viewport=%dx%d event_box=%dx%d | rotation=%s quick_draw=%s "
+                "session=%s",
+                what,
+                widget.start_point_screen,
+                widget.selection,
+                region.coords() if region is not None else None,
+                getattr(widget, "scale", None),
+                getattr(widget, "scaled_size", None),
+                getattr(widget, "original_image_size", None),
+                alloc.width,
+                alloc.height,
+                widget.event_box.get_allocated_width(),
+                widget.event_box.get_allocated_height(),
+                self.rotation_degrees,
+                self.quick_draw_mode,
+                os.environ.get("XDG_SESSION_TYPE", "?"),
+            )
+        except Exception:  # pylint: disable=broad-except
+            LOG.exception("PhotoTagging draw-debug: logging failed")
+
     def region_modified(self, sender):
         region = self.selection_widget.get_current()
+        self._release_ended_drag = True
+        self._log_marquee_debug("region-modified", region)
         if (
             region.x2 - region.x1 < MIN_MARQUEE_SIZE
             or region.y2 - region.y1 < MIN_MARQUEE_SIZE
@@ -5288,13 +5964,17 @@ class PhotoTaggingGramplet(Gramplet):
                 region.set_coords(*self._selected_region_coords)
             self.selection_widget.select(region)
             return
+        # The precise box is only saved with the attribute, so a moved
+        # or resized marquee must be written out when leaving the
+        # photo (see flush_region_order()).
+        self._order_dirty = True
         person = region.person
         mediaref = region.mediaref
         if person and mediaref:
             selection = self.selection_widget.get_selection()
             rect = self.selection_widget.real_to_proportional_rect(selection)
             rect = unrotate_proportional_rect(rect, self.rotation_degrees)
-            mediaref.set_rectangle(rect)
+            mediaref.set_rectangle(outward_int_rect(rect))
             # commit_person() below fires a "person-update" db signal
             # synchronously, which db_changed() has connected straight
             # to main() -- meaning main() (hide self.top, rebuild the
@@ -5322,6 +6002,8 @@ class PhotoTaggingGramplet(Gramplet):
         self._schedule_refresh_selection()
 
     def region_created(self, sender):
+        self._release_ended_drag = True
+        self._log_marquee_debug("region-created", self.selection_widget.get_current())
         self.show_marquees()
         self.refresh_list()
         # Deferred for the same reason as region_modified() above,
@@ -5577,7 +6259,7 @@ class PhotoTaggingGramplet(Gramplet):
         Opens the Person editor for the currently selected region's
         tagged person -- the action for a double click on a marquee
         or its own row (see cb_preview_panel_button_release()/
-        row_activated()), or the "_See the person details" context
+        row_activated()), or the "See the person details" context
         menu item (button_edit and context_button_details, both of
         which call this directly, leaving expected_region at its
         default). Does nothing if the region has no person tagged, or
@@ -5638,7 +6320,7 @@ class PhotoTaggingGramplet(Gramplet):
     def cb_person_edited(self, region) -> None:
         """
         Callback for the Edit Person window opened by
-        edit_person_clicked() (a double-clicked row, or the "_See the
+        edit_person_clicked() (a double-clicked row, or the "See the
         person details" context menu item) -- re-applies the
         selection to `region` (row, marquee, and Caption panel
         highlight; see apply_selected_region()) once its Person has
@@ -6111,13 +6793,65 @@ class PhotoTaggingGramplet(Gramplet):
             # to apply_selected_region() here would select `region` on
             # SelectionWidget after all, defeating the whole point --
             # and the same signal fires just as unhelpfully for a
-            # genuine row click while this mode is on, which shouldn't
-            # narrow the photo down to one marquee any more than a
-            # freshly drawn one should. Either way, there's nothing
-            # left to do here: the treeview's own cursor is already
-            # exactly where this signal says it is.
+            # genuine row click while this mode is on. Genuine mouse
+            # clicks on a row are handled separately instead, by
+            # cb_row_button_release(), so they still select the
+            # marquee and Caption link like a click on the photo does.
             return
         self.apply_selected_region(self.get_selected_region())
+
+    def cb_row_button_release(self, treeview, event) -> bool:
+        """
+        Callback for the region list's "button-release-event". In
+        quick draw mode only, a plain left click on a row switches
+        quick draw mode off (selecting a row means reviewing, not
+        drawing) and selects that row's marquee and Caption panel
+        link. cursor_changed() can't do this, since it cannot tell a
+        real click from the list's own programmatic cursor moves (see
+        _focus_treeview_row_only()).
+
+        Clicks on the two icon columns are left to row_mouse_click().
+        Deferred to idle so GTK finishes its own click handling first.
+
+        :param treeview: The region list (unused).
+        :param event: The Gdk.EventButton for the release.
+        :returns: ``False`` always, so GTK's own handling continues.
+        """
+        if not self.quick_draw_mode or event.button != 1:
+            return False
+        pthinfo = self.treeview.get_path_at_pos(event.x, event.y)
+        if pthinfo is None:
+            return False
+        path, col, _cellx, _celly = pthinfo
+        if col in (self.column_add_icon, self.column_pipe_icon):
+            return False
+        index = path.get_indices()[0]
+        if not 0 <= index < len(self.regions):
+            return False
+        region = self.regions[index]
+        self._leave_quick_draw()
+        GLib.idle_add(self._cb_apply_clicked_row, region)
+        return False
+
+    def _cb_apply_clicked_row(self, region) -> bool:
+        """
+        The deferred half of cb_row_button_release(). Does nothing if
+        that region is already the selected one -- the second click
+        that starts editing a row's Name cell must not move the list
+        cursor again, which would cancel the edit (see
+        cursor_changed()'s docstring) -- or if a Name edit is in
+        progress, or the region is gone.
+
+        :param region: The clicked row's Region.
+        :returns: ``GLib.SOURCE_REMOVE``.
+        """
+        if (
+            self._editing_name_path is None
+            and region in self.regions
+            and self.selection_widget.get_current() is not region
+        ):
+            self.apply_selected_region(region)
+        return GLib.SOURCE_REMOVE
 
     def row_activated(self, treeview, path, view_column):
         """
@@ -6129,7 +6863,24 @@ class PhotoTaggingGramplet(Gramplet):
         own docstring): `path` is ground truth for exactly which row
         this double click landed on, independent of whatever
         self.selection_widget.get_current() is by the time this runs.
+
+        A mouse double-click on the Row ID column is ignored here: it
+        opens the Move Row popover instead (see row_mouse_click() /
+        _handle_row_id_double_click()). GTK 3 recognizes the double
+        click for "row-activated" separately from the
+        "button-press-event" handler, so that handler returning True
+        did not stop this one -- both ran, opening the person editor
+        as well. Enter on the keyboard still activates the row from
+        any column.
         """
+        if view_column is self.column_row_id:
+            event = Gtk.get_current_event()
+            if event is not None and event.type in (
+                Gdk.EventType.BUTTON_PRESS,
+                Gdk.EventType._2BUTTON_PRESS,  # pylint: disable=protected-access
+                Gdk.EventType.BUTTON_RELEASE,
+            ):
+                return
         index = path.get_indices()[0]
         expected_region = (
             self.regions[index] if 0 <= index < len(self.regions) else None
@@ -6838,7 +7589,7 @@ class PhotoTaggingGramplet(Gramplet):
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(text, -1)
 
-    def metadata_clue_text_for(self, region):
+    def metadata_clue_text_for(self, region, with_source=False):
         """
         The text shown in `region`'s row of the Metadata clues column
         (see refresh_list()): its own embedded/keyword-derived clue
@@ -6854,11 +7605,18 @@ class PhotoTaggingGramplet(Gramplet):
         counts as a row's clue text.
 
         :param region: A gramplet Region.
+        :param with_source: Append where the clue came from, e.g.
+            "[XMP - embedded]" or "[Picasa - sidecar]" (see
+            region.xmp_source). Only the Metadata clues column asks
+            for this; the Note transcription keeps the bare clue.
         :returns: The clue text, possibly "".
         """
         clue = getattr(region, "xmp_person", "") or ""
         if clue and getattr(region, "xmp_whole_image", False):
-            return _("%s (whole photo, no region)") % clue
+            clue = _("%s (whole photo, no region)") % clue
+        source = CLUE_SOURCE_LABELS.get(getattr(region, "xmp_source", ""), "")
+        if clue and with_source and source:
+            clue = "%s [%s]" % (clue, source)
         return clue
 
     def refresh_list(self):
@@ -6875,7 +7633,7 @@ class PhotoTaggingGramplet(Gramplet):
             self.format_person_age_header(media_date)
         )
         for i, region in enumerate(self.regions, start=1):
-            metadata_clues = self.metadata_clue_text_for(region)
+            metadata_clues = self.metadata_clue_text_for(region, with_source=True)
             if region.person:
                 name = display_name_respecting_format(
                     get_name_at_date(region.person, name_as_of_date)

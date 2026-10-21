@@ -33,7 +33,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         description=_("Gramplet for tagging people in photos"),
         authors=["Artem Glebov", "Nick Hall", "Paul Culley", "Bruce Jackson"],
         maintainers=["Brian McCullough"],
-        version = '1.2.2',
+        version="1.2.4",  # build 20261020
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="PhotoTaggingGramplet.py",

@@ -40,10 +40,15 @@ metadata extraction, and ready-to-publish GitHub output structure.
 import os
 import re
 import sys
+import copy
 import glob
 import json
+import types
 import shutil
+import logging
 import datetime
+import importlib.util
+import inspect
 import subprocess
 import configparser
 import urllib.request
@@ -54,7 +59,7 @@ import urllib.error
 # GTK modules
 #
 #------------------------------------------------------------------------
-from gi.repository import Gtk, GObject, GLib, Gdk
+from gi.repository import Gtk, GObject, GLib, Gdk, GdkPixbuf
 
 #------------------------------------------------------------------------
 #
@@ -67,6 +72,7 @@ from gramps.version import major_version
 from gramps.gui.plug import tool
 from gramps.gui.dialog import OkDialog, ErrorDialog
 from gramps.gui.managedwindow import ManagedWindow
+from gramps.gui.utils import open_file_with_default_application, ProgressMeter
 from gramps.gen.simple import SimpleDoc, SimpleTable
 # Import directly from _pluginreg so VIEW is always present (same as PluginManager Enhanced)
 from gramps.gen.plug._pluginreg import PluginRegister, PTYPE_STR
@@ -75,6 +81,8 @@ try:
     from gramps.gen.plug import PTYPE_STR as _PTYPE_STR_PUB
 except ImportError:
     _PTYPE_STR_PUB = PTYPE_STR
+
+LOG = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------
 #
@@ -106,6 +114,12 @@ GITHUB_ADDONS_SOURCE_BRANCHES_API = (
     "?per_page=100"
 )
 
+# Flathub app ID for the community-maintained GitHub Desktop Flatpak
+# (https://github.com/flathub/io.github.shiftey.Desktop), used as a
+# fallback by _find_github_desktop_linux() when no "github-desktop"
+# command is found on PATH.
+GITHUB_DESKTOP_LINUX_FLATPAK_ID = 'io.github.shiftey.Desktop'
+
 # Reserved APS.ini section name (not a real named configuration) used to
 # remember which configuration was active when the tool was last closed,
 # so it can be restored automatically next time it's opened.
@@ -135,6 +149,166 @@ PTYPE_TO_NUM = {
     'CITE': 14,
 }
 
+# GTK themes normally pad a Gtk.Button/Gtk.LinkButton's hit area out
+# beyond its label glyphs. Left alone, that padding is what makes the
+# space between a checkbox and a neighbouring hotlink (see
+# rebuild_addon_list()) still register as part of the hotlink, making
+# the checkbox fussy to click accurately. This CSS class, applied via
+# _tighten_hotlink_hit_area(), zeroes that padding so a plain spacer
+# widget (see _new_dead_space()) placed next to the hotlink is
+# genuinely dead space rather than being swallowed by the link's own
+# oversized hit area.
+HOTLINK_CSS = b"""
+.aps-tight-hotlink {
+    padding: 0px;
+    margin: 0px;
+    border-width: 0px;
+}
+"""
+
+# Cross-fades media/icons/github-desktop-dev.svg in over
+# media/icons/github-desktop-prod.svg on hover/press, for the GitHub
+# Desktop icon button built by _build_github_desktop_icon_button().
+# The two icons are stacked in a Gtk.Overlay; the top (dev) image
+# starts fully transparent and fades to opaque on :hover/:active using
+# a plain CSS opacity transition -- opacity is one of the properties
+# GTK's own CSS engine animates, so this needs no hand-rolled timer.
+GITHUB_DESKTOP_BUTTON_CSS = b"""
+.aps-github-hover-icon {
+    opacity: 0;
+    transition: opacity 500ms ease-in-out;
+}
+button.aps-github-desktop-btn:hover .aps-github-hover-icon,
+button.aps-github-desktop-btn:active .aps-github-hover-icon {
+    opacity: 1;
+}
+"""
+
+#------------------------------------------------------------------------
+#
+# Helper functions
+#
+#------------------------------------------------------------------------
+
+def _new_dead_space(width: int = 8) -> Gtk.Widget:
+    """
+    Return a fixed-width, non-interactive spacer widget, for use
+    between a checkbox/icon-button and a neighbouring Gtk.LinkButton
+    (see rebuild_addon_list() and the "Output location:" row) so the
+    visual gap between them is genuinely un-clickable rather than
+    being swallowed by either widget's own themed hit area. Pair with
+    :func:`_tighten_hotlink_hit_area` on the neighbouring hotlink for
+    this to be reliable across GTK themes.
+
+    :param width: spacer width in pixels.
+    :returns: a plain, childless Gtk.Box sized to ``width``.
+    """
+    spacer = Gtk.Box()
+    spacer.set_size_request(width, -1)
+    return spacer
+
+
+def _tighten_hotlink_hit_area(link_button: Gtk.LinkButton) -> None:
+    """
+    Shrink ``link_button``'s clickable hit area down to just its
+    label, by zeroing the padding/margin/border GTK's theme normally
+    adds around a button (see :data:`HOTLINK_CSS`). Used alongside
+    :func:`_new_dead_space` so a spacer placed next to a hotlink is
+    genuinely dead space instead of still activating the link.
+
+    :param link_button: the Gtk.LinkButton to tighten.
+    """
+    provider = Gtk.CssProvider()
+    try:
+        provider.load_from_data(HOTLINK_CSS)
+    except GLib.Error:
+        return
+    style_context = link_button.get_style_context()
+    style_context.add_class('aps-tight-hotlink')
+    style_context.add_provider(provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+
+def _load_scaled_svg_pixbuf(svg_path: str, size: int = 32) -> GdkPixbuf.Pixbuf | None:
+    """
+    Load an SVG file scaled to a square ``size`` x ``size`` pixbuf,
+    for crisp rendering of a small toolbar-style icon regardless of
+    the SVG's own native size.
+
+    :param svg_path: path to the ``.svg`` file.
+    :param size: target width and height, in pixels.
+    :returns: a GdkPixbuf.Pixbuf, or ``None`` if the file is missing,
+        unreadable, or not a valid image.
+    """
+    try:
+        return GdkPixbuf.Pixbuf.new_from_file_at_scale(svg_path, size, size, True)
+    except GLib.Error:
+        return None
+
+
+# Cache for _get_make_addon_module(): make_addon.py never changes
+# mid-session (only the upstream make<NN>.py copies it delegates to
+# can be refreshed, via "Update make.py Scripts", and those are still
+# run as a subprocess rather than imported -- see run_make_command()),
+# so it is safe, and much cheaper, to import it once per process.
+_MAKE_ADDON_MODULE = None
+
+
+def _get_make_addon_module() -> types.ModuleType | None:
+    """
+    Import make_addon.py (bundled alongside this tool) as a regular
+    Python module and cache it for the life of this process, so its
+    packaging functions can be called directly in-process instead of
+    launched as a subprocess.
+
+    Calling the packaging engine in-process removes the need to
+    locate a standalone Python interpreter to shell out to. That
+    matters because, under a frozen (cx_Freeze) Windows build,
+    ``sys.executable`` is the Gramps application executable itself
+    rather than a usable interpreter -- launching it as a subprocess
+    used to start a second instance of Gramps, which Gramps' own
+    single-instance guard immediately terminated with a
+    "Gramps is already running!" dialog, all while reporting a clean
+    exit code that made the caller believe packaging had succeeded.
+
+    :returns: The imported ``make_addon`` module, or ``None`` if
+        ``make_addon.py`` could not be found alongside this file.
+    :rtype: types.ModuleType | None
+    """
+    global _MAKE_ADDON_MODULE
+    if _MAKE_ADDON_MODULE is not None:
+        return _MAKE_ADDON_MODULE
+
+    scripts_dir = os.path.dirname(os.path.abspath(__file__))
+    module_path = os.path.join(scripts_dir, 'make_addon.py')
+    if not os.path.exists(module_path):
+        return None
+
+    spec = importlib.util.spec_from_file_location(
+        'gramps_addonpackship_make_addon', module_path)
+    if spec is None or spec.loader is None:
+        return None
+
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    _MAKE_ADDON_MODULE = module
+    return module
+
+
+def _get_logs_dir():
+    """
+    Return this plugin's session-log directory: <this file's own
+    directory>/logs -- the same path make_addon.py's
+    _log_session_command() writes to. Not guaranteed to exist yet;
+    callers that need it to (e.g. before opening it in a file
+    manager) should create it first.
+
+    :returns: Absolute path to the logs/ directory.
+    """
+    scripts_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(scripts_dir, 'logs')
+
+
+
 #------------------------------------------------------------------------
 #
 # AddonPackShip Tool
@@ -162,6 +336,17 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         self.version_checkboxes = {}   # version code -> Gtk.CheckButton
         self.pending_version_bumps = set()  # addon names flagged to bump
         self.version_bump_widgets = {}      # addon name -> widget info dict
+        self._listing_filter_names = None   # addon names to show, or None
+
+        # One session ID per tool window, used to group every
+        # make_addon.py/make<NN>.py command run during this session
+        # into a single logs/<session_id>.log teaching transcript,
+        # stored right next to make_addon.py itself (this plugin's
+        # own install folder) so it's always in one fixed, easy-to-
+        # find place (see run_make_command()) -- so a developer can
+        # see, and directly reuse, the equivalent CLI commands for
+        # everything the GUI just did.
+        self.session_id = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 
         # Scan for installed addons
         self.scan_installed_addons()
@@ -508,6 +693,42 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 selected = [GRAMPS_VERSION]
         return selected
 
+    def _get_single_selected_version(self):
+        """
+        Return the one checked "Gramps Versions" code, if exactly one
+        is checked -- otherwise None.
+
+        Unlike :meth:`get_selected_versions`, this has no fallback to
+        "the first available version" when nothing is checked: the
+        addon-list context menu's listing actions need to know
+        unambiguously whether the user has picked exactly one version,
+        not have one guessed for them, since there's no single
+        addons-en.json to act on when zero or several are checked.
+
+        :returns: a single version code (e.g. 'gramps52'), or None.
+        """
+        selected = [
+            code for code, checkbox in self.version_checkboxes.items()
+            if checkbox.get_active()
+        ]
+        return selected[0] if len(selected) == 1 else None
+
+    def _listing_json_path(self, version):
+        """
+        Return the path to the addons-en.json listing file for the
+        given Gramps version, under the current Output Location.
+
+        This is the file the addon list's right-click "Filter list to
+        addons in this listing" and "Open addons-en.json for editing"
+        actions both act on -- it may or may not exist yet.
+
+        :param version: a Gramps version code, e.g. 'gramps52'.
+        :returns: the addons-en.json path.
+        """
+        return os.path.join(
+            self.get_output_parent_dir(), version, 'listings',
+            'addons-en.json')
+
     def _config_ini_path(self):
         """
         Return the path to APS.ini, where named configurations are
@@ -601,9 +822,10 @@ class AddonPackShip(tool.Tool, ManagedWindow):
     def _collect_config_state(self):
         """
         Gather the current state of every saveable control -- build
-        mode, Gramps version checkboxes, output location, filters, and
-        which addons/plugins are selected -- into a plain dict, ready
-        to write to one section of APS.ini.
+        mode, Gramps version checkboxes, output location, filters,
+        which addons/plugins are selected, and the Options tab's
+        Multilingual and version-coverage-override checkboxes -- into
+        a plain dict, ready to write to one section of APS.ini.
 
         :returns: dict of state.
         """
@@ -611,6 +833,15 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         # first, the same way rebuild_addon_list() does at its own start.
         for pid, checkbox in self.checkboxes.items():
             self.all_selections[pid] = checkbox.get_active()
+
+        # Only plugin ids from the current scan are meaningful to save;
+        # anything else in self.all_selections is left over from a
+        # previous scan (e.g. an addon since removed) and would just
+        # be dead weight in APS.ini.
+        current_selections = {
+            pid: checked for pid, checked in self.all_selections.items()
+            if pid in self.plugin_to_dir
+        }
 
         return {
             'build_mode': self.get_build_mode(),
@@ -621,7 +852,12 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                             if hasattr(self, 'author_filter_entry') else ''),
             'type_filter': (self.type_filter_combo.get_active_text()
                             if hasattr(self, 'type_filter_combo') else ''),
-            'selected_plugins': dict(self.all_selections),
+            'selected_plugins': current_selections,
+            'multilingual': (self.multilingual_check.get_active()
+                             if hasattr(self, 'multilingual_check') else False),
+            'force_uncovered': (self.force_uncovered_check.get_active()
+                                if hasattr(self, 'force_uncovered_check')
+                                else False),
         }
 
     def save_named_config(self, name):
@@ -658,6 +894,8 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             pid for pid, checked in state['selected_plugins'].items()
             if checked)
         parser.set(name, 'selected_plugins', json.dumps(checked_plugins))
+        parser.set(name, 'multilingual', str(state['multilingual']))
+        parser.set(name, 'force_uncovered', str(state['force_uncovered']))
 
         try:
             with open(ini_path, 'w', encoding='utf-8') as fh:
@@ -673,7 +911,8 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         """
         Apply the saved UI state for `name` from APS.ini to every
         control it covers (build mode, version checkboxes, output
-        location, filters, addon/plugin selection).
+        location, filters, addon/plugin selection, and the Options
+        tab's Multilingual and version-coverage-override checkboxes).
 
         :param name: Configuration name to load.
         """
@@ -726,6 +965,14 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         except ValueError:
             checked_plugins = []
         self.all_selections = {pid: True for pid in checked_plugins}
+
+        if hasattr(self, 'multilingual_check'):
+            self.multilingual_check.set_active(
+                parser.getboolean(name, 'multilingual', fallback=False))
+
+        if hasattr(self, 'force_uncovered_check'):
+            self.force_uncovered_check.set_active(
+                parser.getboolean(name, 'force_uncovered', fallback=False))
         # rebuild_addon_list() normally flushes live checkboxes into
         # self.all_selections at its own start, which would immediately
         # overwrite what was just loaded -- clear it first so that
@@ -885,6 +1132,62 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 return chosen
         return os.path.dirname(os.path.abspath(__file__))
 
+    def cb_open_output_folder(self, linkbutton: Gtk.LinkButton) -> bool:
+        """
+        Open the current "Output location:" folder in the OS file
+        browser.
+
+        Connected to the "Output location:" Gtk.LinkButton's
+        "activate-link" signal (see :meth:`build_interface`). The
+        folder is re-resolved fresh on every click, via
+        :meth:`get_output_parent_dir`, so this always reflects
+        whatever is currently chosen rather than whatever was chosen
+        when the window was built.
+
+        :param linkbutton: the Gtk.LinkButton that was clicked.
+        :returns: ``True``, to stop GTK's default handler (which
+                  would otherwise also try to open an empty URI in a
+                  web browser).
+        """
+        folder = self.get_output_parent_dir()
+        if folder and os.path.isdir(folder):
+            open_file_with_default_application(folder, self.user.uistate)
+        else:
+            ErrorDialog(
+                _("Folder Not Found"),
+                _("Output location folder does not exist yet:\n{}")
+                .format(folder),
+                parent=self.window)
+        return True
+
+    def cb_open_addon_folder(
+        self, linkbutton: Gtk.LinkButton, folder_path: str
+    ) -> bool:
+        """
+        Open an addon's own folder in the OS file browser.
+
+        Connected to each plugin-name Gtk.LinkButton's
+        "activate-link" signal in the addon list (see
+        :meth:`build_interface`'s addon list construction). Used
+        purely for the built-in link click/hover styling -- there is
+        no real URI to follow, so this always returns ``True`` to
+        stop GTK's default handler from also trying to open one in a
+        web browser.
+
+        :param linkbutton: the Gtk.LinkButton that was clicked.
+        :param folder_path: absolute path of the addon's folder.
+        :returns: ``True``, to stop the default handler.
+        """
+        if folder_path and os.path.isdir(folder_path):
+            open_file_with_default_application(
+                folder_path, self.user.uistate)
+        else:
+            ErrorDialog(
+                _("Folder Not Found"),
+                _("Addon folder does not exist:\n{}").format(folder_path),
+                parent=self.window)
+        return True
+
     def on_output_suggestion_changed(self, combo):
         """
         Apply the folder selected in the "Suggested" combo (detected
@@ -959,6 +1262,386 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             if len(found) >= max_results:
                 break
         return sorted(found)[:max_results]
+
+    # ------------------------------------------------------------
+    # GitHub Desktop integration -- intentionally read-only and
+    # narrow in scope. This tool asks GitHub Desktop for exactly
+    # four things: whether it's installed, whether it's running,
+    # the names of locally-detected repositories, and each one's
+    # folder path. It does not inspect repository contents, decide
+    # what counts as "changed", or drive GitHub Desktop's UI (no
+    # tab-switching, no opening a specific repository) -- all of
+    # that is left entirely to GitHub Desktop itself. The one
+    # exception is :meth:`launch_or_focus_github_desktop`, which
+    # only starts/raises the app with no arguments, same as
+    # clicking its dock/taskbar icon.
+    #
+    # GitHub Desktop's own "repository list" and "active
+    # repository" (see
+    # https://docs.github.com/en/desktop/overview/github-desktop-keyboard-shortcuts,
+    # Ctrl+T/Cmd+T) live in an undocumented, version-fragile
+    # Dexie/IndexedDB-backed database under its own userData folder,
+    # with no supported read API -- parsing it is liable to break on
+    # any GitHub Desktop update (and, for "active repository", there
+    # is currently no reliable alternative either; see
+    # :meth:`get_repository_list`'s docstring). So
+    # :meth:`get_repository_list` instead reports the same
+    # filesystem-detected local Git clones as
+    # :meth:`detect_local_git_repo_roots` -- the closest available
+    # proxy to GitHub Desktop's own list, without touching its
+    # internals.
+    #
+    # A feature request asking the GitHub Desktop project for a
+    # supported, read-only way to query the repository list, the
+    # active repository, and each one's local path -- plus a way to
+    # launch/focus a specific repository's Changes view -- has been
+    # filed upstream: "CLI/API access to known repositories list +
+    # launch to Changes view" --
+    # https://github.com/desktop/desktop/issues/22779. If/when that
+    # lands, get_repository_list() and the "active repository" gap
+    # noted above should be revisited to use it instead of the
+    # filesystem heuristic.
+    #
+    # On Linux, where GitHub Desktop is not an officially supported
+    # platform, install/running detection looks for the
+    # community-maintained build from
+    # https://github.com/shiftkey/desktop (packaged as
+    # "github-desktop") and its Flathub Flatpak,
+    # "io.github.shiftey.Desktop".
+    #
+    # Generated-by: Claude (Anthropic), model claude-sonnet-4-6, via
+    # claude.ai, in response to a request to detect a GitHub Desktop
+    # install/running state and report locally-detected repository
+    # names and folder paths, without any analysis of repository
+    # contents or changes. See
+    # https://www.gramps-project.org/wiki/index.php/Howto:_Contribute_to_Gramps#AI_generated_code
+    # ------------------------------------------------------------
+
+    def get_repository_list(self) -> list[dict[str, str]]:
+        """
+        Return the local Git repository folders this tool can detect
+        (see :meth:`detect_local_git_repo_roots`), each paired with
+        its folder name, as a stand-in for GitHub Desktop's own
+        "repository list" (Ctrl+T/Cmd+T).
+
+        This is a filesystem-based proxy, not GitHub Desktop's actual
+        list -- there is no supported way to read that without
+        parsing its internal database (see this class's "GitHub
+        Desktop integration" banner comment above). For the same
+        reason, there is currently no method here for "which
+        repository is active": GitHub Desktop doesn't expose that
+        outside its own UI either. See
+        https://github.com/desktop/desktop/issues/22779 for the
+        upstream feature request asking for a supported way to query
+        both of these.
+
+        :returns: a list of ``{'name': ..., 'path': ...}`` dicts, one
+            per detected repository, in the same order as
+            :meth:`detect_local_git_repo_roots`.
+        """
+        return [
+            {
+                'name': os.path.basename(repo_root.rstrip(os.sep)) or repo_root,
+                'path': repo_root,
+            }
+            for repo_root in self.detect_local_git_repo_roots()
+        ]
+
+    @staticmethod
+    def find_github_desktop_executable() -> str | None:
+        """
+        Locate a GitHub Desktop installation on this machine, without
+        relying on any GitHub-Desktop-internal database.
+
+        :returns: something :meth:`launch_or_focus_github_desktop`
+            knows how to start GitHub Desktop from -- a command name
+            or path on Windows/Linux, an ``.app`` bundle path on
+            macOS, or a ``"flatpak:<app-id>"`` marker for a Flatpak
+            install -- or ``None`` if no installation was found.
+        """
+        if sys.platform.startswith('win'):
+            return AddonPackShip._find_github_desktop_windows()
+        if sys.platform == 'darwin':
+            return AddonPackShip._find_github_desktop_macos()
+        return AddonPackShip._find_github_desktop_linux()
+
+    @staticmethod
+    def _find_github_desktop_windows() -> str | None:
+        """
+        Locate GitHub Desktop on Windows: prefer the ``github``
+        command-line helper if it's on PATH, then fall back to
+        scanning the per-user install folder GitHub Desktop's
+        installer uses (``%LOCALAPPDATA%\\GitHubDesktop\\app-<ver>``).
+
+        :returns: a launchable path/command, or ``None`` if not found.
+        """
+        cli = (
+            shutil.which('github')
+            or shutil.which('github.cmd')
+            or shutil.which('github.bat')
+        )
+        if cli:
+            return cli
+        local_app_data = os.environ.get('LOCALAPPDATA', '')
+        base = os.path.join(local_app_data, 'GitHubDesktop')
+        if local_app_data and os.path.isdir(base):
+            matches = sorted(
+                glob.glob(os.path.join(base, 'app-*', 'GitHubDesktop.exe'))
+            )
+            if matches:
+                return matches[-1]  # highest "app-<version>" folder
+        return None
+
+    @staticmethod
+    def _find_github_desktop_macos() -> str | None:
+        """
+        Locate GitHub Desktop on macOS: prefer the ``github``
+        command-line helper (installed via GitHub Desktop's own
+        "Install Command Line Tool" menu item) if it's on PATH,
+        otherwise look for the ``.app`` bundle in the usual
+        Applications folders.
+
+        :returns: a launchable command/bundle path, or ``None`` if
+            not found.
+        """
+        cli = shutil.which('github')
+        if cli:
+            return cli
+        for base in (
+            '/Applications',
+            os.path.join(os.path.expanduser('~'), 'Applications'),
+        ):
+            bundle = os.path.join(base, 'GitHub Desktop.app')
+            if os.path.isdir(bundle):
+                return bundle
+        return None
+
+    @staticmethod
+    def _find_github_desktop_linux() -> str | None:
+        """
+        Locate GitHub Desktop on Linux. GitHub Desktop is not an
+        officially supported platform here, so this looks for the
+        community-maintained build from
+        https://github.com/shiftkey/desktop (packaged as the
+        ``github-desktop`` command) and for its Flathub Flatpak,
+        ``io.github.shiftey.Desktop``.
+
+        :returns: a launchable command, or ``"flatpak:<app-id>"`` for
+            a Flatpak install, or ``None`` if neither was found.
+        """
+        for command in ('github-desktop', 'GitHubDesktop'):
+            found = shutil.which(command)
+            if found:
+                return found
+        try:
+            result = subprocess.run(
+                ['flatpak', 'info', GITHUB_DESKTOP_LINUX_FLATPAK_ID],
+                capture_output=True,
+                check=False,
+                timeout=5,
+            )
+            if result.returncode == 0:
+                return 'flatpak:' + GITHUB_DESKTOP_LINUX_FLATPAK_ID
+        except (OSError, subprocess.SubprocessError):
+            pass
+        return None
+
+    @staticmethod
+    def is_github_desktop_running() -> bool:
+        """
+        Best-effort check for whether a GitHub Desktop process is
+        currently running, using each platform's own process-listing
+        tool (``tasklist`` / ``pgrep``) rather than adding a
+        third-party dependency such as ``psutil``.
+
+        :returns: ``True`` if a matching process was found. ``False``
+            otherwise, including when the check itself can't be
+            performed (e.g. the platform tool isn't on PATH) -- which
+            is indistinguishable from "not running" for our purposes.
+        """
+        try:
+            if sys.platform.startswith('win'):
+                result = subprocess.run(
+                    ['tasklist', '/FI', 'IMAGENAME eq GitHubDesktop.exe'],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    timeout=5,
+                )
+                return 'GitHubDesktop.exe' in result.stdout
+            if sys.platform == 'darwin':
+                result = subprocess.run(
+                    ['pgrep', '-f', 'GitHub Desktop'],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    timeout=5,
+                )
+                return bool(result.stdout.strip())
+            result = subprocess.run(
+                ['pgrep', '-f', 'github-desktop'],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=5,
+            )
+            return bool(result.stdout.strip())
+        except (OSError, subprocess.SubprocessError):
+            return False
+
+    def launch_or_focus_github_desktop(self) -> tuple[bool, str]:
+        """
+        Start GitHub Desktop, or -- on platforms where the OS launch
+        mechanism already does this for a running app -- bring it to
+        the front. Equivalent to clicking its dock/taskbar icon: it
+        does not open, select, or otherwise touch any particular
+        repository or tab. Deciding what to show is left entirely to
+        GitHub Desktop itself (see this class's "GitHub Desktop
+        integration" banner comment above).
+
+        :returns: ``(True, '')`` once the launch command has been
+            issued, or ``(False, message)`` if GitHub Desktop could
+            not be found or started.
+        """
+        target = self.find_github_desktop_executable()
+        if target is None:
+            return False, _(
+                "GitHub Desktop was not found on this computer. Install"
+                " it from https://desktop.github.com/ (on Linux, the"
+                " community-maintained build at"
+                " https://github.com/shiftkey/desktop)."
+            )
+
+        try:
+            if target.startswith('flatpak:'):
+                args = ['flatpak', 'run', target[len('flatpak:') :]]
+            elif sys.platform == 'darwin' and target.endswith('.app'):
+                args = ['open', '-a', target]
+            else:
+                args = [target]
+            # GitHub Desktop is an Electron (Chromium) app and prints
+            # its own startup diagnostics -- e.g. D-Bus connection
+            # warnings on a system with no session bus, or missing
+            # optional GTK modules -- straight to its inherited
+            # stdout/stderr. Those are GitHub Desktop's own messages,
+            # not ours, and Gramps has no use for them, so they're
+            # discarded here rather than left to spill into whatever
+            # terminal launched Gramps.
+            with open(os.devnull, 'wb') as devnull:
+                subprocess.Popen(  # pylint: disable=consider-using-with
+                    args, stdout=devnull, stderr=devnull
+                )
+        except OSError as exc:
+            return False, _("Could not start GitHub Desktop: {}").format(exc)
+        return True, ""
+
+    def cb_activate_github_desktop(self, _button) -> None:
+        """
+        GTK "clicked" callback: start GitHub Desktop, or bring it to
+        the front if it's already running (see
+        :meth:`launch_or_focus_github_desktop`). Does not open a
+        specific repository or tab.
+        """
+        success, message = self.launch_or_focus_github_desktop()
+        if not success:
+            ErrorDialog(_("Could Not Open GitHub Desktop"), message, parent=self.window)
+            return
+        self.bottom_status_label.set_text(_("Launched GitHub Desktop."))
+
+    def _build_github_desktop_icon_button(self) -> Gtk.Widget:
+        """
+        Build the 32x32 icon button used to start/focus GitHub
+        Desktop (see :meth:`cb_activate_github_desktop`), using
+        ``media/icons/github-desktop-prod.svg`` (bundled alongside
+        this tool) for its resting state, cross-faded on hover/press
+        with ``media/icons/github-desktop-dev.svg`` via CSS opacity
+        transitions (see :data:`GITHUB_DESKTOP_BUTTON_CSS` and
+        :meth:`_install_github_desktop_button_css`).
+
+        Only called when GitHub Desktop has actually been detected
+        (see :meth:`find_github_desktop_executable`) -- callers
+        should not show this button, or the dead space next to it,
+        otherwise.
+
+        :returns: a Gtk.Button showing the icon(s), or a small text
+            Gtk.Button fallback if ``github-desktop-prod.svg`` can't
+            be loaded, so a missing/broken icon file doesn't also
+            lose the button's functionality.
+        """
+        icons_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'media', 'icons'
+        )
+        prod_pixbuf = _load_scaled_svg_pixbuf(
+            os.path.join(icons_dir, 'github-desktop-prod.svg')
+        )
+
+        btn = Gtk.Button()
+        btn.set_relief(Gtk.ReliefStyle.NONE)
+        btn.get_style_context().add_class('aps-github-desktop-btn')
+
+        if prod_pixbuf is None:
+            LOG.warning(
+                "GitHub Desktop icon not found under %s -- falling"
+                " back to a text button.",
+                icons_dir,
+            )
+            btn.set_label(_("GitHub Desktop"))
+        else:
+            overlay = Gtk.Overlay()
+            overlay.add(Gtk.Image.new_from_pixbuf(prod_pixbuf))
+
+            dev_pixbuf = _load_scaled_svg_pixbuf(
+                os.path.join(icons_dir, 'github-desktop-dev.svg')
+            )
+            if dev_pixbuf is not None:
+                hover_image = Gtk.Image.new_from_pixbuf(dev_pixbuf)
+                hover_image.get_style_context().add_class('aps-github-hover-icon')
+                overlay.add_overlay(hover_image)
+                if hasattr(overlay, 'set_overlay_pass_through'):
+                    overlay.set_overlay_pass_through(hover_image, True)
+            btn.add(overlay)
+            self._install_github_desktop_button_css(btn)
+
+        repo_names = [repo['name'] for repo in self.get_repository_list()]
+        if repo_names:
+            tooltip = _(
+                "Start GitHub Desktop, or bring it to the front if"
+                " it's already running.\nDetected local"
+                " repositories: {}"
+            ).format(", ".join(repo_names))
+        else:
+            tooltip = _(
+                "Start GitHub Desktop, or bring it to the front if"
+                " it's already running."
+            )
+        btn.set_tooltip_text(tooltip)
+        btn.connect("clicked", self.cb_activate_github_desktop)
+        return btn
+
+    @staticmethod
+    def _install_github_desktop_button_css(widget: Gtk.Widget) -> None:
+        """
+        Install :data:`GITHUB_DESKTOP_BUTTON_CSS` -- the hover/press
+        icon cross-fade for the GitHub Desktop button (see
+        :meth:`_build_github_desktop_icon_button`) -- on ``widget``'s
+        screen.
+
+        :param widget: any realized-or-about-to-be-realized widget in
+            the same top-level window as the GitHub Desktop button,
+            used only to reach a Gdk.Screen to install the provider
+            on.
+        """
+        screen = widget.get_screen()
+        if screen is None:
+            return
+        provider = Gtk.CssProvider()
+        try:
+            provider.load_from_data(GITHUB_DESKTOP_BUTTON_CSS)
+        except GLib.Error:
+            return
+        Gtk.StyleContext.add_provider_for_screen(
+            screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
 
     def _fetch_make_script_source(self, digits, timeout=15):
         """
@@ -1125,9 +1808,17 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         window.set_default_size(800, 650)
         window.set_border_width(12)
 
-        # Main vertical box
+        # Two tabs: "Build" (day-to-day actions, changes every run) and
+        # "Options" (infrequently-changed settings -- Build Mode,
+        # Multilingual, Update Scripts, the version-coverage override,
+        # and the logs folder icon -- moved out of the main view to
+        # reduce clutter as the tool grew). Both are actually built
+        # into by the rest of this function; the Gtk.Notebook that
+        # holds them is only assembled at the very end, once both are
+        # complete.
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        window.add(vbox)
+        options_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        options_vbox.set_border_width(12)
 
         # No separate title/info labels here -- the window titlebar
         # (set via set_window() above) already shows the tool name, and
@@ -1162,45 +1853,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         select_mode_box.pack_start(
             Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 6)
 
-        mode_label = Gtk.Label()
-        mode_label.set_markup(_("<b>Build Mode:</b>"))
-        select_mode_box.pack_start(mode_label, False, False, 0)
-
-        self.radio_beta = Gtk.RadioButton.new_with_label(None, _("β  Beta"))
-        self.radio_beta.set_tooltip_text(
-            _("Beta build — includes everything for testers and translators:\n"
-              "• All core files (.py, .glade, .xml)\n"
-              "• README.md and all *.md files\n"
-              "• po/*.po translation source files\n"
-              "• po/template.pot translation template\n"
-              "• MANIFEST and MANIFEST.beta files\n"
-              "• All subdirectory contents (data, layouts, etc.)\n"
-              "• locale/*.mo compiled translations\n\n"
-              "Uses MANIFEST.beta if present, otherwise auto-includes all extras.")
-        )
-        self.radio_beta.connect("toggled", self.on_build_mode_changed)
-        select_mode_box.pack_start(self.radio_beta, False, False, 0)
-
-        self.radio_release = Gtk.RadioButton.new_with_label_from_widget(
-            self.radio_beta, _("Δ  Release")
-        )
-        self.radio_release.set_tooltip_text(
-            _("Release build — clean end-user package:\n"
-              "• All core files (.py, .glade, .xml)\n"
-              "• README.md only (no other .md files)\n"
-              "• locale/*.mo compiled translations only\n"
-              "• MANIFEST extras (if MANIFEST present)\n\n"
-              "⚠ Intentionally lossy — po/ source files,\n"
-              "CHANGELOG, dev notes are NOT included.\n"
-              "Uses MANIFEST if present.")
-        )
-        self.radio_release.connect("toggled", self.on_build_mode_changed)
-        select_mode_box.pack_start(self.radio_release, False, False, 0)
-
         # Type filter combo — at the end of the mode row, no label needed
-        select_mode_box.pack_start(
-            Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 6)
-
         self.type_filter_combo = Gtk.ComboBoxText()
         self.type_filter_combo.append_text(_("All Types"))
         all_types = sorted(set(
@@ -1299,23 +1952,6 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                             " default '{}'.").format(GRAMPS_VERSION)),
                 False, False, 0)
 
-        update_scripts_btn = Gtk.Button(label=_("Update Scripts…"))
-        update_icon = Gtk.Image.new_from_icon_name(
-            "folder-download-symbolic", Gtk.IconSize.BUTTON)
-        update_scripts_btn.set_image(update_icon)
-        update_scripts_btn.set_always_show_image(True)
-        update_scripts_btn.set_image_position(Gtk.PositionType.LEFT)
-        update_scripts_btn.set_tooltip_text(
-            _("Fetch the current Gramps 5.2+ packaging scripts from"
-              " gramps-project/addons-source on GitHub, overwriting this"
-              " tool's bundled copies (a timestamped backup is kept)."
-              " Also offers to add a script for any newly released"
-              " Gramps version not yet bundled here.\nThis is the only"
-              " way these files are ever changed — they are never"
-              " edited automatically."))
-        update_scripts_btn.connect("clicked", self.on_update_make_scripts)
-        version_row.pack_start(update_scripts_btn, False, False, 12)
-
         targets_box.pack_start(version_row, False, False, 0)
 
         vbox.pack_start(targets_frame, False, False, 0)
@@ -1324,8 +1960,33 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         # plus named configuration load/save ─────────────────────────────
         output_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 
-        output_icon_label = Gtk.Label()
-        output_icon_label.set_markup(_("<b>Output location:</b>"))
+        # Start/focus GitHub Desktop (see "GitHub Desktop
+        # integration" above) -- shown only when it's actually
+        # detected on this machine, and never opens a specific
+        # repository or tab; that's left entirely to GitHub Desktop.
+        # Placed to the left of the "Output location:" hotlink, with
+        # a dead space (see _new_dead_space()) so aiming for one
+        # doesn't accidentally hit the other.
+        if self.find_github_desktop_executable() is not None:
+            output_box.pack_start(
+                self._build_github_desktop_icon_button(), False, False, 0
+            )
+            output_box.pack_start(_new_dead_space(), False, False, 0)
+
+        # A Gtk.LinkButton is used here purely for its "looks and acts
+        # like a hotlink" styling -- there is no real URI to follow,
+        # so cb_open_output_folder() (connected below) always returns
+        # True to stop GTK's default handler from also trying to open
+        # one in a web browser.
+        output_icon_label = Gtk.LinkButton.new_with_label("", "")
+        output_link_label = output_icon_label.get_child()
+        if isinstance(output_link_label, Gtk.Label):
+            output_link_label.set_markup(_("<b>Output location:</b>"))
+        output_icon_label.set_relief(Gtk.ReliefStyle.NONE)
+        output_icon_label.set_tooltip_text(
+            _("Open the output location folder in your file browser."))
+        output_icon_label.connect("activate-link", self.cb_open_output_folder)
+        _tighten_hotlink_hit_area(output_icon_label)
         output_box.pack_start(output_icon_label, False, False, 0)
 
         # Default folder is this tool's own installation directory; the
@@ -1452,13 +2113,23 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scrolled.set_vexpand(True)
         scrolled.set_tooltip_text(
-            _("Select installed addons to package and publish."))
+            _("Select installed addons to package and publish.\n"
+              "Right-click for listing actions (filter by / open"
+              " addons-en.json)."))
         vbox.pack_start(scrolled, True, True, 0)
 
-        # Addon selection area
+        # Addon selection area, wrapped in an EventBox so right-clicks
+        # anywhere in the list (not just over specific child widgets)
+        # reach cb_addon_list_button_press -- the listing filter/open
+        # actions it offers apply to the whole list, not to any one
+        # addon row, so a list-wide context menu is the right scope.
         self.addon_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.addon_box.set_border_width(6)
-        scrolled.add(self.addon_box)
+        addon_list_event_box = Gtk.EventBox()
+        addon_list_event_box.add(self.addon_box)
+        addon_list_event_box.connect(
+            'button-press-event', self.cb_addon_list_button_press)
+        scrolled.add(addon_list_event_box)
 
         # Build the addon list
         self.rebuild_addon_list()
@@ -1508,6 +2179,150 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         bottom_box.pack_end(close_btn, False, False, 0)
 
         vbox.pack_start(bottom_box, False, False, 0)
+
+        # ══════════════════════════════════════════════════════════════
+        # "Options" tab — settings changed rarely, not every run: Build
+        # Mode, Multilingual, Update Scripts, the version-coverage
+        # override, and the logs folder icon (now permanently visible,
+        # since it has its own room here rather than crowding the main
+        # action row). All of these are still part of the same named
+        # configuration save/load as the Build tab's own settings (see
+        # _collect_config_state()/save_named_config()/
+        # load_named_config()).
+        # ══════════════════════════════════════════════════════════════
+        build_mode_frame = Gtk.Frame(label=_("Build Mode:"))
+        build_mode_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        build_mode_box.set_border_width(6)
+        build_mode_frame.add(build_mode_box)
+
+        self.radio_beta = Gtk.RadioButton.new_with_label(None, _("β  Beta"))
+        self.radio_beta.set_tooltip_text(
+            _("Beta build — includes everything for testers and translators:\n"
+              "• All core files (.py, .glade, .xml)\n"
+              "• README.md and all *.md files\n"
+              "• po/*.po translation source files\n"
+              "• po/template.pot translation template\n"
+              "• MANIFEST and MANIFEST.beta files\n"
+              "• All subdirectory contents (data, layouts, etc.)\n"
+              "• locale/*.mo compiled translations\n\n"
+              "Uses MANIFEST.beta if present, otherwise auto-includes all extras.")
+        )
+        self.radio_beta.connect("toggled", self.on_build_mode_changed)
+        build_mode_box.pack_start(self.radio_beta, False, False, 0)
+
+        self.radio_release = Gtk.RadioButton.new_with_label_from_widget(
+            self.radio_beta, _("Δ  Release")
+        )
+        self.radio_release.set_tooltip_text(
+            _("Release build — clean end-user package:\n"
+              "• All core files (.py, .glade, .xml)\n"
+              "• README.md only (no other .md files)\n"
+              "• locale/*.mo compiled translations only\n"
+              "• MANIFEST extras (if MANIFEST present)\n\n"
+              "⚠ Intentionally lossy — po/ source files,\n"
+              "CHANGELOG, dev notes are NOT included.\n"
+              "Uses MANIFEST if present.")
+        )
+        self.radio_release.connect("toggled", self.on_build_mode_changed)
+        build_mode_box.pack_start(self.radio_release, False, False, 0)
+
+        options_vbox.pack_start(build_mode_frame, False, False, 0)
+
+        # Listings frame: Multilingual + the version-coverage override
+        listings_frame = Gtk.Frame(label=_("Listings:"))
+        listings_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        listings_box.set_border_width(6)
+        listings_frame.add(listings_box)
+
+        # Deselected by default: non-English listing JSON generation
+        # is otherwise pruned back to English-only after the fact (see
+        # make_addon.py's ENABLE_NON_ENGLISH_LISTINGS / this checkbox's
+        # multilingual= override) while that machinery gets more field
+        # testing. Checking this re-enables the other languages an
+        # addon already has po/<lang>-local.po files for.
+        self.multilingual_check = Gtk.CheckButton(label=_("Multilingual"))
+        self.multilingual_check.set_active(False)
+        self.multilingual_check.set_tooltip_text(
+            _("Off (default): listings are English-only, regardless of"
+              " how many languages an addon has translations for.\n"
+              "On: also generate/keep addons-<lang>.json for every"
+              " language the addon has a po/<lang>-local.po for."))
+        listings_box.pack_start(self.multilingual_check, False, False, 0)
+
+        # Deselected by default: build_for_versions() normally refuses
+        # to duplicate a built package into a version its own .gpr.py
+        # doesn't support (see check_gpr_version_coverage() and the
+        # main tab's per-version red/greyed-out hints when exactly one
+        # addon is selected). This is the explicit override for a
+        # maintainer who knows better than that check -- it never
+        # causes anything to be rewritten; it only widens which
+        # versions get a duplicate at all.
+        self.force_uncovered_check = Gtk.CheckButton(
+            label=_("Duplicate into unverified/incompatible versions anyway"))
+        self.force_uncovered_check.set_active(False)
+        self.force_uncovered_check.set_tooltip_text(
+            _("Off (default): a multi-version build skips duplicating the"
+              " package into any Gramps version this addon's own .gpr.py"
+              " doesn't demonstrably support (an explicit version-range"
+              " gate that excludes it, or a hardcoded"
+              " gramps_target_version naming a different one).\n"
+              "On: duplicates into every checked version regardless."
+              " Nothing about the .gpr.py itself is ever changed either"
+              " way -- this only controls whether a mismatched version"
+              " still gets a copy."))
+        listings_box.pack_start(self.force_uncovered_check, False, False, 0)
+
+        options_vbox.pack_start(listings_frame, False, False, 0)
+
+        # Maintenance frame: Update Scripts
+        maintenance_frame = Gtk.Frame(label=_("Maintenance:"))
+        maintenance_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        maintenance_box.set_border_width(6)
+        maintenance_frame.add(maintenance_box)
+
+        update_scripts_btn = Gtk.Button(label=_("Update Scripts…"))
+        update_icon = Gtk.Image.new_from_icon_name(
+            "folder-download-symbolic", Gtk.IconSize.BUTTON)
+        update_scripts_btn.set_image(update_icon)
+        update_scripts_btn.set_always_show_image(True)
+        update_scripts_btn.set_image_position(Gtk.PositionType.LEFT)
+        update_scripts_btn.set_tooltip_text(
+            _("Fetch the current Gramps 5.2+ packaging scripts from"
+              " gramps-project/addons-source on GitHub, overwriting this"
+              " tool's bundled copies (a timestamped backup is kept)."
+              " Also offers to add a script for any newly released"
+              " Gramps version not yet bundled here.\nThis is the only"
+              " way these files are ever changed — they are never"
+              " edited automatically."))
+        update_scripts_btn.connect("clicked", self.on_update_make_scripts)
+        maintenance_box.pack_start(update_scripts_btn, False, False, 0)
+
+        # Logs-folder icon -- opens this plugin's logs/ directory (see
+        # make_addon.py's _log_session_command()) in the OS file
+        # manager. Permanently visible here (unlike its previous home
+        # squeezed next to Pack and Ship on the main tab, where it
+        # stayed hidden until this session's first log entry to avoid
+        # clutter): the Options tab has the room, so there's no longer
+        # a clutter cost to showing it immediately.
+        logs_icon = Gtk.Image.new_from_icon_name(
+            "folder-documents", Gtk.IconSize.SMALL_TOOLBAR)
+        self.logs_btn = Gtk.Button()
+        self.logs_btn.set_image(logs_icon)
+        self.logs_btn.set_always_show_image(True)
+        self.logs_btn.set_label(_("Session Logs"))
+        self.logs_btn.set_tooltip_text(_("Open the session logs folder."))
+        self.logs_btn.connect("clicked", self.on_open_logs_folder_clicked)
+        maintenance_box.pack_start(self.logs_btn, False, False, 0)
+
+        options_vbox.pack_start(maintenance_frame, False, False, 0)
+
+        notebook = Gtk.Notebook()
+        notebook.append_page(vbox, Gtk.Label(_("Build")))
+        notebook.append_page(options_vbox, Gtk.Label(_("Options")))
+        window.add(notebook)
 
         window.show_all()
 
@@ -1834,7 +2649,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             else:
                 icon.set_from_icon_name("list-add", Gtk.IconSize.MENU)
             label.set_markup(
-                '<small><span foreground="darkred"><b>{}</b></span>'
+                '<small>\u00a0<span foreground="darkred"><b>{}</b></span>'
                 '</small>'.format(bumped))
             button.set_tooltip_text(
                 _("Will bump {} to {} on next build. Click to"
@@ -1843,7 +2658,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             icon.set_from_icon_name(
                 "preferences-system-sharing-symbolic", Gtk.IconSize.MENU)
             label.set_markup(
-                '<small>{}</small>'.format(current_version or '?'))
+                '<small>\u00a0{}</small>'.format(current_version or '?'))
             button.set_tooltip_text(
                 _("Click to flag {} for a patch version bump ({} →"
                   " {}) on its next build.").format(
@@ -1891,6 +2706,12 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         A directory group is shown if any of its plugins match.  Within a
         group, plugins that do NOT match the current filter are hidden while
         matching ones remain visible.
+
+        When self._listing_filter_names is set (via the addon list's
+        right-click "Filter list to addons in this listing" menu item),
+        it gates at the whole-addon-directory level instead: only
+        directories named in that set are shown at all, on top of
+        (not instead of) the text/type filters above.
         """
         # Flush current visible checkbox states
         for pid, checkbox in self.checkboxes.items():
@@ -1915,6 +2736,9 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         filtered_plugin_count = 0
 
         for addon_name in sorted(self.addon_info.keys()):
+            if (self._listing_filter_names is not None
+                    and addon_name not in self._listing_filter_names):
+                continue
             info    = self.addon_info[addon_name]
             plugins = info.get('plugins', [])
 
@@ -2006,17 +2830,41 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                         continue
                     self.plugin_to_dir[pid] = addon_name
 
-                    cb_label = '  {}'.format(
-                        getattr(pdata, 'name', pid) or pid)
+                    cb_label = getattr(pdata, 'name', pid) or pid
 
                     plugin_id_label = getattr(pdata, 'id', '')
                     row = Gtk.Box(
                         orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-                    cb = Gtk.CheckButton(label=cb_label)
+                    cb = Gtk.CheckButton()
                     cb.set_margin_start(20)
                     if pid in self.all_selections:
                         cb.set_active(self.all_selections[pid])
                     cb.connect('toggled', self.on_selection_changed, pid)
+
+                    # Hotlink on the plugin name itself -- opens this
+                    # addon's own folder (not the checkbox, which is
+                    # reserved for selecting it for packaging). The
+                    # gap between the checkbox and this hotlink is
+                    # made genuinely un-clickable (see
+                    # _new_dead_space() and
+                    # _tighten_hotlink_hit_area()) so aiming for the
+                    # checkbox doesn't accidentally trigger the link.
+                    name_link = Gtk.LinkButton.new_with_label("", cb_label)
+                    name_link.set_relief(Gtk.ReliefStyle.NONE)
+                    name_link.set_halign(Gtk.Align.START)
+                    name_link.set_tooltip_text(
+                        _("Open the folder for {} in your file"
+                          " browser.").format(addon_name))
+                    name_link.connect(
+                        "activate-link", self.cb_open_addon_folder,
+                        info['path'])
+                    _tighten_hotlink_hit_area(name_link)
+
+                    name_row = Gtk.Box(
+                        orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+                    name_row.pack_start(cb,               False, False, 0)
+                    name_row.pack_start(_new_dead_space(), False, False, 0)
+                    name_row.pack_start(name_link,        False, False, 0)
 
                     id_lbl = Gtk.Label()
                     id_lbl.set_markup(
@@ -2025,8 +2873,8 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
                     cb_vbox = Gtk.Box(
                         orientation=Gtk.Orientation.VERTICAL, spacing=0)
-                    cb_vbox.pack_start(cb,     False, False, 0)
-                    cb_vbox.pack_start(id_lbl, False, False, 0)
+                    cb_vbox.pack_start(name_row, False, False, 0)
+                    cb_vbox.pack_start(id_lbl,   False, False, 0)
 
                     row.pack_start(cb_vbox, True, True, 0)
                     self.checkboxes[pid] = cb
@@ -2054,11 +2902,35 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 cb_vbox  = Gtk.Box(
                     orientation=Gtk.Orientation.VERTICAL, spacing=1)
 
-                cb = Gtk.CheckButton(label=cb_label)
+                cb = Gtk.CheckButton()
                 if pid in self.all_selections:
                     cb.set_active(self.all_selections[pid])
                 cb.connect('toggled', self.on_selection_changed, pid)
-                cb_vbox.pack_start(cb, False, False, 0)
+
+                # Hotlink on the plugin name itself -- opens this
+                # addon's own folder (not the checkbox, which is
+                # reserved for selecting it for packaging). The gap
+                # between the checkbox and this hotlink is made
+                # genuinely un-clickable (see _new_dead_space() and
+                # _tighten_hotlink_hit_area()) so aiming for the
+                # checkbox doesn't accidentally trigger the link.
+                name_link = Gtk.LinkButton.new_with_label("", cb_label)
+                name_link.set_relief(Gtk.ReliefStyle.NONE)
+                name_link.set_halign(Gtk.Align.START)
+                name_link.set_tooltip_text(
+                    _("Open the folder for {} in your file"
+                      " browser.").format(addon_name))
+                name_link.connect(
+                    "activate-link", self.cb_open_addon_folder,
+                    info['path'])
+                _tighten_hotlink_hit_area(name_link)
+
+                name_row = Gtk.Box(
+                    orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+                name_row.pack_start(cb,               False, False, 0)
+                name_row.pack_start(_new_dead_space(), False, False, 0)
+                name_row.pack_start(name_link,        False, False, 0)
+                cb_vbox.pack_start(name_row, False, False, 0)
 
                 detail = Gtk.Label()
                 detail.set_markup(
@@ -2080,6 +2952,145 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
         self.update_selection_count(filter_text, filtered_plugin_count)
         self.addon_box.show_all()
+        self._update_version_compatibility_hints()
+
+    def cb_addon_list_button_press(self, widget, event):
+        """
+        Right-click handler for the addon list: shows a context menu
+        offering two actions on the currently selected Gramps
+        Version's addons-en.json listing -- filtering the addon list
+        down to just what's already in that listing, and opening the
+        file directly for editing.
+
+        Both actions require exactly one "Gramps Versions" checkbox
+        to be checked (see :meth:`_get_single_selected_version`) and
+        that version's addons-en.json to already exist -- with none
+        or several versions checked, or a version that hasn't been
+        listed yet, there's no single unambiguous file for either
+        action to act on, so both menu items are shown but disabled.
+
+        :param widget: the widget the right-click landed on (the
+            addon list's EventBox); used to anchor the menu via
+            attach_to_widget() so GDK can resolve its toplevel via
+            this widget's ancestry -- without that, popping up a
+            freshly created Gtk.Menu can log a GDK-WARNING ("Tried to
+            map a popup with a non-top most parent"), since the menu
+            otherwise has no widget to walk up from to find its
+            transient parent.
+        :param event: the Gdk button-press event.
+        :returns: True (event handled) for a right-click, False
+                  otherwise so other button presses behave normally.
+        """
+        if event.button != 3:
+            return False
+
+        version = self._get_single_selected_version()
+        listing_path = self._listing_json_path(version) if version else None
+        available = bool(listing_path and os.path.isfile(listing_path))
+        label = self._version_label(version[len('gramps'):]) if version \
+            else _("selected version")
+
+        menu = Gtk.Menu()
+        menu.attach_to_widget(widget, None)
+
+        if self._listing_filter_names is not None:
+            filter_item = Gtk.MenuItem(
+                label=_("Show all addons (clear listing filter)"))
+            filter_item.set_sensitive(True)
+        else:
+            filter_item = Gtk.MenuItem(
+                label=_("Filter list to addons in {}'s listing").format(
+                    label))
+            filter_item.set_sensitive(available)
+        filter_item.connect(
+            'activate', self.cb_toggle_listing_filter, listing_path)
+        menu.append(filter_item)
+
+        open_item = Gtk.MenuItem(
+            label=_("Open {}'s addons-en.json for editing").format(label))
+        open_item.set_sensitive(available)
+        open_item.connect('activate', self.cb_open_listing_json, listing_path)
+        menu.append(open_item)
+
+        menu.show_all()
+        menu.popup_at_pointer(event)
+        return True
+
+    @staticmethod
+    def _load_listing_addon_names(path):
+        """
+        Return the set of addon (directory) names present in an
+        addons-en.json listing file, derived from each entry's 'z'
+        field by stripping the '.addon.tgz' suffix -- the same name
+        this tool uses as the addon's directory/checkbox key
+        elsewhere (see e.g. :meth:`run_make_command`, which builds
+        that same '<addon_name>.addon.tgz' filename).
+
+        :param path: path to an addons-en.json listing file.
+        :returns: set of addon names, or an empty set if the file
+                  can't be read as the expected list of dict entries.
+        """
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                entries = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return set()
+        if not isinstance(entries, list):
+            return set()
+        names = set()
+        for entry in entries:
+            z = entry.get('z') if isinstance(entry, dict) else None
+            if isinstance(z, str) and z.endswith('.addon.tgz'):
+                names.add(z[:-len('.addon.tgz')])
+        return names
+
+    def cb_toggle_listing_filter(self, _menuitem, listing_path):
+        """
+        Handle the addon list's "Filter list to addons in this
+        listing" / "Show all addons" context menu item: toggles
+        self._listing_filter_names between the addon names found in
+        ``listing_path`` and None (no filter), then rebuilds the list.
+
+        :param listing_path: path to the addons-en.json listing file
+            to filter by, as resolved when the menu was opened.
+        """
+        if self._listing_filter_names is not None:
+            self._listing_filter_names = None
+        elif listing_path and os.path.isfile(listing_path):
+            self._listing_filter_names = self._load_listing_addon_names(
+                listing_path)
+        self.rebuild_addon_list()
+
+    def cb_open_listing_json(self, _menuitem, listing_path):
+        """
+        Handle the addon list's "Open addons-en.json for editing"
+        context menu item: opens ``listing_path`` in the OS default
+        text editor, the same cross-platform approach used to open
+        MANIFEST files (see :meth:`on_edit_manifest`).
+
+        :param listing_path: path to the addons-en.json listing file
+            to open, as resolved when the menu was opened.
+        """
+        if not listing_path or not os.path.isfile(listing_path):
+            return
+        try:
+            if sys.platform.startswith('win'):
+                os.startfile(listing_path)
+            elif sys.platform.startswith('darwin'):
+                subprocess.Popen(['open', listing_path])
+            else:
+                for editor_cmd in ['xdg-open', 'gedit', 'kate', 'mousepad',
+                                    'xed', 'geany', 'nano']:
+                    try:
+                        subprocess.Popen([editor_cmd, listing_path])
+                        break
+                    except FileNotFoundError:
+                        continue
+        except Exception as e:  # pylint: disable=broad-except
+            ErrorDialog(
+                _("Could Not Open File"),
+                _("Could not open {}:\n{}").format(listing_path, e),
+                parent=self.window)
 
     def on_selection_changed(self, widget, pid=None):
         """
@@ -2119,6 +3130,62 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         if hasattr(self, 'author_filter_entry'):
             filter_text = self.author_filter_entry.get_text().strip()
         self.update_selection_count(filter_text, len(self.checkboxes))
+        self._update_version_compatibility_hints()
+
+    def _update_version_compatibility_hints(self):
+        """
+        When exactly one addon (per :meth:`_get_selected_addon_dirs`,
+        the same single source of truth every other selection-driven
+        action uses -- addon directories, not individual plugin ids,
+        so gang-select's multi-plugin addons still count as one) is
+        currently selected, grey out and redden the Gramps-version
+        checkboxes its own .gpr.py cannot support, per
+        make_addon.check_gpr_version_coverage() (a version-range gate
+        that excludes it, or a hardcoded literal
+        gramps_target_version naming a different one). This is a
+        lightweight, opt-in "proofread before you build" hint -- it
+        never rewrites the .gpr.py itself, and it does not change
+        what build_for_versions() actually refuses at build time
+        (that check runs independently, every time).
+
+        Reverts every version checkbox to its normal, fully-enabled
+        state as soon as zero or more than one addon is selected:
+        "the incompatible versions" isn't a single, well-defined set
+        once more than one addon (potentially with different
+        constraints) is in play.
+        """
+        if not self.version_checkboxes:
+            return
+
+        selected_dirs = self._get_selected_addon_dirs()
+
+        coverage = {}
+        if len(selected_dirs) == 1:
+            addon_name = next(iter(selected_dirs))
+            addon_path = self.addon_info.get(addon_name, {}).get('path')
+            make_addon = _get_make_addon_module()
+            if make_addon is not None and addon_path:
+                coverage = make_addon.check_gpr_version_coverage(
+                    addon_path, list(self.version_checkboxes.keys()))
+
+        version_labels = {
+            entry['code']: entry['label'] for entry in self.available_versions}
+
+        for code, checkbox in self.version_checkboxes.items():
+            incompatible = coverage.get(code) is False
+            checkbox.set_sensitive(not incompatible)
+            if incompatible:
+                # Also uncheck -- a disabled-but-still-checked box would
+                # otherwise silently stay selected for building.
+                checkbox.set_active(False)
+            label_widget = checkbox.get_child()
+            if label_widget is not None and hasattr(label_widget, 'set_markup'):
+                plain_label = version_labels.get(code, code)
+                if incompatible:
+                    label_widget.set_markup(
+                        '<span foreground="red">{}</span>'.format(plain_label))
+                else:
+                    label_widget.set_text(plain_label)
 
     def on_build_mode_changed(self, widget):
         """
@@ -2165,6 +3232,39 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             filter_text = self.author_filter_entry.get_text().strip()
         self.update_selection_count(filter_text, len(self.checkboxes))
 
+    def _get_selected_addon_dirs(self):
+        """
+        Return the set of addon directory names currently selected --
+        the single source of truth for "what's selected".
+
+        Both the bottom-bar "Selected bundles: X/Y" readout (see
+        :meth:`update_selection_count`) and every action that operates
+        on a selection -- Build Selected, Amend Listings, Pack and
+        Ship, Clean (all via :meth:`get_selected_addons`) -- are
+        derived from this exact same set. That guarantees, by
+        construction, that those actions can never act on more (or
+        less) than what the status bar is showing as selected at that
+        moment: there's only one place selection state is computed
+        from, not two computations that could drift apart.
+
+        Flushes every currently rendered checkbox's live state into
+        self.all_selections first (a plugin hidden by the current
+        filter/search keeps whatever state it last had -- see the
+        self.all_selections comment in __init__ -- but nothing
+        visible right now can be stale).
+
+        :returns: set of addon directory names.
+        """
+        for pid, checkbox in self.checkboxes.items():
+            self.all_selections[pid] = checkbox.get_active()
+
+        return {
+            self.plugin_to_dir[pid]
+            for pid, checked in self.all_selections.items()
+            if checked and pid in self.plugin_to_dir
+            and self.plugin_to_dir[pid] in self.addon_info
+        }
+
     def update_selection_count(self, filter_text, visible_plugin_count):
         """
         When nothing is selected, show the same "Found N bundles (M
@@ -2179,13 +3279,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         if not hasattr(self, 'bottom_status_label'):
             return
 
-        # Count unique selected bundles (directories)
-        selected_dirs = set(
-            self.plugin_to_dir[pid]
-            for pid, checked in self.all_selections.items()
-            if checked and pid in self.plugin_to_dir
-        )
-        selected_count = len(selected_dirs)
+        selected_count = len(self._get_selected_addon_dirs())
         total_bundles  = getattr(self, '_total_bundles',  len(self.addon_info))
         total_plugins  = getattr(self, '_total_plugins',
                                   sum(len(i['plugins'])
@@ -2222,29 +3316,21 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
     def get_selected_addons(self):
         """
-        Return a deduplicated list of (addon_dir_name, addon_path) tuples
-        for every addon directory that has at least one checked plugin_id.
+        Return a sorted list of (addon_dir_name, addon_path) tuples
+        for every addon directory currently selected.
 
-        Because multiple plugin_ids map to the same directory (gang-select
-        keeps them in sync), we collect unique directory names only.
-        The returned list is sorted by directory name for reproducible output.
+        Built directly from :meth:`_get_selected_addon_dirs` -- the
+        same set the bottom-bar "Selected bundles: X/Y" status readout
+        counts -- so Build Selected, Amend Listings, Pack and Ship,
+        and Clean all act on exactly what that readout shows as
+        selected, and nothing else (in particular, never anything
+        merely saved as True in some *other* named configuration in
+        APS.ini -- named configurations only affect selection when
+        actually loaded via the Configuration combo).
         """
-        # Flush current visible checkbox states
-        for pid, checkbox in self.checkboxes.items():
-            self.all_selections[pid] = checkbox.get_active()
-
-        seen_dirs = set()
-        selected = []
-        for pid, checked in self.all_selections.items():
-            if not checked:
-                continue
-            addon_dir = self.plugin_to_dir.get(pid)
-            if addon_dir and addon_dir not in seen_dirs:
-                seen_dirs.add(addon_dir)
-                if addon_dir in self.addon_info:
-                    selected.append(
-                        (addon_dir, self.addon_info[addon_dir]['path']))
-        return sorted(selected, key=lambda t: t[0])
+        selected_dirs = self._get_selected_addon_dirs()
+        return sorted(
+            (name, self.addon_info[name]['path']) for name in selected_dirs)
 
     def on_select_all(self, widget):
         """Select all visible plugin checkboxes (gang-select fires automatically)."""
@@ -2268,11 +3354,23 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             self._gang_in_progress = False
         self.on_selection_changed(None)
 
-    def run_make_command(self, addon_path, command, build_mode='beta',
-                          version=None):
+    def run_make_command(self, addon_path: str, command: str,
+                          build_mode: str = 'beta',
+                          version: str | None = None
+                          ) -> tuple[bool, str, str]:
         """
-        Run make_addon.py command using the bundled script.
-        Pass plugin type number and build mode to the packaging engine.
+        Run a make_addon.py packaging command in-process.
+
+        make_addon.py (bundled alongside this tool) is imported once
+        as a regular Python module via :func:`_get_make_addon_module`
+        and its ``run_command()`` is called directly -- no subprocess
+        or external Python interpreter is involved. This works
+        identically on Linux, macOS, and Windows, whether Gramps is
+        running from source or as a frozen (cx_Freeze) application,
+        because it never needs to locate a second interpreter to shell
+        out to (see the commit history for the "Gramps is already
+        running!" bug this replaced, where ``sys.executable`` turned
+        out to be the Gramps application itself under cx_Freeze).
 
         version:    Gramps version code (e.g. 'gramps52') selecting which
                     output subdirectory to build/list into. Defaults to
@@ -2282,66 +3380,81 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         For 'listing', make_addon.py delegates to the matching bundled
         make<NN>.py when present, which generates every language the
         addon has a po/*-local.po for -- no separate language selection
-        is needed here.
+        is needed here. That delegation is the one remaining place
+        this tool still runs code as a subprocess: make<NN>.py is
+        fetched as-is from gramps-project/addons-source (see "Update
+        make.py Scripts"), so it is treated as untrusted, unmodified
+        third-party code and kept process-isolated rather than
+        imported.
+
+        Whether the resulting listing(s) actually keep those other
+        languages, or get pruned back to English-only, follows this
+        tool's own "Multilingual" checkbox (deselected by default) --
+        read fresh on every call, not just once at startup, so
+        toggling it takes effect on the very next action.
+
+        Every call also appends the CLI-equivalent command for
+        whatever ran to this plugin's own logs/<self.session_id>.log
+        -- a plain-text session transcript, always in the same fixed,
+        easy-to-find location regardless of where output is
+        redirected, that a developer can read (or directly copy
+        commands from) to learn how to drive make.py themselves from
+        a terminal, without the GUI. See make_addon.py's
+        run_command() for the log format.
         """
         addon_name = os.path.basename(addon_path)
         version = version or GRAMPS_VERSION
-
-        # Scripts (make_addon.py itself) always live alongside this
-        # tool; output can be redirected elsewhere via "Output Location".
-        scripts_dir = os.path.dirname(os.path.abspath(__file__))
-        make_script = os.path.join(scripts_dir, 'make_addon.py')
 
         # Output directory - create <version> subdirectory (e.g. gramps52)
         # under the chosen output parent folder (defaults to scripts_dir).
         output_dir = os.path.join(self.get_output_parent_dir(), version)
         os.makedirs(output_dir, exist_ok=True)
 
-        if not os.path.exists(make_script):
+        make_addon = _get_make_addon_module()
+        if make_addon is None:
             return False, "", _("make_addon.py not found in AddonPackShip directory")
 
         try:
-            env = os.environ.copy()
-
-            # Pass plugin type number for listing command
-            if command == 'listing' and addon_name in self.addon_info:
-                ptype_nums = self.addon_info[addon_name].get('ptype_nums', set())
-                if ptype_nums:
-                    env['PLUGIN_TYPE_NUM'] = str(min(ptype_nums))
-
-            # Pass build mode to packaging engine
-            env['BUILD_MODE'] = build_mode
-
-            # Pass the live sys.path so the subprocess can import Gramps.
-            # Required for listing (exec+make_environment gpr parsing) and
-            # compile (xgettext fallback). Avoids any GRAMPSPATH guessing.
-            env['GRAMPS_PYTHONPATH'] = os.pathsep.join(
-                p for p in sys.path if p  # skip empty-string entries
-            )
-
-            # Use sys.executable to run with the same Python that's running Gramps
-            # This works on Windows with bundled Python, Linux, and macOS
-            cmd = [sys.executable, make_script, command, addon_path, output_dir]
-
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                env=env
-            )
+            extra_kwargs = {}
+            if command == 'listing':
+                # Only 'listing' actually uses this -- see
+                # make_addon.run_command()'s docstring. Keeping it out
+                # of every other call's kwargs means a make_addon.py
+                # that predates this parameter (a version mismatch
+                # between this file and that one) only breaks listing,
+                # not build/compile/clean too.
+                extra_kwargs['multilingual'] = (
+                    self.multilingual_check.get_active()
+                    if hasattr(self, 'multilingual_check') else False)
+            if 'wait_callback' in inspect.signature(
+                    make_addon.run_command).parameters:
+                # Keeps the window responsive (and the progress window
+                # drawn) while make_addon.py waits on a child process
+                # -- see _pump_gtk_events(). Checked rather than always
+                # passed, so an older make_addon.py still works.
+                extra_kwargs['wait_callback'] = self._pump_gtk_events
+            success, stdout, stderr = make_addon.run_command(
+                command, addon_path, output_dir, build_mode=build_mode,
+                session_id=self.session_id, **extra_kwargs)
 
             # Add output location info to stdout
-            if result.returncode == 0:
+            if success:
+                if command == 'listing':
+                    self._normalize_listing_jsons(output_dir)
                 location_info = self.get_output_location_info(command, output_dir, addon_name)
-                output = result.stdout + "\n" + location_info
-            else:
-                output = result.stdout
+                stdout = stdout + "\n" + location_info
 
-            return result.returncode == 0, output, result.stderr
-        except Exception as e:
+            return success, stdout, stderr
+        except Exception as e:  # pylint: disable=broad-except
+            # Belt-and-braces: run_command() already catches and
+            # reports its own internal errors, but this keeps a bad
+            # make_addon.py (e.g. after a hand edit) from ever being
+            # able to take the whole Gramps process down with it.
+            LOG.exception("run_make_command(%s) failed", command)
             return False, "", str(e)
 
-    def build_for_versions(self, addon_path, build_mode, versions):
+    def build_for_versions(self, addon_path, build_mode, versions,
+                            force_uncovered=None):
         """
         Build the addon package once for the first of `versions`, then
         duplicate the resulting .addon.tgz into the download/ directory
@@ -2356,11 +3469,28 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
         The archive's contents (.py, .gpr.py, locale/*.mo, etc.) do not
         depend on which Gramps version is being targeted, so duplicating
-        the file avoids rebuilding an identical archive once per version.
+        the file avoids rebuilding an identical archive once per version
+        -- but only for versions the addon's own .gpr.py actually
+        covers. Before duplicating, each of `other_versions` is checked
+        via make_addon.check_gpr_version_coverage(): a version whose
+        .gpr.py gate would not have registered under it (e.g. a gate
+        written as ``if (6, 0, 0) <= VERSION_TUPLE:`` while building
+        for gramps52) is skipped rather than shipped as if it were
+        compatible. Leaving `force_uncovered` at its default (``None``)
+        reads the "Duplicate into unverified/incompatible versions
+        anyway" checkbox on the Options tab, read fresh on every call;
+        pass ``True``/``False`` explicitly to override that checkbox
+        for this call only.
 
         :returns: (success, stdout, stderr) for the primary build; any
-            duplication notes are appended to stdout.
+            duplication notes (including skipped/forced versions) are
+            appended to stdout.
         """
+        if force_uncovered is None:
+            force_uncovered = (self.force_uncovered_check.get_active()
+                                if hasattr(self, 'force_uncovered_check')
+                                else False)
+
         addon_name = os.path.basename(addon_path)
         primary, *other_versions = versions
 
@@ -2389,13 +3519,55 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         if not success or not other_versions:
             return success, stdout, stderr
 
+        coverage = {}
+        make_addon = _get_make_addon_module()
+        if make_addon is not None:
+            coverage = make_addon.check_gpr_version_coverage(
+                addon_path, other_versions)
+
+        duplicate_notes = []
+        versions_to_duplicate = []
+        for version in other_versions:
+            covered = coverage.get(version)
+            if covered is False and not force_uncovered:
+                duplicate_notes.append(
+                    _("  Skipped {}: this addon's .gpr.py does not"
+                      " register under that version (its own"
+                      " version-range gate excludes it) — not"
+                      " duplicating a possibly-incompatible package."
+                      " Re-run with the override to duplicate anyway"
+                      " if you know it's actually compatible.").format(
+                        version))
+                continue
+            if covered is False and force_uncovered:
+                duplicate_notes.append(
+                    _("  Warning: duplicating for {} anyway (forced) —"
+                      " this addon's .gpr.py does not register under"
+                      " that version.").format(version))
+            elif covered is None:
+                # Most .gpr.py files have no explicit version-range
+                # gate at all, so this is the common case, not an
+                # error state -- but it genuinely means compatibility
+                # with `version` was never verified, only assumed (see
+                # check_gpr_version_coverage()'s docstring). Note it
+                # rather than duplicating as silently as a confirmed
+                # `True`, since "no gate found" and "confirmed
+                # compatible" are different claims that were
+                # previously conflated.
+                duplicate_notes.append(
+                    _("  Note: {}'s .gpr.py has no version-range gate,"
+                      " so compatibility with {} was not verified —"
+                      " only assumed. Confirm the addon's actual code"
+                      " supports that Gramps version before"
+                      " publishing.").format(addon_name, version))
+            versions_to_duplicate.append(version)
+
         builder_dir = self.get_output_parent_dir()
         src_tgz = os.path.join(
             builder_dir, primary, 'download', f"{addon_name}.addon.tgz")
 
-        duplicate_notes = []
         if os.path.exists(src_tgz):
-            for version in other_versions:
+            for version in versions_to_duplicate:
                 dst_dir = os.path.join(builder_dir, version, 'download')
                 os.makedirs(dst_dir, exist_ok=True)
                 dst_tgz = os.path.join(dst_dir, f"{addon_name}.addon.tgz")
@@ -2407,15 +3579,271 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                     duplicate_notes.append(
                         _("  Could not duplicate package for {}: {}").format(
                             version, exc))
-        else:
+        elif versions_to_duplicate:
             duplicate_notes.append(
                 _("  Warning: built package not found — nothing to"
-                  " duplicate for {}").format(", ".join(other_versions)))
+                  " duplicate for {}").format(
+                    ", ".join(versions_to_duplicate)))
 
         if duplicate_notes:
             stdout = stdout + "\n" + "\n".join(duplicate_notes)
 
         return success, stdout, stderr
+
+
+    def _dedupe_listing_json(self, path):
+        """
+        Remove exact-duplicate entries from a single addons-<lang>.json
+        listing file, keyed by ('i' plugin id, 'z' package filename,
+        'g' target Gramps version) -- the combination that uniquely
+        identifies one listed plugin's entry. Multiple *different*
+        plugins from the same package (e.g. an importer and exporter
+        both shipped in one .addon.tgz, each with their own 'i') are
+        left alone; only literal repeats of the same plugin's entry
+        are collapsed.
+
+        Where a key repeats, the entry with the highest 'v' (version)
+        is kept, in the position of the first occurrence. An earlier
+        version kept the *last* occurrence, on the assumption that the
+        later one was written later -- but make52.py inserts the new
+        entry *before* the stale one it fails to remove, so that kept
+        the stale version (e.g. Photo Tagging 1.1.3 over 1.2.4). On a
+        version tie, the last occurrence is still kept.
+
+        Leaves the file untouched -- rather than raising -- if it
+        can't be read as JSON, isn't a list of dict entries, or has
+        an entry missing 'i', 'z', or 'g' to key on.
+
+        :param path: path to the addons-<lang>.json file to dedupe.
+        :returns: True if the file was rewritten, False if it was
+                  left as-is.
+        """
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                entries = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return False
+
+        if not isinstance(entries, list) or not all(
+                isinstance(e, dict) and 'i' in e and 'z' in e and 'g' in e
+                for e in entries):
+            return False
+
+        def version_key(entry):
+            parts = []
+            for part in str(entry.get('v', '')).split('.'):
+                try:
+                    parts.append((1, int(part)))
+                except ValueError:
+                    parts.append((0, part))
+            return parts
+
+        by_key = {}
+        for entry in entries:
+            key = (entry['i'], entry['z'], entry['g'])
+            kept = by_key.get(key)
+            if kept is None or version_key(entry) >= version_key(kept):
+                by_key[key] = entry
+        deduped = list(by_key.values())
+        if len(deduped) == len(entries):
+            return False
+
+        try:
+            with open(path, 'w', encoding='utf-8') as f:
+                json.dump(deduped, f, indent=2, ensure_ascii=False)
+                f.write('\n')
+        except OSError:
+            return False
+        return True
+
+    def _apply_listing_language_fallback(self, listings_dir):
+        """
+        Ensure every non-English addons-<lang>.json listing file under
+        ``listings_dir`` that already has *some* genuinely localized
+        content is a *complete* catalog -- one entry per plugin --
+        rather than only the subset that happens to have a
+        translation for that language.
+
+        addons-en.json is the default/fallback catalog Gramps' Addon
+        Manager already falls back to when a requested locale's file
+        doesn't exist, not a superset the other languages overlay:
+        each language file should carry its own localized entry where
+        a translation exists, and fall back to the English entry for
+        every plugin that has no translation into that language yet.
+        Any plugin ('i') present in addons-en.json but missing from a
+        given addons-<lang>.json has its English entry copied in
+        verbatim.
+
+        An addons-<lang>.json with *no* entries at all is left alone
+        rather than turned into a full English-fallback clone: if a
+        language has nothing genuinely translated yet, there's no
+        reason to maintain a second catalog that's 100% English
+        copies under a different filename -- the Addon Manager's own
+        fallback to addons-en.json already covers that reader. (This
+        assumes an existing lang file's entries, as written by
+        make_addon.py, are genuinely localized rather than pre-filled
+        fallback copies -- true of every sample listing seen so far,
+        and only ever made false by a previous run of this same
+        fallback step, whose fallback-filled entries are exact copies
+        of their English counterparts and so don't change this
+        emptiness check either way.)
+
+        Note this can't manufacture an English entry that doesn't
+        exist: some addons' template.pot originates in a language
+        other than English (e.g. Finnish for parts of the Isotammi
+        collection, or Esperanto for some other addons), with English
+        generated as just one more .po translation among others, not
+        guaranteed to exist yet. addons-en.json is only as complete
+        as its own translations -- a plugin missing from it stays
+        missing from every fallback-filled file too, correctly, since
+        no language here actually has content for it yet.
+
+        Does nothing if addons-en.json itself can't be read as the
+        expected list of dict entries with an 'i' field.
+
+        :param listings_dir: the ``listings/`` folder to normalize
+            (e.g. ``<output_dir>/listings``).
+        :returns: True if any file was rewritten, False otherwise.
+        """
+        en_path = os.path.join(listings_dir, 'addons-en.json')
+        try:
+            with open(en_path, 'r', encoding='utf-8') as f:
+                en_entries = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return False
+        if not isinstance(en_entries, list) or not all(
+                isinstance(e, dict) and 'i' in e for e in en_entries):
+            return False
+
+        changed = False
+        for fname in os.listdir(listings_dir):
+            if not (fname.startswith('addons-') and fname.endswith('.json')
+                    and fname != 'addons-en.json'):
+                continue
+            lang_path = os.path.join(listings_dir, fname)
+            try:
+                with open(lang_path, 'r', encoding='utf-8') as f:
+                    lang_entries = json.load(f)
+            except (OSError, json.JSONDecodeError):
+                continue
+            if not isinstance(lang_entries, list) or not all(
+                    isinstance(e, dict) and 'i' in e for e in lang_entries):
+                continue
+            if not lang_entries:
+                # No genuinely localized content for this language at
+                # all -- don't manufacture an all-English clone of the
+                # default catalog under this filename.
+                continue
+
+            existing_ids = {e['i'] for e in lang_entries}
+            missing = [copy.deepcopy(e) for e in en_entries
+                       if e['i'] not in existing_ids]
+            if not missing:
+                continue
+
+            try:
+                with open(lang_path, 'w', encoding='utf-8') as f:
+                    json.dump(lang_entries + missing, f, indent=2,
+                               ensure_ascii=False)
+                    f.write('\n')
+                changed = True
+            except OSError:
+                continue
+        return changed
+
+    def _alphabetize_listing_json(self, path):
+        """
+        Re-sort a single addons-<lang>.json listing file's entries by
+        'n' -- the name the Addon Manager shows -- case-insensitively,
+        so a person reading the file finds an addon where the GUI
+        lists it. 'i' and 't' break ties between plugins that share a
+        name (e.g. a CSV importer and exporter).
+
+        make_addon.py (and the make<NN>.py scripts it delegates to)
+        add/update entries in whatever order the selected addons
+        happen to be processed in, so re-sorting here keeps the
+        listing file stable and easy to diff/review across builds,
+        regardless of build order. This is a reading order only:
+        make_addon._reconcile_listing_with_gpr() repairs whatever
+        make52.py's order-dependent merge leaves behind, so the order
+        no longer affects correctness.
+
+        Leaves the file untouched -- rather than raising -- if it
+        can't be read as JSON, isn't a list of dict entries, or has
+        an entry with no 'n', 'i' or 't' field to sort by; none of
+        those are this method's concern to fix, and make_addon.py's own
+        error handling covers genuinely malformed listings.
+
+        :param path: path to the addons-<lang>.json file to re-sort.
+        :returns: True if the file was rewritten, False if it was
+                  left as-is.
+        """
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                entries = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return False
+
+        if not isinstance(entries, list) or not all(
+                isinstance(e, dict) and 'n' in e and 'i' in e and 't' in e
+                for e in entries):
+            return False
+
+        def sort_key(entry):
+            try:
+                ptype = int(entry['t'])
+            except (TypeError, ValueError):
+                ptype = 0
+            return (str(entry['n']).casefold(),
+                    str(entry['i']).casefold(), ptype)
+
+        sorted_entries = sorted(entries, key=sort_key)
+        if sorted_entries == entries:
+            return False
+
+        try:
+            with open(path, 'w', encoding='utf-8') as f:
+                json.dump(sorted_entries, f, indent=2, ensure_ascii=False)
+                f.write('\n')
+        except OSError:
+            return False
+        return True
+
+    def _normalize_listing_jsons(self, output_dir):
+        """
+        Bring every addons-<lang>.json listing file under
+        ``output_dir/listings/`` into a consistent, correct state
+        after a 'listing' command has written or updated them:
+
+        1. Dedupe each file (see :meth:`_dedupe_listing_json`).
+        2. Fill in English-fallback entries so every non-English file
+           is a complete catalog, not just its translated subset (see
+           :meth:`_apply_listing_language_fallback`).
+        3. Re-sort every file by name, 'n' (see
+           :meth:`_alphabetize_listing_json`) -- last, since step 2
+           can add entries that also need sorting into place.
+
+        The legacy .txt listing format (for Gramps versions before
+        5.2) is left alone throughout, since it isn't JSON.
+
+        :param output_dir: the version-specific output directory
+            (e.g. ``<parent>/gramps52``) that was just listed into.
+        """
+        listings_dir = os.path.join(output_dir, 'listings')
+        if not os.path.isdir(listings_dir):
+            return
+
+        json_names = [fname for fname in os.listdir(listings_dir)
+                      if fname.startswith('addons-')
+                      and fname.endswith('.json')]
+
+        for fname in json_names:
+            self._dedupe_listing_json(os.path.join(listings_dir, fname))
+
+        self._apply_listing_language_fallback(listings_dir)
+
+        for fname in json_names:
+            self._alphabetize_listing_json(os.path.join(listings_dir, fname))
 
     def get_output_location_info(self, command, output_dir, addon_name):
         """
@@ -2931,13 +4359,20 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
     def _collect_command_result(self, results, details, addon_name,
                                  version_tag, command, addon_path,
-                                 success, stdout, stderr):
+                                 success, stdout, stderr, label_prefix=""):
         """
         Append one command invocation's outcome to the running results/
         details lists used by show_operation_results() and
         show_combined_results(). Factored out so 'build' and 'listing'
         can each be run once per selected Gramps version without
         duplicating the formatting logic.
+
+        :param label_prefix: Optional text (e.g. ``"Listing: "``)
+            prepended to the addon name in the results line -- used by
+            show_combined_results() to distinguish its combined
+            build+listing lines; show_operation_results() leaves this
+            at its default of "" since each of its dialogs only ever
+            shows one kind of line.
         """
         status = "✓" if success else "✗"
 
@@ -2947,9 +4382,10 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             has_manifest = os.path.exists(manifest_file)
 
         if has_manifest:
-            results.append(f"{status} {addon_name}{version_tag} 🔴 (MANIFEST)")
+            results.append(
+                f"{status} {label_prefix}{addon_name}{version_tag} 🔴 (MANIFEST)")
         else:
-            results.append(f"{status} {addon_name}{version_tag}")
+            results.append(f"{status} {label_prefix}{addon_name}{version_tag}")
 
         if success and stdout:
             if 'MANIFEST' in stdout or 'manifest' in stdout:
@@ -2959,6 +4395,45 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                     details.append(f"    {line}")
         elif not success and stderr:
             details.append(f"    Error: {stderr[:200]}")
+
+    @staticmethod
+    def _pump_gtk_events():
+        """
+        Process pending GTK events, so the windows stay responsive and
+        redraw during a long packaging step instead of freezing until
+        it ends (which made the desktop offer to force-quit Gramps as
+        "not responding"). Passed to make_addon.run_command() as its
+        wait_callback; ProgressMeter itself does the same between
+        steps.
+        """
+        while Gtk.events_pending():
+            Gtk.main_iteration()
+
+    def _start_progress(self, operation, total_steps):
+        """
+        Open Gramps' standard progress window (ProgressMeter) for a
+        packaging run. It is modal to this tool's window, so nothing
+        else can be clicked while the run is in progress.
+
+        :param operation: Window title, e.g. "Pack and Ship".
+        :param total_steps: Number of ``progress.step()`` calls the
+            run will make (one per build or listing step).
+        :returns: The ProgressMeter; close it with ``.close()``.
+        """
+        progress = ProgressMeter(operation, "", parent=self.window)
+        progress.set_pass(_("Preparing..."), max(1, total_steps))
+        return progress
+
+    @staticmethod
+    def _progress_note(progress, text):
+        """
+        Show in the progress window what the next step is doing. Call
+        ``progress.step()`` once that step has finished.
+
+        :param progress: The ProgressMeter from :meth:`_start_progress`.
+        :param text: e.g. "Listing PhotoTaggingGramplet for gramps52".
+        """
+        progress.set_header(text)
 
     def show_operation_results(self, operation, addons, command):
         """
@@ -2982,28 +4457,45 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         results = []
         details = []
 
-        for addon_name, addon_path in addons:
-            if command == 'build':
-                success, stdout, stderr = self.build_for_versions(
-                    addon_path, build_mode, versions)
-                version_tag = f" [{', '.join(versions)}]" if multi_version else ""
-                self._collect_command_result(
-                    results, details, addon_name, version_tag, command,
-                    addon_path, success, stdout, stderr)
-            elif command == 'listing':
-                for version in versions:
-                    success, stdout, stderr = self.run_make_command(
-                        addon_path, command, version=version)
-                    version_tag = f" [{version}]" if multi_version else ""
+        steps_per_addon = len(versions) if command == 'listing' else 1
+        progress = self._start_progress(
+            operation, len(addons) * steps_per_addon)
+        try:
+            for addon_name, addon_path in addons:
+                if command == 'build':
+                    self._progress_note(
+                        progress, _("Building {}").format(addon_name))
+                    success, stdout, stderr = self.build_for_versions(
+                        addon_path, build_mode, versions)
+                    progress.step()
+                    version_tag = (f" [{', '.join(versions)}]"
+                                   if multi_version else "")
                     self._collect_command_result(
                         results, details, addon_name, version_tag, command,
                         addon_path, success, stdout, stderr)
-            else:
-                success, stdout, stderr = self.run_make_command(
-                    addon_path, command, build_mode=build_mode)
-                self._collect_command_result(
-                    results, details, addon_name, "", command, addon_path,
-                    success, stdout, stderr)
+                elif command == 'listing':
+                    for version in versions:
+                        self._progress_note(
+                            progress,
+                            _("Listing {} for {}").format(addon_name, version))
+                        success, stdout, stderr = self.run_make_command(
+                            addon_path, command, version=version)
+                        progress.step()
+                        version_tag = f" [{version}]" if multi_version else ""
+                        self._collect_command_result(
+                            results, details, addon_name, version_tag,
+                            command, addon_path, success, stdout, stderr)
+                else:
+                    self._progress_note(
+                        progress, "{}: {}".format(operation, addon_name))
+                    success, stdout, stderr = self.run_make_command(
+                        addon_path, command, build_mode=build_mode)
+                    progress.step()
+                    self._collect_command_result(
+                        results, details, addon_name, "", command, addon_path,
+                        success, stdout, stderr)
+        finally:
+            progress.close()
 
         # Combine results and details
         message_lines = [_("{} completed:").format(operation), ""]
@@ -3072,23 +4564,21 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         dialog.run()
         dialog.destroy()
 
-    def show_combined_results(self, operation, addons, build_mode='beta'):
+    def _run_combined_steps(self, addons, build_mode, versions,
+                            multi_version, all_results, details, progress):
         """
-        Show results for combined operations (build + listing), across
-        every selected Gramps version.
-        build_mode: 'beta' or 'release'
+        The build and listing steps of :meth:`show_combined_results`,
+        appending each outcome to `all_results`/`details` and
+        advancing `progress` after each step.
         """
-        versions = self.get_selected_versions()
-        multi_version = len(versions) > 1
-
-        all_results = []
-        mode_label = "β Beta" if build_mode == 'beta' else "Δ Release"
-
         # Build once per addon; the resulting .tgz is duplicated across
         # every other selected version (see build_for_versions()).
         for addon_name, addon_path in addons:
+            self._progress_note(
+                progress, _("Building {}").format(addon_name))
             success, stdout, stderr = self.build_for_versions(
                 addon_path, build_mode, versions)
+            progress.step()
             status = "✓" if success else "✗"
             version_tag = f" [{', '.join(versions)}]" if multi_version else ""
 
@@ -3105,23 +4595,69 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             else:
                 all_results.append(f"{status} Build: {addon_name}{version_tag} [Δ release defaults]")
 
+            # Surface *why* — same truncated stdout/stderr detail
+            # show_operation_results() already shows via
+            # _collect_command_result(), which this loop doesn't call
+            # directly (it needs the richer MANIFEST-mode annotations
+            # above), so the error/detail capture is duplicated here
+            # rather than dropped entirely.
+            if success and stdout:
+                for line in stdout.split('\n'):
+                    if line.strip():
+                        details.append(f"    {line}")
+            elif not success and stderr:
+                details.append(
+                    f"    Error (Build: {addon_name}{version_tag}):"
+                    f" {stderr[:200]}")
+
         # Listing — once per addon per selected version; each run
         # delegates to the matching bundled make<NN>.py (when present)
         # which generates every language the addon has translations for.
         for addon_name, addon_path in addons:
             for version in versions:
+                self._progress_note(
+                    progress,
+                    _("Listing {} for {}").format(addon_name, version))
                 success, stdout, stderr = self.run_make_command(
                     addon_path, "listing", version=version)
-                status = "✓" if success else "✗"
+                progress.step()
                 version_tag = f" [{version}]" if multi_version else ""
-                all_results.append(
-                    f"{status} Listing: {addon_name}{version_tag}")
+                self._collect_command_result(
+                    all_results, details, addon_name, version_tag,
+                    'listing', addon_path, success, stdout, stderr,
+                    label_prefix="Listing: ")
+
+    def show_combined_results(self, operation, addons, build_mode='beta'):
+        """
+        Show results for combined operations (build + listing), across
+        every selected Gramps version.
+        build_mode: 'beta' or 'release'
+        """
+        versions = self.get_selected_versions()
+        multi_version = len(versions) > 1
+
+        all_results = []
+        details = []
+        mode_label = "β Beta" if build_mode == 'beta' else "Δ Release"
+
+        progress = self._start_progress(
+            operation, len(addons) * (1 + len(versions)))
+        try:
+            self._run_combined_steps(addons, build_mode, versions,
+                                     multi_version, all_results, details,
+                                     progress)
+        finally:
+            progress.close()
 
         # Build mode is shown once, at the top of the body -- avoid
         # repeating "Pack and Ship Complete" here since the dialog
         # title (below) already says that.
         message_lines = [_("Build mode: {}").format(mode_label), ""]
         message_lines.extend(all_results)
+
+        if details:
+            message_lines.append("")
+            message_lines.extend(details)
 
         # Show location of output files for every selected version
         builder_dir = self.get_output_parent_dir()
@@ -3274,6 +4810,27 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         if readme_path and self._open_readme_in_markdown_dash(readme_path):
             return
         self._open_help_url_in_browser()
+
+    def on_open_logs_folder_clicked(self, _button):
+        """
+        Open this plugin's session logs folder in the OS file browser.
+
+        Mirrors :meth:`cb_open_output_folder`: resolves the path fresh
+        on every click and delegates to the shared
+        ``open_file_with_default_application()`` Gramps GUI utility
+        rather than any bespoke per-platform launching.
+
+        :param _button: the button that was clicked (unused).
+        """
+        logs_dir = _get_logs_dir()
+        if logs_dir and os.path.isdir(logs_dir):
+            open_file_with_default_application(logs_dir, self.user.uistate)
+        else:
+            ErrorDialog(
+                _("Folder Not Found"),
+                _("No session logs yet — nothing has been run in this"
+                  " session:\n{}").format(logs_dir),
+                parent=self.window)
 
     def build_menu_names(self, obj):
         """
