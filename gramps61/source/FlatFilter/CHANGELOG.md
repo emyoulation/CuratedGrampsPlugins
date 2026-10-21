@@ -40,5 +40,10 @@ Announced as available, but never publicly released.
 ## Relationship Filter (Doug Blank)
 - Reworked Flat Filter and renamed it "Relationship Filter". Supported Gramps 6.0 only.
 
-## Flat Filter (Paul Womack, BugBear)
-- Original gramplet: a People view sidebar filter that finds people by the names of their father, mother, spouse, siblings and children.
+## Flat Filter 1.0.0 (Paul Womack, BugBear)
+Initial release.
+- A People view sidebar filter that finds people by the names of their father, mother, spouse, siblings and children, and by their own name.
+- Each relationship row has separate boxes for the given name and the surname.
+- **Probably Alive** date field, using the standard Gramps `ProbablyAlive` rule.
+- One **Use regular expressions** checkbox switching every box to regular expression matching.
+- For a female person, the own-name surname box also searches the surnames of her spouses.
