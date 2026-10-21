@@ -1,7 +1,10 @@
 #
 # Gramps - a GTK+/GNOME based genealogy program
 #
-# Copyright (C) 2024-2026  Paul Womack (BugBear)
+# Copyright (C) 2015      Nick Hall
+# Copyright (C) 2024      Paul Womack (BugBear)
+# Copyright (C) 2026      Doug Blank
+# Copyright (C) 2026      Claude AI (wish coding by Brian McCullough)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,73 +19,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#
+from gramps.version import major_version, VERSION_TUPLE
 
 # ------------------------------------------------------------------------
 #
-# FlatFilter Gramplet registration
-#
-# FlatFilter extends the built-in Person Filter sidebar with additional
-# relationship-aware name matching rules:
-#   - Father / Mother name match
-#   - Person's own name (given and family separately)
-#   - Spouse name match
-#   - Sibling name match (× 2 rows, reserved for future variants)
-#   - Child name match   (× 2 rows, reserved for future variants)
-#   - Probably-Alive date range filter
-#
-# Each name field is split into two entry boxes: one for given/personal
-# names and one for family/surname names, so partial or regex searches
-# can target each part independently.
-#
-# Registered for the "Person" navtype only, because all filter rules and
-# the sidebar class (PersonSidebarFilter2) are written specifically around
-# Person records and person-relative relationships.
-#
-# Author    : Paul Womack (BugBear)
-# Maintainer: <maintainer name and contact>
-#
-# Generated-by: Claude Sonnet 4.6 (Anthropic, claude-sonnet-4-6, 2025)
-# Prompts used:
-#   1. "Create a .gpr.py for FlatFilter.py gramplet code (for all categories)
-#       following Gramps developer guidelines"
-#   2. "Running a filtering under 5.2 fails. Adapting the .gpr.py to 6.0 gives
-#       AttributeError: 'HasNamedFather' object has no attribute 'apply_to_one'"
-# Constraints:
-#   https://www.gramps-project.org/wiki/index.php/Howto:_Contribute_to_Gramps#AI_generated_code
-#   https://github.com/gramps-project/gramps/blob/master/AGENTS.md
-#
-# Co-authored-by: Claude Sonnet 4.6 <claude-sonnet-4-6@anthropic.com>
+# Flat Filter gramplet (BugBear's Flat Filter, by way of Doug Blank's
+# Relationship Filter)
 #
 # ------------------------------------------------------------------------
 
-# ------------------------
-# Gramps modules
-# ------------------------
-from gramps.gen.const import GRAMPS_LOCALE as glocale
-_ = glocale.translation.gettext
-
-# ------------------------------------------------------------------------
-#
-# FlatFilter Gramplet — Person view
-#
-# ------------------------------------------------------------------------
-register(
-    GRAMPLET,
-    id="Person Flat Filter",
-    name=_("Person Flat Filter"),
-    description=_(
-        "Extended person filter gramplet with split given/family name "
-        "entry boxes and relationship-aware name-matching rules for "
-        "father, mother, spouse, sibling, and child."
-    ),
-    authors="Paul Womack",
-    version="1.0.02",
-    gramps_target_version="6.0",
-    status=STABLE,
-    fname="FlatFilter.py",
-    gramplet="FlatFilter",
-    gramplet_title=_("Flat Filter"),
-    navtypes=["Person"],
-    help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FlatFilter/README.md",
-)
+if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
+    register(
+        GRAMPLET,
+        id="Flat Filter",
+        name=_("Flat Filter"),
+        description=_(
+            "Gramplet providing a person filter on relationships, with "
+            "a choice of phonetic matching systems"
+        ),
+        version="2.0.0",  # build 20261021.1538
+        gramps_target_version=major_version,
+        status=STABLE,
+        fname="FlatFilter.py",
+        height=200,
+        gramplet="FlatFilter",
+        gramplet_title=_("Flat Filter"),
+        # Undocked window size that shows every row without scroll bars.
+        detached_width=560,
+        detached_height=700,
+        navtypes=["Person"],
+        authors=["Paul Womack", "Doug Blank"],
+        authors_email=["doug.blank@gmail.com"],
+        help_url="Addon:FlatFilter",
+    )

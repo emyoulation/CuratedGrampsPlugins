@@ -1,206 +1,115 @@
-# FlatFilter — Extended Person Filter Gramplet for Gramps
+# Flat Filter
 
-**Author:** Paul Womack (developer name: BugBear)  
-**Maintainer:** *(position vacant — see "Taking Over Maintenance" below)*  
-**License:** GNU General Public License v2 or later (GPL-2.0-or-later)  
-**Gramps target version:** 5.2 and 6.0+  
-**Plugin version:** 1.0.2  
-**Status:** Stable
+[Read Me](README.md) ● [Change Log](CHANGELOG.md)
 
----
-
-## Overview
-<img width="562" height="620" alt="undocked Flat Filter gramplet" src="media/undocked.png" />
-
-FlatFilter is a sidebar/bottombar Gramplet for Person-oriented [Gramps](https://www.gramps-project.org/) views that extends the built-in Person Filter with a richer set of relationship-aware name-matching fields.
-
-Where the standard Person Filter offers a single *Name* search box, FlatFilter gives you **two entry boxes per relationship role** — one for given/personal names and one for family/surnames — so you can narrow searches precisely, with or without regular expressions.
-
-Supported filter rows:
-
-| Row label | What it matches |
-|-----------|-----------------|
-| **Father** | Given or family name of the person's father |
-| **Mother** | Given or family name of the person's mother |
-| **Name** | The person's own given or family name |
-| **Spouse** | Given or family name of any spouse |
-| **Sibling** *(× 2)* | Given or family name of any sibling |
-| **Child** *(× 2)* | Given or family name of any child |
-| **Probably Alive** | Date or date-range expression (e.g. `before 1900`) |
-
-A *Use regular expressions* checkbox activates regex matching in all fields simultaneously.
-
----
-
-## Background
-
-FlatFilter was written by Paul Womack (BugBear) to fill a gap in the standard Gramps filter sidebar: the inability to search separately on given names versus surnames, and the absence of quick relationship-relative name filters.
-
-[Paul suffered a serious stroke in April 2026 and is seeking volunteers to continue maintaining the gramplet](https://gramps.discourse.group/t/filter-any-take-over-help/9725). If you are willing to take on that role, please see the section below.
-
----
-
-## Requirements
-
-- Gramps 5.2 or later (GTK+/GNOME desktop application)
-- Python 3.10 or later
-- No additional third-party Python packages are required; the gramplet uses   only the Gramps core libraries and PyGObject (GTK bindings).
-
----
+A Gramps gramplet that adds a sidebar filter to the **People** view. It finds people by the names of their relatives (father, mother, spouse, siblings and children), by their own name, by an optional "probably alive" date, and with several text-matching modes.
 
 ## Installation
+1. Install the gramplet with the Addon Manager.
+2. Restart Gramps (or use **Help → Reload Plugins**).
+3. Open the **People** view.
+4. In the sidebar, choose **Gramplets → Add a Gramplet → Flat Filter**, or add it from the gramplet selector of the sidebar.
 
-### Via the Gramps Plugin Manager (recommended)
+If an older copy named "Relationship Filter" is installed, remove it. Settings saved by that copy are not carried over.
 
-1. In Gramps, open **Help → Plugin Manager**.
-2. Switch to the **Addons** tab.
-3. Search for *FlatFilter* and click **Install**.
+## Compatibility
+Works on Gramps 5.2 and Gramps 6.0 and later. Gramps 6.0 renamed the internal `Rule.apply()` method, which every filter rule must implement, to `apply_to_one()`. The rule classes in this addon implement both names (one calls the other), so the same file runs on either version.
 
----
+## What it does
+The gramplet places a set of name-search rows in the sidebar. Most rows have two text boxes, a given-name box and a surname box, which are combined into one filter when you click **Find**. The **Person** row is the exception: its given-name and surname boxes are on separate lines, each followed by its own row of **Include:** checkboxes (see below).
 
-## Activating the Gramplet
+![undocked Flat Filter gramplet](media/screenshot.png)
 
-FlatFilter is available in the **People**, **Relationships** or **Families** view category.
+| Row | Matches people who... |
+|-------------------------|---------------------------------------------------------------------|
+| Person | ...have this given name / surname themselves |
+| Father | ...have a father with this given name / surname |
+| Mother | ...have a mother with this given name / surname |
+| Spouse | ...have a spouse with this given name / surname |
+| Sibling 1, Sibling 2 | ...have a sibling with this given name / surname |
+| Child 1, Child 2 | ...have a child with this given name / surname |
 
-1. Switch to the **People** view (navigator icon or **View → People**).
-2. Click the drop-down arrow (∨) on the **Sidebar** or **Bottombar** to open    the gramplet selector.
-3. Choose **Flat Filter** from the list and click **Add**.
+Any row you leave blank is skipped. Filling in more than one row combines them with an implicit **AND**. For example, a surname in *Person* and a given name in *Father* finds people with that surname whose father has that given name.
 
-The gramplet docks into the sidebar/bottombar panel.  Fill in as many or as few fields as you like, then press **Enter** (or click the **Apply** button that appears in the toolbar) to apply the filter to the People list.  Click **Reset** or clear all fields and re-apply to remove the filter.
+The **Probably Alive** field accepts a date (for example `before 1900`, or a date range). It uses the standard Gramps `ProbablyAlive` rule to keep only people who were plausibly alive around that time.
 
----
+## Include: checkboxes (Person row only)
+A Gramps name record stores several parts: a title, a call name, a nickname, a surname prefix, a suffix, a family nickname (labeled "Clan" here because it is short), and more, in addition to the given name and surname. By default, matching a name tests **all** of these parts. That can give surprising results: a search for an *empty* given name (`^$`, see below) also matches anyone with an empty *title*, which is nearly everyone.
 
-## Usage
+The two checkbox rows of the **Person** row narrow the search to the parts you mean, for that row only. Every other row (Father, Mother, Spouse, and so on) still searches all parts.
 
-### Basic name search
+- Below the given-name line: **Title**, **Given**, **Call**, **Nick**, **Alternatives**
+- Below the surname line: **Prefix**, **Surname**, **Suffix**, **Clan**, **Alternatives**
 
-Type part of a name into the *given name* (left) box or the *family name* (right) box for any row.  Matches are case-insensitive substrings by default.
+Only the checked parts are tested against the text you typed. **Alternatives** (in both rows, set separately) decides whether *alternate* names are searched as well as the primary name. For example, you might search alternate names for a surname but not for a given name.
 
-Example — find everyone whose **father's surname** starts with "Mac":
+**Defaults:** Given + Alternatives, and Surname + Alternatives, are checked. Everything else starts unchecked. This is deliberately narrow, so a pattern like `^$` behaves as expected (see the Regular expression examples below) instead of matching almost everyone through a blank title or suffix.
 
-- In the **Father** row, leave the left box empty and type `Mac` in the right   box.
+### Saving your own checkbox settings
+Right-click **any** checkbox in the gramplet (either Include: row, or the **Use pattern matching (Regular expressions)** / **Use fuzzy matching** checkboxes below), or its label, to open a small context menu with **Save settings**.
+![Checkbox context menu](media/menu.png)
 
-### Regular expressions
+**Save settings** writes the state of all twelve checkboxes (five personal, five surname, and the two matching-mode checkboxes) to `FlatFilter.ini`, in the folder of the gramplet. It uses the Gramps configuration system, the same one other Gramps addons use. The gramplet reloads these settings the next time it starts, and the **Reset** button restores them too.
 
-Check **Use regular expressions** to switch all fields to regex mode.
+The phonetic system chosen in the **Use fuzzy matching** popup menu does not need **Save settings**. It is remembered as soon as you change it.
 
-Example — find people with a **spouse** whose given name is "Ann", "Anne", or "Anna":
+## Help button
+The **Help** button next to **Find** / **Reset** opens this README. It opens in a Markdown Dash window if that addon is installed and enabled, or in your web browser otherwise. If a translation of this README exists for your Gramps language, that translation opens instead.
 
-- Check *Use regular expressions*.
-- In the **Spouse** row, type `Ann(e|a)?` in the left box.
+## Matching modes
+Two checkboxes control how the text you type is interpreted. They are mutually exclusive: checking one unchecks the other.
 
-### Probably Alive
+- **Use pattern matching (Regular expressions)** treats the text as a Python [Regular expression](https://gramps-project.org/wiki/index.php/Gramps_Glossary#regex) instead of a plain substring.
+- **Use fuzzy matching** treats the text phonetically, so names that *sound* alike match even when they are spelled differently (for example `Smith` and `Smyth`). The popup menu after the checkbox chooses the phonetic system. Soundex is the default.
 
-Type a Gramps date expression into the **Probably Alive** field.  The gramplet passes this to the built-in `ProbablyAlive` filter rule.
+If neither box is checked, the text is matched as a plain, case-insensitive substring anywhere in the field (the normal Gramps default).
 
-Examples of valid expressions (locale-dependent):
+Like the Include: checkboxes, these two checkboxes are covered by **Save settings** and **Reset** (see above).
 
-```
-before 1900
-between 1800 and 1900
-```
+## Phonetic systems
+The **Use fuzzy matching** popup menu lists the phonetic systems that are available:
 
-### Combining filters
+- Without the Fuzzy Matching addon, only **Soundex** (built into Gramps) is listed.
+- With the Fuzzy Matching addon installed and enabled, every system that addon provides is listed, for example Soundex, NYSIIS, Match Rating Approach and Metaphone. Hover over the menu to see a description of the selected system.
 
-All active fields are combined with **AND** logic — a person must match every non-empty field to appear in the results.
+If a remembered system is no longer installed, the menu shows Soundex until you choose another system.
 
----
+## Regular expression examples
+When **Use pattern matching (Regular expressions)** is checked, the text in a given-name or surname box is matched against that field with the Python `re` module. Some practical examples:
 
-## Technical notes
+| Pattern | Finds people whose... | Typical use |
+|---------|-------------------------------|---|
+| `^$` | given name (or surname) field is **empty** | A "Null" pattern |
+| `.+` | given name (or surname) field is **not empty** | A "not-Null" pattern |
+| `^Mc` | surname starts with `Mc` (e.g. `McDonald`, `McKay`) | Prefix search |
+| `sen$` | surname ends in `sen` (e.g. `Jensen`, `Andersen`) | Suffix search, useful for Scandinavian patronymics |
+| `^(John\|Jon\|Jonathan)$` | given name is exactly `John`, `Jon`, or `Jonathan` | Exact match against a small set of name variants |
+| `[aeiou]{3,}` | field contains three or more vowels in a row | Catching unusual spellings or OCR/transcription errors |
+| `(?i)^o'` | surname starts with `O'` in any letter case (e.g. `O'Brien`, `o'brien`) | Case-insensitive prefix match |
 
-### Filter rules provided
+* **A "Null" pattern** finds records missing that piece of data. For example, put `^$` in the *Person* surname box to find everyone with no surname recorded. On the **Person** row, this only works as expected when the Include: checkboxes are narrowed to the one field you mean (the defaults already do this). With every part checked, `^$` also matches anyone with a blank title, suffix, and so on.
+* **A "not-Null" pattern** is the opposite. Put `.+` in the *Father* given-name box to find everyone whose father has a recorded given name.
+* **Case-insensitive prefix match**: the substring mode is already case-insensitive, but this shows how to force it inside a pattern.
 
-**FlatFilter** registers the following private filter-rule classes (used only internally by the gramplet; they are not exposed in the Gramps Filter Editor):
+## Fuzzy matching example
+With **Use fuzzy matching** checked and **Soundex** chosen, typing `Smith` in a surname box also matches `Smyth`, `Smithe`, and other names with the same Soundex code. This helps when a family name was spelled differently across historical records.
 
-| Class | Matches |
-|-------|---------|
-| `RegExpPersonal` | Given name, title, or nickname |
-| `RegExpFamily` | Surname, suffix, title, family nickname, or call name |
-| `HasNamedFather` | Person's father matches a name rule |
-| `HasNamedMother` | Person's mother matches a name rule |
-| `HasNamedSpouse` | Any spouse matches a name rule |
-| `IsSiblingofNamedSibling` | Any sibling (via main parent family) matches a name rule |
-| `HasNamedChild` | Any child matches a name rule |
-| `HasName` | The person themselves match (with female surname → spouse surname logic) |
+Each word of a name is encoded separately, so `John` in a given-name box also finds `John Henry`.
 
-### Female surname handling
+**Note:** a phonetic code covers the *whole* word. It is not a prefix search. Typing `Thom` matches `Thom`, but not `Thomas` (the Soundex codes are `T500` and `T520`). Type the full name you expect, not a shortened form.
 
-For the **Name / family** field, if the person is female, **FlatFilter** also searches the surnames of the person's spouses, reflecting the common genealogical practice of recording married surnames.
+## Notes for developers
+- The rule classes (`RegExpPersonal`, `RegExpFamily`, `HasNamedFather`, `HasNamedMother`, `HasNamedSpouse`, `IsSiblingofNamedSibling`, `HasNamedChild`, `HasName`) are ordinary Gramps `Rule` subclasses and can be reused or combined in custom filters.
+- `RegExpPersonal` and `RegExpFamily` accept optional `personal_fields` / `surname_fields` (a subset of `PERSONAL_FIELDS` / `SURNAME_FIELDS`) and `include_alternates` arguments, which restrict the name parts tested and whether alternate names are tested. Only the "Person" row of the sidebar passes these (from its Include: checkboxes). Every other row omits them and searches everything.
+- Phonetic matching is selected with an `encoder` argument: a function that takes one word and returns a `set` of codes, or `None` for no phonetic matching. A field matches when any word in it shares a code with any word of the search text.
+- The phonetic systems come from the `phonetic_codes` registry of the Fuzzy Matching addon, reached through its "Fuzzy Match API" GENERAL plugin (`BasePluginManager.get_plugin()` then `import_plugin()`), as described in `FuzzyMatchAPI.md` of that addon. If that plugin is missing or fails to load, only the built-in `gramps.gen.soundex` is offered.
+- The sidebar UI is built on the Gramps `SidebarFilter` base class (`gramps.gui.filters.sidebar.SidebarFilter`). The matching-mode checkboxes, the phonetic system popup menu and both Include: rows are attached directly to `self.grid`.
+- Matching a `HasName`-derived rule against a `RegExpFamily` field for a female person also searches the surnames of her spouses, since married women in many record-keeping traditions took the surname of their spouse.
+- Settings are stored with the Gramps configuration system (`gramps.gen.config.config.register_manager`) as `FlatFilter.ini` in the addon folder: the Include: checkboxes, the two matching-mode checkboxes (`[matching]` `regex`, `fuzzy`) and the phonetic system (`[matching]` `algorithm`). The file also stores the plugin id and a config schema version under `[meta]`. If either does not match what the running code expects, all saved settings are reset to their defaults rather than risk misreading a value from an incompatible revision.
+- Every rule class implements both `apply_to_one()` (called by Gramps 6.0) and `apply()` (a one-line alias for Gramps 5.2). See Compatibility above.
+- **Do not use `db.get_raw_person_data()` / `db.get_raw_family_data()` for anything beyond a bare lookup.** They look like a good Gramps 6.0 speed-up, but the result depends on backend and version: on the Gramps 5.2 dbapi backend they return a plain pickled tuple with no attribute access, while the Gramps 6.0 JSON-backed database returns a dict-like wrapper that supports attribute access. Code that assumes the latter raises `AttributeError` on the former. This was tried, failed in the field, and was reverted to `get_person_from_handle()` / `get_family_from_handle()`, verified against real `gramps==5.2.4` and `gramps==6.0.8` installs.
+- The Help button code is pasted into `FlatFilter.py` from the reference `help_doc_button.py` kept with MarkdownUtils (see `HelpDocButton.md` there), between `BEGIN HELP BUTTON BLOCK` and `END HELP BUTTON BLOCK` markers. No separate module ships with this addon. If the button row cannot be found, the gramplet simply has no Help button.
+- `SidebarFilter` wraps each button row in a 12 px border; `Filter._tighten_button_rows()` replaces it with smaller margins. The undocked window size is set by `detached_width` / `detached_height` in `FlatFilter.gpr.py`.
 
-### Code structure
-
-```
-FlatFilter/
-├── FlatFilter.py      # All rule classes, sidebar filter, and gramplet class
-└── FlatFilter.gpr.py  # Gramps plugin registration
-```
-
----
-
-## Known limitations
-
-- Sibling matching uses only the *main* parent family (`get_main_parents_family_handle`), not all parent families.  Persons with multiple parent families may miss some siblings.
-- The `_HasNamedRelation` hierarchy mixes composition and inheritance in a way that the original author acknowledged as "slightly nasty".  Future refactoring   is welcome.
-- There are currently two identical **Sibling** rows and two identical **Child** rows in the UI. These were placeholders for planned distinct filter variations;   they are harmless duplicates in the current release.
-
----
-
-## Contributing
-
-Bug reports and patches are welcome.  Please follow the [Gramps developer guidelines](https://www.gramps-project.org/wiki/index.php/Howto:_Contribute_to_Gramps) when submitting code, including the [AI-generated code disclosure requirements](https://www.gramps-project.org/wiki/index.php/Howto:_Contribute_to_Gramps#AI_generated_code) if applicable.
-
-Code must pass:
-
-```bash
-black FlatFilter.py
-pylint FlatFilter.py   # target score ≥ 9.0
-mypy FlatFilter.py
-```
-
-Tests live in `test/` and use the `unittest` framework:
-
-```bash
-GRAMPS_RESOURCES=. python3 -m unittest discover -p "*_test.py"
-```
-
----
-
-## Taking Over Maintenance
-
-Paul Womack (BugBear) is seeking a new maintainer following his stroke in April 2026.  If you are willing to take on this role, please:
-
-1. Open an issue or post on the [Gramps Discourse forum](https://gramps.discourse.group/) with the subject    *"FlatFilter — volunteering as maintainer"*.
-2. Review the known limitations above and the TODO comments in the source.
-3. Ensure you have a working Gramps development environment before accepting.
-
-Responsibilities of a maintainer include triaging bug reports, reviewing and merging patches, keeping the gramplet compatible with new Gramps releases, and tagging new plugin-manager releases.
-
----
-
-## Changelog
-
-### 1.0.0 (initial release)
-
-- Split name entry into given/personal and family/surname boxes for each relationship role.
-- Relationship-aware rules: father, mother, own name, spouse, sibling, child.
-- Probably-Alive date range field.
-- Regular-expression support across all fields.
-
----
-
-## Acknowledgements
-
-- Paul Womack (BugBear) — original author and designer.
-- The Gramps development team for the `SidebarFilter`, `GenericFilter`, and `Rule` infrastructure that FlatFilter builds upon.
-
----
-
-## Licence
-
-```
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-```
+## License
+GNU General Public License v2.0 or later, consistent with Gramps itself.
