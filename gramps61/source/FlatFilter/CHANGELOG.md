@@ -1,8 +1,26 @@
 # Changelog — Flat Filter
 
-[Read Me](README.md) ● [Change Log](CHANGELOG.md)
+[Read Me](README.md) ● [Change Log](CHANGELOG.md) ● [Define Filter](DefineFilter.md)
 
 All notable changes to this gramplet. Newest first.
+
+## 2.0.2
+- A filter rule named "Flat Filter rule" (class `FlatFilterRule`), registered in `FlatFilter.gpr.py` for Gramps 6.0 and later. Saved Flat Filter searches use it to stand in for each Flat Filter rule. It also appears in the Filter Editor, but it is not meant to be added by hand.
+
+## 2.0.1
+Kari Kujansuu made the **Define filter** button work with Flat Filter, so a Flat Filter search can be saved as a custom filter. How it works, and what is still missing, is documented in [DefineFilter.md](DefineFilter.md).
+
+### Added
+- **Define filter** (Gramps 6.0 and later) now saves Flat Filter searches. It opens the Define Filter dialog with one rule for each box that is filled in, including **Probably Alive**, and the comment "Created by the Flat Filter gramplet on" followed by the date. After you click OK, the filter is in the custom filter list, so it can be chosen in the Filter sidebar, in reports, and anywhere else Gramps offers custom filters. Before, the dialog opened, but the saved filter lost its Flat Filter rules the next time Gramps started, because Gramps could not find those rule classes by name.
+- A Generic filter rule added
+
+### Known limitations
+- **Use fuzzy matching** cannot be saved yet, so **Define filter** is dimmed while it is checked, with a tooltip saying so.
+- Changes to the **Include:** checkboxes of the Person row are not saved. The saved filter then searches every name part, so it can match more people than **Find**.
+- Saved Flat Filter searches need Flat Filter to be installed and active.
+
+### Notes
+- Filters saved from this version record the class names `FlatFilterRule`, `HasNamedFather`, `RegExpPersonal` and so on in `custom_filters.xml`. Renaming any of these classes in a later version would break filters that people have already saved.
 
 ## 2.0.0
 This release gathers everything since Doug Blank renamed the gramplet "Relationship Filter", including an earlier revision that was never publicly released.
@@ -24,7 +42,7 @@ This release gathers everything since Doug Blank renamed the gramplet "Relations
 - Settings saved by "Relationship Filter" (`RelationshipFilter.ini`) are not carried over, because the plugin id changed. Remove the old `RelationshipFilter` folder so the two gramplets do not appear side by side.
 - The rule classes take an `encoder` argument (a function returning a set of phonetic codes) instead of `use_soundex`.
 
-## Unreleased revision (1.0.1 in its .gpr.py)
+## 1.0.1
 Announced as available, but never publicly released.
 
 ### Added

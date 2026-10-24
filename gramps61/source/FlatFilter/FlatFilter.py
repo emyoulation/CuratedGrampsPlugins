@@ -29,6 +29,7 @@
 
 import logging
 import os
+import time
 from typing import Callable
 from urllib.parse import quote
 
@@ -37,6 +38,7 @@ from urllib.parse import quote
 # Gramps modules
 #
 # -------------------------------------------------------------------------
+import gramps.gen.filters
 
 from gi.repository import Gdk, Gio, GLib, Gtk
 
@@ -56,6 +58,7 @@ from gramps.gui import widgets
 from gramps.gui.dialog import OkDialog
 from gramps.gui.filters.sidebar import SidebarFilter
 from gramps.gui.pluginmanager import GuiPluginManager
+from gramps.gui.editors import EditFilter
 
 # -------------------------------------------------------------------------
 #
@@ -1186,6 +1189,14 @@ class PersonSidebarFilter(
 
         SidebarFilter.__init__(self, dbstate, uistate, "Person")
 
+        # The core tooltip of "Define filter" (Gramps 6.0 and later), kept
+        # so it can be restored when fuzzy matching is turned off again.
+        define_btn = getattr(self, "define_filter_btn", None)
+        self.define_filter_tooltip = (
+            define_btn.get_tooltip_text() if define_btn is not None else None
+        )
+        self._update_define_filter_button()
+
     def cb_regex_toggled(self, obj: Gtk.CheckButton) -> None:
         """
         Keep regex and fuzzy matching mutually exclusive.
@@ -1203,6 +1214,32 @@ class PersonSidebarFilter(
         """
         if obj.get_active():
             self.filter_regex.set_active(False)
+        self._update_define_filter_button()
+
+    def _update_define_filter_button(self) -> None:
+        """
+        Dim "Define filter" while fuzzy matching is on.
+
+        A saved custom filter cannot yet store the phonetic system (see
+        DefineFilter.md), so it would match differently from Find.
+        Gramps 5.2 has no "Define filter" button, and while the saved
+        settings are applied during __init__ the button does not exist
+        yet; both cases are simply skipped.
+        """
+        define_btn = getattr(self, "define_filter_btn", None)
+        if define_btn is None:
+            return
+        fuzzy = self.filter_fuzzy.get_active()
+        define_btn.set_sensitive(not fuzzy)
+        if fuzzy:
+            define_btn.set_tooltip_text(
+                _(
+                    "The Define Filter is not yet compatible with Fuzzy "
+                    "Matching options."
+                )
+            )
+        else:
+            define_btn.set_tooltip_text(getattr(self, "define_filter_tooltip", None))
 
     def cb_algorithm_changed(self, combo: Gtk.ComboBoxText) -> None:
         """
@@ -1457,6 +1494,79 @@ class PersonSidebarFilter(
         if not generic_filter.get_rules():
             return None
         return generic_filter
+
+    def define_filter(self, _obj):
+        self.filterdb = gramps.gen.filters.CustomFilters
+        the_filter = self.get_filter()
+
+        if not the_filter:
+            self.msg_label.set_markup(
+                "<span color='red'>" + _("Supply at least one value") + "</span>"
+            )
+            return
+
+        new_rules = []
+        for rule in the_filter.get_rules():
+            if not isinstance(rule, _HasNamedRelation):
+                # A core rule (ProbablyAlive): Gramps can already save and
+                # reload it by class name, and it has no name_matcher.
+                new_rules.append(rule)
+                continue
+            rule1 = FlatFilterRule(
+                rule.list
+                + [rule.__class__.__name__, rule.name_matcher.__class__.__name__],
+                use_regex=rule.use_regex,
+            )
+            new_rules.append(rule1)
+        the_filter.flist = new_rules
+
+        comment = _("Created by the Flat Filter gramplet on {today}").format(
+            today=time.strftime("%Y-%m-%d", time.localtime())
+        )
+        the_filter.set_comment(comment)
+
+        self.msg_label.set_text("")
+        track = []
+        EditFilter(
+            self.namespace,
+            self.dbstate,
+            self.uistate,
+            track,
+            the_filter,
+            self.filterdb,
+            update=self.update,
+        )
+
+
+# -------------------------------------------------------------------------
+#
+# FlatFilterRule
+#
+# -------------------------------------------------------------------------
+class FlatFilterRule(Rule):
+    """
+    Stand-in for one Flat Filter name rule inside a saved custom filter.
+
+    Registered as a RULE plugin in FlatFilter.gpr.py, so Gramps can find
+    it by class name when it reads custom_filters.xml. The class name is
+    saved in that file: never rename it, or filters people have already
+    saved lose this rule. See DefineFilter.md.
+    """
+
+    labels = ["Name:", "Rule class:", "Name matcher class:"]
+    name = _("Flat Filter rule")
+    allow_regex = True
+
+    def prepare(self, db, user):
+        rule_class = globals()[self.list[1]]
+        self.name_matcher = globals()[self.list[2]]
+        self.rule = rule_class(
+            self.list[0:1], self.name_matcher, use_regex=self.use_regex
+        )
+        self.rule.name_matcher.requestprepare(db, user)
+
+    def apply_to_one(self, db, person):
+        return self.rule.apply_to_one(db, person)
 
 
 # -------------------------------------------------------------------------

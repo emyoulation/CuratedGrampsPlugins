@@ -87,7 +87,7 @@
     "i": "Flat Filter",
     "t": 10,
     "d": "Gramplet, joka tarjoaa henkilösuotimen sukulaisuussuhteiden perusteella ja valittavan foneettisen vertailutavan",
-    "v": "2.0.1",
+    "v": "2.0.2",
     "g": "6.0",
     "s": 3,
     "z": "FlatFilter.addon.tgz",
