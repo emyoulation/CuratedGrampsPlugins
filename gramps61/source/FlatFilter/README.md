@@ -1,6 +1,6 @@
 # Flat Filter
 
-[Read Me](README.md) ● [Change Log](CHANGELOG.md)
+[Read Me](README.md) ● [Change Log](CHANGELOG.md) ● [Define Filter](DefineFilter.md)
 
 A Gramps gramplet that adds a sidebar filter to the **People** view. It finds people by the names of their relatives (father, mother, spouse, siblings and children), by their own name, by an optional "probably alive" date, and with several text-matching modes.
 
@@ -74,6 +74,11 @@ Right-click **any** checkbox in the gramplet (either Include: row, or the **Use 
 
 The phonetic system chosen in the **Use fuzzy matching** popup menu does not need **Save settings**. It is remembered as soon as you change it.
 
+## Define filter button
+In Gramps 6.0 and later, **Define filter** (below **Find**) saves the current search as a custom filter. It opens the Define Filter dialog with one rule for each box that is filled in. Give the filter a name and click OK. The filter then appears in the **Custom filter** list of the Filter sidebar, and anywhere else Gramps offers custom filters, such as reports. Gramps 5.2 has no **Define filter** button.
+
+**Define filter** is dimmed while **Use fuzzy matching** is checked, because a saved filter cannot store the phonetic system yet. Changes to the **Include:** checkboxes are not saved yet either (see Known limitations below).
+
 ## Help button
 The **Help** button next to **Find** / **Reset** opens this README. It opens in a Markdown Dash window if that addon is installed and enabled, or in your web browser otherwise. If a translation of this README exists for your Gramps language, that translation opens instead.
 
@@ -122,7 +127,10 @@ Each word of a name is encoded separately, so `John` in a given-name box also fi
 ## Known limitations
 - Sibling matching uses only the *main* parent family of a person (`get_main_parents_family_handle()`), not every parent family. A person with more than one parent family (for example, birth parents and adoptive parents) may miss some siblings.
 - The rule class hierarchy (`_HasNamedRelation` and its subclasses) mixes composition and inheritance in a way that the original author called "slightly nasty". Refactoring is welcome.
-- The rules are used only inside the gramplet. They do not appear in the Gramps Filter Editor.
+- The name rules themselves do not appear in the Gramps Filter Editor. Saved searches use one stand-in rule, "Flat Filter rule", which does appear there but is not meant to be added by hand.
+- **Define filter** cannot be used together with **Use fuzzy matching** yet, so it is dimmed while that box is checked.
+- **Define filter** does not save changes to the **Include:** checkboxes. The saved filter then searches every name part.
+- Filters saved with **Define filter** need Flat Filter to stay installed and active.
 
 ## Notes for developers
 - The rule classes are ordinary Gramps `Rule` subclasses and can be reused or combined in custom filters:
@@ -146,6 +154,7 @@ Each word of a name is encoded separately, so `John` in a given-name box also fi
 - Settings are stored with the Gramps configuration system (`gramps.gen.config.config.register_manager`) as `FlatFilter.ini` in the addon folder: the Include: checkboxes, the two matching-mode checkboxes (`[matching]` `regex`, `fuzzy`) and the phonetic system (`[matching]` `algorithm`). The file also stores the plugin id and a config schema version under `[meta]`. If either does not match what the running code expects, all saved settings are reset to their defaults rather than risk misreading a value from an incompatible revision.
 - Every rule class implements both `apply_to_one()` (called by Gramps 6.0) and `apply()` (a one-line alias for Gramps 5.2). See Compatibility above.
 - **Do not use `db.get_raw_person_data()` / `db.get_raw_family_data()` for anything beyond a bare lookup.** They look like a good Gramps 6.0 speed-up, but the result depends on backend and version: on the Gramps 5.2 dbapi backend they return a plain pickled tuple with no attribute access, while the Gramps 6.0 JSON-backed database returns a dict-like wrapper that supports attribute access. Code that assumes the latter raises `AttributeError` on the former. This was tried, failed in the field, and was reverted to `get_person_from_handle()` / `get_family_from_handle()`, verified against real `gramps==5.2.4` and `gramps==6.0.8` installs.
+- **Define filter** support is explained in [DefineFilter.md](DefineFilter.md): how Gramps stores custom filters, why private rule classes cannot be saved directly, the registered stand-in rule `FlatFilterRule`, the open gaps, and a recipe for adding the same ability to other filter gramplets.
 - The Help button code is pasted into `FlatFilter.py` from the reference `help_doc_button.py` kept with MarkdownUtils (see `HelpDocButton.md` there), between `BEGIN HELP BUTTON BLOCK` and `END HELP BUTTON BLOCK` markers. No separate module ships with this addon. If the button row cannot be found, the gramplet simply has no Help button.
 - `SidebarFilter` wraps each button row in a 12 px border; `Filter._tighten_button_rows()` replaces it with smaller margins. The undocked window size is set by `detached_width` / `detached_height` in `FlatFilter.gpr.py`.
 
@@ -157,6 +166,7 @@ FlatFilter/
 ├── FlatFilter.ini      # Saved settings (created by Save settings)
 ├── README.md
 ├── CHANGELOG.md
+├── DefineFilter.md     # Developer reference for Define filter support
 └── media/              # Screenshots used by this README
 ```
 
@@ -178,6 +188,7 @@ A maintainer triages bug reports, reviews and merges patches, keeps the gramplet
 ## Credits
 - Paul Womack (BugBear): original author and designer.
 - Doug Blank: the "Relationship Filter" rework for Gramps 6.0.
+- Kari Kujansuu: **Define filter** support (2.0.1), and the **Define filter** button of Gramps itself.
 - Version 2.0.0: Claude AI (Anthropic), wish coding by Brian McCullough.
 - The Gramps development team, for the `SidebarFilter`, `GenericFilter` and `Rule` classes that Flat Filter builds on.
 
