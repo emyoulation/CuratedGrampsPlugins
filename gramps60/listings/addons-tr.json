@@ -87,11 +87,21 @@
     "i": "Flat Filter",
     "t": 10,
     "d": "Gramplet providing a person filter on relationships, with a choice of phonetic matching systems",
-    "v": "2.0.0",
+    "v": "2.0.1",
     "g": "6.0",
     "s": 3,
     "z": "FlatFilter.addon.tgz",
     "h": "Addon:FlatFilter"
+  },
+  {
+    "n": "Flat Filter rule",
+    "i": "FlatFilterRule",
+    "t": 13,
+    "d": "Rule used by custom filters saved with the Define filter button of the Flat Filter gramplet",
+    "v": "0.0.1",
+    "g": "6.0",
+    "s": 3,
+    "z": "FlatFilter.addon.tgz"
   },
   {
     "n": "Fotoğraf Etiketleme",
