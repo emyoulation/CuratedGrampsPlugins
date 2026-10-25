@@ -170,6 +170,20 @@
     "a": 0
   },
   {
+    "n": "PDF Field Mapper",
+    "i": "PDFFieldMapper",
+    "t": 10,
+    "d": "Map the form fields of a PDF media object to GEDCOM-style names, reorder the tab sequence, and embed the mapping in the PDF",
+    "v": "0.0.2",
+    "g": "6.1",
+    "s": 1,
+    "z": "PDFfieldmapper.addon.tgz",
+    "rm": [
+      "pypdf"
+    ],
+    "h": "https://claude.ai/share/5499326c-cb83-453f-aa82-7f8248f94ca6"
+  },
+  {
     "n": "Soundex match of People with the <names>",
     "i": "FuzzyMatchingEncoder:soundex",
     "t": 13,
