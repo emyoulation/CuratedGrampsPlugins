@@ -1,0 +1,495 @@
+# Translation template for the 0.0.2 PDF Field Mapper gramplet addon for Gramps.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PDF Field Mapper package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PDF Field Mapper 0.0.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-25 10:10-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: pdffieldmapper.gpr.py:29 pdffieldmapper.gpr.py:40
+msgid "PDF Field Mapper"
+msgstr ""
+
+#: pdffieldmapper.gpr.py:31
+msgid ""
+"Map the form fields of a PDF media object to GEDCOM-style names, reorder the "
+"tab sequence, and embed the mapping in the PDF"
+msgstr ""
+
+#: pdffieldmapper.py:205
+msgid "No documentation available"
+msgstr ""
+
+#: pdffieldmapper.py:206
+msgid "This plugin has neither a README.md nor a registered help_url."
+msgstr ""
+
+#: pdffieldmapper.py:275
+msgid "Help"
+msgstr ""
+
+#: pdffieldmapper.py:277
+msgid "Show documentation for this plugin"
+msgstr ""
+
+#: pdffieldmapper.py:340
+msgid "PDF has a damaged cross-reference table (repaired in memory)"
+msgstr ""
+
+#: pdffieldmapper.py:341
+#, python-format
+msgid "pypdf reported %d warning(s)"
+msgstr ""
+
+#: pdffieldmapper.py:715
+msgid "Pg"
+msgstr ""
+
+#: pdffieldmapper.py:716
+msgid "#"
+msgstr ""
+
+#: pdffieldmapper.py:717 pdffieldmapper.py:1381
+msgid "Tab"
+msgstr ""
+
+#: pdffieldmapper.py:718
+msgid "Off"
+msgstr ""
+
+#: pdffieldmapper.py:719
+msgid "Del"
+msgstr ""
+
+#: pdffieldmapper.py:720
+msgid "Multi"
+msgstr ""
+
+#: pdffieldmapper.py:721
+msgid "PDF field"
+msgstr ""
+
+#: pdffieldmapper.py:722
+msgid "Type"
+msgstr ""
+
+#: pdffieldmapper.py:723
+msgid "Current value"
+msgstr ""
+
+#: pdffieldmapper.py:755
+msgid "GEDCOM tag"
+msgstr ""
+
+#: pdffieldmapper.py:792
+msgid "Rename fields"
+msgstr ""
+
+#: pdffieldmapper.py:795
+msgid "Embed crosswalk"
+msgstr ""
+
+#: pdffieldmapper.py:803
+msgid "Tab order: structure (/S, adds tags)"
+msgstr ""
+
+#: pdffieldmapper.py:804
+msgid "Tab order: annotation order (/A, PDF 2.0)"
+msgstr ""
+
+#: pdffieldmapper.py:805
+msgid "Tab order: leave /Tabs unchanged"
+msgstr ""
+
+#: pdffieldmapper.py:811
+msgid ""
+"Only viewers that follow the PDF's own tab order use this. Xreader and "
+"Firefox's PDF viewer ignore it and tab by field position."
+msgstr ""
+
+#: pdffieldmapper.py:817
+msgid "Write anchors"
+msgstr ""
+
+#: pdffieldmapper.py:821
+msgid ""
+"Add a named destination (anchor) for each field, so that a link such as "
+"form.pdf#INDI4/BIRT/DATE scrolls to that field"
+msgstr ""
+
+#: pdffieldmapper.py:831 pdffieldmapper.py:853
+msgid "Up"
+msgstr ""
+
+#: pdffieldmapper.py:832 pdffieldmapper.py:853
+msgid "Down"
+msgstr ""
+
+#: pdffieldmapper.py:833
+msgid "Edit row…"
+msgstr ""
+
+#: pdffieldmapper.py:834
+msgid "Suggest tags"
+msgstr ""
+
+#: pdffieldmapper.py:835
+msgid "Auto-order"
+msgstr ""
+
+#: pdffieldmapper.py:836
+msgid "Tab = #"
+msgstr ""
+
+#: pdffieldmapper.py:839
+msgid "Clear values"
+msgstr ""
+
+#: pdffieldmapper.py:840
+msgid "Names → values"
+msgstr ""
+
+#: pdffieldmapper.py:841
+msgid "Tab + names → values"
+msgstr ""
+
+#: pdffieldmapper.py:844
+msgid "Load crosswalk…"
+msgstr ""
+
+#: pdffieldmapper.py:845
+msgid "Save crosswalk…"
+msgstr ""
+
+#: pdffieldmapper.py:846
+msgid "Write PDF…"
+msgstr ""
+
+#: pdffieldmapper.py:855
+msgid "Sort the table ascending by # or Tab to move rows"
+msgstr ""
+
+#: pdffieldmapper.py:979
+#, python-format
+msgid "Reordering changes the %s column"
+msgstr ""
+
+#: pdffieldmapper.py:984 pdffieldmapper.py:1129 pdffieldmapper.py:1315
+msgid "Sort ascending by # or Tab to reorder rows"
+msgstr ""
+
+#: pdffieldmapper.py:1002
+msgid "Select a PDF media object."
+msgstr ""
+
+#: pdffieldmapper.py:1006
+msgid "The active media object is not a PDF."
+msgstr ""
+
+#: pdffieldmapper.py:1018
+msgid "The pypdf package is required."
+msgstr ""
+
+#: pdffieldmapper.py:1053
+#, python-format
+msgid "Cannot read PDF: %s"
+msgstr ""
+
+#: pdffieldmapper.py:1077
+#, python-format
+msgid "%(n)d fields in %(f)s"
+msgstr ""
+
+#: pdffieldmapper.py:1083
+#, python-format
+msgid "; multi-line (Tab may get stuck in some viewers): %s"
+msgstr ""
+
+#: pdffieldmapper.py:1086
+#, python-format
+msgid "; crosswalk found: %s"
+msgstr ""
+
+#: pdffieldmapper.py:1117
+msgid "Rows can only be moved within a page"
+msgstr ""
+
+#: pdffieldmapper.py:1155
+#, python-format
+msgid "%(f)s switched %(s)s"
+msgstr ""
+
+#: pdffieldmapper.py:1156
+msgid "off"
+msgstr ""
+
+#: pdffieldmapper.py:1156
+msgid "on"
+msgstr ""
+
+#: pdffieldmapper.py:1167
+#, python-format
+msgid "%(f)s %(s)s; %(n)d widget(s) will be deleted"
+msgstr ""
+
+#: pdffieldmapper.py:1170
+msgid "marked for deletion"
+msgstr ""
+
+#: pdffieldmapper.py:1170
+msgid "kept"
+msgstr ""
+
+#: pdffieldmapper.py:1181
+msgid "Only text fields can be multi-line"
+msgstr ""
+
+#: pdffieldmapper.py:1189
+#, python-format
+msgid "%(f)s is now %(s)s"
+msgstr ""
+
+#: pdffieldmapper.py:1190
+msgid "multi-line"
+msgstr ""
+
+#: pdffieldmapper.py:1190
+msgid "single-line"
+msgstr ""
+
+#: pdffieldmapper.py:1203
+msgid "tag not set"
+msgstr ""
+
+#: pdffieldmapper.py:1205
+#, python-format
+msgid "field renamed to %s"
+msgstr ""
+
+#: pdffieldmapper.py:1207
+#, python-format
+msgid "%(k)s = %(t)s embedded"
+msgstr ""
+
+#: pdffieldmapper.py:1211
+#, python-format
+msgid " [one of %d widgets of this field]"
+msgstr ""
+
+#: pdffieldmapper.py:1213
+msgid " [OFF: hidden in the PDF]"
+msgstr ""
+
+#: pdffieldmapper.py:1217
+#, python-format
+msgid " [sorted by %s, so rows can't be moved: click the # or Tab header]"
+msgstr ""
+
+#: pdffieldmapper.py:1221
+#, python-format
+msgid " [VALUE changes on write; was '%s']"
+msgstr ""
+
+#: pdffieldmapper.py:1223
+msgid " [multi-line: Tab may not leave it in some viewers]"
+msgstr ""
+
+#: pdffieldmapper.py:1227
+msgid " [DELETE: the whole field is removed on write]"
+msgstr ""
+
+#: pdffieldmapper.py:1229
+msgid " [DELETE: this widget is removed on write]"
+msgstr ""
+
+#: pdffieldmapper.py:1232
+#, python-format
+msgid "Page %(p)d, # %(n)d, Tab %(o)d (%(l)s): %(f)s = '%(v)s' → %(r)s"
+msgstr ""
+
+#: pdffieldmapper.py:1237
+msgid "Tab follows #"
+msgstr ""
+
+#: pdffieldmapper.py:1237
+msgid "Tab independent"
+msgstr ""
+
+#: pdffieldmapper.py:1349
+#, python-format
+msgid "%(f)s: # %(n)d, Tab %(t)d"
+msgstr ""
+
+#: pdffieldmapper.py:1359
+msgid "Row editor"
+msgstr ""
+
+#: pdffieldmapper.py:1370
+#, python-format
+msgid "%(f)s (%(n)d fields on Page %(p)d)"
+msgstr ""
+
+#: pdffieldmapper.py:1381
+msgid "# (position)"
+msgstr ""
+
+#: pdffieldmapper.py:1393
+msgid ""
+"The row moves to that position and the others shift, as if dropped there. "
+"Tab follows # until Tab is edited."
+msgstr ""
+
+#: pdffieldmapper.py:1439
+#, python-format
+msgid "Suggested %(n)d tags (%(v)d from values, %(m)d from names)"
+msgstr ""
+
+#: pdffieldmapper.py:1445
+#, python-format
+msgid "; %(n)d fields left without a tag, e.g. %(e)s"
+msgstr ""
+
+#: pdffieldmapper.py:1474
+#, python-format
+msgid "Ordered %(c)s by tag; %(n)d fields without a usable tag are last"
+msgstr ""
+
+#: pdffieldmapper.py:1498
+#, python-format
+msgid "Cleared %d values; write the PDF to keep this"
+msgstr ""
+
+#: pdffieldmapper.py:1500
+#, python-format
+msgid " (%d other fields left alone)"
+msgstr ""
+
+#: pdffieldmapper.py:1515
+#, python-format
+msgid "Set %(n)d values to the %(m)s; write the PDF to keep this"
+msgstr ""
+
+#: pdffieldmapper.py:1518
+msgid "new field names"
+msgstr ""
+
+#: pdffieldmapper.py:1520
+msgid "current field names"
+msgstr ""
+
+#: pdffieldmapper.py:1545
+#, python-format
+msgid ""
+"Set %d values to tab position + name; open the written PDF and Tab through "
+"it: the numbers should count up. Clear values removes them"
+msgstr ""
+
+#: pdffieldmapper.py:1556
+msgid "Tab now follows #"
+msgstr ""
+
+#: pdffieldmapper.py:1615
+msgid "Save crosswalk"
+msgstr ""
+
+#: pdffieldmapper.py:1635
+#, python-format
+msgid "Saved %d mappings"
+msgstr ""
+
+#: pdffieldmapper.py:1652
+msgid "Load crosswalk"
+msgstr ""
+
+#: pdffieldmapper.py:1683
+#, python-format
+msgid "Applied %d mappings"
+msgstr ""
+
+#: pdffieldmapper.py:1686
+#, python-format
+msgid " (this crosswalk was saved for %s)"
+msgstr ""
+
+#: pdffieldmapper.py:1699
+msgid "Write PDF"
+msgstr ""
+
+#: pdffieldmapper.py:1708
+msgid "Refusing to overwrite the original file."
+msgstr ""
+
+#: pdffieldmapper.py:1714
+#, python-format
+msgid "Write failed: %s"
+msgstr ""
+
+#: pdffieldmapper.py:1720
+#, python-format
+msgid "Wrote %s"
+msgstr ""
+
+#: pdffieldmapper.py:1795
+#, python-format
+msgid "'%s' would be used by two different fields"
+msgstr ""
+
+#: pdffieldmapper.py:1852
+msgid "annotations"
+msgstr ""
+
+#: pdffieldmapper.py:1852
+msgid "field list"
+msgstr ""
+
+#: pdffieldmapper.py:1857
+msgid "tag tree"
+msgstr ""
+
+#: pdffieldmapper.py:1868
+#, python-format
+msgid "%d anchors"
+msgstr ""
+
+#: pdffieldmapper.py:1871
+#, python-format
+msgid "%d anchors skipped because the PDF already has others of that name"
+msgstr ""
+
+#: pdffieldmapper.py:1874
+#, python-format
+msgid "tab order set in: %s"
+msgstr ""
+
+#: pdffieldmapper.py:1886
+#, python-format
+msgid "%d widget(s) deleted"
+msgstr ""
+
+#: pdffieldmapper.py:1890
+#, python-format
+msgid "%d value(s) changed"
+msgstr ""
+
+#: pdffieldmapper.py:2362
+msgid "a Form fields branch was added to the existing tag tree"
+msgstr ""
+
+#: pdffieldmapper.py:2384
+msgid "the tag tree groups the fields in several places, so it was not changed"
+msgstr ""
+
+#: pdffieldmapper.py:2421
+msgid "the tag tree's Form elements were put in tab order"
+msgstr ""
