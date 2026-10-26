@@ -2,7 +2,6 @@
 # vcardenhanced — Multi-version vCard Import/Export for Gramps
 ![](gramps:icon:gramps-attribute:64) **vCard** `.vcf` addons — Plug-in Types: ![](gramps:icon:gramps-import:24) Importer / ![](gramps:icon:gramps-export:24) Exporter
 
-- **Experimental!**
 - **vCard versions supported:** 1.0, 2.1, 3.0, 4.0
 - **Gramps versions:** 5.2 and later
 - **Addon type:** Fork-and-Hide workaround (GEPS 048, Workaround A)
@@ -12,20 +11,23 @@
 This addon replaces the built-in Gramps vCard importer and exporter with versions that understand vCard 1.0, 2.1, 3.0 and 4.0, and the common extensions written by Apple, Android, Evolution, KDE and Outlook.
 
 The importer brings every vCard property that has a place in the Gramps database into that place: names, events, places, addresses, web links, notes, tags, photos (as Media objects), family relationships (as Families) and other relationships (as Associations). Properties that have no place in Gramps are kept as text in a Person attribute, so no data is lost.
-![Import statistics](media/screenshot.png)
 
 The exporter writes the same data back out. A file that is imported and then exported again gives the same Gramps data when it is imported a second time (a "round trip").
 
 See [vCard on Wikipedia](https://wikipedia.org/wiki/VCard) for background on the format.
 
 ## Installation
-1. Hide the built-in vCard plugins, so that only one vCard choice appears in the Import and Export dialogs:
-    - Open **Help → Plugin Manager**.
-    - Find the two ***built-in*** plugins named `vCard` (one importer, one exporter) and set them to **Hidden**.
+1. Copy these files into one folder inside the Gramps plugins folder, for example `~/.local/share/gramps/gramps60/plugins/vcardenhanced/` on Linux:
+    - `vcardenhanced.gpr.py`
+    - `importvcard_enh.py`
+    - `exportvcard_enh.py`
+    - `README.md`
+    - `CHANGELOG.md`
+2. Restart Gramps.
+3. Hide the built-in vCard plugins, so that only one vCard choice appears in the Import and Export dialogs:
+    - Open **Help → Plugin Manager Enhanced**.
+    - Find the two built-in plugins named `vCard` (one importer, one exporter) and set them to **Hidden**.
     - The addon plugins are named **vCard (Enhanced — v1/2.1/3.0/4.0)**.
-2. Use the Addon Manager to Install the vCard Enhanced import and export addons 
-   - found in the [Emyoulation Curated Gramps Plugins](https://github.com/emyoulation/CuratedGrampsPlugins) GitHub repository project.
-3. Restart Gramps.
 
 Automatic hiding is not possible yet. See Hurdle 4 below.
 
@@ -188,8 +190,8 @@ After one plugin is hidden, Gramps has no built-in control to switch back. That 
 ## Credits
 - Original vCard import and export: Martin Hawlisch, Donald N. Allingham, Brian G. Matherly, Jakim Friant, Michiel D. Nauta (Gramps project)
 - Export option box pattern: Kari Kujansuu (isotammiexportxml)
-- Multi-version fork (1.0): Claude (Anthropic, claude-sonnet-4-6), GEPS 048 experiment, March 2026
-- Version 2.0 (media, Families and Associations, full property mapping, round-trip export): Claude (Anthropic, Claude Opus 5.5), October 2026
-- Wish-coder and tester: Brian McCullough (emyoulation), Gramps project
+- Multi-version fork: Claude (Anthropic, claude-sonnet-4-6), GEPS 048 experiment, March 2026
+- Media, Families and Associations, full property mapping and round-trip export: Claude (Anthropic, Claude Opus 5.5), October 2026
+- Author and tester: Brian McCullough (emyoulation), Gramps project
 
 ![](gramps:icon:kasumi:32)
