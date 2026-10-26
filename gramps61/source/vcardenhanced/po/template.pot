@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Translation template for the 2.0.0 vCard (Enhanced — v1/2.1/3.0/4.0) importer addon for Gramps.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the vCard (Enhanced — v1/2.1/3.0/4.0) package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: vCard (Enhanced — v1/2.1/3.0/4.0) 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-21 20:10-0500\n"
+"POT-Creation-Date: 2026-10-25 19:49-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,65 +16,219 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/vcardenhanced.gpr.py:91
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/vcardenhanced.gpr.py:110
-msgid "vCard (Enhanced — v1/2.1/3.0/4.0)"
+#: exportvcard_enh.py:67 importvcard_enh.py:90
+msgid "unidentified"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/vcardenhanced.gpr.py:93
-msgid ""
-"Import contacts from vCard files (.vcf). Supports vCard versions 1, 2.1, "
-"3.0, and 4.0. Unhandled properties are preserved as Person attributes. "
-"Variant Call Format (DNA) files are detected and rejected."
+#: exportvcard_enh.py:68 importvcard_enh.py:91
+msgid "vCard Import"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/vcardenhanced.gpr.py:111
-msgid "_vCard (Enhanced)"
+#: exportvcard_enh.py:69 importvcard_enh.py:1239
+msgid "Instant Messaging"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/vcardenhanced.gpr.py:113
-msgid ""
-"Export contacts to vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, "
-"and 4.0 (default: 3.0)."
+#: exportvcard_enh.py:70 importvcard_enh.py:193
+msgid "photo"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/vcardenhanced.gpr.py:122
-msgid "vCard export options"
+#: exportvcard_enh.py:70 importvcard_enh.py:194
+msgid "logo"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/exportvcard_enh.py:55
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/exportvcard_enh.py:58
+#: exportvcard_enh.py:70 importvcard_enh.py:195
+msgid "sound"
+msgstr ""
+
+#: exportvcard_enh.py:71 importvcard_enh.py:1267
+msgid "Gender identity"
+msgstr ""
+
+#: exportvcard_enh.py:72 importvcard_enh.py:1151
+msgid "Role"
+msgstr ""
+
+#: exportvcard_enh.py:73 importvcard_enh.py:1651 importvcard_enh.py:1717
+msgid "vCard RELATED"
+msgstr ""
+
+#: exportvcard_enh.py:77 importvcard_enh.py:248
+msgid "Free/Busy"
+msgstr ""
+
+#: exportvcard_enh.py:78 importvcard_enh.py:249
+msgid "Calendar"
+msgstr ""
+
+#: exportvcard_enh.py:79 importvcard_enh.py:250
+msgid "Calendar address"
+msgstr ""
+
+#: exportvcard_enh.py:81 importvcard_enh.py:251 importvcard_enh.py:252
+#: importvcard_enh.py:253
+msgid "Social Profile"
+msgstr ""
+
+#: exportvcard_enh.py:98 exportvcard_enh.py:879 importvcard_enh.py:272
+msgid "Spouse"
+msgstr ""
+
+#: exportvcard_enh.py:99 exportvcard_enh.py:881 importvcard_enh.py:273
+msgid "Partner"
+msgstr ""
+
+#: exportvcard_enh.py:100 exportvcard_enh.py:883 importvcard_enh.py:274
+msgid "Child"
+msgstr ""
+
+#: exportvcard_enh.py:101 exportvcard_enh.py:889 importvcard_enh.py:275
+msgid "Parent"
+msgstr ""
+
+#: exportvcard_enh.py:102 importvcard_enh.py:276
+msgid "Father"
+msgstr ""
+
+#: exportvcard_enh.py:103 importvcard_enh.py:277
+msgid "Mother"
+msgstr ""
+
+#: exportvcard_enh.py:104 exportvcard_enh.py:898 importvcard_enh.py:278
+msgid "Sibling"
+msgstr ""
+
+#: exportvcard_enh.py:105 exportvcard_enh.py:894 importvcard_enh.py:279
+msgid "Brother"
+msgstr ""
+
+#: exportvcard_enh.py:106 exportvcard_enh.py:896 importvcard_enh.py:280
+msgid "Sister"
+msgstr ""
+
+#: exportvcard_enh.py:107 importvcard_enh.py:281
+msgid "Kin"
+msgstr ""
+
+#: exportvcard_enh.py:108 importvcard_enh.py:282
+msgid "Muse"
+msgstr ""
+
+#: exportvcard_enh.py:109 importvcard_enh.py:283
+msgid "Crush"
+msgstr ""
+
+#: exportvcard_enh.py:110 importvcard_enh.py:284
+msgid "Date"
+msgstr ""
+
+#: exportvcard_enh.py:111 importvcard_enh.py:285
+msgid "Sweetheart"
+msgstr ""
+
+#: exportvcard_enh.py:112 importvcard_enh.py:286
+msgid "Colleague"
+msgstr ""
+
+#: exportvcard_enh.py:113 importvcard_enh.py:287 importvcard_enh.py:288
+msgid "Coworker"
+msgstr ""
+
+#: exportvcard_enh.py:114 importvcard_enh.py:289
+msgid "Agent"
+msgstr ""
+
+#: exportvcard_enh.py:115 importvcard_enh.py:290
+msgid "Assistant"
+msgstr ""
+
+#: exportvcard_enh.py:116 importvcard_enh.py:291
+msgid "Manager"
+msgstr ""
+
+#: exportvcard_enh.py:117 importvcard_enh.py:292
+msgid "Friend"
+msgstr ""
+
+#: exportvcard_enh.py:118 importvcard_enh.py:293
+msgid "Acquaintance"
+msgstr ""
+
+#: exportvcard_enh.py:119 importvcard_enh.py:294
+msgid "Met"
+msgstr ""
+
+#: exportvcard_enh.py:120 importvcard_enh.py:295
+msgid "Contact"
+msgstr ""
+
+#: exportvcard_enh.py:121 importvcard_enh.py:296
+msgid "Neighbor"
+msgstr ""
+
+#: exportvcard_enh.py:122 importvcard_enh.py:297 importvcard_enh.py:298
+msgid "Co-resident"
+msgstr ""
+
+#: exportvcard_enh.py:123 importvcard_enh.py:299
+msgid "Emergency contact"
+msgstr ""
+
+#: exportvcard_enh.py:124 importvcard_enh.py:300
+msgid "Same person"
+msgstr ""
+
+#: exportvcard_enh.py:125 exportvcard_enh.py:900 importvcard_enh.py:301
+#: importvcard_enh.py:1496
+msgid "Related"
+msgstr ""
+
+#: exportvcard_enh.py:126 importvcard_enh.py:302
+msgid "Husband"
+msgstr ""
+
+#: exportvcard_enh.py:127 importvcard_enh.py:303
+msgid "Wife"
+msgstr ""
+
+#: exportvcard_enh.py:128 importvcard_enh.py:304
+msgid "Son"
+msgstr ""
+
+#: exportvcard_enh.py:129 importvcard_enh.py:305
+msgid "Daughter"
+msgstr ""
+
+#: exportvcard_enh.py:172 exportvcard_enh.py:176
 #, python-format
 msgid "Could not create %s"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/exportvcard_enh.py:90
+#: exportvcard_enh.py:208
 msgid "vCard version to export"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/exportvcard_enh.py:105
+#: exportvcard_enh.py:222
 msgid "1.0  — original Versit spec (rarely needed)"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/exportvcard_enh.py:106
+#: exportvcard_enh.py:223
 msgid "2.1  — widely supported; used by older phones and apps"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/exportvcard_enh.py:107
+#: exportvcard_enh.py:224
 msgid "3.0  — RFC 2426; Gramps default; broadest compatibility"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/exportvcard_enh.py:108
+#: exportvcard_enh.py:225
 msgid "4.0  — RFC 6350; modern standard; richer data types"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:78
+#: importvcard_enh.py:118
 msgid "Cannot import this .vcf file"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:80
+#: importvcard_enh.py:120
 msgid ""
 "This file appears to be a Variant Call Format (VCF) file used for DNA / "
 "genomic data, not a vCard contact file.\n"
@@ -83,73 +237,209 @@ msgid ""
 "process this file."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:100
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:103
+#: importvcard_enh.py:137 importvcard_enh.py:140
 #, python-format
 msgid "%s could not be opened\n"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:105
+#: importvcard_enh.py:142
 msgid "Results"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:105
+#: importvcard_enh.py:142
 msgid "done"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:330
+#: importvcard_enh.py:646
 #, python-format
 msgid "Line %(line)5d: %(prob)s\n"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:360
+#: importvcard_enh.py:661
+#, python-format
+msgid "%(start)s… [%(count)d more characters]"
+msgstr ""
+
+#: importvcard_enh.py:691
 msgid "vCard import"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:366
-#, python-brace-format
-msgid "Import Complete: {number_of} second"
-msgid_plural "Import Complete: {number_of} seconds"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:372
+#: importvcard_enh.py:700
 msgid "vCard import report: No errors detected"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:375
+#: importvcard_enh.py:703
 #, python-format
 msgid "vCard import report: %s errors detected\n"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:469
+#: importvcard_enh.py:713
+msgid "People imported"
+msgstr ""
+
+#: importvcard_enh.py:714
+msgid "Events created"
+msgstr ""
+
+#: importvcard_enh.py:715
+msgid "Places created"
+msgstr ""
+
+#: importvcard_enh.py:716
+msgid "Media objects created"
+msgstr ""
+
+#: importvcard_enh.py:717
+msgid "Media files written"
+msgstr ""
+
+#: importvcard_enh.py:718
+msgid "Notes created"
+msgstr ""
+
+#: importvcard_enh.py:719
+msgid "Tags created"
+msgstr ""
+
+#: importvcard_enh.py:720
+msgid "Associations created"
+msgstr ""
+
+#: importvcard_enh.py:721
+msgid "People created from RELATED names"
+msgstr ""
+
+#: importvcard_enh.py:722
+msgid "Placeholder people (no name)"
+msgstr ""
+
+#: importvcard_enh.py:723
+msgid "Families created"
+msgstr ""
+
+#: importvcard_enh.py:727
+#, python-format
+msgid "Media folder: %s"
+msgstr ""
+
+#: importvcard_enh.py:786
+msgid "File ended inside a vCard (missing END)."
+msgstr ""
+
+#: importvcard_enh.py:795
 msgid ""
 "BEGIN property not properly closed by END; Gramps can't cope with nested "
 "vCards."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:496
+#: importvcard_enh.py:810
+msgid "The vCard contains no data; skipping this record."
+msgstr ""
+
+#: importvcard_enh.py:854
 #, python-format
 msgid ""
 "vCard version %(ver)s is not explicitly supported; attempting import using "
 "vCard 3.0 rules."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:527
+#: importvcard_enh.py:888
+#, python-format
 msgid ""
-"The vCard is malformed. It is missing both N and ORG properties; skipping "
-"this record."
+"The vCard has no N, FN or ORG property; imported as placeholder person "
+"'%(given)s %(surname)s'."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:538
+#: importvcard_enh.py:908
 msgid "The vCard N field has wrong component count."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:686
+#: importvcard_enh.py:1076
 #, python-brace-format
 msgid "Invalid date {vcard_snippet}, preserving as text."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/vcardenhanced/importvcard_enh.py:718
+#: importvcard_enh.py:1122
 msgid "Anniversary (from vCard)"
+msgstr ""
+
+#: importvcard_enh.py:1355
+#, python-format
+msgid "vCard %s link"
+msgstr ""
+
+#: importvcard_enh.py:1363
+#, python-format
+msgid "Could not decode %(kind)s data (%(err)s); kept as text."
+msgstr ""
+
+#: importvcard_enh.py:1435
+#, python-format
+msgid "Linked %(kind)s file not found: %(path)s"
+msgstr ""
+
+#: importvcard_enh.py:1450
+#, python-format
+msgid "%(name)s (vCard %(kind)s)"
+msgstr ""
+
+#: importvcard_enh.py:1468
+#, python-format
+msgid "Could not save %(kind)s to %(dir)s: %(err)s"
+msgstr ""
+
+#: importvcard_enh.py:1653
+#, python-format
+msgid "Created from a RELATED property in the vCard of %s"
+msgstr ""
+
+#: importvcard_enh.py:1679
+#, python-format
+msgid "RELATED value %s matches several people; not linked."
+msgstr ""
+
+#: importvcard_enh.py:1681
+#, python-format
+msgid "RELATED value %s matches nobody in this file; not linked."
+msgstr ""
+
+#: importvcard_enh.py:1759
+#, python-format
+msgid ""
+"%(child)s has more than two parents (%(names)s); linked as Associations "
+"instead."
+msgstr ""
+
+#: importvcard_enh.py:1777
+#, python-format
+msgid ""
+"%s has an ANNIVERSARY but several spouses; the Marriage event is kept on the "
+"person."
+msgstr ""
+
+#: vcardenhanced.gpr.py:95 vcardenhanced.gpr.py:118
+msgid "vCard (Enhanced — v1/2.1/3.0/4.0)"
+msgstr ""
+
+#: vcardenhanced.gpr.py:97
+msgid ""
+"Import contacts from vCard files (.vcf). Supports vCard versions 1, 2.1, "
+"3.0, and 4.0. Embedded photos become Media objects, relationships become "
+"Associations, and unhandled properties are preserved as Person attributes. "
+"Variant Call Format (DNA) files are detected and rejected."
+msgstr ""
+
+#: vcardenhanced.gpr.py:119
+msgid "_vCard (Enhanced)"
+msgstr ""
+
+#: vcardenhanced.gpr.py:121
+msgid ""
+"Export contacts to vCard files (.vcf). Supports vCard versions 1, 2.1, 3.0, "
+"and 4.0 (default: 3.0). Round-trips files made by the Enhanced vCard "
+"importer."
+msgstr ""
+
+#: vcardenhanced.gpr.py:131
+msgid "vCard export options"
 msgstr ""

@@ -46,8 +46,9 @@
 #
 # ─────────────────────────────────────────────────────────────────────
 
-from gramps.version import major_version
+from gramps.version import major_version, VERSION_TUPLE
 from gramps.gen.const import GRAMPS_LOCALE as glocale
+
 _ = glocale.translation.gettext
 
 # ── Automatic hide of upstream built-in plugins (best-effort) ─────────
@@ -56,6 +57,7 @@ _ = glocale.translation.gettext
 # the try/except swallows the error gracefully and the user must hide
 # manually.
 
+"""
 _UPSTREAM_IDS = ("im_vcard", "ex_vcard")
 
 def _auto_hide_upstream():
@@ -83,43 +85,51 @@ def _auto_hide_upstream():
 
 _auto_hide_upstream()
 # ─────────────────────────────────────────────────────────────────────
-
+"""
 
 # ── vCard Enhanced Import ─────────────────────────────────────────────
-register(IMPORT,
-    id          = "im_vcard_enh",
-    name        = _("vCard (Enhanced — v1/2.1/3.0/4.0)"),
-    description = _(
-        "Import contacts from vCard files (.vcf). "
-        "Supports vCard versions 1, 2.1, 3.0, and 4.0. "
-        "Unhandled properties are preserved as Person attributes. "
-        "Variant Call Format (DNA) files are detected and rejected."
-    ),
-    version     = "1.0.0",
-    gramps_target_version = major_version,
-    status      = STABLE,
-    fname       = "importvcard_enh.py",
-    import_function = "importData",
-    extension   = "vcf",
-    help_url    = "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#Importing_data",
-)
+if VERSION_TUPLE >= (5, 2, 0):
+    register(
+        IMPORT,
+        id="im_vcard_enh",
+        name=_("vCard (Enhanced — v1/2.1/3.0/4.0)"),
+        description=_(
+            "Import contacts from vCard files (.vcf). "
+            "Supports vCard versions 1, 2.1, 3.0, and 4.0. "
+            "Embedded photos become Media objects, relationships become "
+            "Associations, and unhandled properties are preserved as Person "
+            "attributes. Variant Call Format (DNA) files are detected and rejected."
+        ),
+        version="2.0.0",  # build 20261025.2241
+        gramps_target_version=major_version,
+        status=EXPERIMENTAL,
+        fname="importvcard_enh.py",
+        import_function="importData",
+        extension="vcf",
+        # help_url    = "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#Importing_data",
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/vcardenhanced",
+    )
 
 # ── vCard Enhanced Export ─────────────────────────────────────────────
-register(EXPORT,
-    id          = "ex_vcard_enh",
-    name        = _("vCard (Enhanced — v1/2.1/3.0/4.0)"),
-    name_accell = _("_vCard (Enhanced)"),
-    description = _(
-        "Export contacts to vCard files (.vcf). "
-        "Supports vCard versions 1, 2.1, 3.0, and 4.0 (default: 3.0)."
-    ),
-    version     = "1.0.0",
-    gramps_target_version = major_version,
-    status      = STABLE,
-    fname       = "exportvcard_enh.py",
-    export_function     = "exportData",
-    export_options      = "VCardVersionOptionBox",
-    export_options_title = _("vCard export options"),
-    extension   = "vcf",
-    help_url    = "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#vCard_export",
-)
+if VERSION_TUPLE >= (5, 2, 0):
+    register(
+        EXPORT,
+        id="ex_vcard_enh",
+        name=_("vCard (Enhanced — v1/2.1/3.0/4.0)"),
+        name_accell=_("_vCard (Enhanced)"),
+        description=_(
+            "Export contacts to vCard files (.vcf). "
+            "Supports vCard versions 1, 2.1, 3.0, and 4.0 (default: 3.0). "
+            "Round-trips files made by the Enhanced vCard importer."
+        ),
+        version="2.0.0",  # build 20261025.2241
+        gramps_target_version=major_version,
+        status=EXPERIMENTAL,
+        fname="exportvcard_enh.py",
+        export_function="exportData",
+        export_options="VCardVersionOptionBox",
+        export_options_title=_("vCard export options"),
+        extension="vcf",
+        # help_url    = "Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#vCard_export",
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/vcardenhanced",
+    )
