@@ -68,6 +68,7 @@ from gramps.gen.lib.date import Date, Today
 from gramps.gen.plug import PluginRegister
 from gramps.gen.plug._pluginreg import PluginData
 from gramps.gui.dialog import OkDialog
+from gramps.gui.utils import text_to_clipboard
 from gramps.gui.editors.editdate import EditDate, MOD_TEXT, QUAL_TEXT
 from gramps.gui.pluginmanager import GuiPluginManager
 
@@ -1592,13 +1593,46 @@ def _add_evaluation_line(dialog):
     label.set_tooltip_text(
         _(
             "How Gramps reads this date when comparing it with other dates, "
-            "using the About, Before and After ranges set in Preferences"
+            "using the About, Before and After ranges set in Preferences.\n"
+            "Double-click to copy the evaluated date."
         )
     )
+    # A double-click copies the evaluated date. The handler runs before the
+    # label's own (it returns True), so the double-click does not also
+    # select a word; a single click or a drag still selects text as before.
+    label.connect("button-press-event", _cb_evaluation_pressed, dialog)
     column.pack_start(label, False, False, 0)
     label.show()
     dialog._evaluation_label = label
+    dialog._evaluation_value = ""
+    dialog._evaluation_flash = 0
     _update_evaluation(dialog, True)
+
+
+def _cb_evaluation_pressed(label, event, dialog):
+    """
+    Double-click on the Evaluates to line: copy the evaluated date (the
+    value only, without "Evaluates to:") to the clipboard, and say so on
+    the line for a moment.
+    """
+    if event.type != Gdk.EventType._2BUTTON_PRESS or event.button != 1:
+        return False
+    value = getattr(dialog, "_evaluation_value", "")
+    if not value:  # nothing to copy: keep the usual double-click behavior
+        return False
+    text_to_clipboard(value)
+    if dialog._evaluation_flash:
+        GLib.source_remove(dialog._evaluation_flash)
+    label.set_text(_("Copied to the clipboard: %s") % value)
+    dialog._evaluation_flash = GLib.timeout_add(1500, _cb_evaluation_unflash, dialog)
+    return True
+
+
+def _cb_evaluation_unflash(dialog):
+    """Put the Evaluates to text back after the "Copied" message."""
+    dialog._evaluation_flash = 0
+    _update_evaluation(dialog, dialog._evaluation_valid)
+    return False
 
 
 def _update_evaluation(dialog, valid):
@@ -1608,7 +1642,15 @@ def _update_evaluation(dialog, valid):
     label = getattr(dialog, "_evaluation_label", None)
     if label is None:
         return
-    text = _evaluated_text(dialog.validated_date) if valid else ""
+    dialog._evaluation_valid = valid
+    date = dialog.validated_date if valid else None
+    text = _evaluated_text(date) if valid else ""
+    # only a real evaluated date can be copied, not the Text only notice
+    is_date = bool(text) and date.get_modifier() != Date.MOD_TEXTONLY
+    dialog._evaluation_value = text if is_date else ""
+    if getattr(dialog, "_evaluation_flash", 0):
+        GLib.source_remove(dialog._evaluation_flash)
+        dialog._evaluation_flash = 0
     label.set_text(_("Evaluates to: %s") % text if text else "")
 
 

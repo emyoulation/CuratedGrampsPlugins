@@ -50,6 +50,7 @@ Configure dialog additions:
 import logging
 import os
 import re
+import weakref
 from collections import Counter
 from time import perf_counter
 from urllib.parse import quote
@@ -735,6 +736,7 @@ class FuzzyGroupingView(BasePersonView):
         self.subsort_store = None
         self._subsort_filling = False
         self._refresh_timer = None  # pending delayed refresh (GLib source id)
+        self._system_listeners = []  # weakrefs, see connect_phonetic_system
 
         BasePersonView.__init__(
             self,
@@ -778,6 +780,7 @@ class FuzzyGroupingView(BasePersonView):
         model.name_fmt_str = name_format_string(CONFIG.get("subsort.name_format"))
 
     def build_tree(self, *args, **kwargs):
+        self._cancel_refresh()  # this build covers any pending change
         self._push_settings_to_model()
         BasePersonView.build_tree(self, *args, **kwargs)
 
@@ -844,13 +847,9 @@ class FuzzyGroupingView(BasePersonView):
         old_system = self.system_id
         self.system_id = wanted if wanted in encoders else DEFAULT_SYSTEM
 
-        action = self.uimanager.get_action(self.action_group, "FuzzyGroupingSystem")
-        if action is not None:
-            action.set_state(GLib.Variant("s", self.system_id))
-        self.toolbar_ui[:] = self._build_toolbar_ui()
-        self.uimanager.add_ui_from_string(self.toolbar_ui)
-        self.uimanager.update_menu()
+        self._refresh_toolbar()
         if self.system_id != old_system:
+            self._notify_system_listeners()
             self._rebuild()
 
     def _cb_first_run_configure(self):
@@ -1093,19 +1092,86 @@ class FuzzyGroupingView(BasePersonView):
     def cb_set_phonetic_system(self, action, value):
         """Toolbar menu callback: regroup with the chosen system."""
         action.set_state(value)
-        system_id = value.get_string()
-        if system_id == self.system_id or system_id not in self.encoders:
+        self.set_phonetic_system(value.get_string())
+
+    def _refresh_toolbar(self):
+        """
+        Rebuild the toolbar fragments for the current system (same ids, so
+        leaving the view still removes them). The live toolbar is only
+        touched while this view is shown; otherwise the fragments are
+        merged on the next visit.
+        """
+        self.toolbar_ui[:] = self._build_toolbar_ui()
+        if not self.active:
             return
+        if self.action_group is not None:
+            action = self.uimanager.get_action(self.action_group, "FuzzyGroupingSystem")
+            if action is not None:
+                action.set_state(GLib.Variant("s", self.system_id))
+        self.uimanager.add_ui_from_string(self.toolbar_ui)
+        self.uimanager.update_menu()
+
+    # ---------------------------------------------------------------
+    # Phonetic system sync with gramplets docked in this view
+    #
+    # Duck-typed, so no addon imports another: a docked gramplet checks
+    # getattr(self.gui.view, "PHONETIC_SYSTEM_SYNC", 0) >= 1, then uses
+    # phonetic_system_id(), set_phonetic_system() and
+    # connect_phonetic_system(). Used by Flat Filter and Fuzzy Matching.
+    # ---------------------------------------------------------------
+    PHONETIC_SYSTEM_SYNC = 1
+
+    def phonetic_system_id(self):
+        """The id of the phonetic system this view groups with."""
+        return self.system_id
+
+    def connect_phonetic_system(self, callback):
+        """
+        Call callback(system_id) when this view changes phonetic system.
+        A bound method is held weakly, so a closed gramplet needs no
+        disconnect.
+        """
+        try:
+            ref = weakref.WeakMethod(callback)
+        except TypeError:  # plain function
+            ref = weakref.ref(callback)
+        self._system_listeners.append(ref)
+
+    def set_phonetic_system(self, system_id, source=None):
+        """
+        Group with system_id. Returns False when this view does not have
+        that system (for example its plugin is hidden) or already uses it.
+
+        source is the object asking (a docked gramplet); it is not called
+        back. A change from a gramplet waits REFRESH_DELAY seconds before
+        regrouping, so a following Find click does a single rebuild.
+        """
+        if system_id == self.system_id or system_id not in self.encoders:
+            return False
         self.system_id = system_id
         CONFIG.set("grouping.system", system_id)
         save_config()
+        self._refresh_toolbar()
+        self._notify_system_listeners(source)
+        if source is None:
+            self._rebuild()
+        else:
+            self.dirty = True
+            self._schedule_refresh()
+        return True
 
-        # refresh the button label (same ids, so leaving the view still
-        # removes it)
-        self.toolbar_ui[:] = self._build_toolbar_ui()
-        self.uimanager.add_ui_from_string(self.toolbar_ui)
-        self.uimanager.update_menu()
-        self._rebuild()
+    def _notify_system_listeners(self, source=None):
+        for ref in list(self._system_listeners):
+            callback = ref()
+            if callback is None:
+                self._system_listeners.remove(ref)
+                continue
+            if source is not None and getattr(callback, "__self__", None) is source:
+                continue
+            try:
+                callback(self.system_id)
+            except Exception:  # pylint: disable=broad-except
+                LOG.exception("Fuzzy Grouping: phonetic system listener failed")
 
     def define_actions(self):
         """
