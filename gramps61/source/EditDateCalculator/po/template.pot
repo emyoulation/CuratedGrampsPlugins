@@ -1,0 +1,362 @@
+# Translation template for the 0.0.1 Edit Date Calculator general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Edit Date Calculator package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Edit Date Calculator 0.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-26 17:53-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: EditDateCalculator.gpr.py:31
+msgid "Edit Date Calculator"
+msgstr ""
+
+#: EditDateCalculator.gpr.py:33
+msgid ""
+"Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with "
+"the triangle tab on the right edge of the dialog. To switch it off, hide "
+"this plugin and restart Gramps."
+msgstr ""
+
+#: datecalculator.py:106 editdate_calc_panel.py:110
+msgid "Reference date"
+msgstr ""
+
+#: datecalculator.py:107 editdate_calc_panel.py:111
+msgid "Date or offset"
+msgstr ""
+
+#: datecalculator.py:117 editdate_calc_panel.py:121
+msgid "a valid Gramps date or date range"
+msgstr ""
+
+#: datecalculator.py:122 editdate_calc_panel.py:126
+msgid ""
+"1. a Date\n"
+"2. a positive or negative number, representing years\n"
+"3. years, months and days: 2, 3, 10\n"
+"    or with units, in any order and each optional: 2y, 3m, 10d\n"
+"A leading minus, or Age / Aged (Aged 45y 3m), subtracts the whole offset."
+msgstr ""
+
+#: datecalculator.py:132 editdate_calc_panel.py:136
+#, python-format
+msgid "\"%(date)s\" or \"%(offset)s\""
+msgstr ""
+
+#: datecalculator.py:135 editdate_calc_panel.py:139
+msgid "Result"
+msgstr ""
+
+#: datecalculator.py:137 editdate_calc_panel.py:141
+msgid "Enter an expression above, then Calculate"
+msgstr ""
+
+#: datecalculator.py:140
+msgid "Result to Date"
+msgstr ""
+
+#: datecalculator.py:142
+msgid "Load the result into the Date fields of the dialog"
+msgstr ""
+
+#: datecalculator.py:145
+msgid "Result to Second Date"
+msgstr ""
+
+#: datecalculator.py:148
+msgid ""
+"Copy the result to the Second date of the dialog; the Type becomes Span "
+"unless it is already a Range or Span"
+msgstr ""
+
+#: datecalculator.py:153 editdate_calc_panel.py:158
+msgid "Calculate"
+msgstr ""
+
+#: datecalculator.py:155 editdate_calc_panel.py:160
+msgid "Copy"
+msgstr ""
+
+#: datecalculator.py:157 editdate_calc_panel.py:162
+msgid "Clear"
+msgstr ""
+
+#: datecalculator.py:248 editdate_calc_panel.py:253
+#, python-format
+msgid "Error: %(field)s must be a date"
+msgstr ""
+
+#: datecalculator.py:261 datecalculator.py:265 editdate_calc_panel.py:266
+#: editdate_calc_panel.py:270
+#, python-format
+msgid "Error: invalid %(field)s"
+msgstr ""
+
+#: datecalculator.py:272 editdate_calc_panel.py:277
+msgid "Error: could not calculate a result"
+msgstr ""
+
+#: editdate.py:99 editdate.py:111
+msgid "Regular"
+msgstr ""
+
+#: editdate.py:100 editdate.py:1033
+msgid "Before"
+msgstr ""
+
+#: editdate.py:101 editdate.py:1034
+msgid "After"
+msgstr ""
+
+#: editdate.py:102
+msgid "About"
+msgstr ""
+
+#: editdate.py:103
+msgid "Range"
+msgstr ""
+
+#: editdate.py:104
+msgid "From"
+msgstr ""
+
+#: editdate.py:105
+msgid "To"
+msgstr ""
+
+#: editdate.py:106
+msgid "Span"
+msgstr ""
+
+#: editdate.py:107 editdate.py:1054
+msgid "Text only"
+msgstr ""
+
+#: editdate.py:112 editdate.py:1036
+msgid "Estimated"
+msgstr ""
+
+#: editdate.py:113 editdate.py:1037
+msgid "Calculated"
+msgstr ""
+
+#: editdate.py:127
+msgctxt "manual"
+msgid "Editing_dates"
+msgstr ""
+
+#: editdate.py:160 editdate.py:746
+msgid "Date selection"
+msgstr ""
+
+#: editdate.py:365 editdatecalculator.py:405
+msgid "Show or hide the date calculator"
+msgstr ""
+
+#: editdate.py:737
+#, python-brace-format
+msgid "Correct the date or switch from `{cur_mode}' to `{text_mode}'"
+msgstr ""
+
+#: editdate.py:952
+msgid "Calendar"
+msgstr ""
+
+#. Translators: this string may contain markdown formatting; preserve it
+#: editdate.py:955
+msgid ""
+"Choose the calendar system: **Gregorian**, **Julian**, **Hebrew**, **French "
+"Republican**, **Persian**, **Islamic**, or **Swedish**. The selector is "
+"disabled when the date type is **Free text**, when **Dual dated** is active, "
+"or when the date contains a validation error (shown in the status bar at the "
+"bottom of this dialog)."
+msgstr ""
+
+#: editdate.py:965
+msgid "Dual-dated dates"
+msgstr ""
+
+#. Translators: this string may contain markdown formatting; preserve it
+#: editdate.py:968
+msgid ""
+"Slash dates such as `Jan 23, 1735/6` mark a historic transition between New "
+"Year conventions (e.g., March 25 vs. January 1). Enter a slash between years "
+"to create one: `1721/2`, `1719/20`, `1799/800`. Dual-dated dates use the "
+"Julian calendar. An alternate New Year day can be added in parentheses after "
+"the calendar name: `Jan 20, 1750 (Julian,Mar25)` or `Feb 23, 1710/1 "
+"(Mar25)`. Valid New Year codes: `Jan1`, `Mar1`, `Mar25`, `Sep1`."
+msgstr ""
+
+#: editdate.py:979
+msgid "Date entry syntax for this locale"
+msgstr ""
+
+#: editdate.py:1025
+msgid "sometime in the 1800s"
+msgstr ""
+
+#: editdate.py:1030
+msgid "Year only"
+msgstr ""
+
+#: editdate.py:1031
+msgid "Month and year"
+msgstr ""
+
+#: editdate.py:1032
+msgid "Full date"
+msgstr ""
+
+#: editdate.py:1035
+msgid "About/circa"
+msgstr ""
+
+#: editdate.py:1039
+msgid "Estimated, before"
+msgstr ""
+
+#: editdate.py:1043
+msgid "Calculated, after"
+msgstr ""
+
+#: editdate.py:1046
+msgid "Span (from/to)"
+msgstr ""
+
+#: editdate.py:1047
+msgid "Range (between/and)"
+msgstr ""
+
+#: editdate.py:1048
+msgid "Julian calendar"
+msgstr ""
+
+#: editdate.py:1049
+msgid "Hebrew calendar"
+msgstr ""
+
+#: editdate.py:1050
+msgid "French Republican"
+msgstr ""
+
+#: editdate.py:1051
+msgid "Persian calendar"
+msgstr ""
+
+#: editdate.py:1052
+msgid "Islamic calendar"
+msgstr ""
+
+#: editdate.py:1053
+msgid "Swedish calendar"
+msgstr ""
+
+#: editdate.py:1101
+msgid "What to express"
+msgstr ""
+
+#: editdate.py:1107
+msgid "Example"
+msgstr ""
+
+#: editdate_calc_panel.py:144
+msgid "Result to Start Date"
+msgstr ""
+
+#: editdate_calc_panel.py:146
+msgid "Load the result into the Start date fields of the dialog"
+msgstr ""
+
+#: editdate_calc_panel.py:149
+msgid "Result to End Date"
+msgstr ""
+
+#: editdate_calc_panel.py:152
+msgid ""
+"Copy the result to the End date of the dialog; if the End date is dimmed, "
+"From becomes a Span, After or any other Type a Range"
+msgstr ""
+
+#: editdatecalculator.py:200
+msgid "No documentation available"
+msgstr ""
+
+#: editdatecalculator.py:201
+msgid "This plugin has neither a README.md nor a registered help_url."
+msgstr ""
+
+#: editdatecalculator.py:293
+msgid "Help"
+msgstr ""
+
+#: editdatecalculator.py:295
+msgid "Show documentation for this plugin"
+msgstr ""
+
+#: editdatecalculator.py:929 editdatecalculator.py:1529
+msgid "Start date"
+msgstr ""
+
+#: editdatecalculator.py:929 editdatecalculator.py:1529
+msgid "End date"
+msgstr ""
+
+#: editdatecalculator.py:947
+#, python-format
+msgid "Click to use this month and year as the %s; drag to copy them"
+msgstr ""
+
+#: editdatecalculator.py:953
+#, python-format
+msgid "Click to use this year as the %s; drag to copy it"
+msgstr ""
+
+#: editdatecalculator.py:960
+msgid "Previous month"
+msgstr ""
+
+#: editdatecalculator.py:962
+msgid "Next month"
+msgstr ""
+
+#: editdatecalculator.py:963
+msgid "Next year"
+msgstr ""
+
+#: editdatecalculator.py:965
+msgid "Previous year"
+msgstr ""
+
+#: editdatecalculator.py:1542
+msgid "Range (Between)"
+msgstr ""
+
+#: editdatecalculator.py:1544
+msgid "Span (From-To)"
+msgstr ""
+
+#: editdatecalculator.py:1556
+msgid "Text only: not evaluated as a date"
+msgstr ""
+
+#: editdatecalculator.py:1594
+msgid ""
+"How Gramps reads this date when comparing it with other dates, using the "
+"About, Before and After ranges set in Preferences"
+msgstr ""
+
+#: editdatecalculator.py:1612
+#, python-format
+msgid "Evaluates to: %s"
+msgstr ""

@@ -71,6 +71,17 @@
     "a": 2
   },
   {
+    "n": "Edit Date Calculator",
+    "i": "editdatecalculator",
+    "t": 6,
+    "d": "Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with the triangle tab on the right edge of the dialog. To switch it off, hide this plugin and restart Gramps.",
+    "v": "0.0.1",
+    "g": "6.1",
+    "s": 1,
+    "z": "EditDateCalculator.addon.tgz",
+    "h": "https://gramps.discourse.group/t/10127/8"
+  },
+  {
     "n": "Environment Inspector",
     "i": "EnvironmentInspector",
     "t": 10,
