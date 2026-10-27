@@ -126,11 +126,22 @@
     "z": "FlatFilter.addon.tgz"
   },
   {
+    "n": "Fuzzy Grouping",
+    "i": "fuzzygroupingview",
+    "t": 8,
+    "d": "The view showing all people in the Family Tree grouped by phonetically similar family names",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "FuzzyGroupingView.addon.tgz",
+    "h": "Addon:Fuzzy_Grouping"
+  },
+  {
     "n": "Fuzzy Match API",
     "i": "Fuzzy Match API",
     "t": 6,
     "d": "Library for other addons: phonetic surname matching (fuzzy_match_index.py), person-display formatting (fuzzy_match_display.py), and a standalone lookup window (FuzzyMatchLookupWindow.py) for a quick 'does someone like this already exist' check from another plugin. See FuzzyMatchAPI.md in this addon's own folder for the calling convention.",
-    "v": "0.5.1",
+    "v": "0.5.2",
     "g": "6.1",
     "s": 3,
     "z": "Fuzzy.addon.tgz"
@@ -140,7 +151,7 @@
     "i": "Fuzzy Matching",
     "t": 10,
     "d": "Gramplet for finding people in the Family Tree whose surname phonetically matches a given surname, using a cached per-tree index so it stays fast on large Family Trees",
-    "v": "0.5.4",
+    "v": "0.5.5",
     "g": "6.1",
     "s": 3,
     "z": "Fuzzy.addon.tgz",

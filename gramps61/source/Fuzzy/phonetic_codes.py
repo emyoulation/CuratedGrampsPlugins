@@ -86,6 +86,7 @@ vectors (e.g. "Peters" should encode to {"739400", "734000"}).
 # ------------------------
 import importlib
 import logging
+import weakref
 from types import ModuleType
 from typing import Callable, Dict, Iterable, List, Optional, Set, Tuple, Type
 
@@ -109,6 +110,7 @@ from typing import Callable, Dict, Iterable, List, Optional, Set, Tuple, Type
 # ------------------------
 # Gramps modules
 # ------------------------
+from gramps.gen.config import config as _gramps_config
 from gramps.gen.filters.rules.person import HasSoundexName
 from gramps.gen.plug import PluginRegister
 from gramps.gen.plug._pluginreg import RULE
@@ -176,8 +178,19 @@ def _discover_addon_rule_modules() -> List[Tuple[ModuleType, str, str]]:
     """
     modules_and_ruleclasses = []
     registry = PluginRegister.get_instance()
+    # Plugins the user hid/deactivated in the Plugin Manager are left out
+    # of the Encoding system list. Read from the same "plugin.hiddenplugins"
+    # config key that GuiPluginManager.hide_plugin() writes and that
+    # gramps.gen.plug._manager itself consults, so this module stays free
+    # of any gramps.gui import. Gramps core still makes a hidden rule
+    # findable for saved filters (BasePluginManager.reg_plugins does that
+    # for every addon rule), so filters built earlier keep working.
+    hidden = set(_gramps_config.get("plugin.hiddenplugins"))
     for pdata in registry.type_plugins(RULE):
         if not (pdata.id or "").startswith(_ENCODER_ID_PREFIX):
+            continue
+        if pdata.id in hidden:
+            LOG.debug("Fuzzy Matching: skipping hidden encoder plugin %r", pdata.id)
             continue
         try:
             module = importlib.import_module(pdata.mod_name)
@@ -438,3 +451,85 @@ if not ALGORITHMS:
         "(not even the hardcoded Soundex entry); the gramplet's "
         "Encoding system list will be empty"
     )
+
+
+# ------------------------
+# Live reload when plugins are hidden/shown
+# ------------------------
+#: Callbacks to run after :func:`reload_encoders` changed the registry.
+#: Held weakly, so a closed gramplet or window does not need to
+#: disconnect and is not kept alive by this list.
+_LISTENERS: List[weakref.ref] = []
+
+
+def connect_changed(callback: Callable[[], None]) -> None:
+    """
+    Call ``callback()`` (no arguments) whenever the set of installed
+    encoding systems changes, for example after a user hides or shows an
+    encoder plugin in the Plugin Manager. A bound method is held weakly.
+
+    :param callback: Function or bound method to call.
+    """
+    try:
+        ref: weakref.ref = weakref.WeakMethod(callback)  # type: ignore[arg-type]
+    except TypeError:  # a plain function, not a bound method
+        ref = weakref.ref(callback)
+    _LISTENERS.append(ref)
+
+
+def get_encoder(algorithm_id: Optional[str]) -> Callable[[str], Set[str]]:
+    """
+    The encode function for ``algorithm_id``, or the default system's
+    when that id is unknown, for example because its plugin was hidden
+    after the caller chose it.
+
+    :param algorithm_id: An id key of :data:`ALGORITHMS`, or None.
+    :returns: An encode function.
+    """
+    encode = ALGORITHMS.get(algorithm_id) if algorithm_id else None
+    if encode is None:
+        encode = ALGORITHMS[DEFAULT_ALGORITHM]
+    return encode
+
+
+def reload_encoders() -> bool:
+    """
+    Rebuild the four registries **in place** (so every
+    ``from phonetic_codes import ALGORITHMS`` reference stays current)
+    and notify :func:`connect_changed` listeners when the set of
+    systems changed.
+
+    :returns: True if the set of systems changed.
+    """
+    global DEFAULT_ALGORITHM  # pylint: disable=global-statement
+    old_ids = list(ALGORITHMS)
+    algorithms, labels, descriptions, filter_rules = _load_encoders()
+    for target, source in (
+        (ALGORITHMS, algorithms),
+        (ALGORITHM_LABELS, labels),
+        (ALGORITHM_DESCRIPTIONS, descriptions),
+        (ALGORITHM_FILTER_RULES, filter_rules),
+    ):
+        target.clear()
+        target.update(source)
+    DEFAULT_ALGORITHM = _choose_default(ALGORITHMS)
+    if list(ALGORITHMS) == old_ids:
+        return False
+    for ref in list(_LISTENERS):
+        callback = ref()
+        if callback is None:
+            _LISTENERS.remove(ref)
+            continue
+        try:
+            callback()
+        except Exception:  # pylint: disable=broad-except
+            LOG.exception("Fuzzy Matching: encoder-change listener failed")
+    return True
+
+
+def _cb_hidden_plugins_changed(*_args) -> None:
+    """config "plugin.hiddenplugins" callback: see :func:`reload_encoders`."""
+    reload_encoders()
+
+
+_gramps_config.connect("plugin.hiddenplugins", _cb_hidden_plugins_changed)

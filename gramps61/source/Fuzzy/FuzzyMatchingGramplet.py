@@ -195,8 +195,9 @@ from phonetic_codes import (
     ALGORITHM_DESCRIPTIONS,
     ALGORITHM_FILTER_RULES,
     ALGORITHM_LABELS,
-    ALGORITHMS,
     DEFAULT_ALGORITHM,
+    connect_changed,
+    get_encoder,
 )
 from fuzzy_match_display import format_person, person_sort_key, refresh_matching_person_rows
 from fuzzy_match_index import FuzzyMatchIndex, person_surnames
@@ -401,7 +402,11 @@ class FuzzyMatchingGramplet(Gramplet):
             self.algo_combo.append(algorithm_id, _(display_name))
         self.algo_combo.set_active_id(DEFAULT_ALGORITHM)
         self._update_algorithm_tooltip()
-        self.algo_combo.connect("changed", self.cb_algorithm_changed)
+        self._algo_changed_id = self.algo_combo.connect(
+            "changed", self.cb_algorithm_changed
+        )
+        # Encoder plugins hidden/shown in the Plugin Manager: refill the list.
+        connect_changed(self.cb_encoders_changed)
         grid.attach(self.algo_combo, 1, 1, 1, 1)
 
         code_label = Gtk.Label(label=_("Code(s):"), halign=Gtk.Align.START)
@@ -1256,6 +1261,24 @@ class FuzzyMatchingGramplet(Gramplet):
         else:
             self.status_label.set_text(_("Indexing {phase}…").format(phase=phase))
 
+    def cb_encoders_changed(self) -> None:
+        """
+        :func:`phonetic_codes.connect_changed` callback: an encoder plugin
+        was hidden or shown. Refill the Encoding system list, keeping the
+        current choice when it is still available; otherwise switch to
+        the default system and re-index.
+        """
+        current = self.algo_combo.get_active_id()
+        self.algo_combo.handler_block(self._algo_changed_id)
+        self.algo_combo.remove_all()
+        for algorithm_id, display_name in ALGORITHM_LABELS.items():
+            self.algo_combo.append(algorithm_id, _(display_name))
+        keep = current if current in ALGORITHM_LABELS else DEFAULT_ALGORITHM
+        self.algo_combo.set_active_id(keep)
+        self.algo_combo.handler_unblock(self._algo_changed_id)
+        if keep != current:
+            self.cb_algorithm_changed(self.algo_combo)
+
     def cb_algorithm_changed(self, _combo: Gtk.ComboBoxText) -> None:
         """
         Update the tooltip for the newly-selected algorithm and
@@ -1335,7 +1358,7 @@ class FuzzyMatchingGramplet(Gramplet):
             return
 
         surname, given_name = self._parse_query(self.name_entry.get_text())
-        encode = ALGORITHMS[self._current_algorithm()]
+        encode = get_encoder(self._current_algorithm())
         codes = encode(surname)
         self.code_store.clear()
         for code in sorted(codes):

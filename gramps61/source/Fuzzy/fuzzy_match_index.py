@@ -53,7 +53,12 @@ from typing import Dict, List, Optional, Set
 # ------------------------
 # Gramps specific
 # ------------------------
-from phonetic_codes import ALGORITHMS, DEFAULT_ALGORITHM
+# get_encoder() rather than ALGORITHMS[...]: the registry can change at
+# run time when an encoder plugin is hidden/shown (see
+# phonetic_codes.reload_encoders), and an index built for a system that
+# has since been hidden falls back to the default system instead of
+# raising KeyError.
+from phonetic_codes import DEFAULT_ALGORITHM, get_encoder
 
 LOG = logging.getLogger(__name__)
 
@@ -217,7 +222,7 @@ class FuzzyMatchIndex:
             after the final one (implicit ``StopIteration``).
         """
         self.ready = False
-        encode = ALGORITHMS[self.algorithm_id]
+        encode = get_encoder(self.algorithm_id)
 
         surnames = self.db.get_surname_list()
         known = set(surnames)
@@ -311,7 +316,7 @@ class FuzzyMatchIndex:
         """
         if not self.ready:
             return []
-        encode = ALGORITHMS[self.algorithm_id]
+        encode = get_encoder(self.algorithm_id)
         matches: Set[str] = set()
         for code in encode(name):
             matches.update(self.surname_index.get(code, []))
@@ -387,7 +392,7 @@ class FuzzyMatchIndex:
         if not self.ready:
             return touched
 
-        encode = ALGORITHMS[self.algorithm_id]
+        encode = get_encoder(self.algorithm_id)
         for handle in handles:
             try:
                 person = self.db.get_person_from_handle(handle)

@@ -1,0 +1,115 @@
+# Translation template for the 0.1.0 Fuzzy Grouping view addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Fuzzy Grouping package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Fuzzy Grouping 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-27 09:48-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: FuzzyGrouping.gpr.py:32 fuzzygroupingview.py:452 fuzzygroupingview.py:744
+msgid "Fuzzy Grouping"
+msgstr ""
+
+#: FuzzyGrouping.gpr.py:34
+msgid ""
+"The view showing all people in the Family Tree grouped by phonetically "
+"similar family names"
+msgstr ""
+
+#: FuzzyGrouping.gpr.py:45
+msgid "People"
+msgstr ""
+
+#: fuzzygroupingview.py:209
+msgid "Soundex"
+msgstr ""
+
+#: fuzzygroupingview.py:326
+msgid "No documentation available"
+msgstr ""
+
+#: fuzzygroupingview.py:327
+msgid "This plugin has neither a README.md nor a registered help_url."
+msgstr ""
+
+#: fuzzygroupingview.py:361
+msgid "View the ReadMe markdown docs for the Fuzzy Grouping person view mode"
+msgstr ""
+
+#: fuzzygroupingview.py:362
+msgid "Browse to the Help URL for the Fuzzy Grouping person view mode"
+msgstr ""
+
+#: fuzzygroupingview.py:455
+msgid "Building the fuzzy grouping index"
+msgstr ""
+
+#: fuzzygroupingview.py:628
+msgid "Display Name Editor"
+msgstr ""
+
+#: fuzzygroupingview.py:685
+#, python-format
+msgid "Default: %s"
+msgstr ""
+
+#: fuzzygroupingview.py:725
+msgid "Grouping"
+msgstr ""
+
+#: fuzzygroupingview.py:875
+msgid "Subsorting"
+msgstr ""
+
+#: fuzzygroupingview.py:883
+msgid "Grouping:"
+msgstr ""
+
+#: fuzzygroupingview.py:884
+msgid "Fuzzy grouping ID"
+msgstr ""
+
+#: fuzzygroupingview.py:885
+msgid "Sample Surname"
+msgstr ""
+
+#: fuzzygroupingview.py:894
+#, python-format
+msgid "Tree View: first column \"%s\" cannot be changed"
+msgstr ""
+
+#: fuzzygroupingview.py:918
+#, python-format
+msgid "%s: "
+msgstr ""
+
+#: fuzzygroupingview.py:918 fuzzygroupingview.py:961
+msgid "Name format"
+msgstr ""
+
+#: fuzzygroupingview.py:924
+msgid "Drag and drop, or edit the numbers, to change the subsort order"
+msgstr ""
+
+#: fuzzygroupingview.py:944
+msgid "Order"
+msgstr ""
+
+#: fuzzygroupingview.py:947
+msgid "Column Name"
+msgstr ""
+
+#: fuzzygroupingview.py:1081
+msgid "Select the phonetic system used to group people"
+msgstr ""

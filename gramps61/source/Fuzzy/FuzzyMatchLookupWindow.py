@@ -106,7 +106,12 @@ from gramps.gui.managedwindow import ManagedWindow
 # addon's own folder.
 from fuzzy_match_display import format_person, person_sort_key, refresh_matching_person_rows
 from fuzzy_match_index import FuzzyMatchIndex
-from phonetic_codes import ALGORITHM_DESCRIPTIONS, ALGORITHM_LABELS, DEFAULT_ALGORITHM
+from phonetic_codes import (
+    ALGORITHM_DESCRIPTIONS,
+    ALGORITHM_LABELS,
+    DEFAULT_ALGORITHM,
+    connect_changed,
+)
 
 # Also exposed whole, as ``<API module>.phonetic_codes``, so other addons
 # can list the installed encoding systems (ALGORITHM_LABELS) and get their
@@ -180,6 +185,8 @@ class FuzzyMatchLookupWindow(ManagedWindow):
         self._on_select = on_select
 
         algorithm_id = _last_algorithm_id or DEFAULT_ALGORITHM
+        if algorithm_id not in ALGORITHM_LABELS:  # its plugin was hidden
+            algorithm_id = DEFAULT_ALGORITHM
         self._index = FuzzyMatchIndex(dbstate.db, algorithm_id)
         self._build_generator = None
         self._build_idle_id = 0
@@ -226,7 +233,11 @@ class FuzzyMatchLookupWindow(ManagedWindow):
             self.algo_combo.append(algorithm_id, _(display_name))
         self.algo_combo.set_active_id(self._index.algorithm_id)
         self._update_algorithm_tooltip()
-        self.algo_combo.connect("changed", self.cb_algorithm_changed)
+        self._algo_changed_id = self.algo_combo.connect(
+            "changed", self.cb_algorithm_changed
+        )
+        # Encoder plugins hidden/shown in the Plugin Manager: refill the list.
+        connect_changed(self.cb_encoders_changed)
         grid.attach(self.algo_combo, 1, 1, 1, 1)
 
         given_label = Gtk.Label(label=_("Given name contains:"), halign=Gtk.Align.START)
@@ -442,6 +453,22 @@ class FuzzyMatchLookupWindow(ManagedWindow):
         ):
             handler_id = db.connect(signal, handler)
             self._db_handlers.append((db, handler_id))
+
+    def cb_encoders_changed(self) -> None:
+        """
+        :func:`phonetic_codes.connect_changed` callback - see
+        ``FuzzyMatchingGramplet.cb_encoders_changed``, which this mirrors.
+        """
+        current = self.algo_combo.get_active_id()
+        self.algo_combo.handler_block(self._algo_changed_id)
+        self.algo_combo.remove_all()
+        for algorithm_id, display_name in ALGORITHM_LABELS.items():
+            self.algo_combo.append(algorithm_id, _(display_name))
+        keep = current if current in ALGORITHM_LABELS else DEFAULT_ALGORITHM
+        self.algo_combo.set_active_id(keep)
+        self.algo_combo.handler_unblock(self._algo_changed_id)
+        if keep != current:
+            self.cb_algorithm_changed(self.algo_combo)
 
     def cb_algorithm_changed(self, _combo) -> None:
         """
