@@ -1,5 +1,4 @@
 # Select Edit and Calculate Dates
-
 [README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md)
 
 Edit Date Calculator is a Gramps addon that makes the Date selection dialog (the Date Editor) of Gramps 5.2, 6.0 and 6.1 much easier to use. It adds:
@@ -7,7 +6,8 @@ Edit Date Calculator is a Gramps addon that makes the Date selection dialog (the
 - **month calendars** that you can click, browse and drag dates from (on Gramps 6.1, the calendars of Gramps itself get the same new behavior),
 - **drag and drop** of days, months and years between the Start date, the End date, the calculator and other text boxes,
 - **smarter Date Type handling**, so that Before, To, Range and Span dates always show their dates in the section where they belong,
-- an **"Evaluates to" line** that shows how Gramps reads the date when it compares dates.
+- a **Parse button** that reads the Text comment as a date, and **red text** that shows when a date is Text only,
+- an **"Evaluates to" line** that shows how Gramps reads the date when it compares dates, and copies it with a double-click.
 
 ![The Select Date dialog with Date calculation slideout](media/screenshot.png)
 
@@ -20,6 +20,7 @@ The addon makes these changes when Gramps starts, without changing any Gramps co
 - [The month calendars](#the-month-calendars)
 - [Drag and drop](#drag-and-drop)
 - [Types: which section holds the date](#types-which-section-holds-the-date)
+- [The Text comment and the Parse button](#the-text-comment-and-the-parse-button)
 - [The Evaluates to line](#the-evaluates-to-line)
 - [Worked examples](#worked-examples)
 - [If something does not work](#if-something-does-not-work)
@@ -36,7 +37,7 @@ Addon Manager projects URLs:
 * `https://raw.githubusercontent.com/emyoulation/CuratedGrampsPlugins/master/gramps60`
 * `https://raw.githubusercontent.com/emyoulation/CuratedGrampsPlugins/master/gramps61`
 
-To check that the addon works, click the open any Date selection dialog, for example with the button beside a Date field in the Edit Event dialog. A narrow tab with a small triangle is on the right edge of the dialog.
+To check that the addon works, open any Date selection dialog, for example with the button beside a Date field in the Edit Event dialog. A small triangle is at the right edge of the dialog. It is the tab of the calculator, and it shows as a button when the mouse pointer is over it.
 
 ![Installed and listed in the Plugin Manager](media/PluginManager_DateCalc.png)
 
@@ -45,10 +46,10 @@ To check that the addon works, click the open any Date selection dialog, for exa
 From top to bottom, the Date selection dialog with this addon has:
 - **Calendar, Dual dated and New year begins**, unchanged from Gramps.
 - **Quality and Type.** In the Type menu, Range is named **Range (Between)** and Span is named **Span (From-To)**, so you can see what each one means.
-- **Start date and End date.** These are the "Date" and "Second date" sections of Gramps, renamed for what they hold. Each section has Year, Month and Day fields and, below them, a month calendar.
-- **Text comment.** Typing here changes the Type to Text only (see [Types](#types-which-section-holds-the-date)).
-- **Evaluates to**, a new line that shows how Gramps reads the date.
-- **The triangle tab** on the right edge, which opens the date calculator.
+- **Start date and End date.** These are the "Date" and "Second date" sections of Gramps, renamed for what they hold. Each section has Year, Month and Day fields and, below them, a month calendar. The two sections have the same width, with a wide space between them.
+- **Text comment**, with the **Parse button** at the end of the row (see [The Text comment and the Parse button](#the-text-comment-and-the-parse-button)). While the Type is Text only, the text here is red.
+- **Evaluates to**, a new line that shows how Gramps reads the date. It starts below the "Text comment:" label.
+- **The triangle tab** at the right edge, which opens the date calculator.
 - **Help** at the lower left, which opens this document.
 
 You can move the Date selection dialog separately from the editor that opened it, for example to see the Edit Event dialog behind it. The editor does not accept input until you close the Date selection dialog with OK or Cancel.
@@ -56,8 +57,8 @@ You can move the Date selection dialog separately from the editor that opened it
 ## The slide-out date calculator
 ![The Select Date dialog](media/DateSelection.png)
 ### Opening and closing
-Click the narrow tab on the right edge of the dialog. The triangle on the tab points to the right (▸) while the calculator is closed and to the left (◂) while it is open, and the tooltip of the tab says what it does. When the calculator opens, the dialog grows wider by the width of the calculator, and taller only if the calculator needs more room. When it closes, the dialog returns to exactly the size it had before. While the calculator is open, making the dialog wider or narrower changes only the width of the calculator, not the date fields and calendars. Gramps remembers the size of the dialog without the calculator.
-![The Select Date dialog with Date calclulation slideout](media/screenshot.png)
+Click the narrow tab at the right edge of the dialog. The tab shows the background of the dialog, so at first you see only its triangle; it shows as a button while the mouse pointer is over it, and as a pressed button while the calculator is open. The triangle on the tab points to the right (▶) while the calculator is closed and to the left (◀) while it is open, and the tooltip of the tab says what it does. When the calculator opens, the dialog grows wider by the width of the calculator, and taller only if the calculator needs more room. When it closes, the dialog returns to exactly the size it had before. While the calculator is open, making the dialog wider or narrower changes only the width of the calculator, not the date fields and calendars. Gramps remembers the size of the dialog without the calculator.
+![The Select Date dialog with Date calculation slideout](media/screenshot.png)
 
 ### The three boxes
 - **Reference date** is the starting date. When the calculator opens, it is filled with the date from the dialog, unless you already typed something there yourself; each time you open the calculator again, an unchanged Reference date is refreshed. You can type any date that Gramps understands, including a range such as "between 1850 and 1860".
@@ -82,7 +83,7 @@ Units may be written as `y`, `yr`, `yrs`, `year` or `years`; `m`, `mo`, `mos`, `
 - **Calculate** shows the result. Pressing Enter in any of the boxes does the same. A date result has the quality Calculated.
 - **Result to Start Date** puts the result in the Start date fields of the dialog. The Quality and the Type come from the result (a calculated date is Calculated, and usually Regular). For a Range or Span, only the Start date changes and the End date stays. For a Before or To date, the Start date is dimmed, so the Type changes so that both sides are active: Before becomes Range (Between) and To becomes Span (From-To).
 - **Result to End Date** puts the result in the End date fields, converted to the calendar of the dialog. If the End date is dimmed, the Type changes so that both sides are active: From becomes Span (From-To), After becomes Range (Between), and any other Type becomes Range (Between). For a Range, Span, Before or To date, the Type stays.
-- **Copy** puts the text of the result on the clipboard.
+- **Copy** puts the text of the result on the clipboard of your computer.
 - **Clear** empties all three boxes, and the hint returns to the Result box.
 
 The two "Result to" buttons work only when the result is a date. A time span, such as "69 years, 2 months, 3 days", can only be copied.
@@ -162,12 +163,32 @@ Changing the Calendar keeps a Before or To date in the End date section.
 | | Regular, About | Span (From-To) |
 | Drop on the dimmed Start date | Before | Range (Between) |
 | | To | Span (From-To) |
-| Type in Text comment | any | Text only |
+| Type in Text comment, with parsing off | any | Text only |
+| Type in Text comment, with parsing on | any | the Type of the date that Gramps reads, or Text only |
 
-Gramps keeps the Text comment only for Text only dates, so typing a comment for any other Type would lose it when you press OK. That is why typing in Text comment changes the Type to Text only. Clearing the Text comment does not change the Type.
+Gramps keeps the Text comment only for Text only dates, so typing a comment for any other Type would lose it when you press OK. That is why typing in Text comment changes the Type to Text only while parsing is off. Clearing the Text comment does not change the Type.
+
+## The Text comment and the Parse button
+### Red for Text only
+While the Type is Text only, the text in Text comment and the Text only item of the Type menu are red, in the error color of your theme. A Text only date is not a date for Gramps: it is not sorted, compared or evaluated as a date, so the red is a warning. Only the color changes, never the weight of the letters, so the text does not move under the mouse pointer while you edit it. The red appears and disappears with a short fade.
+
+### The Parse button
+The Parse button is at the end of the Text comment row: at the right for languages that read from left to right, and at the left for languages that read from right to left.
+- **Parsing off.** The button is faint. Typing in Text comment changes the Type to Text only, as described above. This is how the dialog starts.
+- **Click the button** to read the Text comment as a date at once. The button fades to full color, and parsing is on.
+- **Parsing on.** Each time you pause while typing in Text comment, Gramps reads the text as a date, the same way it reads a date typed in the Date field of an editor. A date that Gramps understands, such as "abt 1850" or "between 1850 and 1860", fills the Type, Quality, Calendar and date fields; a Before or To date goes to the End date section. Text that Gramps cannot read makes the Type Text only, so it turns red.
+- **Click the button again** to stop parsing. The button fades back to faint.
+
+Parsing works in one direction only: changing the date fields does not change the Text comment. An empty Text comment is not read. Parsing is off again each time the dialog opens.
 
 ## The Evaluates to line
-The line below Text comment shows the date the way Gramps reads it when it compares dates, for example in filters. It changes as you edit, and you can select and copy its text. It uses the About, Before and After date ranges set in the Gramps Preferences; these examples use the default of 50 years:
+The line below Text comment shows the date the way Gramps reads it when it compares dates, for example in filters. It changes as you edit, and you can select and copy its text.
+
+**Double-click the line** to copy the evaluated date, without the words "Evaluates to:", to two places:
+- the clipboard of your computer, to paste into other programs, and
+- the Gramps Clipboard (Edit > Clipboard), as a Text item, to drag into Gramps later. This works the same way as Ctrl+C on a selected person in the People view: if the Clipboard window is open, the date is added there; if it is not, a new Clipboard window opens. A date that is already on the Gramps Clipboard is not added again.
+
+For a moment, the line then ends with "(Copied to the clipboard)". The text before it does not move. A Text only date cannot be copied this way. It uses the About, Before and After date ranges set in the Gramps Preferences; these examples use the default of 50 years:
 
 | Date | Evaluates to |
 |---|---|
@@ -223,12 +244,19 @@ Type the first date in Reference date and the second date in Date or offset, the
 | A drop does nothing. | It was dropped on the section the drag came from, the Calendar is not Gregorian, or the Type is Text only. |
 | Help opens a web browser, not this document. | Markdown Dash is not installed, or is hidden in the Plugin Manager. |
 | The Start date shows the date of today. | The Type is Before or To; the date is in the End date section. |
+| The Text comment is red. | The Type is Text only. Gramps does not read the date as a date. Turn parsing on, or choose another Type. |
+| Typing in Text comment changes the date fields. | Parsing is on (the Parse button is in full color). Click the button to turn parsing off. |
+| I cannot see the triangle tab. | Move the mouse pointer over the right edge of the dialog; the tab shows as a button there. |
+| The Gramps Clipboard window opened, but I cannot click it. | The Date selection dialog keeps the input until it closes. Close it with OK or Cancel. |
 
 ## Limits
 - The month calendars work only with the Gregorian calendar and only for positive years.
 - When you drag a day, the day you pressed is marked for a moment, until the drag starts and the earlier mark returns.
 - The Day and Year fields of the Start date and the End date do not accept dropped text, so that a drop anywhere on a section works.
 - The Evaluates to line always shows a Gregorian range.
+- The Gramps Clipboard has no Date item, so a copied date is a Text item there.
+- A Clipboard window that the double-click opens does not accept input until the Date selection dialog closes.
+- On macOS, the double-click probably copies only to the clipboard of the computer, not to the Gramps Clipboard.
 
 ## Turn the addon off
 To switch the addon off without removing it, open the Plugin Manager, hide "Edit Date Calculator", and restart Gramps. To remove it, use the Addon Manager.
@@ -244,6 +272,6 @@ This addon was substantially written with an AI tool, as the Gramps [AI generate
 Generated-by: Claude Sonnet 5 (claude-sonnet-5) and Claude Opus 5.5 (claude-opus-5-5), Anthropic, via the claude.ai chat interface, 2026
 Prompted by: Brian McCullough
 ```
-- **Prompts (summary):** first a slide-out date calculator for the Edit Date dialog as patched Gramps files, then the same feature as a monkey-patch addon for field testing, with the Gramps 6.1 month calendars, calendar clicks and drag and drop, Before and To dates in the End date section, Type changes for the "Result to" buttons and for drops, the evaluated date line, and a Markdown-aware Help button.
+- **Prompts (summary):** first a slide-out date calculator for the Edit Date dialog as patched Gramps files, then the same feature as a monkey-patch addon for field testing, with the Gramps 6.1 month calendars, calendar clicks and drag and drop, Before and To dates in the End date section, Type changes for the "Result to" buttons and for drops, the evaluated date line, and a Markdown-aware Help button; then, for version 0.1.0, the red Text only warning, the Parse button and its icons, copying the evaluated date to both clipboards, and layout changes to the sections, the Evaluates to line and the calculator tab.
 - **Guidelines:** written in "draft mode", so the Gramps [AGENTS.md](https://github.com/gramps-project/gramps/blob/master/AGENTS.md) style rules (type hints, Black, pylint and others) were not applied.
-- **Testing:** the addon logic was checked by the AI with simulated widgets and with the date code of Gramps 5.2.4 and 6.0.8, which also produced the results in the worked examples. The user interface was tested by Brian McCullough on Gramps 6.0.8.
+- **Testing:** the addon logic was checked by the AI with simulated widgets and with the date code of Gramps 5.2.4 and 6.0.8, which also produced the results in the worked examples. The changes for version 0.1.0 were checked by the AI for Python syntax only. The user interface was tested by Brian McCullough on Gramps 6.0.8.

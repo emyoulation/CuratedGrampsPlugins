@@ -59,14 +59,16 @@ import os
 from collections.abc import Callable
 from urllib.parse import quote
 
-from gi.repository import Gdk, Gio, GLib, GObject, Gtk
+from gi.repository import Gdk, GdkPixbuf, Gio, GLib, GObject, Gtk, Pango
 
 from gramps.gen.config import config
 from gramps.gen.const import GRAMPS_LOCALE as glocale
-from gramps.gen.datehandler import displayer
+from gramps.gen.datehandler import displayer, parser
 from gramps.gen.lib.date import Date, Today
 from gramps.gen.plug import PluginRegister
 from gramps.gen.plug._pluginreg import PluginData
+from gramps.gui import clipboard as gramps_clipboard
+from gramps.gui.ddtargets import DdTargets
 from gramps.gui.dialog import OkDialog
 from gramps.gui.utils import text_to_clipboard
 from gramps.gui.editors.editdate import EditDate, MOD_TEXT, QUAL_TEXT
@@ -82,6 +84,24 @@ except ValueError:
 
 # the id= in EditDateCalculator.gpr.py
 PLUGIN_ID = "editdatecalculator"
+
+# Parse button on the Text comment row: full color while parsing is live,
+# grey while it is off.  The icons are in the media folder of this addon.
+_MEDIA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "media")
+_PARSE_ICON_ON = "award_rosette.svg"
+_PARSE_ICON_OFF = "award_rosette_inactive.svg"
+_PARSE_ICON_SIZE = 20
+# while parsing is live, wait this long (ms) after the last keystroke, so
+# the fields do not flicker through half-typed dates
+_PARSE_DELAY = 400
+# red for the Text only Type: the theme's error color, else this
+_TEXTONLY_RED_FALLBACK = "#c01c28"
+# fade between normal and red, and between the grey and full-color Parse
+# icons (ms), drawn every _FADE_TICK ms
+_FADE_MS = 250
+_FADE_TICK = 16
+# opacity of the grey Parse icon (parsing off): 75% transparent
+_PARSE_ICON_OFF_OPACITY = 0.25
 
 # ======================================================================
 # BEGIN HELP BUTTON BLOCK -- paste from here to the END marker.
@@ -306,8 +326,25 @@ def add_help_button(
 # grow (pixels) to make room for it
 CALC_PANEL_WIDTH = DateCalculatorPanel.PANEL_WIDTH
 CALC_PANEL_MAX_HEIGHT = 420
-# what is left of the dialog's right margin once the open panel reaches into it
+# gap between the open panel and the right edge of the dialog
 CALC_RIGHT_MARGIN = 7
+# the slide-out handle: flat (the dialog background); on mouse-over the
+# theme's button fill and border; while open, the theme's pressed fill
+CALC_HANDLE_CSS = b"""
+button.calc-handle {
+    padding: 0 2px;
+    min-width: 0;
+    border-radius: 0;
+}
+button.calc-handle:not(:hover) {
+    border-color: transparent;
+    box-shadow: none;
+}
+button.calc-handle:not(:hover):not(:checked) {
+    background-image: none;
+    background-color: transparent;
+}
+"""
 
 # marker on the EditDate class, so a plugin reload never patches twice
 _MARKER = "_edit_date_calculator_addon"
@@ -333,6 +370,41 @@ def _set_type(dialog, modifier):
     Select a Date modifier in the Type menu.
     """
     dialog.type_box.set_active([mod for mod, _text in MOD_TEXT].index(modifier))
+
+
+# the slide-out handle: black triangles, as text (U+FE0E asks for the text
+# form, not a color emoji)
+_TRIANGLE_RIGHT = "\u25b6\ufe0e"
+_TRIANGLE_LEFT = "\u25c0\ufe0e"
+
+
+def _handle_triangle(widget, opened):
+    """
+    Return the triangle for the slide-out handle: pointing the way the
+    panel opens while it is closed, and back while it is open.  The panel
+    opens to the right, or to the left for right-to-left languages.
+    """
+    rtl = widget.get_direction() == Gtk.TextDirection.RTL
+    points_right = opened == rtl
+    return _TRIANGLE_RIGHT if points_right else _TRIANGLE_LEFT
+
+
+def _borders_to_margins(window):
+    """
+    Turn the border widths of the dialog window and its content area into
+    margins of the content area, which look the same but, unlike a
+    border, can be changed on the right side alone.
+    """
+    content = window.get_content_area()
+    border = window.get_border_width() + content.get_border_width()
+    if not border:
+        return
+    window.set_border_width(0)
+    content.set_border_width(0)
+    content.set_margin_start(content.get_margin_start() + border)
+    content.set_margin_end(content.get_margin_end() + border)
+    content.set_margin_top(content.get_margin_top() + border)
+    content.set_margin_bottom(content.get_margin_bottom() + border)
 
 
 # -------------------------------------------------------------------------
@@ -388,6 +460,8 @@ class _CalculatorMethods:
             Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 0
         )
         panel_box.pack_start(scroll, True, True, 0)
+        panel_box.set_margin_end(CALC_RIGHT_MARGIN)
+        self.calc_panel_box = panel_box
 
         self.calc_revealer = Gtk.Revealer()
         self.calc_revealer.set_transition_type(Gtk.RevealerTransitionType.SLIDE_LEFT)
@@ -398,16 +472,17 @@ class _CalculatorMethods:
         self.calc_revealer.connect("size-allocate", self.cb_calc_panel_allocated)
 
         # the slide-out handle: a slim, full-height toggle with an arrow
-        self.calc_arrow = Gtk.Image.new_from_icon_name(
-            "pan-end-symbolic", Gtk.IconSize.BUTTON
-        )
+        # black triangles, not the theme's pan arrows: those look like the
+        # year arrows of the calendar next to the handle
+        self.calc_arrow = Gtk.Label(label=_handle_triangle(self.window, False))
         self.calc_handle = Gtk.ToggleButton()
         self.calc_handle.set_focus_on_click(False)
         self.calc_handle.set_tooltip_text(_("Show or hide the date calculator"))
         self.calc_handle.add(self.calc_arrow)
-        # keep the handle slim, with a small gutter before it
+        # a slim handle, flat until hovered or open; its gutter (the margin
+        # before it) is set to match the gutter left of the Start date sheet
         handle_css = Gtk.CssProvider()
-        handle_css.load_from_data(b"button.calc-handle { padding: 0 2px; min-width: 0; }")
+        handle_css.load_from_data(CALC_HANDLE_CSS)
         handle_style = self.calc_handle.get_style_context()
         handle_style.add_class("calc-handle")
         handle_style.add_provider(handle_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -424,6 +499,11 @@ class _CalculatorMethods:
         self._calc_grown_height = 0
         self._calc_grown_width = 0
         self._calc_bleed = 0
+        # the row reaches through the dialog's right margin for good, so the
+        # handle butts against the right edge of the dialog
+        _borders_to_margins(self.window)
+        self._calc_set_bleed(content.get_margin_end())
+        main_box.connect("size-allocate", self.cb_calc_main_allocated)
 
         # show only our own widgets; the Glade children keep their own state
         self.calc_row.show()
@@ -431,6 +511,21 @@ class _CalculatorMethods:
         self.calc_revealer.show()
         panel_box.show_all()
         self.calc_handle.show_all()
+
+    def cb_calc_main_allocated(self, _main_box, _allocation):
+        """
+        Keep the gutter before the handle equal to the gutter left of the
+        Start date sheet (measured from the edge of the dialog).
+        """
+        content = self.window.get_content_area()
+        sheet = getattr(self, "first_date", None) or self.top.get_object("table48")
+        coords = sheet.translate_coordinates(content, 0, 0) if sheet else None
+        if not coords:
+            return
+        gutter = max(0, coords[0] + content.get_margin_start())
+        if gutter != self.calc_handle.get_margin_start():
+            # (not while GTK is allocating: change it just after)
+            GLib.idle_add(self.calc_handle.set_margin_start, gutter)
 
     def _calc_set_bleed(self, bleed):
         """
@@ -480,8 +575,6 @@ class _CalculatorMethods:
         self.calc_main.set_vexpand_set(False)
         if keep_width:
             return
-        # the panel is gone: the row no longer needs to reach into the margin
-        self._calc_set_bleed(0)
         self.calc_main.set_halign(Gtk.Align.FILL)
         self.calc_main.set_hexpand_set(False)
         if self.calc_main.get_parent() is self.calc_row:
@@ -520,10 +613,7 @@ class _CalculatorMethods:
         growing the window; closing hands the room back in cb_calc_revealed.
         """
         opened = button.get_active()
-        self.calc_arrow.set_from_icon_name(
-            "pan-start-symbolic" if opened else "pan-end-symbolic",
-            Gtk.IconSize.BUTTON,
-        )
+        self.calc_arrow.set_text(_handle_triangle(self.window, opened))
         grown = bool(self._calc_grown_width or self._calc_grown_height)
         if not opened:
             # (reveal first: the panel's tracked width must stop updating)
@@ -541,13 +631,9 @@ class _CalculatorMethods:
             self.calc_revealer.set_reveal_child(True)
             return
         self._calc_freeze_main()
-        # Let the open panel reach into the dialog's right margin, so that the
-        # gap left beside it is CALC_RIGHT_MARGIN (plus the panel's own padding).
-        content = self.window.get_content_area()
-        margin = content.get_margin_end() + content.get_border_width()
-        self._calc_set_bleed(max(0, margin - CALC_RIGHT_MARGIN))
         width, height = self.window.get_size()
-        self._calc_grown_width = self.calc_panel.get_preferred_width()[1] + 1
+        # (the panel box holds the separator, the panel and the right gap)
+        self._calc_grown_width = self.calc_panel_box.get_preferred_width()[1]
         wanted = min(self.calc_panel.get_preferred_height()[1], CALC_PANEL_MAX_HEIGHT)
         available = self.calc_row.get_allocated_height()
         self._calc_grown_height = max(0, wanted - available)
@@ -600,8 +686,7 @@ class _CalculatorMethods:
             and revealer.get_reveal_child()
             and revealer.get_child_revealed()
         ):
-            # (the part reaching into the dialog's margin is not window width)
-            self._calc_grown_width = allocation.width - self._calc_bleed
+            self._calc_grown_width = allocation.width
 
     def _save_size(self):
         """
@@ -1249,14 +1334,445 @@ class _CalendarInteractionMethods:
         """
         Editing the Text comment switches the Type to Text only: for any
         other Type the comment is not kept.
+
+        While parsing is live (the Parse button is in full color), the Text
+        comment is read as a date instead, as in the date field of an
+        editor: a date it can read fills the fields, anything else makes
+        the Type Text only.
+
+        The Text only Type, in the Type menu, and the Text comment are shown
+        in red.
         """
-        textonly = [mod for mod, _text in MOD_TEXT].index(Date.MOD_TEXTONLY)
+        textonly = _textonly_index()
+        self._parse_live = False
+        self._parse_timer = 0
 
         def cb_text_changed(entry):
-            if entry.get_text().strip() and self.type_box.get_active() != textonly:
+            if self._parse_live:
+                _schedule_parse(self)
+            elif entry.get_text().strip() and self.type_box.get_active() != textonly:
                 self.type_box.set_active(textonly)
 
         self.text_entry.connect("changed", cb_text_changed)
+        try:
+            _add_textonly_red(self)
+        except Exception:
+            LOG.exception("Edit Date Calculator: could not color Text only red")
+        try:
+            _add_parse_buttons(self)
+        except Exception:
+            LOG.exception("Edit Date Calculator: could not add the Parse buttons")
+
+
+# -------------------------------------------------------------------------
+#
+# Text comment: red for Text only, and the Parse buttons
+#
+# -------------------------------------------------------------------------
+def _textonly_index():
+    """
+    Return the position of Text only in the Type menu.
+    """
+    return [mod for mod, _text in MOD_TEXT].index(Date.MOD_TEXTONLY)
+
+
+def _textonly_red(widget):
+    """
+    Return the red used for Text only: the theme's error color (lighter in
+    a dark theme), or a fixed red if the theme has none.
+    """
+    found, rgba = widget.get_style_context().lookup_color("error_color")
+    if not found:
+        rgba = Gdk.RGBA()
+        rgba.parse(_TEXTONLY_RED_FALLBACK)
+    return rgba
+
+
+def _ease(value):
+    """
+    Ease in and out (smoothstep): slow at both ends of each fade phase.
+    """
+    return value * value * (3 - 2 * value)
+
+
+def _mix(color_a, color_b, amount):
+    """
+    Return the color `amount` (0 to 1) of the way from color_a to color_b.
+    """
+    return Gdk.RGBA(
+        color_a.red + (color_b.red - color_a.red) * amount,
+        color_a.green + (color_b.green - color_a.green) * amount,
+        color_a.blue + (color_b.blue - color_a.blue) * amount,
+        color_a.alpha + (color_b.alpha - color_a.alpha) * amount,
+    )
+
+
+# -------------------------------------------------------------------------
+#
+# _Fade: a value between 0 and 1 that fades over _FADE_MS
+#
+# -------------------------------------------------------------------------
+class _Fade:
+    """
+    A value between 0 (the original state) and 1 (the other state).  A
+    change fades to the new state over _FADE_MS.  `draw` is called with
+    the value at each frame.
+
+    A change mid-fade fades from where the value is.
+    """
+
+    def __init__(self, draw, value=0.0):
+        self._draw = draw
+        self.value = value
+        self._target = value
+        self._phases = []  # (from, to, ms) still to run
+        self._phase_start = 0
+        self._timer = 0
+
+    def set_target(self, target, animate=True):
+        """
+        Fade to `target` (0 or 1), or jump there if `animate` is False.
+        """
+        if not animate:
+            self.stop()
+            self._target = self.value = target
+            self._draw(target)
+            return
+        if target == self._target:
+            return
+        self._target = target
+        self._phases = [(self.value, target, _FADE_MS)]
+        self._phase_start = GLib.get_monotonic_time()
+        if not self._timer:
+            self._timer = GLib.timeout_add(_FADE_TICK, self._cb_tick)
+
+    def _cb_tick(self):
+        now = GLib.get_monotonic_time()
+        while self._phases:
+            start, end, duration = self._phases[0]
+            elapsed = (now - self._phase_start) / 1000
+            if elapsed < duration:
+                self.value = start + (end - start) * _ease(elapsed / duration)
+                self._draw(self.value)
+                return True
+            self._phases.pop(0)
+            self._phase_start += duration * 1000
+        self.value = self._target
+        self._draw(self.value)
+        self._timer = 0
+        return False
+
+    def stop(self):
+        """
+        Stop fading (the dialog is closing).
+        """
+        self._phases = []
+        if self._timer:
+            GLib.source_remove(self._timer)
+            self._timer = 0
+
+
+def _stop_fades_on_close(dialog, fade):
+    """
+    Stop a fade when the dialog window goes, so no frame draws on a
+    destroyed widget.
+    """
+    dialog.window.connect("destroy", lambda _window: fade.stop())
+
+
+def _theme_color(widget, name):
+    """
+    Return a named color of the theme (such as theme_text_color), or else
+    the widget's text color in its current state.  Never call this while
+    the widget is being drawn.
+    """
+    context = widget.get_style_context()
+    found, color = context.lookup_color(name)
+    if found:
+        return color
+    return context.get_color(context.get_state())
+
+
+def _add_textonly_red(dialog):
+    """
+    While the Type is Text only, show the Text comment string and the Type
+    menu item in red, with a _Fade for both.  No CSS changes while the
+    dialog runs: the entry gets a Pango color attribute, the menu item a
+    cell renderer color.  Only the color changes, never
+    the weight, so the characters keep their widths and the text does not
+    move under the mouse pointer.
+    """
+    textonly = _textonly_index()
+    entry = dialog.text_entry
+    red = _textonly_red(entry)
+    # The colors the red fades from, read here and when the theme changes,
+    # never while drawing: asking a style context for the color of another
+    # state than its own makes GTK 3 change the state and back, which frees
+    # styles still in use mid-draw (a crash in gtk_css_style_get_value, at
+    # the focus outline of the Type menu button).
+    normal = {}
+
+    def read_normal_colors(*_args):
+        normal["entry"] = _theme_color(entry, "theme_text_color")
+        normal["menu"] = _theme_color(dialog.type_box, "theme_fg_color")
+
+    read_normal_colors()
+    dialog.type_box.connect("style-updated", read_normal_colors)
+
+    def cell_func(_layout, cell, model, tree_iter, _data):
+        # (runs while the menu draws: only cached colors here)
+        index = model.get_path(tree_iter).get_indices()[0]
+        if index == textonly and fade.value > 0:
+            cell.set_property("foreground-rgba", _mix(normal["menu"], red, fade.value))
+        else:
+            # the theme's own color, including hover and selection
+            cell.set_property("foreground-set", False)
+
+    def draw(amount):
+        # The Text comment is colored with a Pango attribute, not CSS:
+        # reloading a CSS provider at every frame crashed GTK 3 while it
+        # was drawing (a freed style in gtk_css_style_get_value).
+        attributes = Pango.AttrList()
+        if amount > 0:
+            color = _mix(normal["entry"], red, amount)
+            attributes.insert(
+                Pango.attr_foreground_new(
+                    int(color.red * 65535),
+                    int(color.green * 65535),
+                    int(color.blue * 65535),
+                )
+            )
+        # (an empty list: the theme's own color)
+        entry.set_attributes(attributes)
+        dialog.type_box.queue_draw()
+
+    fade = _Fade(draw)
+    dialog._textonly_fade = fade
+    _stop_fades_on_close(dialog, fade)
+    for cell in dialog.type_box.get_cells():
+        dialog.type_box.set_cell_data_func(cell, cell_func, None)
+
+    def cb_type_changed(combo, animate=True):
+        fade.set_target(1.0 if combo.get_active() == textonly else 0.0, animate)
+
+    dialog.type_box.connect("changed", cb_type_changed)
+    # the dialog opens in its final colors, without a fade
+    cb_type_changed(dialog.type_box, animate=False)
+
+
+def _load_parse_icon(name):
+    """
+    Return a pixbuf of one of the Parse button icons, or None (with a
+    logged warning) if the file cannot be read.
+    """
+    path = os.path.join(_MEDIA_DIR, name)
+    try:
+        return GdkPixbuf.Pixbuf.new_from_file_at_size(
+            path, _PARSE_ICON_SIZE, _PARSE_ICON_SIZE
+        )
+    except GLib.Error:
+        LOG.warning("Edit Date Calculator: cannot read the icon %s", path)
+        return None
+
+
+def _faded(pixbuf, opacity):
+    """
+    Return a copy of a pixbuf at the given opacity (0 to 1), or None.
+    """
+    if pixbuf is None:
+        return None
+    faded = GdkPixbuf.Pixbuf.new(
+        GdkPixbuf.Colorspace.RGB, True, 8, pixbuf.get_width(), pixbuf.get_height()
+    )
+    faded.fill(0x00000000)  # fully transparent
+    pixbuf.composite(
+        faded,
+        0,
+        0,
+        pixbuf.get_width(),
+        pixbuf.get_height(),
+        0,
+        0,
+        1,
+        1,
+        GdkPixbuf.InterpType.NEAREST,
+        int(round(255 * opacity)),
+    )
+    return faded
+
+
+def _add_parse_buttons(dialog):
+    """
+    Put the Parse button at the end of the Text comment row: at the right
+    for left-to-right languages, at the left for right-to-left languages
+    (GTK mirrors the row for those by itself).
+    """
+    row = dialog.text_entry.get_parent()
+    dialog._parse_pixbufs = (
+        _faded(_load_parse_icon(_PARSE_ICON_OFF), _PARSE_ICON_OFF_OPACITY),
+        _load_parse_icon(_PARSE_ICON_ON),
+    )
+    button = Gtk.Button(relief=Gtk.ReliefStyle.NONE)
+    button.set_valign(Gtk.Align.CENTER)
+    button.set_focus_on_click(False)
+    button.add(Gtk.Image())
+    button.connect("clicked", _cb_parse_clicked, dialog)
+    row.pack_end(button, False, False, 0)
+    button.show_all()
+    # (a list, so the rest of the code works with one button or more)
+    dialog._parse_buttons = [button]
+    dialog._parse_fade = _Fade(lambda amount: _draw_parse_icons(dialog, amount))
+    _stop_fades_on_close(dialog, dialog._parse_fade)
+    _update_parse_buttons(dialog, animate=False)
+
+
+def _draw_parse_icons(dialog, amount):
+    """
+    Show the Parse icons `amount` (0 to 1) of the way from grey to full
+    color: the full-color icon laid over the grey one with that opacity.
+    (Both icons have the same outline, so this cross-fades them.)
+    """
+    grey, color = dialog._parse_pixbufs
+    if grey is None or color is None:
+        return
+    if amount <= 0:
+        pixbuf = grey
+    elif amount >= 1:
+        pixbuf = color
+    else:
+        pixbuf = grey.copy()
+        color.composite(
+            pixbuf,
+            0,
+            0,
+            pixbuf.get_width(),
+            pixbuf.get_height(),
+            0,
+            0,
+            1,
+            1,
+            GdkPixbuf.InterpType.NEAREST,
+            int(round(255 * amount)),
+        )
+    for button in dialog._parse_buttons:
+        button.get_child().set_from_pixbuf(pixbuf)
+
+
+def _update_parse_buttons(dialog, animate=True):
+    """
+    Fade the Parse icons to full color while parsing is live, to grey
+    while it is off, and set the tooltips.
+    """
+    live = dialog._parse_live
+    if live:
+        tooltip = _(
+            "Parsing is live: the Text comment is read as a date while you "
+            "type.\nClick to stop parsing."
+        )
+    else:
+        tooltip = _(
+            "Parsing is off: the Text comment is kept as text.\n"
+            "Click to read it as a date now, and while you type."
+        )
+    for button in dialog._parse_buttons:
+        button.set_tooltip_text(tooltip)
+    if None in dialog._parse_pixbufs:
+        # an icon file is missing: theme icons, without a fade
+        for button in dialog._parse_buttons:
+            button.get_child().set_from_icon_name(
+                "emblem-default" if live else "emblem-readonly",
+                Gtk.IconSize.BUTTON,
+            )
+        return
+    dialog._parse_fade.set_target(1.0 if live else 0.0, animate)
+
+
+def _cb_parse_clicked(_button, dialog):
+    """
+    Parse button: switch parsing on (and parse the Text comment at once),
+    or off.
+    """
+    dialog._parse_live = not dialog._parse_live
+    if dialog._parse_timer:
+        GLib.source_remove(dialog._parse_timer)
+        dialog._parse_timer = 0
+    _update_parse_buttons(dialog)
+    if dialog._parse_live:
+        _parse_text_comment(dialog)
+
+
+def _schedule_parse(dialog):
+    """
+    Parse the Text comment once typing pauses.
+    """
+    if dialog._parse_timer:
+        GLib.source_remove(dialog._parse_timer)
+    dialog._parse_timer = GLib.timeout_add(_PARSE_DELAY, _parse_text_comment, dialog)
+
+
+def _parse_text_comment(dialog):
+    """
+    Read the Text comment as a date.  A date the parser understands fills
+    the Type, Quality, calendar and date fields; anything else makes the
+    Type Text only.  An empty Text comment changes nothing.
+    """
+    dialog._parse_timer = 0
+    text = dialog.text_entry.get_text().strip()
+    if not text:
+        return False
+    date = parser.parse(text)
+    if date.get_modifier() == Date.MOD_TEXTONLY or date.is_empty():
+        textonly = _textonly_index()
+        if dialog.type_box.get_active() != textonly:
+            dialog.type_box.set_active(textonly)
+    else:
+        _load_parsed_date(dialog, date)
+    return False  # (one-shot timeout)
+
+
+def _load_parsed_date(dialog, date):
+    """
+    Put a whole parsed Date in the dialog: Type, Quality, calendar, dual
+    dating, new year and the date fields.  A Before or To date goes in the
+    End date fields, with today in the dimmed Start date.
+    """
+    modifier = date.get_modifier()
+    quality_index = 0
+    for index, (quality, _text) in enumerate(QUAL_TEXT):
+        if quality == date.get_quality():
+            quality_index = index
+
+    # A dual date forces the Julian calendar, so handle it first.
+    dialog.dual_dated.set_active(bool(date.get_slash()))
+    if not date.get_slash():
+        # repopulates the month names if the calendar changes
+        dialog.calendar_box.set_active(date.get_calendar())
+    # the Type first: switching it may move fields between the blocks,
+    # and the values below then overwrite them
+    _set_type(dialog, modifier)
+    dialog.quality_box.set_active(quality_index)
+
+    first = (date.get_day(), date.get_month(), date.get_year())
+    if modifier in END_MODIFIERS and getattr(dialog, "_end_swap_ready", False):
+        _values_to_fields(first, _stop_fields(dialog))
+        _today_to_start(dialog)
+    else:
+        _values_to_fields(first, _start_fields(dialog))
+        if date.is_compound():
+            second = (date.get_stop_day(), date.get_stop_month(), date.get_stop_year())
+            _values_to_fields(second, _stop_fields(dialog))
+    dialog.new_year.set_text(date.newyear_to_str())
+    dialog.revalidate()
+
+
+def _values_to_fields(values, fields):
+    """
+    Put (day, month, year) values in a set of field widgets.
+    """
+    day, month, year = fields
+    day.set_value(values[0])
+    month.set_active(values[1])
+    year.set_value(values[2])
 
 
 def _replaced_date_change_in_calendar(self, cal, which):
@@ -1590,11 +2106,19 @@ def _add_evaluation_line(dialog):
     label.set_selectable(True)
     label.set_line_wrap(True)
     label.set_margin_start(6)
+    # keep it lined up below the "Text comment:" label, wherever the theme
+    # and the text direction put that label
+    comment_label = dialog.top.get_object("label415")
+    if comment_label is not None:
+        comment_label.connect(
+            "size-allocate", _cb_comment_label_allocated, label, column
+        )
     label.set_tooltip_text(
         _(
             "How Gramps reads this date when comparing it with other dates, "
             "using the About, Before and After ranges set in Preferences.\n"
-            "Double-click to copy the evaluated date."
+            "Double-click to copy the evaluated date to the clipboard of "
+            "the system and to the Gramps Clipboard."
         )
     )
     # A double-click copies the evaluated date. The handler runs before the
@@ -1609,6 +2133,61 @@ def _add_evaluation_line(dialog):
     _update_evaluation(dialog, True)
 
 
+def _cb_comment_label_allocated(comment_label, _allocation, label, column):
+    """
+    Indent the Evaluates to line to start where the "Text comment:" label
+    starts.
+    """
+    coords = comment_label.translate_coordinates(column, 0, 0)
+    if not coords:
+        return
+    indent = coords[0]
+    if column.get_direction() == Gtk.TextDirection.RTL:
+        # right-to-left: the start is the right edge
+        indent = (
+            column.get_allocated_width()
+            - coords[0]
+            - comment_label.get_allocated_width()
+        )
+    if indent >= 0 and indent != label.get_margin_start():
+        # (not while GTK is allocating: change it just after)
+        GLib.idle_add(label.set_margin_start, indent)
+
+
+def _balance_sections(dialog):
+    """
+    Make the Start date and End date sections equally wide, with a double
+    gutter between them.
+
+    * Each End date column is paired, in a size group, with the matching
+      Start date column, so the two sections ask for the same widths.
+    * The End date sheet spans 3 columns, as the Start date sheet does.
+      (Gramps 6.1 attaches it 5 wide; the 2 empty columns each added a
+      column gap to it.)
+    * An empty column between the sections adds a second column gap.
+    """
+    grid = dialog.top.get_object("table48")
+    if grid is None:
+        return
+    for widget in (
+        getattr(dialog, "second_date", None),
+        getattr(dialog, "_calendar_headers", {}).get("stop"),
+    ):
+        if widget is not None and widget.get_parent() is grid:
+            if grid.child_get_property(widget, "width") > 3:
+                grid.child_set_property(widget, "width", 3)
+    groups = [Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL) for _i in range(3)]
+    for child in grid.get_children():
+        left = grid.child_get_property(child, "left-attach")
+        if grid.child_get_property(child, "width") == 1 and 0 <= left <= 5:
+            groups[left % 3].add_widget(child)
+    dialog._section_size_groups = groups  # (keep them alive)
+    grid.insert_column(3)
+    spacer = Gtk.Box()
+    grid.attach(spacer, 3, 0, 1, 1)
+    spacer.show()
+
+
 def _cb_evaluation_pressed(label, event, dialog):
     """
     Double-click on the Evaluates to line: copy the evaluated date (the
@@ -1621,10 +2200,71 @@ def _cb_evaluation_pressed(label, event, dialog):
     if not value:  # nothing to copy: keep the usual double-click behavior
         return False
     text_to_clipboard(value)
+    try:
+        _to_gramps_clipboard(dialog, value)
+    except Exception:  # (the system clipboard has it all the same)
+        LOG.exception("Edit Date Calculator: could not use the Gramps Clipboard")
     if dialog._evaluation_flash:
         GLib.source_remove(dialog._evaluation_flash)
-    label.set_text(_("Copied to the clipboard: %s") % value)
+    # the same text, with a note after it, so nothing moves
+    label.set_text(
+        _("Evaluates to: %s") % value + " " + _("(Copied to the clipboard)")
+    )
     dialog._evaluation_flash = GLib.timeout_add(1500, _cb_evaluation_unflash, dialog)
+    return True
+
+
+def _to_gramps_clipboard(dialog, text):
+    """
+    Copy the evaluated date to the Gramps Clipboard, the same way Ctrl+C
+    copies the selected Person in the People view (PageView.copy_to_clipboard
+    in Gramps 5.2, 6.0 and 6.1): use the open Clipboard window as it is, or
+    open a new one, and hand it the date as a simulated drop.
+
+    The Gramps Clipboard has no Date item type, so the date arrives as a
+    Text item, as dropped text would.  Text already on the Clipboard is not
+    added twice.
+
+    :returns: True if the drop was handed to the Clipboard.
+    """
+    viewmanager = getattr(dialog.uistate, "viewmanager", None)
+    dbstate = getattr(viewmanager, "dbstate", None)
+    if dbstate is None or not dbstate.is_open():
+        return False
+    clipboard = None
+    for widget in dialog.uistate.gwm.window_tree:
+        if isinstance(widget, gramps_clipboard.ClipboardWindow):
+            clipboard = widget
+    if clipboard is None:
+        clipboard = gramps_clipboard.ClipboardWindow(dbstate, dialog.uistate)
+    drag_type = DdTargets.TEXT
+
+    class Selection:
+        def __init__(self, data):
+            self.data = data
+
+        def get_data(self):
+            return self.data
+
+    class Context:
+        targets = [Gdk.atom_intern(drag_type.drag_type, False)]
+        action = 1
+
+        def list_targets(self):
+            return Context.targets
+
+        def get_actions(self):
+            return Context.action
+
+    clipboard.object_list.object_drag_data_received(
+        clipboard.object_list._widget,  # widget
+        Context(),  # drag type and action
+        0,
+        0,  # x, y
+        Selection(text.encode("utf-8")),  # the date, as dropped text
+        None,  # info (not used)
+        -1,  # time
+    )
     return True
 
 
@@ -1693,6 +2333,12 @@ def _patched_show(self, *args, **kwargs):
             self._enhance_calendars()
         except Exception:
             LOG.exception("Edit Date Calculator: could not change the calendars")
+    if not getattr(self, "_sections_balanced", False):
+        self._sections_balanced = True
+        try:
+            _balance_sections(self)
+        except Exception:
+            LOG.exception("Edit Date Calculator: could not balance the sections")
     if not getattr(self, "_sections_relabeled", False):
         self._sections_relabeled = True
         _relabel_sections(self)

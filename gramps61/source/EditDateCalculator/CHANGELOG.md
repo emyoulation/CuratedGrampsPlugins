@@ -3,7 +3,20 @@
 [README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md)
 
 All notable changes to the Edit Date Calculator addon are listed here, newest first.
-
+## 0.1.0 - 2026-10-28
+Second field-test release.
+### Added
+- A Parse button at the end of the Text comment row: at the right for left-to-right languages, at the left for right-to-left languages. It is faint while parsing is off. Click it to read the Text comment as a date at once; the button then shows in full color, and the Text comment is read again each time you pause while typing. A date that Gramps understands fills the Type, Quality, Calendar and date fields; any other text makes the Type Text only. Click the button again to stop parsing.
+- While the Type is Text only, the Text comment and the Text only item of the Type menu are shown in red. Only the color changes, never the weight of the letters, so the text does not move under the mouse pointer. The red, and the Parse button, change with a short fade.
+- A double-click on the Evaluates to line also puts the evaluated date on the Gramps Clipboard, as a Text item, the same way Ctrl+C copies a selected person in the People view: an open Clipboard window is used as it is, otherwise a new Clipboard window opens.
+### Changed
+- After a double-click on the Evaluates to line, the line keeps its text and adds "(Copied to the clipboard)" for a moment, so the date does not move.
+- The Evaluates to line starts directly below the "Text comment:" label.
+- The Start date and End date sections have the same width, and the space between them is twice as wide. Before, the End date calendar was wider, because it reached over two empty columns of the dialog (this is also so in Gramps 6.1 itself).
+- The triangle tab of the calculator is at the right edge of the dialog, and the space before it is the same as the space at the left of the Start date calendar. The tab shows the background of the dialog; it shows as a button only when the mouse pointer is over it, and it shows as pressed while the calculator is open.
+- The tab shows black triangles (▶ and ◀), so it no longer looks like the year arrows of the calendar beside it.
+## 0.0.2 - 2026-10-28
+- double-click on Evaluation line copies to OS clipboard
 ## 0.0.1 - 2026-10-26
 First field-test release. The addon changes the Date selection dialog (Date Editor) of Gramps 5.2, 6.0 and 6.1 when Gramps starts, without replacing any Gramps files.
 ### Added
