@@ -26,6 +26,13 @@ Provides:
   - ``Segment``                 -- data model for a parsed text run
   - ``parse_markdown()``        -- convert Markdown text to a list of Segments
   - ``define_tags()``           -- create all Gtk.TextTag styles in a TextBuffer
+                                   (light or dark palette, see ``theme_is_dark()``)
+  - ``theme_is_dark()``         -- whether the GTK theme draws light text on dark
+  - ``link_style_colours()``    -- (foreground, background) for a link style
+  - ``insert_image_into_buffer()`` -- insert a local image (scaled, cached,
+                                   double-click-openable) into a TextBuffer
+  - ``mark_image_source()``     -- record an inserted image's source file
+  - ``markdown_image_double_click()`` -- open a double-clicked image's source
   - ``inline_to_pango()``       -- convert inline Markdown to Pango markup (tables)
   - ``build_table_widget()``    -- build a Gtk.TreeView widget for a GFM table
   - ``resolve_icon_pixbuf()``   -- resolve a GTK/Gramps icon to a GdkPixbuf (Theme-aware)
@@ -1122,19 +1129,108 @@ def parse_markdown(
 
 # ---------------------------------------------------------------------------
 #
+# Theme palettes
+#
+# ---------------------------------------------------------------------------
+#: Tag colours for light themes (dark text on a light background).
+#: Keys are define_tags() tag names; values are (foreground, background).
+_TAG_COLOURS_LIGHT: dict[str, tuple[str | None, str | None]] = {
+    "heading1": ("#111111", None),
+    "heading2": ("#111111", None),
+    "heading3": ("#222222", None),
+    "heading4": ("#222222", None),
+    "heading5": ("#333333", None),
+    "heading6": ("#555555", None),
+    "hr": ("#bbbbbb", None),
+    "blockquote": ("#555555", None),
+    "blockquote_bar": ("#aaaaaa", None),
+    "code_block": ("#222222", "#f5f5f5"),
+    "code_fence_marker": ("#888888", "#e8e8e8"),
+    "list_bullet": ("#555555", None),
+    "code_inline": ("#333333", "#f0f0f0"),
+    "kbd": ("#333333", "#eeeeee"),
+    "hyperlink": ("#0055cc", None),
+    "image_link": ("#0077aa", "#eef4ff"),
+    "gramps_link": ("#8800aa", "#f5eeff"),
+    "anchor_link": ("#006633", None),
+}
+
+#: Tag colours for dark themes (light text on a dark background). The
+#: light palette's near-black headings were unreadable here.
+_TAG_COLOURS_DARK: dict[str, tuple[str | None, str | None]] = {
+    "heading1": ("#f0f0f0", None),
+    "heading2": ("#f0f0f0", None),
+    "heading3": ("#e0e0e0", None),
+    "heading4": ("#e0e0e0", None),
+    "heading5": ("#cccccc", None),
+    "heading6": ("#aaaaaa", None),
+    "hr": ("#555555", None),
+    "blockquote": ("#aaaaaa", None),
+    "blockquote_bar": ("#777777", None),
+    "code_block": ("#dddddd", "#2b2b2b"),
+    "code_fence_marker": ("#999999", "#333333"),
+    "list_bullet": ("#aaaaaa", None),
+    "code_inline": ("#dddddd", "#333333"),
+    "kbd": ("#dddddd", "#3a3a3a"),
+    "hyperlink": ("#6ea8ff", None),
+    "image_link": ("#5cc8ff", "#1e2a3a"),
+    "gramps_link": ("#d08cff", "#2e2240"),
+    "anchor_link": ("#5fd38a", None),
+}
+
+
+#: Palette choice of the latest define_tags() call (see inline_to_pango).
+_last_render_dark: list[bool] = [False]
+
+
+def theme_is_dark(widget: Gtk.Widget | None = None) -> bool:
+    """
+    Return ``True`` if the current GTK theme draws light text on dark.
+
+    Judged from the theme's actual text colour rather than a theme name
+    or the ``gtk-application-prefer-dark-theme`` setting, so it also
+    catches dark CSS applied some other way.
+
+    :param widget: the widget whose styling counts (e.g. the TextView
+                   being rendered into); ``None`` checks a plain TextView
+    :returns: ``True`` for a dark theme
+    """
+    try:
+        ctx = (widget or Gtk.TextView()).get_style_context()
+        fg = ctx.get_color(Gtk.StateFlags.NORMAL)
+        return (0.299 * fg.red + 0.587 * fg.green + 0.114 * fg.blue) > 0.5
+    except Exception:  # pylint: disable=broad-except
+        return False
+
+
+# ---------------------------------------------------------------------------
+#
 # define_tags
 #
 # ---------------------------------------------------------------------------
-def define_tags(buf: Gtk.TextBuffer) -> dict[str, Gtk.TextTag]:
+def define_tags(
+    buf: Gtk.TextBuffer, dark: bool | None = None
+) -> dict[str, Gtk.TextTag]:
     """Create all rendering :class:`Gtk.TextTag` objects inside *buf*.
 
     Tags are created via ``buf.create_tag()`` so constructor keyword arguments
     automatically activate the corresponding ``-set`` flags.  All tags are also
     stored in the buffer's tag table and returned as a name-keyed dict.
 
+    Colours come from the light or dark palette above, so headings,
+    quotes, code and links stay readable on either kind of theme.
+
     :param buf: The :class:`Gtk.TextBuffer` that will own the tags.
+    :param dark: use the dark palette; ``None`` asks :func:`theme_is_dark`
+                 (pass ``theme_is_dark(textview)`` for the exact view)
     :returns: ``dict`` mapping tag-name strings to :class:`Gtk.TextTag` objects.
     """
+    if dark is None:
+        dark = theme_is_dark()
+    # Remembered for inline_to_pango(), which colours table-cell links and
+    # code while the same render builds its tables.
+    _last_render_dark[0] = bool(dark)
+    palette = _TAG_COLOURS_DARK if dark else _TAG_COLOURS_LIGHT
     W_BOLD = Pango.Weight.BOLD
     S_ITALIC = Pango.Style.ITALIC
     U_SINGLE = Pango.Underline.SINGLE
@@ -1142,7 +1238,19 @@ def define_tags(buf: Gtk.TextBuffer) -> dict[str, Gtk.TextTag]:
     tags: dict[str, Gtk.TextTag] = {}
 
     def tag(name: str, **kw) -> Gtk.TextTag:
-        """Create a named tag in *buf* and store it in *tags*."""
+        """Create a named tag in *buf* and store it in *tags*.
+
+        Colours given here are overridden by the theme palette entry for
+        *name*, when there is one.
+        """
+        if name in palette:
+            fg, bg = palette[name]
+            kw.pop("foreground", None)
+            kw.pop("background", None)
+            if fg:
+                kw["foreground"] = fg
+            if bg:
+                kw["background"] = bg
         tags[name] = buf.create_tag(name, **kw)
         return tags[name]
 
@@ -1249,6 +1357,32 @@ _LINK_STYLE_COLOURS: dict[str, tuple[str, str | None]] = {
     "md_link": ("#006688", "#eaf6fb"),
 }
 
+#: Dark-theme counterparts of _LINK_STYLE_COLOURS.
+_LINK_STYLE_COLOURS_DARK: dict[str, tuple[str, str | None]] = {
+    "hyperlink": ("#6ea8ff", None),
+    "gramps_link": ("#d08cff", "#2e2240"),
+    "image_link": ("#5cc8ff", "#1e2a3a"),
+    "anchor_link": ("#5fd38a", None),
+    "mailto_link": ("#4fd1a5", None),
+    "file_link": ("#e0a85a", "#3a2e1e"),
+    "md_link": ("#5cc8e0", "#1e3038"),
+}
+
+
+def link_style_colours(style: str, dark: bool | None = None) -> tuple[str, str | None]:
+    """
+    Return the (foreground, background) colours for a link style.
+
+    :param style: a link style such as ``"hyperlink"`` or ``"gramps_link"``;
+                  unknown styles get the ``"hyperlink"`` colours
+    :param dark: use the dark palette; ``None`` asks :func:`theme_is_dark`
+    :returns: ``(foreground, background)``; background may be ``None``
+    """
+    if dark is None:
+        dark = theme_is_dark()
+    table = _LINK_STYLE_COLOURS_DARK if dark else _LINK_STYLE_COLOURS
+    return table.get(style, table["hyperlink"])
+
 
 # ---------------------------------------------------------------------------
 # Scaled-image disk cache
@@ -1262,7 +1396,7 @@ THUMB_MARKDOWN = os.path.join(THUMB_DIR, "markdown")
 #: width to fit the pane, so the exact width changes whenever a pane is
 #: resized; caching at a few fixed steps (then shrinking in memory, which
 #: is cheap) avoids one cached file per pane width. 560 is the default
-#: ``max_width`` of :func:`_insert_image_into_buffer`.
+#: ``max_width`` of :func:`insert_image_into_buffer`.
 _THUMB_WIDTH_STEPS = (128, 260, 400, 560)
 
 
@@ -1287,7 +1421,28 @@ def _scale_to_width(pixbuf: GdkPixbuf.Pixbuf, width: int) -> GdkPixbuf.Pixbuf:
     return pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
 
 
-def _cached_image_path(img_path: str, width: int) -> str:
+def _scale_to_fit(
+    pixbuf: GdkPixbuf.Pixbuf, width: int, height: int
+) -> GdkPixbuf.Pixbuf:
+    """
+    Shrink *pixbuf* to fit inside a *width* x *height* box, keeping its
+    proportions -- the way Gramps fits its own ``normal`` and ``large``
+    thumbnails into a square. Never enlarges.
+
+    :param pixbuf: the image
+    :param width: the box width
+    :param height: the box height
+    :returns: the scaled image, or *pixbuf* itself if it already fits
+    """
+    ratio = min(width / pixbuf.get_width(), height / pixbuf.get_height())
+    if ratio >= 1:
+        return pixbuf
+    new_w = max(1, int(pixbuf.get_width() * ratio))
+    new_h = max(1, int(pixbuf.get_height() * ratio))
+    return pixbuf.scale_simple(new_w, new_h, GdkPixbuf.InterpType.BILINEAR)
+
+
+def _cached_image_path(img_path: str, width: int, height: int | None = None) -> str:
     """
     Return the cache file path for *img_path* scaled to *width*.
 
@@ -1299,11 +1454,16 @@ def _cached_image_path(img_path: str, width: int) -> str:
 
     :param img_path: the source image path
     :param width: the cached width step
+    :param height: the box height for a fixed-box thumbnail, else ``None``
     :returns: the full path of the cached PNG
     """
     import hashlib  # deferred: only needed when an image is shown
 
-    key = ("%s?w=%d" % (os.path.abspath(img_path), width)).encode("utf-8")
+    if height:
+        key = "%s?box=%dx%d" % (os.path.abspath(img_path), width, height)
+    else:
+        key = "%s?w=%d" % (os.path.abspath(img_path), width)
+    key = key.encode("utf-8")
     return os.path.join(THUMB_MARKDOWN, hashlib.md5(key).hexdigest() + ".png")
 
 
@@ -1337,7 +1497,9 @@ def _load_with_gramps_thumbnailer(img_path: str) -> GdkPixbuf.Pixbuf | None:
         return None
 
 
-def _load_scaled_image(img_path: str, max_width: int) -> GdkPixbuf.Pixbuf | None:
+def _load_scaled_image(
+    img_path: str, max_width: int, max_height: int | None = None
+) -> GdkPixbuf.Pixbuf | None:
     """
     Load *img_path* no wider than *max_width*, using a disk cache.
 
@@ -1354,11 +1516,21 @@ def _load_scaled_image(img_path: str, max_width: int) -> GdkPixbuf.Pixbuf | None
     not cached here, because Gramps caches them itself.
 
     :param img_path: local path of the source image
+    With *max_height* the image is instead fitted inside a *max_width* x
+    *max_height* box (a fixed-size thumbnail, like Gramps' own ``normal``
+    and ``large`` ones), cached once at that box size.
+
     :param max_width: the widest the result may be, in pixels
+    :param max_height: the tallest the result may be, or ``None`` for no
+                       height limit (scale by width only)
     :returns: the image, or ``None`` if it could not be loaded
     """
-    step = next((w for w in _THUMB_WIDTH_STEPS if w >= max_width), max_width)
-    cache_path = _cached_image_path(img_path, step)
+    if max_height:
+        step = max_width
+        cache_path = _cached_image_path(img_path, max_width, max_height)
+    else:
+        step = next((w for w in _THUMB_WIDTH_STEPS if w >= max_width), max_width)
+        cache_path = _cached_image_path(img_path, step)
     try:
         src_mtime = os.path.getmtime(img_path)
     except OSError:
@@ -1379,7 +1551,9 @@ def _load_scaled_image(img_path: str, max_width: int) -> GdkPixbuf.Pixbuf | None
             if pixbuf is None:
                 return None
         else:
-            if pixbuf.get_width() > step:
+            if max_height:
+                pixbuf = _scale_to_fit(pixbuf, step, max_height)
+            elif pixbuf.get_width() > step:
                 pixbuf = _scale_to_width(pixbuf, step)
             # Write to a temporary file, then rename it into place, so a
             # second Gramps window never reads a half-written PNG.
@@ -1395,12 +1569,15 @@ def _load_scaled_image(img_path: str, max_width: int) -> GdkPixbuf.Pixbuf | None
                 except OSError:
                     pass
 
+    if max_height:
+        # Also shrinks a Gramps-thumbnailer result (180 px) to the box.
+        return _scale_to_fit(pixbuf, max_width, max_height)
     if pixbuf.get_width() > max_width:
         pixbuf = _scale_to_width(pixbuf, max_width)
     return pixbuf
 
 
-def _insert_image_into_buffer(
+def insert_image_into_buffer(
     buf: Gtk.TextBuffer,
     it: Gtk.TextIter,
     tags: dict[str, Gtk.TextTag],
@@ -1410,6 +1587,7 @@ def _insert_image_into_buffer(
     center: bool = False,
     show_caption: bool = True,
     add_trailing_newline: bool = True,
+    max_height: int | None = None,
 ) -> bool:
     """
     Insert a local image file into *buf* at *it*, scaled to fit.
@@ -1444,15 +1622,21 @@ def _insert_image_into_buffer(
                                   for a thumbnail that's the buffer's
                                   only content, where trailing
                                   whitespace would just waste space
+    :param max_height: fit the image inside a *max_width* x *max_height*
+                       box (fixed-size thumbnail); ``None`` limits width only
     :returns: ``True`` if the image was inserted, ``False`` on any
                failure (caller falls back to a text placeholder)
     """
     try:
-        pixbuf = _load_scaled_image(img_path, max_width)
+        pixbuf = _load_scaled_image(img_path, max_width, max_height)
         if pixbuf is None:
             raise ValueError("image could not be loaded")
         image_start = buf.create_mark(None, it, True)
         buf.insert_pixbuf(it, pixbuf)
+        # Remember the source file on the image itself, so a double-click
+        # can open it (see markdown_image_double_click). The tag name holds
+        # the path, so it lives in GTK's tag table with the buffer.
+        mark_image_source(buf, buf.get_iter_at_mark(image_start), it, img_path)
         if center:
             center_tag = buf.create_tag(None, justification=Gtk.Justification.CENTER)
             buf.apply_tag(center_tag, buf.get_iter_at_mark(image_start), it)
@@ -1472,6 +1656,113 @@ def _insert_image_into_buffer(
         return False
 
 
+# Old private name, kept for add-ons written before it became public.
+_insert_image_into_buffer = insert_image_into_buffer
+
+
+#: Prefix of the per-image tag name that records an inserted image's
+#: source file path (see :func:`markdown_image_at`).
+_IMAGE_SOURCE_TAG_PREFIX = "md-image-source:"
+
+
+def mark_image_source(
+    buf: Gtk.TextBuffer, start: Gtk.TextIter, end: Gtk.TextIter, img_path: str
+) -> None:
+    """
+    Record *img_path* as the source file of the image between two iters.
+
+    :func:`render_markdown` does this for every image it inserts. Callers
+    with their own image insertion (Markdown Dash) call it right after
+    ``insert_pixbuf`` so :func:`markdown_image_double_click` works there too.
+
+    :param buf: the buffer holding the image
+    :param start: iter just before the image's pixbuf character
+    :param end: iter just after it
+    :param img_path: the image file the pixbuf was made from
+    """
+    name = _IMAGE_SOURCE_TAG_PREFIX + img_path
+    src_tag = buf.get_tag_table().lookup(name) or buf.create_tag(name)
+    buf.apply_tag(src_tag, start, end)
+
+
+def markdown_image_at(textview: Gtk.TextView, x: int, y: int) -> str | None:
+    """
+    Return the source file of the image at a point in *textview*, if any.
+
+    Only local images inserted by :func:`render_markdown` are found --
+    not ``gramps:icon:`` pixbufs, and not images inside table widgets.
+
+    :param textview: the view rendered by :func:`render_markdown`
+    :param x: window x coordinate (e.g. ``event.x``)
+    :param y: window y coordinate (e.g. ``event.y``)
+    :returns: the image's file path, or ``None``
+    """
+    bx, by = textview.window_to_buffer_coords(Gtk.TextWindowType.WIDGET, x, y)
+    found = textview.get_iter_at_location(bx, by)
+    # Gtk 3.20+ returns (bool, iter); older returns the iter alone.
+    if isinstance(found, tuple):
+        inside, it = found
+        if not inside:
+            return None
+    else:
+        it = found
+    if it is None:
+        return None
+    for tag in it.get_tags():
+        name = tag.props.name or ""
+        if name.startswith(_IMAGE_SOURCE_TAG_PREFIX):
+            return name[len(_IMAGE_SOURCE_TAG_PREFIX) :]
+    return None
+
+
+def open_image_with_default_application(
+    textview: Gtk.TextView, img_path: str
+) -> None:
+    """
+    Open *img_path* in the desktop's default viewer for its MIME type.
+
+    Uses Gramps' own :func:`gramps.gui.utils.open_file_with_default_application`,
+    as the Edit Media dialog does when its thumbnail is double-clicked.
+    That function only uses ``uistate.window``, as the parent of its error
+    dialog, so the window holding *textview* is passed in a stand-in.
+
+    :param textview: the view the image was double-clicked in
+    :param img_path: the image file to open
+    """
+    from types import SimpleNamespace  # deferred: rarely used
+
+    from gramps.gui.utils import open_file_with_default_application
+
+    toplevel = textview.get_toplevel()
+    parent = toplevel if isinstance(toplevel, Gtk.Window) else None
+    open_file_with_default_application(img_path, SimpleNamespace(window=parent))
+
+
+def markdown_image_double_click(
+    textview: Gtk.TextView, event: Gdk.EventButton
+) -> bool:
+    """
+    Handle a double-click on a rendered image: open its source file.
+
+    For callers' own ``button-press-event`` handlers, which should call
+    this *before* anything that swallows double-clicks::
+
+        if markdown_image_double_click(widget, event):
+            return True
+
+    :param textview: the view rendered by :func:`render_markdown`
+    :param event: the button-press event
+    :returns: ``True`` if an image was opened (event handled)
+    """
+    if event.type != Gdk.EventType._2BUTTON_PRESS or event.button != 1:
+        return False
+    img_path = markdown_image_at(textview, int(event.x), int(event.y))
+    if not img_path:
+        return False
+    open_image_with_default_application(textview, img_path)
+    return True
+
+
 def render_markdown(
     textview: Gtk.TextView,
     md_text: str,
@@ -1482,6 +1773,7 @@ def render_markdown(
     image_adds_newline: bool = True,
     default_icon_style: str = ICON_STYLE_AUTO,
     table_style: str = "widget",
+    image_max_height: int | None = None,
 ) -> dict:
     """
     Render *md_text* into a fresh :class:`Gtk.TextBuffer` on *textview*.
@@ -1516,14 +1808,18 @@ def render_markdown(
                           ever treated as already-resolved/absolute)
     :param image_max_width: pixel width local images are scaled down to
                              fit, if wider (see
-                             :func:`_insert_image_into_buffer`)
+                             :func:`insert_image_into_buffer`)
+    :param image_max_height: if set, local images are fitted inside an
+                              ``image_max_width`` x ``image_max_height``
+                              box instead (fixed-size thumbnails, e.g.
+                              Plugin Manager plus's Preview pane)
     :param center_images: center inline images (and their captions);
-                           see :func:`_insert_image_into_buffer`
+                           see :func:`insert_image_into_buffer`
     :param show_image_captions: show each image's alt text underneath it
                                  as a caption; see
-                                 :func:`_insert_image_into_buffer`
+                                 :func:`insert_image_into_buffer`
     :param image_adds_newline: insert a newline after each image; see
-                                :func:`_insert_image_into_buffer`
+                                :func:`insert_image_into_buffer`
     :param default_icon_style: :data:`ICON_STYLE_AUTO` (default),
                                 ``'color'``, or ``'symbolic'`` -- the
                                 document-wide default for any
@@ -1561,7 +1857,7 @@ def render_markdown(
     # rendered while the view is narrower than image_max_width (a docked
     # gramplet sidebar pane, or a reader window later shrunk after the
     # image was already inserted at the wider cap) can end up wider than
-    # the TextView's live allocation -- see _insert_image_into_buffer's
+    # the TextView's live allocation -- see insert_image_into_buffer's
     # own comment, and this module's docstring's "Next target for fixes"
     # note on negative-height allocation warnings while scrolling.
     allocated = textview.get_allocated_width()
@@ -1573,7 +1869,8 @@ def render_markdown(
             1, min(image_max_width, allocated - left - right - padding)
         )
 
-    tags = define_tags(buf)
+    dark = theme_is_dark(textview)
+    tags = define_tags(buf, dark=dark)
     link_uris: dict[str, tuple[str, str]] = {}
     anchor_marks: dict[str, Gtk.TextMark] = {}
     link_counter = [0]
@@ -1581,7 +1878,7 @@ def render_markdown(
     def make_link_tag(style: str, uri: str) -> Gtk.TextTag:
         link_counter[0] += 1
         name = f"_link_{link_counter[0]}"
-        fg, bg = _LINK_STYLE_COLOURS.get(style, _LINK_STYLE_COLOURS["hyperlink"])
+        fg, bg = link_style_colours(style, dark=dark)
         kw: dict = {"foreground": fg, "underline": Pango.Underline.SINGLE}
         if bg:
             kw["background"] = bg
@@ -1659,7 +1956,7 @@ def render_markdown(
             img_path = resolve_path(seg.image_path)
             inserted = False
             if os.path.isfile(img_path):
-                inserted = _insert_image_into_buffer(
+                inserted = insert_image_into_buffer(
                     buf,
                     it,
                     tags,
@@ -1669,6 +1966,7 @@ def render_markdown(
                     center=center_images,
                     show_caption=show_image_captions,
                     add_trailing_newline=image_adds_newline,
+                    max_height=image_max_height,
                 )
             if not inserted:
                 display = f"[image: {seg.text or seg.image_path}]"
@@ -1809,9 +2107,10 @@ def inline_to_pango(text: str) -> str:
             result.append("<i>{}</i>".format(_esc(alt)))
         elif kind == "link":
             label = m.group("link_label")
+            link_fg = link_style_colours("hyperlink", dark=_last_render_dark[0])[0]
             result.append(
-                '<span foreground="#0055cc" underline="single">{}</span>'.format(
-                    inline_to_pango(label)
+                '<span foreground="{}" underline="single">{}</span>'.format(
+                    link_fg, inline_to_pango(label)
                 )
             )
         elif kind in ("bold3", "und3"):
@@ -1823,10 +2122,13 @@ def inline_to_pango(text: str) -> str:
         elif kind == "br":
             result.append("\n")
         elif kind == "kbd":
+            kbd_fg, kbd_bg = (
+                _TAG_COLOURS_DARK if _last_render_dark[0] else _TAG_COLOURS_LIGHT
+            )["kbd"]
             result.append(
-                '<span font_family="monospace" background="#eeeeee" '
-                'foreground="#333333">{}</span>'.format(
-                    inline_to_pango(m.group("kbd_t"))
+                '<span font_family="monospace" background="{}" '
+                'foreground="{}">{}</span>'.format(
+                    kbd_bg, kbd_fg, inline_to_pango(m.group("kbd_t"))
                 )
             )
         elif kind == "code":

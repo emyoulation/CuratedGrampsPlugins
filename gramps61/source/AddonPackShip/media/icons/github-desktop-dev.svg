@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 1066.6667 1066.6667"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="github-desktop-dev.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="14.481547"
+     inkscape:cx="15.985861"
+     inkscape:cy="16.262075"
+     inkscape:window-width="1698"
+     inkscape:window-height="991"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg10" />
+  <defs
+     id="defs5">
+    <linearGradient
+       id="bgGradientDev"
+       x1="512"
+       y1="0"
+       x2="512"
+       y2="717"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#F7C313"
+         id="stop1" />
+      <stop
+         offset="1"
+         stop-color="#E9B500"
+         id="stop2" />
+    </linearGradient>
+    <radialGradient
+       id="specularDev"
+       cx="358.39999"
+       cy="204.8"
+       r="665.59998"
+       fx="358.39999"
+       fy="204.8"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#FFFFFF"
+         stop-opacity="0.4"
+         id="stop3" />
+      <stop
+         offset="1"
+         stop-color="#FFFFFF"
+         stop-opacity="0"
+         id="stop4" />
+    </radialGradient>
+    <filter
+       id="dropShadowDev"
+       x="-0.04097561"
+       y="-0.042316499"
+       width="1.0819512"
+       height="1.1022649">
+      <feGaussianBlur
+         in="SourceAlpha"
+         stdDeviation="14"
+         result="blur"
+         id="feGaussianBlur4" />
+      <feOffset
+         in="blur"
+         dx="0"
+         dy="14"
+         result="offsetBlur"
+         id="feOffset4" />
+      <feComponentTransfer
+         in="offsetBlur"
+         result="shadow"
+         id="feComponentTransfer4">
+        <feFuncA
+           type="linear"
+           slope="0.5"
+           id="feFuncA4" />
+      </feComponentTransfer>
+      <feMerge
+         id="feMerge5">
+        <feMergeNode
+           in="shadow"
+           id="feMergeNode4" />
+        <feMergeNode
+           in="SourceGraphic"
+           id="feMergeNode5" />
+      </feMerge>
+    </filter>
+    <clipPath
+       id="squircleDev">
+      <rect
+         x="0"
+         y="0"
+         width="1024"
+         height="1024"
+         rx="224"
+         ry="224"
+         id="rect5" />
+    </clipPath>
+  </defs>
+  <g
+     clip-path="url(#squircleDev)"
+     id="g7"
+     transform="translate(23.0178,20.71602)">
+    <rect
+       x="0"
+       y="0"
+       width="1024"
+       height="1024"
+       fill="url(#bgGradientDev)"
+       id="rect6"
+       style="fill:url(#bgGradientDev)" />
+    <!-- faint grid texture from the source dev icon layer, at low opacity -->
+    <path
+       d="M 260,252 H 508 V 0 h 8 V 252 H 764 V 0 h 8 v 252 h 252 v 8 H 772 v 248 h 252 v 8 H 772 v 248 h 252 v 8 H 772 v 252 h -8 V 772 H 516 v 252 h -8 V 772 H 260 v 252 h -8 V 772 H 0 v -8 H 252 V 516 H 0 v -8 H 252 V 260 H 0 v -8 H 252 V 0 h 8 z m 0,512 H 508 V 516 H 260 Z m 256,0 H 764 V 516 H 516 Z M 260,508 H 508 V 260 H 260 Z m 256,0 H 764 V 260 H 516 Z"
+       fill="#ffffff"
+       fill-opacity="0.25"
+       id="path6" />
+    <rect
+       x="0"
+       y="0"
+       width="1024"
+       height="1024"
+       fill="url(#specularDev)"
+       id="rect7"
+       style="fill:url(#specularDev)" />
+  </g>
+  <g
+     filter="url(#dropShadowDev)"
+     id="g10"
+     transform="translate(23.0178,20.71602)">
+    <g
+       clip-path="url(#clip0_dev)"
+       id="g9">
+      <mask
+         id="mask0_dev"
+         maskUnits="userSpaceOnUse"
+         x="102"
+         y="103"
+         width="820"
+         height="803">
+        <path
+           d="M 922,103 H 102 v 803 h 820 z"
+           fill="#ffffff"
+           id="path7" />
+      </mask>
+      <g
+         mask="url(#mask0_dev)"
+         id="g8">
+        <path
+           d="M 448.739,683.375 C 343.035,670.566 268.562,594.517 268.562,496.053 c 0,-40.025 14.415,-83.253 38.438,-112.072 -10.41,-26.417 -8.808,-82.453 3.203,-105.668 32.031,-4.002 75.273,12.808 100.898,36.023 30.43,-9.606 62.461,-14.409 101.7,-14.409 39.238,0 71.269,4.803 100.097,13.609 24.825,-22.415 68.868,-39.225 100.899,-35.223 11.211,21.614 12.812,77.65 2.402,104.868 25.625,30.419 39.238,71.246 39.238,112.872 0,98.464 -74.472,172.912 -181.777,186.522 27.226,17.61 45.645,56.036 45.645,100.064 v 83.254 c 0,24.015 20.019,37.624 44.043,28.018 C 808.289,838.675 922,693.781 922,514.466 922,287.919 737.82,103 511.199,103 284.578,103 102,287.919 102,514.466 c 0,177.714 112.91,325.01 265.058,380.245 21.622,8.005 42.442,-6.404 42.442,-28.018 v -64.042 c -11.211,4.804 -25.625,8.006 -38.438,8.006 -52.851,0 -84.082,-28.818 -106.504,-82.454 -8.808,-21.613 -18.417,-34.422 -36.835,-36.823 -9.609,-0.801 -12.813,-4.803 -12.813,-9.606 0,-9.607 16.016,-16.811 32.032,-16.811 23.222,0 43.241,14.41 64.062,44.029 16.016,23.215 32.832,33.621 52.851,33.621 20.02,0 32.832,-7.204 51.25,-25.617 13.614,-13.609 24.024,-25.616 33.634,-33.621 z"
+           fill="#ffffff"
+           id="path8" />
+      </g>
+    </g>
+  </g>
+  <defs
+     id="defs10">
+    <clipPath
+       id="clip0_dev">
+      <rect
+         width="820"
+         height="803"
+         fill="#ffffff"
+         transform="translate(102,103)"
+         id="rect10"
+         x="0"
+         y="0" />
+    </clipPath>
+  </defs>
+</svg>

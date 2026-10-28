@@ -99,6 +99,7 @@ import urllib.error
 import urllib.request
 from hashlib import sha1
 from typing import Callable
+from xml.sax.saxutils import escape as _xml_escape
 
 # ------------------------
 # Gramps modules
@@ -109,7 +110,7 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 gi.require_version("GdkPixbuf", "2.0")
 gi.require_version("Pango", "1.0")
-from gi.repository import Gdk, GdkPixbuf, Gio, GLib, Gtk, Pango
+from gi.repository import Gdk, Gio, GLib, Gtk, Pango
 
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gen.errors import WindowActiveError
@@ -121,7 +122,6 @@ from gramps.gui.managedwindow import ManagedWindow
 # ------------------------
 from MarkdownUtils import (
     LANG_SUFFIX_RE,
-    NAMESPACE_MAP,
     VIEW_NAMES,
     apply_table_no_wrap_tag,
     build_table_text,
@@ -136,6 +136,27 @@ from MarkdownUtils import (
     table_has_uninteractive_links,
 )
 
+# Image insertion is shared with Plugin Manager plus. Older MarkdownUtils
+# builds only had the private name.
+try:
+    from MarkdownUtils import insert_image_into_buffer
+except ImportError:
+    from MarkdownUtils import _insert_image_into_buffer as insert_image_into_buffer
+
+# Newer MarkdownUtils features (late Oct 2026 builds): dark-theme palette
+# and double-click-to-open for images. Older builds lack them; Markdown
+# Dash then keeps its previous light colours and ignores double-clicks.
+try:
+    from MarkdownUtils import (
+        link_style_colours,
+        markdown_image_double_click,
+        theme_is_dark,
+    )
+except ImportError:
+    link_style_colours = None
+    markdown_image_double_click = None
+    theme_is_dark = None
+
 # Backward-compatible names: these moved to MarkdownUtils. Kept so any
 # add-on that still imports them from MarkdownDash keeps working; delete
 # once nothing does.
@@ -145,6 +166,39 @@ _LANG_SUFFIX_RE = LANG_SUFFIX_RE
 _ = glocale.translation.gettext
 
 LOG = logging.getLogger(__name__)
+
+
+def _set_unique_dashboard_title(gui, wanted: str) -> str | None:
+    """Rename a Dashboard gramplet through core set_title(), never to a
+    title another Dashboard gramplet already owns.
+
+    On the Dashboard the title is the key of GrampletPane.gramplet_map,
+    the section name in Gramplets_dashboardview_gramplets.ini and the key
+    of every Configure-dialog setting for that gramplet, so it must stay
+    unique. Taken titles get "-1", "-2" ... exactly as GrampletPane does
+    when it loads the layout.
+
+    :returns: the title now in use, or None if *gui* is not (yet) in
+        gramplet_map -- i.e. Gramps is still constructing the gramplet.
+    """
+    gramplet_map = getattr(getattr(gui, "pane", None), "gramplet_map", None)
+    if not isinstance(gramplet_map, dict):
+        return None
+    own_key = next((k for k, g in gramplet_map.items() if g is gui), None)
+    if own_key is None:
+        return None
+    # Repair a title that drifted from its map key (older builds assigned
+    # gui.title directly), so set_title() deletes our own entry, not
+    # another gramplet's.
+    if gui.title != own_key:
+        gui.title = own_key
+    if wanted != _xml_escape(wanted):
+        return gui.title  # core refuses XML characters; keep current title
+    candidate, cnt = wanted, 1
+    while not gui.set_title(candidate, set_override=False):
+        candidate = "%s-%d" % (wanted, cnt)
+        cnt += 1
+    return gui.title
 
 
 def _esc(text: str) -> str:
@@ -476,6 +530,13 @@ class _MarkdownReaderWindow(
         self.dialog = Gtk.Dialog(
             title=self._menu_title, flags=Gtk.DialogFlags.DESTROY_WITH_PARENT
         )
+        # A Gtk.Dialog reports itself to the window manager as a dialog:
+        # usually only a Close button, kept above its parent (the main
+        # Gramps window), often no taskbar entry. A reader may stay open
+        # beside other work, so ask to be treated as an ordinary window
+        # instead, as Plugin Manager plus does. Only a request: the window
+        # manager has the final say.
+        self.dialog.set_type_hint(Gdk.WindowTypeHint.NORMAL)
         self.dialog.add_button(_("Close"), Gtk.ResponseType.CLOSE)
         self.dialog.connect("response", self._cb_response)
         self.set_window(self.dialog, None, self._menu_title)
@@ -1296,8 +1357,8 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
         the filename it would return to, or disabled when there's nowhere
         to go back to yet.  Below a separator, the remaining entries are
         the sibling ``.md`` / ``.markdown`` files in the same folder,
-        including any ``README_<lang>.md`` source-language variants, each
-        tooltipped with its parent folder's name so that a generic
+        including any ``README_<lang>.md`` source-language variants, under
+        a greyed-out heading naming that folder so that a generic
         filename like "README.md" is still identifiable at a glance. The
         file currently displayed is bulleted and boldfaced, but stays
         clickable like any other entry -- selecting it re-triggers
@@ -1309,6 +1370,21 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
         menu = getattr(self, "_folder_menu", None)
         if menu is None:
             return
+
+        def _load_after_menu_closes(_menu_item: Gtk.MenuItem, action, *args) -> None:
+            """Run *action* once the menu has fully closed.
+
+            Loading a document rebuilds this same menu, so it should not
+            run inside the menu's own "activate" handler, while the menu
+            is still closing.
+            """
+
+            def _run() -> bool:
+                action(*args)
+                return False
+
+            GLib.idle_add(_run)
+
         for child in menu.get_children():
             menu.remove(child)
 
@@ -1331,7 +1407,7 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
             prev_label = "\u2190 {}".format(_("Previous"))
         prev_item = Gtk.MenuItem(label=prev_label)
         if has_previous:
-            prev_item.connect("activate", lambda _mi: self.cb_back(None))
+            prev_item.connect("activate", _load_after_menu_closes, self.cb_back, None)
         else:
             prev_item.set_sensitive(False)
         menu.append(prev_item)
@@ -1357,6 +1433,15 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
         else:
             current_name = os.path.basename(current_path)
             folder_name = os.path.basename(folder.rstrip(os.sep)) or folder
+            # The folder name used to be a tooltip on every file entry, but
+            # a tooltip open on a menu item when that item is chosen is a
+            # popup of the menu's own popup window, still showing as the
+            # menu closes -- which GTK's Wayland backend reports as
+            # "Gdk-WARNING: Tried to unmap the parent of a popup". All
+            # entries share one folder, so a single heading says it once.
+            heading = Gtk.MenuItem(label="\U0001F4C1 {}".format(folder_name))
+            heading.set_sensitive(False)
+            menu.append(heading)
             for fname in md_files:
                 is_current = fname == current_name
                 # Annotate source-language files so the user knows what they are
@@ -1383,8 +1468,7 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
                     item.add(gtk_label)
                 else:
                     item = Gtk.MenuItem(label=label_text)
-                item.set_tooltip_text(folder_name)
-                item.connect("activate", lambda _mi, p=full_path: self._load(p))
+                item.connect("activate", _load_after_menu_closes, self._load, full_path)
                 menu.append(item)
 
         menu.show_all()
@@ -1490,26 +1574,35 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
     # ── file loading ───────────────────────────────────────────────────
 
     def _update_frame_title(self, final_title: str) -> None:
-        """Update window frame layout labels without triggering
-        deletion lookup KeyErrors."""
+        """Make the gramplet title follow the loaded file heading, without
+        ever creating a duplicate Dashboard title."""
         try:
-            self.title = final_title
-            if hasattr(self, "gui") and self.gui:
-                if (
-                    hasattr(self.gui, "frame")
-                    and self.gui.frame
-                    and hasattr(self.gui.frame, "set_label")
-                ):
-                    self.gui.frame.set_label(final_title)
-
-                pane = getattr(self.gui, "pane", None)
-                gramplet_map = getattr(pane, "gramplet_map", None) if pane else None
-                current_gui_title = getattr(self.gui, "title", None)
-
-                if gramplet_map and current_gui_title in gramplet_map:
-                    self.gui.set_title(final_title)
+            gui = getattr(self, "gui", None)
+            if gui:
+                pane = getattr(gui, "pane", None)
+                if isinstance(getattr(pane, "gramplet_map", None), dict):
+                    # Dashboard. Never touch gui.title directly: during
+                    # init() the gramplet is not in gramplet_map yet, and a
+                    # title changed then makes GrampletPane evict another
+                    # gramplet from the map (see _set_unique_dashboard_title).
+                    self._pending_dashboard_title = final_title
+                    accepted = _set_unique_dashboard_title(gui, final_title)
+                    if accepted is None:
+                        # Still being constructed: retry once Gramps has
+                        # registered the gramplet.
+                        if not getattr(self, "_dashboard_title_idle", False):
+                            self._dashboard_title_idle = True
+                            GLib.idle_add(self._cb_apply_pending_title)
+                    else:
+                        self.title = accepted
                 else:
-                    self.gui.title = final_title
+                    # Sidebar/Bottombar (or no pane): these save by gramplet
+                    # name, so the title is only a label here.
+                    gui.title = final_title
+                    self.title = final_title
+                frame = getattr(gui, "frame", None)
+                if frame is not None and hasattr(frame, "set_label"):
+                    frame.set_label(gui.title)
 
             # A standalone _MarkdownReaderWindow (see open_markdown_file)
             # has no self.gui at all -- it registers this hook instead
@@ -1522,6 +1615,21 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
                 on_title_changed(final_title)
         except Exception:
             pass
+
+    def _cb_apply_pending_title(self) -> bool:
+        """Idle callback: apply the heading title that _update_frame_title
+        had to defer while Gramps was constructing the gramplet."""
+        self._dashboard_title_idle = False
+        gui = getattr(self, "gui", None)
+        wanted = getattr(self, "_pending_dashboard_title", None)
+        if gui and wanted:
+            try:
+                accepted = _set_unique_dashboard_title(gui, wanted)
+                if accepted is not None:
+                    self.title = accepted
+            except Exception:  # pylint: disable=broad-except
+                LOG.debug("Deferred Markdown Dash title failed", exc_info=True)
+        return False  # run once
 
     def _load(self, path: str, track_history: bool = True) -> None:
         """Read and render a Markdown file, optionally recording it in history.
@@ -1870,7 +1978,10 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
         buf = Gtk.TextBuffer()
         self.textview.set_buffer(buf)
 
-        self._tags = define_tags(buf)
+        # Light or dark palette, judged from this view's own theme colours,
+        # so headings and links stay readable under dark CSS themes.
+        dark = theme_is_dark(self.textview) if theme_is_dark else None
+        self._tags = define_tags(buf, dark=dark) if theme_is_dark else define_tags(buf)
         self._link_uris = {}
         self._anchor_marks = {}
         link_counter = [0]
@@ -1878,7 +1989,20 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
         def make_link_tag(style_tag_name: str, uri: str) -> Gtk.TextTag:
             link_counter[0] += 1
             name = f"_link_{link_counter[0]}"
-            if style_tag_name == "image_link":
+            if link_style_colours:
+                # Markdown Dash has always shown every other link style
+                # in plain hyperlink colours; keep that.
+                style = (
+                    style_tag_name
+                    if style_tag_name in ("image_link", "gramps_link", "anchor_link")
+                    else "hyperlink"
+                )
+                fg, bg = link_style_colours(style, dark=dark)
+                kw = {"foreground": fg, "underline": Pango.Underline.SINGLE}
+                if bg:
+                    kw["background"] = bg
+                t = buf.create_tag(name, **kw)
+            elif style_tag_name == "image_link":
                 t = buf.create_tag(
                     name,
                     foreground="#0077aa",
@@ -2075,34 +2199,20 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
     def _insert_image(
         self, buf: Gtk.TextBuffer, it: Gtk.TextIter, img_path: str, alt_text: str
     ) -> bool:
-        """Insert a scaled pixbuf into display buffer layout configurations."""
-        try:
-            max_w = self._max_image_width()
-            pb = GdkPixbuf.Pixbuf.new_from_file(img_path)
-            w, h = pb.get_width(), pb.get_height()
-            if w > max_w:
-                # max(1, ...): an extreme-aspect-ratio source image could
-                # otherwise round down to a *zero*-height scaled pixbuf,
-                # which is a second, independent way to end up with a
-                # degenerate (here: exactly-zero rather than negative,
-                # but equally invalid) anchor size for the TextView to
-                # lay out -- worth guarding even though it isn't the
-                # scenario this specific bug report's image triggered.
-                h = max(1, int(h * max_w / w))
-                w = max_w
-                pb = pb.scale_simple(w, h, GdkPixbuf.InterpType.BILINEAR)
-            buf.insert_pixbuf(it, pb)
-            buf.insert(it, "\n")
-            caption_tag = self._tags.get("blockquote")
-            if alt_text and caption_tag:
-                start_mark = buf.create_mark(None, it, True)
-                buf.insert(it, alt_text + "\n")
-                start_it = buf.get_iter_at_mark(start_mark)
-                buf.apply_tag(caption_tag, start_it, it)
-                buf.delete_mark(start_mark)
-            return True
-        except Exception:
-            return False
+        """
+        Insert a local image at *it*, scaled to the view's current width.
+
+        Uses MarkdownUtils' shared image insertion, so Markdown Dash gets
+        the same disk cache of scaled images, extreme-aspect-ratio guard,
+        blockquote-styled caption and double-click-to-open as every other
+        MarkdownUtils consumer, instead of keeping its own copy.
+
+        :returns: ``True`` if inserted, ``False`` so the caller can show a
+                  text placeholder instead
+        """
+        return insert_image_into_buffer(
+            buf, it, self._tags, img_path, alt_text, max_width=self._max_image_width()
+        )
 
     # ── event handlers ─────────────────────────────────────────────────
 
@@ -2197,6 +2307,12 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
 
     def _on_click(self, widget: Gtk.TextView, event: Gdk.EventButton) -> bool:
         """Left-click navigation routers."""
+        # Double-clicking an image opens its source file in the desktop
+        # viewer, like the thumbnail in Gramps' Edit Media dialog.
+        if markdown_image_double_click and markdown_image_double_click(
+            widget, event
+        ):
+            return True
         if event.button != 1:
             return False
         style, uri = self._seg_tag_at(int(event.x), int(event.y))
@@ -2260,27 +2376,37 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
                 ref = "id"
                 value = parts[3]
 
-            info = NAMESPACE_MAP.get(obj_type)
-            if not info:
+            # Gramps' own table of the editable object types and their
+            # editors (gramps/gui/editors/__init__.py, the same in 5.2,
+            # 6.0 and 6.1), matched case-insensitively. This replaces the
+            # copy of that table this module used to import from
+            # MarkdownUtils (NAMESPACE_MAP).
+            from gramps.gui.editors import EDITORS
+
+            obj_class = next(
+                (name for name in EDITORS if name.lower() == obj_type.lower()), None
+            )
+            if obj_class is None:
                 self._set_status(_(f"Unknown object type: {obj_type}"), error=True)
                 return
 
-            getter_id, getter_handle, editor_name = info
-            db = dbstate.db
-            obj = (
-                getattr(db, getter_handle)(value)
-                if ref == "handle"
-                else getattr(db, getter_id)(value)
-            )
+            # Gramps' own way to find the right lookup method, e.g.
+            # get_person_from_gramps_id (DbReadBase.method). Core's
+            # EditObject() would also do this lookup, but it only logs a
+            # missing record or a failing editor; looking the record up
+            # here keeps the "Not found" message in the footer.
+            prop = "handle" if ref == "handle" else "gramps_id"
+            getter = dbstate.db.method("get_%s_from_%s", obj_class, prop)
+            obj = getter(value) if getter else None
 
             if obj is None:
                 self._set_status(_(f"Not found: {obj_type} {value}"), error=True)
                 return
 
             if action == "edit":
-                self._gramps_open_editor(editor_name, obj)
+                self._gramps_open_editor(obj_class, obj)
             else:
-                self._gramps_navigate(obj_type, obj.get_handle())
+                self._gramps_navigate(obj_class, obj.get_handle())
         except Exception:
             traceback.print_exc()
 
@@ -2326,16 +2452,19 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
             pass
         return type(view).__name__
 
-    def _gramps_open_editor(self, editor_name: str, obj) -> None:
-        """Open a Gramps object editor."""
+    def _gramps_open_editor(self, obj_class: str, obj) -> None:
+        """Open the Gramps editor for *obj*, an object of type *obj_class*."""
         try:
-            import gramps.gui.editors as editors_mod
+            from gramps.gui.editors import EDITORS
 
-            editor_class = getattr(editors_mod, editor_name)
-            editor_class(self.dbstate, self.uistate, [], obj)
+            EDITORS[obj_class](self.dbstate, self.uistate, [], obj)
+        except WindowActiveError:
+            # That record's editor is already open; Gramps brings the
+            # existing window to the front instead, as it does elsewhere.
+            pass
         except Exception:
             traceback.print_exc()
-            self._set_status(_(f"Cannot open editor: {editor_name}"), error=True)
+            self._set_status(_(f"Cannot open editor for: {obj_class}"), error=True)
 
     def _gramps_switch_view(self, category: str) -> None:
         """Change to views categories."""

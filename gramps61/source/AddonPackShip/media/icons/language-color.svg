@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 309.17874 309.17874"
+   width="32"
+   height="32"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="language-color.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title19">Translation Icon</title>
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="11.313709"
+     inkscape:cx="21.610951"
+     inkscape:cy="34.338873"
+     inkscape:window-width="1698"
+     inkscape:window-height="991"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg6" />
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect19"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,1,4.3144979,0,1 @ F,0,0,1,1,4.567459,0,1 @ F,0,0,1,1,4.567459,0,1 @ F,0,0,1,1,3.7026462,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="true" />
+    <!-- Shadow for the folded tab -->
+  </defs>
+  <!-- Background Light Grey Card -->
+  <!-- Chinese Character "文" (Dark Grey/Slate) -->
+  <!-- Dark Blue Folded Triangle Ribbon (Bottom Drop) -->
+  <!-- Main Blue Card (Parallelogram / Fold Shape) with Shadow -->
+  <!-- "A" Character Outline Path (Replaces the "G") -->
+  <!-- Converted to direct shapes/path to ensure pure vector outline compatibility without font dependency -->
+  <g
+     id="g19"
+     transform="translate(-136.38253,-84.302541)">
+    <g
+       id="g18"
+       transform="translate(2.1787122,-17.965834)">
+      <path
+         d="m 275.51683,139.36508 134.366,-0.73696 c 17.7526,-0.0974 32.18085,14.20103 32.1443,31.71879 l -0.43597,209.03379 c -0.0365,17.51775 -10.81571,31.48505 -28.56816,31.35626 l -106.13626,-0.77004 z"
+         fill="#e0e0e0"
+         id="path1"
+         inkscape:label="BackFill"
+         style="display:inline;stroke-width:0.886967"
+         sodipodi:nodetypes="csssscc" />
+      <g
+         fill="#607d8b"
+         id="g3"
+         inkscape:label="symbol"
+         style="display:inline">
+        <!-- Top Dot/Vertical Stroke -->
+        <rect
+           x="350"
+           y="186"
+           width="22.441525"
+           height="35.283836"
+           rx="3"
+           id="rect1" />
+        <!-- Horizontal Cross Bar -->
+        <rect
+           x="298"
+           y="216"
+           width="130"
+           height="20"
+           rx="4"
+           id="rect2"
+           style="stroke-width:5;stroke-dasharray:none" />
+        <!-- Left-falling Stroke (Sweeping Arc) -->
+        <path
+           d="M 381.4389,233.06176 C 369.38458,280.95945 342.32138,311.7262 305,330 l 15,18 c 35,-24 60.57556,-51.70959 80.13929,-116.21945 z"
+           id="path2"
+           style="fill:#607d8b;fill-opacity:1;stroke:#607d8b;stroke-width:5;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+           sodipodi:nodetypes="ccccc" />
+        <!-- Right-falling Stroke (Diagonal Bar) -->
+        <path
+           d="m 319.89003,252.57885 c 17.22081,43.01149 49.01569,64.90551 74.10597,96.4921 1.5689,1.97512 4.26111,2.17469 6.06151,0.40784 l 8.67367,-8.51203 c 1.8004,-1.76685 2.02815,-4.83244 0.43149,-6.78517 -22.33284,-27.31339 -59.45681,-51.3839 -64.7616,-82.4306 -0.3443,-2.01506 -2.13069,-3.64055 -4.17526,-3.60289 l -17.56834,0.32358 c -2.38243,0.0439 -3.65309,1.89513 -2.76744,4.10717 z"
+           id="path3"
+           inkscape:label="path3"
+           style="stroke:#607d8b;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+           sodipodi:nodetypes="ccccc"
+           inkscape:path-effect="#path-effect19"
+           inkscape:original-d="m 318.3437,248.55113 c 17.41912,47.36992 52.21953,69.55554 78.4539,104.12683 l 15.19349,-14.91037 C 389.30334,307.8717 346.90238,282.29783 343.92783,248.07991 Z" />
+      </g>
+    </g>
+    <path
+       d="m 137.62155,174.41787 201.45018,174.60792 -26.22309,42.9771 z"
+       fill="#3f51b5"
+       id="path4"
+       inkscape:label="fold"
+       sodipodi:nodetypes="cccc"
+       style="display:inline;fill:#1961da;fill-opacity:1" />
+    <path
+       id="rect9"
+       style="display:inline;fill:#3d8df3;stroke:#ffffff;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:90;stroke-opacity:0"
+       d="m 173.10622,84.864647 107.81785,-0.562106 58.16026,264.720249 -165.97811,-0.18967 c -20.34491,-0.0233 -36.72369,-18.58274 -36.72369,-41.66533 V 126.52998 c 0,-23.08259 16.37898,-41.559266 36.72369,-41.665333 z"
+       sodipodi:nodetypes="sccssss"
+       inkscape:label="Blue BackFill" />
+    <path
+       style="font-size:192px;font-family:Waree;-inkscape-font-specification:Waree;text-align:center;letter-spacing:1.04px;word-spacing:0px;text-anchor:middle;white-space:pre;fill:#fffefe;stroke:#ffffff;stroke-width:10;stroke-linejoin:round;stroke-miterlimit:90"
+       d="m 225.87896,151.86739 20.45341,91.57977 h -40.83245 z m -8.47887,-24.5281 -42.39434,184.02235 h 15.8421 l 10.11514,-47.20734 h 50.05507 l 10.11514,47.20734 h 15.61897 L 234.4322,127.33929 Z"
+       id="text10"
+       inkscape:label="A"
+       aria-label="A" />
+  </g>
+  <metadata
+     id="metadata19">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Translation Icon</dc:title>
+        <dc:date>28 Aug 2026</dc:date>
+        <dc:description>Based on the Google Translate icon&#10;This logo image consists only of simple geometric shapes or text. It does not meet the threshold of originality needed for copyright protection, and is therefore in the public domain. Although it is free of copyright restrictions, this image may still be subject to other restrictions. See WP:PD § Fonts and typefaces or Template talk:PD-textlogo for more information.</dc:description>
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>Brian McCullough</dc:title>
+          </cc:Agent>
+        </dc:contributor>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Public Domain</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>Gramps Genealogy Foundation</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

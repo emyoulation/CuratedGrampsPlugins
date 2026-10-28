@@ -163,6 +163,36 @@ PTYPE_TO_NUM = {
     'CITE': 15,
 }
 
+# Shown after .mo files are compiled. AddonPackShip shows any results
+# line starting with "⚠ Restart Gramps" in bold red.
+RESTART_NOTICE = (
+    "⚠ Restart Gramps to see the new translations. Gramps keeps the"
+    " translations cached until it restarts. Reloading the plugin is"
+    " not enough to see updated strings."
+)
+
+# English plugin-type words for the template.pot title line. Kept
+# untranslated on purpose: one template is read by translators of every
+# language, and the rest of a .pot header is English too.
+PTYPE_POT_LABEL = {
+    0: 'report',
+    1: 'quick view',
+    2: 'tool',
+    3: 'importer',
+    4: 'exporter',
+    5: 'document generator',
+    6: 'general',
+    7: 'map service',
+    8: 'view',
+    9: 'relationship calculator',
+    10: 'gramplet',
+    11: 'sidebar',
+    12: 'database',
+    13: 'filter rule',
+    14: 'thumbnailer',
+    15: 'citation formatter',
+}
+
 # Status to number mapping
 STATUS_TO_NUM = {
     'UNSTABLE': 0,
@@ -200,13 +230,178 @@ def get_version_from_gpr(addon_path):
     
     return "0.0.0"
 
+def prepare_template(addon_path):
+    """
+    Make po/template.pot current: regenerate it from the addon's *.py
+    (and *.glade) files with xgettext, fill its header from the
+    .gpr.py, and replace the existing file only when its strings,
+    references or header changed -- a new POT-Creation-Date alone does
+    not count, so an unchanged addon leaves no diff for Git.
+
+    When xgettext is not available, an existing template is kept and
+    only its header and "#:" references are tidied.
+
+    Used by compile_translations() and by prepare_local_po() (the
+    "Edit translation" button of AddonPackShip).
+
+    :param addon_path: Path to the addon's (bundle's) top folder.
+    :returns: Path to po/template.pot, or None when there is none.
+    """
+    addon_name = os.path.basename(addon_path)
+    po_dir = os.path.join(addon_path, 'po')
+    os.makedirs(po_dir, exist_ok=True)
+    template_pot = os.path.join(po_dir, 'template.pot')
+    fresh_pot = template_pot + '.new'
+    info = _pot_header_info(addon_path)
+
+    # Plain file names, run from inside the addon folder, so the "#:"
+    # source references read "Name.py:12" instead of carrying the
+    # absolute path of this machine (home folder included).
+    py_files = sorted(os.path.basename(f) for f in
+                      glob.glob(os.path.join(addon_path, '*.py')))
+    glade_files = sorted(os.path.basename(f) for f in
+                         glob.glob(os.path.join(addon_path, '*.glade')))
+    fresh_rel = os.path.join('po', 'template.pot.new')
+
+    if not py_files:
+        print("  No .py files found — cannot generate template.pot")
+    else:
+        if os.path.exists(fresh_pot):
+            os.remove(fresh_pot)
+        try:
+            ret = _run_subprocess(
+                ['xgettext', '--language=Python', '--keyword=_',
+                 '--keyword=_:1,2c', '--keyword=N_', '--from-code=UTF-8',
+                 '--add-comments=Translators', '-o', fresh_rel] + py_files,
+                cwd=addon_path).returncode
+        except FileNotFoundError:
+            ret = 127
+        if ret == 127:
+            print("  Warning: xgettext not found -- template.pot not updated")
+            print("  Install gettext tools: dnf install gettext /"
+                  " apt install gettext / brew install gettext")
+        elif ret != 0:
+            print(f"  Warning: xgettext failed (return code {ret})")
+        elif not os.path.exists(fresh_pot):
+            # xgettext exits 0 but writes no file when it finds no
+            # translatable _() strings.
+            print(f"  No translatable strings found in {addon_name}/*.py"
+                  f" -- no template.pot created")
+        if os.path.exists(fresh_pot) and glade_files:
+            try:
+                _run_subprocess(
+                    ['xgettext', '-j', '--add-comments', '-L', 'Glade',
+                     '--from-code=UTF-8', '-o', fresh_rel] + glade_files,
+                    cwd=addon_path)
+            except FileNotFoundError:
+                pass
+
+    if os.path.exists(fresh_pot):
+        if info:
+            _customize_pot_header(fresh_pot, info)
+        if not os.path.exists(template_pot):
+            os.replace(fresh_pot, template_pot)
+            print(f"  ✓ Created template.pot ({len(py_files)} Python file(s))")
+        elif _pot_body(fresh_pot) == _pot_body(template_pot):
+            os.remove(fresh_pot)  # nothing changed but the creation date
+        else:
+            os.replace(fresh_pot, template_pot)
+            print("  ✓ Updated template.pot (strings or header changed)")
+    elif os.path.exists(template_pot):
+        # No fresh template (no xgettext): tidy the existing one.
+        if _relativize_pot_references(template_pot, addon_path):
+            print("  Made template.pot source references relative"
+                  " (removed absolute folder paths)")
+        if info and _customize_pot_header(template_pot, info):
+            print(f"  Updated template.pot header for {info['name']}"
+                  f" {info['version']}")
+
+    return template_pot if os.path.exists(template_pot) else None
+
+
+def _pot_body(pot_path):
+    """
+    Return the text of a .pot file without its POT-Creation-Date line,
+    for telling a real change from a mere regeneration.
+
+    :param pot_path: Path to a .pot file.
+    :returns: The file text minus that one header line.
+    """
+    with open(pot_path, 'r', encoding='utf-8') as fh:
+        return ''.join(line for line in fh
+                       if not line.startswith('"POT-Creation-Date:'))
+
+
+def prepare_local_po(addon_path, lang):
+    """
+    Make po/<lang>-local.po ready for a translator to edit.
+
+    - Missing: created from template.pot with msginit (which also sets
+      the Language and Plural-Forms headers for `lang`), or as a plain
+      copy of the template with the Language header filled when
+      msginit is not available.
+    - Present but older than template.pot: new and changed strings are
+      merged in with msgmerge, keeping every existing translation
+      (no backup file is left behind).
+
+    :param addon_path: Path to the addon's (bundle's) top folder.
+    :param lang: Language code as used in the file name, e.g. 'de' or
+        'pt_BR'.
+    :returns: ``(po_path, notes)`` -- the path (None on failure) and a
+        list of short messages describing what was done.
+    """
+    notes = []
+    po_rel = os.path.join('po', f'{lang}-local.po')
+    po_path = os.path.join(addon_path, po_rel)
+    template_pot = prepare_template(addon_path)
+    pot_rel = os.path.join('po', 'template.pot')
+
+    if not os.path.exists(po_path):
+        if not template_pot:
+            notes.append("no template.pot could be made (are the gettext"
+                         " tools installed, and does the addon use _()?)")
+            return None, notes
+        try:
+            result = _run_subprocess(
+                ['msginit', '--no-translator', f'--locale={lang}',
+                 '-i', pot_rel, '-o', po_rel], cwd=addon_path)
+            created = result.returncode == 0 and os.path.exists(po_path)
+        except FileNotFoundError:
+            created = False
+        if created:
+            notes.append(f"created {po_rel} from template.pot")
+        else:
+            with open(template_pot, 'r', encoding='utf-8') as fh:
+                text = fh.read()
+            text = text.replace('"Language: \\n"', f'"Language: {lang}\\n"')
+            with open(po_path, 'w', encoding='utf-8', newline='\n') as fh:
+                fh.write(text)
+            notes.append(f"created {po_rel} as a copy of template.pot"
+                         " (msginit not available)")
+    elif template_pot and os.path.getmtime(template_pot) > os.path.getmtime(
+            po_path):
+        try:
+            result = _run_subprocess(
+                ['msgmerge', '--update', '--backup=off', '--quiet',
+                 po_rel, pot_rel], cwd=addon_path)
+            if result.returncode == 0:
+                notes.append(f"merged new strings from template.pot into"
+                             f" {po_rel}")
+            else:
+                notes.append(f"could not merge template.pot into {po_rel}:"
+                             f" {result.stderr.strip()[:200]}")
+        except FileNotFoundError:
+            notes.append("msgmerge not available -- new strings were not"
+                         " merged in")
+    return po_path, notes
+
+
 def compile_translations(addon_path, output_dir):
     """
     Compile .po files to .mo files.
 
-    If po/ does not exist it is created.
-    If template.pot does not exist, xgettext is run first to generate it.
-    Both behaviours match what make52.py/make60.py do in their 'init' command.
+    If po/ does not exist it is created. po/template.pot is brought up
+    to date first (see prepare_template()).
     """
     addon_name = os.path.basename(addon_path)
 
@@ -217,44 +412,7 @@ def compile_translations(addon_path, output_dir):
         print(f"  Creating po/ directory for {addon_name}...")
         os.makedirs(po_dir, exist_ok=True)
 
-    # ── Generate template.pot if missing ─────────────────────────────────────
-    template_pot = os.path.join(po_dir, 'template.pot')
-    if not os.path.exists(template_pot):
-        print(f"  Generating template.pot for {addon_name}...")
-
-        py_files = glob.glob(os.path.join(addon_path, '*.py'))
-        glade_files = glob.glob(os.path.join(addon_path, '*.glade'))
-
-        if py_files:
-            fnames = ' '.join(f'"{f}"' for f in py_files)
-            cmd = (
-                f'xgettext --language=Python --keyword=_ --keyword=_:1,2c --keyword=N_'
-                f' --from-code=UTF-8 --add-comments=Translators'
-                f' -o "{template_pot}" {fnames}'
-            )
-            ret = os.system(cmd)
-            if ret == 0:
-                print(f"  ✓ Created template.pot ({len(py_files)} Python file(s))")
-            else:
-                print(f"  Warning: xgettext failed (return code {ret})")
-                print(f"  Install gettext tools: apt install gettext / dnf install gettext / brew install gettext")
-
-            if glade_files:
-                fnames_g = ' '.join(f'"{f}"' for f in glade_files)
-                os.system(
-                    f'xgettext -j --add-comments -L Glade --from-code=UTF-8'
-                    f' -o "{template_pot}" {fnames_g}'
-                )
-
-            # Fix charset
-            if os.path.exists(template_pot):
-                with open(template_pot, 'r', encoding='utf-8', newline='\n') as fh:
-                    contents = fh.read()
-                contents = contents.replace('charset=CHARSET', 'charset=UTF-8')
-                with open(template_pot, 'w', encoding='utf-8', newline='\n') as fh:
-                    fh.write(contents)
-        else:
-            print(f"  No .py files found — cannot generate template.pot")
+    prepare_template(addon_path)
 
     # ── Compile *-local.po files ──────────────────────────────────────────────
     po_files = [
@@ -298,6 +456,7 @@ def compile_translations(addon_path, output_dir):
 
     if compiled_count > 0:
         print(f"  Successfully compiled {compiled_count} translation(s)")
+        print(f"  {RESTART_NOTICE}")
 
     return True
 
@@ -669,6 +828,62 @@ def _prune_non_english_listings(listings_dir):
                       f"removed {fname})")
             except OSError as exc:
                 print(f"  Warning: could not remove {fname}: {exc}")
+
+
+def find_untranslated_listings(listings_dir):
+    """
+    Return the non-English addons-<lang>.json files in listings_dir
+    that hold no translation at all: every entry has an entry with
+    the same plugin id ('i') in addons-en.json, and the same name
+    ('n') and description ('d'). Such a file only repeats the English
+    catalog under another name -- Gramps' Addon Manager already falls
+    back to addons-en.json for a language that has no file.
+
+    An empty file counts as untranslated. A file with any entry
+    that has no English counterpart, or any differing name or
+    description, is kept. Only listing files are considered; an
+    addon's po/ and locale/ translation sources are never involved.
+
+    Used by AddonPackShip's "Remove untranslated listings" action;
+    deliberately not part of Pack and Ship, so nothing is deleted
+    without being asked for.
+
+    :param listings_dir: A <version>/listings/ folder.
+    :returns: A sorted list of file paths (empty if there is nothing
+        to remove, or if addons-en.json cannot be read).
+    """
+    en_path = os.path.join(listings_dir, 'addons-en.json')
+    try:
+        with open(en_path, 'r', encoding='utf-8') as fh:
+            en_entries = json.load(fh)
+    except (OSError, ValueError):
+        return []
+    if not isinstance(en_entries, list):
+        return []
+    english = {e.get('i'): e for e in en_entries if isinstance(e, dict)}
+
+    untranslated = []
+    for path in sorted(glob.glob(os.path.join(listings_dir, 'addons-*.json'))):
+        if os.path.basename(path) == 'addons-en.json':
+            continue
+        try:
+            with open(path, 'r', encoding='utf-8') as fh:
+                entries = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        if not isinstance(entries, list):
+            continue
+        redundant = True
+        for entry in entries:
+            en_entry = english.get(entry.get('i')) if isinstance(
+                entry, dict) else None
+            if en_entry is None or entry.get('n') != en_entry.get('n') \
+                    or entry.get('d') != en_entry.get('d'):
+                redundant = False
+                break
+        if redundant:
+            untranslated.append(path)
+    return untranslated
 
 
 def _log_session_command(session_id, command_line, note=None):
@@ -1636,6 +1851,35 @@ def check_gpr_version_coverage(addon_path: str,
     return results
 
 
+@contextlib.contextmanager
+def _listing_language(glocale, lang):
+    """
+    Temporarily set Gramps' global locale language list to [lang]
+    while one listing language is generated, and always put the
+    original list back afterward.
+
+    This module runs inside Gramps (AddonPackShip imports it), so
+    glocale is the live locale of the whole Gramps session -- not a
+    private copy, as it is for an upstream make.py run as a separate
+    process. Earlier versions set ``glocale.language = [lang]`` and
+    never restored it, leaving the session on whatever language was
+    listed last (e.g. 'uk'). Gramps' Addon Manager reads that same
+    list (glocale.get_language_list()) to choose which
+    ``addons-<lang>.json`` to download, so it then asked for
+    ``addons-uk.json``, got a 404, and logged a warning from its
+    background thread -- which in Gramps 6.0.8 can crash GTK.
+
+    :param glocale: Gramps' GRAMPS_LOCALE.
+    :param lang: The language code to list, e.g. 'fr'.
+    """
+    saved = glocale.language
+    glocale.language = [lang]
+    try:
+        yield
+    finally:
+        glocale.language = saved
+
+
 def create_listing(addon_path: str, output_dir: str,
                     target_languages: list[str] | None = None) -> bool:
     """
@@ -1735,17 +1979,17 @@ def create_listing(addon_path: str, output_dir: str,
             plugins.append(kwargs)
 
         if use_gramps:
-            glocale.language = [lang]
-            local_gettext = glocale.get_addon_translator(
-                gpr_file, languages=[lang, 'en.UTF-8']
-            ).gettext
+            with _listing_language(glocale, lang):
+                local_gettext = glocale.get_addon_translator(
+                    gpr_file, languages=[lang, 'en.UTF-8']
+                ).gettext
 
-            with open(gpr_file, encoding='utf-8',
-                       errors='backslashreplace') as fh:
-                code = compile(fh.read(), gpr_file, 'exec')
-            exec(code,
-                 make_environment(_=local_gettext),
-                 {'register': register, 'build_script': True})
+                with open(gpr_file, encoding='utf-8',
+                           errors='backslashreplace') as fh:
+                    code = compile(fh.read(), gpr_file, 'exec')
+                exec(code,
+                     make_environment(_=local_gettext),
+                     {'register': register, 'build_script': True})
         else:
             plugins = _parse_gpr_legacy(gpr_file, addon_name)
 
@@ -1816,6 +2060,23 @@ def _fresh_listing_entries(gpr_file, addon_name, lang):
     :param lang: Listing language code, e.g. 'en'.
     :returns: A list of entry dicts, or None.
     """
+    plugins = _gpr_register_calls(gpr_file, lang)
+    if plugins is None:
+        return None
+    return [_build_listing_entry(p, addon_name) for p in plugins
+            if p.get('include_in_listing', True)]
+
+
+def _gpr_register_calls(gpr_file, lang='en'):
+    """
+    Return the keyword arguments of every register() call this .gpr.py
+    makes right now, with its _() strings in `lang`, or None if Gramps
+    can't be imported here.
+
+    :param gpr_file: Path to a .gpr.py.
+    :param lang: Language code for the _() strings, e.g. 'en'.
+    :returns: A list of dicts (each with 'ptype' added), or None.
+    """
     try:
         from gramps.gen.plug import make_environment
         from gramps.gen.const import GRAMPS_LOCALE as glocale
@@ -1828,16 +2089,162 @@ def _fresh_listing_entries(gpr_file, addon_name, lang):
         kwargs['ptype'] = ptype
         plugins.append(kwargs)
 
-    glocale.language = [lang]
-    local_gettext = glocale.get_addon_translator(
-        gpr_file, languages=[lang, 'en.UTF-8']).gettext
-    with open(gpr_file, encoding='utf-8', errors='backslashreplace') as fh:
-        code = compile(fh.read(), gpr_file, 'exec')
-    exec(code,  # pylint: disable=exec-used
-         make_environment(_=local_gettext),
-         {'register': register, 'build_script': True})
-    return [_build_listing_entry(p, addon_name) for p in plugins
-            if p.get('include_in_listing', True)]
+    with _listing_language(glocale, lang):
+        local_gettext = glocale.get_addon_translator(
+            gpr_file, languages=[lang, 'en.UTF-8']).gettext
+        with open(gpr_file, encoding='utf-8', errors='backslashreplace') as fh:
+            code = compile(fh.read(), gpr_file, 'exec')
+        exec(code,  # pylint: disable=exec-used
+             make_environment(_=local_gettext),
+             {'register': register, 'build_script': True})
+    return plugins
+
+
+def _pot_header_info(addon_path):
+    """
+    Collect what the template.pot header needs from this addon's
+    .gpr.py file(s): name, version, plugin type, copyright holder and
+    bug-report address.
+
+    A bundle can register several plugins (e.g. a gramplet plus a
+    library) but has one template.pot, so one registration names it:
+    the first whose fname sits in the top folder of the bundle, else
+    the first registration of all.
+
+    :param addon_path: Path to the addon's (bundle's) top folder.
+    :returns: A dict, or None when no registration could be read.
+    """
+    addon_name = os.path.basename(addon_path)
+    preferred = _find_gpr_file(addon_path)
+    if not preferred:
+        return None
+    gpr_files = [preferred] + sorted(
+        os.path.join(addon_path, fn) for fn in os.listdir(addon_path)
+        if fn.endswith('.gpr.py')
+        and os.path.join(addon_path, fn) != preferred)
+
+    calls = []
+    for gpr_file in gpr_files:
+        try:
+            found = _gpr_register_calls(gpr_file, 'en')
+        except Exception:  # pylint: disable=broad-except
+            found = None
+        if found is None:
+            found = _parse_gpr_legacy(gpr_file, addon_name)
+        calls.extend(found or [])
+    if not calls:
+        return None
+
+    top_level = [c for c in calls if c.get('fname') and os.path.isfile(
+        os.path.join(addon_path, str(c['fname'])))]
+    main = (top_level or calls)[0]
+
+    ptype = main.get('ptype', 2)
+    if isinstance(ptype, str):
+        ptype = PTYPE_TO_NUM.get(ptype.strip().upper(), 2)
+    people = main.get('maintainers') or main.get('authors') or []
+    emails = main.get('maintainers_email') or main.get('authors_email') or []
+    return {
+        'name': str(main.get('name') or addon_name),
+        'version': str(main.get('version') or '0.0.0'),
+        'type': PTYPE_POT_LABEL.get(ptype, 'plugin'),
+        'holder': ', '.join(str(p) for p in people if p),
+        'email': next((str(e) for e in emails if e), ''),
+    }
+
+
+def _relativize_pot_references(template_pot, addon_path):
+    """
+    Remove the absolute addon-folder path from the "#:" source
+    reference lines of a template.pot made by an older build, so
+    "#: /home/me/.../Addon/Addon.py:12" becomes "#: Addon.py:12".
+    Only "#:" lines are touched; msgid/msgstr text never is.
+
+    :param template_pot: Path to po/template.pot.
+    :param addon_path: The addon folder the references are relative to.
+    :returns: True when the file was rewritten, False when unchanged.
+    """
+    base = os.path.abspath(addon_path)
+    prefixes = {base + os.sep, base.replace(os.sep, '/') + '/'}
+    with open(template_pot, 'r', encoding='utf-8', newline='\n') as fh:
+        lines = fh.read().split('\n')
+    new = list(lines)
+    for idx, line in enumerate(new):
+        if line.startswith('#:'):
+            for prefix in prefixes:
+                line = line.replace(prefix, '')
+            new[idx] = line
+    if new == lines:
+        return False
+    with open(template_pot, 'w', encoding='utf-8', newline='\n') as fh:
+        fh.write('\n'.join(new))
+    return True
+
+
+def _customize_pot_header(template_pot, info):
+    """
+    Replace the xgettext placeholders in the header of template_pot
+    with values from the .gpr.py (see _pot_header_info()).
+
+    Changed: the title line (also when it is an older title written by
+    this function, so it follows the version), YEAR and the copyright
+    holder, PACKAGE in the license line, Project-Id-Version, an empty
+    Report-Msgid-Bugs-To, and charset=CHARSET. Left alone: a title
+    someone wrote by hand, and the translator placeholders (FIRST
+    AUTHOR, Last-Translator, Language-Team, PO-Revision-Date), which
+    msginit or a .po editor fill in for each translator.
+
+    :param template_pot: Path to po/template.pot.
+    :param info: Dict from _pot_header_info().
+    :returns: True when the file was rewritten, False when unchanged.
+    """
+    with open(template_pot, 'r', encoding='utf-8', newline='\n') as fh:
+        lines = fh.read().split('\n')
+
+    # The header is everything up to the first blank line after the
+    # msgid "" / msgstr "" header entry.
+    end = len(lines)
+    seen_header_entry = False
+    for idx, line in enumerate(lines):
+        if line.startswith('msgid ""'):
+            seen_header_entry = True
+        elif seen_header_entry and not line.strip():
+            end = idx
+            break
+
+    title_prefix = '# Translation template for the '
+    title = (f"{title_prefix}{info['version']} {info['name']}"
+             f" {info['type']} addon for Gramps.")
+    year = str(datetime.date.today().year)
+    new = list(lines)
+    for idx in range(end):
+        line = new[idx]
+        if line == '# SOME DESCRIPTIVE TITLE.' or line.startswith(
+                title_prefix):
+            new[idx] = title
+        elif line.startswith('# Copyright (C) YEAR'):
+            holder = line[len('# Copyright (C) YEAR'):].strip()
+            if holder in ("THE PACKAGE'S COPYRIGHT HOLDER", '') and \
+                    info['holder']:
+                holder = info['holder']
+            new[idx] = f"# Copyright (C) {year} {holder}".rstrip()
+        elif line.startswith('# This file is distributed under the same'
+                             ' license as the PACKAGE package.'):
+            new[idx] = line.replace('the PACKAGE package',
+                                    f"the {info['name']} package")
+        elif line.startswith('"Project-Id-Version:'):
+            new[idx] = (f'"Project-Id-Version: {info["name"]}'
+                        f' {info["version"]}\\n"')
+        elif line == '"Report-Msgid-Bugs-To: \\n"' and info['email']:
+            new[idx] = f'"Report-Msgid-Bugs-To: {info["email"]}\\n"'
+        elif 'charset=CHARSET' in line:
+            new[idx] = line.replace('charset=CHARSET', 'charset=UTF-8')
+
+    if new == lines:
+        return False
+    with open(template_pot, 'w', encoding='utf-8', newline='\n') as fh:
+        fh.write('\n'.join(new))
+    return True
 
 
 def _listing_entries_match(current, fresh):
@@ -1864,6 +2271,142 @@ def _listing_entries_match(current, fresh):
             if key != 'g' and existing.get(key) != value:
                 return False
     return True
+
+
+def _listing_file_languages(listings_dir):
+    """
+    Return the language codes that already have an addons-<lang>.json
+    in listings_dir, e.g. {'en', 'fr'}.
+
+    :param listings_dir: A <version>/listings/ folder.
+    :returns: A set of language codes (empty if the folder is missing).
+    """
+    if not os.path.isdir(listings_dir):
+        return set()
+    return {
+        fname[len('addons-'):-len('.json')]
+        for fname in os.listdir(listings_dir)
+        if fname.startswith('addons-') and fname.endswith('.json')
+    }
+
+
+def _addon_translation_languages(addon_path):
+    """
+    Return the languages this addon has any translation files for:
+    po/<lang>-local.po sources and compiled locale/<lang>/LC_MESSAGES/
+    addon.mo files. Having a file does not mean the .gpr.py strings
+    are translated -- see _gpr_strings_translated().
+
+    :param addon_path: Path to the addon's source directory.
+    :returns: A set of language codes, never including 'en'.
+    """
+    languages = set(_locale_languages(addon_path))
+    po_dir = os.path.join(addon_path, 'po')
+    if os.path.isdir(po_dir):
+        for fname in os.listdir(po_dir):
+            if fname.endswith('-local.po'):
+                languages.add(fname[:-len('-local.po')])
+    languages.discard('en')
+    return languages
+
+
+def _gpr_strings_translated(fresh, en_fresh):
+    """
+    Whether a language's listing entries carry at least one genuinely
+    translated .gpr.py string: a plugin whose name ('n') or
+    description ('d') differs from its English entry. Untranslated
+    strings fall back to English through the addon translator, so
+    entries identical to English mean nothing is translated.
+
+    :param fresh: Entries from _fresh_listing_entries() for a language.
+    :param en_fresh: The same addon's English entries.
+    :returns: True if any name or description is translated.
+    """
+    english = {e['i']: e for e in en_fresh}
+    for entry in fresh:
+        en_entry = english.get(entry['i'])
+        if en_entry is None:
+            continue
+        if entry.get('n') != en_entry.get('n') or (
+                entry.get('d') != en_entry.get('d')):
+            return True
+    return False
+
+
+def _apply_multilingual_rules(addon_path, output_dir, preexisting):
+    """
+    Decide which non-English listing files this addon may *create*,
+    when the Multilingual option is on. Run after the listing
+    generator and before _reconcile_listing_with_gpr().
+
+    The rules:
+
+    - A language that already had an addons-<lang>.json before this
+      run is always updated with this addon's entries (by
+      _reconcile_listing_with_gpr(), translated where a translation
+      exists, English otherwise) -- other addons may be translated
+      into it even if this one is not.
+    - A language with no addons-<lang>.json yet gets a new one only if
+      this addon's .gpr.py strings (plugin name or description) are
+      actually translated into it. Having a po/<lang>-local.po or a
+      compiled .mo is not enough: those can exist with the .gpr.py
+      strings still untranslated, and the upstream make<NN>.py creates
+      a file for every such language, filled with English text. Any
+      such file this run created is removed again.
+
+    :param addon_path: Path to the addon's source directory.
+    :param output_dir: This run's <output_parent>/<version_code>.
+    :param preexisting: Languages that had an addons-<lang>.json
+        before this run (see _listing_file_languages()).
+    """
+    addon_name = os.path.basename(addon_path)
+    listings_dir = os.path.join(output_dir, 'listings')
+    gpr_file = _find_gpr_file(addon_path)
+    if not gpr_file or not os.path.isdir(listings_dir):
+        return
+    try:
+        en_fresh = _fresh_listing_entries(gpr_file, addon_name, 'en')
+    except Exception as exc:  # pylint: disable=broad-except
+        print(f"  Warning: could not read the .gpr.py for languages: {exc}")
+        return
+    if en_fresh is None:
+        print("  Warning: Gramps not importable -- non-English listings"
+              " were not checked for translations.")
+        return
+
+    created_now = _listing_file_languages(listings_dir) - set(preexisting)
+    candidates = (_addon_translation_languages(addon_path) | created_now)
+    for lang in sorted(candidates - {'en'} - set(preexisting)):
+        path = os.path.join(listings_dir, f"addons-{lang}.json")
+        try:
+            fresh = _fresh_listing_entries(gpr_file, addon_name, lang)
+        except Exception as exc:  # pylint: disable=broad-except
+            print(f"  Warning: could not check '{lang}' translations:"
+                  f" {exc}")
+            continue
+        if fresh and _gpr_strings_translated(fresh, en_fresh):
+            if not os.path.exists(path):
+                # The generator did not make one (e.g. the bundled
+                # English-only fallback ran) -- start an empty file;
+                # _reconcile_listing_with_gpr() fills in the entries.
+                try:
+                    with open(path, 'w', encoding='utf-8') as fh:
+                        fh.write('[]\n')
+                except OSError as exc:
+                    print(f"  Warning: could not create"
+                          f" addons-{lang}.json: {exc}")
+                    continue
+            print(f"  addons-{lang}.json: new language listing --"
+                  f" {addon_name} has a translated name or description")
+        elif os.path.exists(path):
+            try:
+                os.remove(path)
+                print(f"  Not creating addons-{lang}.json: {addon_name}"
+                      f" has a '{lang}' translation file, but its .gpr.py"
+                      " name and description are not translated.")
+            except OSError as exc:
+                print(f"  Warning: could not remove addons-{lang}.json:"
+                      f" {exc}")
 
 
 def _reconcile_listing_with_gpr(addon_path, output_dir):
@@ -1955,8 +2498,12 @@ def _reconcile_listing_with_gpr(addon_path, output_dir):
         old_versions = ", ".join(
             f"{e.get('i')} {e.get('v')}" for e in current) or "none"
         new_versions = ", ".join(f"{e['i']} {e['v']}" for e in repaired)
-        print(f"  Repaired {fname}: was [{old_versions}],"
-              f" now [{new_versions}]")
+        if old_versions == new_versions:
+            print(f"  Updated {fname}: {addon_name} names/descriptions"
+                  " now match the .gpr.py")
+        else:
+            print(f"  Repaired {fname}: was [{old_versions}],"
+                  f" now [{new_versions}]")
 
 
 def _parse_gpr_legacy(gpr_file, addon_name):
@@ -2279,6 +2826,10 @@ def _run_command(command, addon_path, output_dir, build_mode,
                     addon_path, output_dir, build_mode, success, session_id)
             elif command == 'listing':
                 target_label = _version_label(_version_digits(version_code))
+                # Which languages already had a listing file before
+                # this run -- see _apply_multilingual_rules().
+                languages_before = _listing_file_languages(
+                    os.path.join(output_dir, 'listings'))
                 upstream_result = None
                 upstream_failure_detail = None
                 if upstream_script:
@@ -2401,6 +2952,9 @@ def _run_command(command, addon_path, output_dir, build_mode,
                     # _reconcile_listing_with_gpr()). Done before the
                     # 'g' correction below, since the repaired entries
                     # carry the running Gramps version in 'g'.
+                    if effective_multilingual:
+                        _apply_multilingual_rules(
+                            addon_path, output_dir, languages_before)
                     _reconcile_listing_with_gpr(addon_path, output_dir)
                     # Correct 'g' (target version) for this addon's own
                     # entries: the addon's .gpr.py computed it from

@@ -102,8 +102,22 @@ try:
     )
 
     _MARKDOWN_AVAILABLE = True
+    try:
+        # Double-click an image to open it in the desktop viewer
+        # (MarkdownUtils 0.2.1 builds from late Oct 2026 on).
+        from MarkdownUtils import markdown_image_double_click
+    except ImportError:
+        markdown_image_double_click = None
+    # An older MarkdownUtils (before fixed-box thumbnails) has no
+    # image_max_height; the Preview pane then scales by width only.
+    import inspect
+
+    _RENDER_HAS_MAX_HEIGHT = (
+        "image_max_height" in inspect.signature(render_markdown).parameters
+    )
 except ImportError:
     _MARKDOWN_AVAILABLE = False
+    _RENDER_HAS_MAX_HEIGHT = False
     # Without MarkdownUtils there is no alias table, so gramplets and
     # rules simply show no view-restriction icons in the Type column.
     VIEW_NAMES = {}
@@ -263,7 +277,26 @@ R_HAS_README = 9
 R_HAS_HELP = 10
 
 _STABLE_PREVIEW_ICON = "gramps-addon"
-_DEVEL_PREVIEW_ICON = "org.gnome.Extensions.Devel"
+# Placeholder icons for non-stable plugins, tried in order; the first one
+# the icon theme can supply is used. org.gnome.Extensions.Devel is an app
+# icon that not every desktop has (it vanished in a Fedora 37 -> 44
+# upgrade), so the chain ends with Gramps' own icons, which always exist.
+_DEVEL_PREVIEW_ICONS = (
+    "org.gnome.Extensions.Devel",
+    "applications-engineering",
+    "gramps-tools",
+    _STABLE_PREVIEW_ICON,
+)
+
+# Preview-pane thumbnails are fitted into a fixed square box of this size
+# (like Gramps' own 96 px "normal" and 180 px "large" thumbnails), and
+# cached at that size by MarkdownUtils. Only a pane too narrow to hold the
+# box (beside the plugin icon) makes them smaller.
+_PREVIEW_THUMB_BOX = 260
+
+# Narrowest the Preview pane may be dragged. Content wider than this
+# (the thumbnail, the action buttons) scrolls horizontally instead.
+_PREVIEW_MIN_WIDTH = 150
 
 # Preview images larger than this are not loaded or thumbnailed; the
 # Preview pane shows a complaint instead (see _render_preview).
@@ -566,6 +599,33 @@ def _load_named_icon_pixbuf(icon_name: str, size: int) -> "GdkPixbuf.Pixbuf | No
         return None
 
 
+
+_devel_icon_choice: list[str] = []
+
+
+def _first_resolvable_devel_icon() -> str:
+    """
+    Return the first of ``_DEVEL_PREVIEW_ICONS`` the icon theme can supply.
+
+    Checked once per session (the result is remembered), at 128 px like
+    the placeholder itself. Without this, a missing themed icon renders as
+    bracketed text such as ``[org.gnome.Extensions.Devel]``.
+
+    :returns: a usable icon name (Gramps' own add-on icon as a last resort)
+    """
+    if not _devel_icon_choice:
+        choice = next(
+            (
+                name
+                for name in _DEVEL_PREVIEW_ICONS
+                if _load_named_icon_pixbuf(name, 128) is not None
+            ),
+            _STABLE_PREVIEW_ICON,
+        )
+        _devel_icon_choice.append(choice)
+    return _devel_icon_choice[0]
+
+
 def _compose_icon_strip(
     icon_names: list[str], size: int = 23, gap: int = 3
 ) -> "GdkPixbuf.Pixbuf | None":
@@ -665,6 +725,9 @@ class _MdInfoPane:
         self._uistate = uistate
         self._link_uris: dict = {}
         self.image_max_width = 560
+        # None: scale by width only; a number fits images into a
+        # image_max_width x image_max_height box (fixed-size thumbnails).
+        self.image_max_height = None
         self.center_images = False
         self.show_image_captions = True
         self.image_adds_newline = True
@@ -740,6 +803,9 @@ class _MdInfoPane:
                     return candidate
             return path
 
+        extra = {}
+        if self.image_max_height and _RENDER_HAS_MAX_HEIGHT:
+            extra["image_max_height"] = self.image_max_height
         result = render_markdown(
             self.textview,
             md_text,
@@ -748,6 +814,7 @@ class _MdInfoPane:
             center_images=self.center_images,
             show_image_captions=self.show_image_captions,
             image_adds_newline=self.image_adds_newline,
+            **extra,
         )
         self._link_uris = result["link_uris"]
 
@@ -765,6 +832,11 @@ class _MdInfoPane:
         return False
 
     def _on_click(self, widget: Gtk.TextView, event: Gdk.EventButton) -> bool:
+        # Double-clicking a thumbnail opens the source image in the
+        # desktop viewer, like the Edit Media dialog's thumbnail.
+        if _MARKDOWN_AVAILABLE and markdown_image_double_click:
+            if markdown_image_double_click(widget, event):
+                return True
         if event.type == Gdk.EventType._2BUTTON_PRESS:
             return True
         if event.button != 1 or not _MARKDOWN_AVAILABLE:
@@ -1097,9 +1169,10 @@ class PluginStatus(tool.Tool, ManagedWindow):
         self._thumb_right_vbox = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL, spacing=0
         )
-        self._thumb_right_vbox.set_size_request(
-            _ini_manager.get("interface.preview-pane-width"), -1
-        )
+        # Minimum width only. The saved preview-pane-width is restored as
+        # the divider position by _set_split below; using it here as well
+        # made the saved width the pane's minimum too.
+        self._thumb_right_vbox.set_size_request(_PREVIEW_MIN_WIDTH, -1)
 
         # Normal preview content is Markdown-rendered, just like the Details
         # pane.  The alternate child is used only while repository polling is
@@ -1109,7 +1182,10 @@ class PluginStatus(tool.Tool, ManagedWindow):
         self._preview_pane.textview.set_left_margin(8)
         self._preview_pane.textview.set_right_margin(8)
         self._preview_pane.textview.set_top_margin(8)
-        self._preview_pane.image_max_width = 260
+        # Fixed-size thumbnail box; _render_preview narrows the width only
+        # when the pane cannot fit the box beside the plugin icon.
+        self._preview_pane.image_max_width = _PREVIEW_THUMB_BOX
+        self._preview_pane.image_max_height = _PREVIEW_THUMB_BOX
         self._preview_pane.center_images = True
         self._preview_pane.show_image_captions = False
         self._preview_pane.image_adds_newline = False
@@ -1188,8 +1264,16 @@ class PluginStatus(tool.Tool, ManagedWindow):
         self._action_sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
         self._action_sep.set_margin_top(4)
 
+        # The buttons scroll sideways in a narrow pane instead of setting
+        # the pane's minimum width.
+        self._action_btn_sw = Gtk.ScrolledWindow()
+        self._action_btn_sw.set_policy(
+            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER
+        )
+        self._action_btn_sw.add(self._action_btn_box)
+
         self._thumb_right_vbox.pack_end(self._action_sep, False, False, 0)
-        self._thumb_right_vbox.pack_end(self._action_btn_box, False, False, 0)
+        self._thumb_right_vbox.pack_end(self._action_btn_sw, False, False, 0)
 
         self._action_btn_box.show_all()
         self._action_btn_box.set_no_show_all(True)
@@ -1754,7 +1838,9 @@ class PluginStatus(tool.Tool, ManagedWindow):
                 "stable",
                 _("Stable").casefold(),
             )
-            icon_name = _STABLE_PREVIEW_ICON if is_stable else _DEVEL_PREVIEW_ICON
+            icon_name = (
+                _STABLE_PREVIEW_ICON if is_stable else _first_resolvable_devel_icon()
+            )
             preview = "![](gramps:icon:%s:128)" % icon_name
             # The plugin's own icon sits beside the placeholder too, just as
             # it does beside a real thumbnail.
@@ -1769,10 +1855,9 @@ class PluginStatus(tool.Tool, ManagedWindow):
         # Narrow the thumbnail while it shares its line with the icon, so
         # both fit side by side in the pane.
         full_width = self._preview_pane.image_max_width
-        if plugin_icon:
-            self._preview_pane.image_max_width = max(
-                120, full_width - _PREVIEW_PLUGIN_ICON_SIZE - 12
-            )
+        self._preview_pane.image_max_width = self._preview_image_width(
+            bool(plugin_icon)
+        )
         try:
             self._preview_pane.render(
                 "## %s\n%s\n\n%s"
@@ -1790,6 +1875,28 @@ class PluginStatus(tool.Tool, ManagedWindow):
             # so scrolling between plugins does not jump left and right.
             self._center_first_image_line(self._preview_pane.textview)
         self._preview_stack.set_visible_child_name("preview")
+
+    def _preview_image_width(self, beside_icon: bool) -> int:
+        """
+        Work out how wide the Preview-pane thumbnail should be right now.
+
+        Uses the preview TextView's live width (or the saved pane width
+        before the dialog is first drawn), minus its margins, capped at
+        ``_PREVIEW_THUMB_BOX``. When the plugin's own icon shares the
+        line, the icon's width is taken off too so both still fit.
+
+        :param beside_icon: ``True`` if the plugin icon sits on the same line
+        :returns: the width in pixels (never below 120)
+        """
+        textview = self._preview_pane.textview
+        avail = textview.get_allocated_width()
+        if avail <= 1:
+            avail = _ini_manager.get("interface.preview-pane-width")
+        # Same deductions render_markdown makes: margins + 16 px padding.
+        avail -= textview.get_left_margin() + textview.get_right_margin() + 16
+        if beside_icon:
+            avail -= _PREVIEW_PLUGIN_ICON_SIZE + 12
+        return max(120, min(_PREVIEW_THUMB_BOX, avail))
 
     @staticmethod
     def _first_image_iter(buf: Gtk.TextBuffer) -> "Gtk.TextIter | None":

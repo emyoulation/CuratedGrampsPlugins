@@ -91,9 +91,11 @@ def find_local_readme(pdata: PluginData | None) -> str | None:
         return None
     readme_path = os.path.join(pdata.fpath, "README.md")
     try:
-        # Imported here, not at module level: MarkdownUtils belongs to the
-        # optional Markdown Dash add-on and is only importable once that
-        # add-on has been loaded (see cb_show_help()).
+        # Imported here, not at module level, so a missing MarkdownUtils
+        # never stops the host module from loading. Since MarkdownUtils
+        # 0.2.1 (load_on_reg=True), Gramps imports it at startup, so this
+        # normally succeeds; cb_show_help() also loads Markdown Dash
+        # first, which imports it too, as a fallback for older installs.
         # pylint: disable-next=import-outside-toplevel,import-error
         from MarkdownUtils import resolve_localized_path
     except ImportError:
@@ -107,18 +109,33 @@ def resolve_markdown_dash_opener() -> Callable[..., Gtk.Dialog] | None:
 
     None means Markdown Dash is deactivated, not registered, fails to
     load, or lacks that function -- callers treat all four the same way
-    (fall back to help_url).
+    (fall back to help_url). Each case logs a warning naming itself, so
+    a Help button that unexpectedly opens the browser can be diagnosed
+    from the terminal; they only appear when Help is clicked.
     """
     gpm = GuiPluginManager.get_instance()
     if _MARKDOWNDASH_ID in gpm.get_hidden_plugin_ids():
+        LOG.warning("help button: Markdown Dash is deactivated")
         return None
     pdata = PluginRegister.get_instance().get_plugin(_MARKDOWNDASH_ID)
     if pdata is None or not pdata.fpath:
+        LOG.warning("help button: no plugin registered as '%s'", _MARKDOWNDASH_ID)
         return None
     mod = gpm.load_plugin(pdata)
     if not mod:
+        LOG.warning(
+            "help button: Markdown Dash at %s failed to load (see the "
+            "'Plugin error' above, often a missing MarkdownUtils)",
+            pdata.fpath,
+        )
         return None
-    return getattr(mod, "open_markdown_file", None)
+    opener = getattr(mod, "open_markdown_file", None)
+    if opener is None:
+        LOG.warning(
+            "help button: Markdown Dash at %s has no open_markdown_file()",
+            pdata.fpath,
+        )
+    return opener
 
 
 def open_help_url(pdata: PluginData | None, parent: Gtk.Window | None) -> None:
@@ -159,8 +176,10 @@ def cb_show_help(_button: Gtk.Button, uistate, pdata: PluginData | None) -> None
     :param uistate: the Gramps UiState (its main window parents the reader).
     :param pdata: the calling plugin's own PluginData.
     """
-    # Load Markdown Dash first: that makes its MarkdownUtils importable,
-    # which find_local_readme() then uses to recognize translated READMEs.
+    # Load Markdown Dash first. MarkdownUtils is normally already loaded at
+    # startup (load_on_reg in MarkdownUtils 0.2.1), but loading Markdown
+    # Dash also imports it, so find_local_readme() can recognize
+    # translated READMEs even with an older MarkdownUtils installed.
     open_markdown_file = resolve_markdown_dash_opener()
     if open_markdown_file is not None:
         readme_path = find_local_readme(pdata)

@@ -1,7 +1,7 @@
 # Quick Start (AddonPackShip — Gramps Addon Packaging Tool)
 [**QuickStart.md**](QuickStart.md) ● [**README.md**](README.md) ● [**Change Log**](CHANGELOG.md)
 
-**Version 1.9.16** — 5-Minute Guide 
+**Version 1.9.19** — 5-Minute Guide 
 
 ---
 
@@ -73,6 +73,10 @@ Before uploading to GitHub:
 **Amend Listings** — Add/update JSON metadata entries  
 > ℹ️ This *adds or updates* entries — it does not remove old ones.  
 > To shrink the listing (e.g., remove a retired addon), **delete the `gramps60/listings/` folder** first, then re-run for only the addons you want listed.
+
+**Translation:** + **Edit translation…** (Options tab, Listings frame) — Choose a language, select addons, and click to open each `po/<code>-local.po` in your `.po` editor (created or updated from `template.pot` first). After saving: **Compile Translations**, then **restart Gramps** — a reload is not enough. See the README section *Translating an Addon*.
+
+**Right-click the addon list** → **Filter list to addons in Gramps 6.0's listing**, then **Select All Visible** — selects exactly the addons already in that version's `addons-en.json` (needs exactly one Gramps Version checked)
 
 **📂 Folder icon button** (on each addon row) — Create or open the MANIFEST.beta / MANIFEST for that addon  
 You do not need to select the addon first — just click its folder button directly.

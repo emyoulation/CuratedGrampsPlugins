@@ -21,9 +21,20 @@
 library used by Markdown Dash, Plugin Manager plus, and other addons.
 
 Ships bundled in a parent folder (plugins/MarkdownBased/) together with
-the Markdown-based addons that use it, each in its own subfolder. Each
-consuming addon puts that parent folder on ``sys.path`` before importing
-``MarkdownUtils``. GENERAL is Gramps' own "Plugin library" category (see
+the Markdown-based addons that use it, each in its own subfolder.
+
+load_on_reg=True makes Gramps import MarkdownUtils.py once at startup
+(BasePluginManager.reg_plugins(), for every plugin in USER_PLUGINS with
+load_on_reg set; same code in Gramps 5.2 and 6.0), with this folder on
+``sys.path`` for that one import. The module then stays in
+``sys.modules`` for the whole session, so a plain ``import MarkdownUtils``
+in any consuming addon succeeds, whatever subfolder that addon is in and
+whatever order addons load in. Without it, a consumer that does not put
+plugins/MarkdownBased/ on ``sys.path`` itself (Markdown Dash, for one)
+only worked when some other consumer happened to import MarkdownUtils
+first -- which a fresh install exposed. Startup cost is one module
+import. If MarkdownUtils is deactivated in the Plugin Manager, Gramps
+skips this load, and consumers fall back as described below. GENERAL is Gramps' own "Plugin library" category (see
 ``PTYPE_STR`` in ``gramps/gen/plug/_pluginreg.py``) -- there is nothing
 here for a user to launch; this registration exists so Gramps' addon
 installer (``load_addon_file()``) has a valid ``.gpr.py`` to find in this
@@ -59,10 +70,13 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
             "tool or gramplet itself -- installed so those addons can "
             "import it."
         ),
-        version="0.2.0",  # build 20261009.2042
+        version="0.2.2",  # build 20261021.1531
         gramps_target_version=major_version,
         status=STABLE,
         fname="MarkdownUtils.py",
+        # Import at startup so every consumer finds MarkdownUtils already
+        # loaded -- see the module docstring above.
+        load_on_reg=True,
         authors=["Claude AI"],
         authors_email=[""],
         maintainers=["Brian McCullough"],

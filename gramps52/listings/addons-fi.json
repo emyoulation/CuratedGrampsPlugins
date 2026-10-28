@@ -75,7 +75,7 @@
     "i": "editdatecalculator",
     "t": 6,
     "d": "Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with the triangle tab on the right edge of the dialog. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.0.1",
+    "v": "0.0.2",
     "g": "5.2",
     "s": 1,
     "z": "EditDateCalculator.addon.tgz",
@@ -119,11 +119,11 @@
     "i": "fuzzygroupingview",
     "t": 8,
     "d": "The view showing all people in the Family Tree grouped by phonetically similar family names",
-    "v": "0.1.0",
+    "v": "0.1.2",
     "g": "5.2",
-    "s": 1,
+    "s": 3,
     "z": "FuzzyGroupingView.addon.tgz",
-    "h": "Addon:Fuzzy_Grouping"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/FuzzyGroupingView"
   },
   {
     "n": "Fuzzy Match API",
@@ -151,7 +151,7 @@
     "i": "MarkdownUtils",
     "t": 6,
     "d": "Shared Markdown rendering and icon-resolution library used by Markdown Dash, Plugin Manager plus, and other addons. Not a tool or gramplet itself -- installed so those addons can import it.",
-    "v": "0.2.1",
+    "v": "0.2.2",
     "g": "5.2",
     "s": 3,
     "z": "MarkdownBased.addon.tgz",

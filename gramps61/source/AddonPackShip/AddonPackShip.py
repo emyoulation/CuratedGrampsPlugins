@@ -37,9 +37,12 @@ metadata extraction, and ready-to-publish GitHub output structure.
 # Python modules
 #
 #------------------------------------------------------------------------
+import ast
+import io
 import os
 import re
 import sys
+import contextlib
 import copy
 import glob
 import json
@@ -59,7 +62,7 @@ import urllib.error
 # GTK modules
 #
 #------------------------------------------------------------------------
-from gi.repository import Gtk, GObject, GLib, Gdk, GdkPixbuf
+from gi.repository import Gtk, GObject, GLib, Gdk, GdkPixbuf, Pango
 
 #------------------------------------------------------------------------
 #
@@ -68,6 +71,41 @@ from gi.repository import Gtk, GObject, GLib, Gdk, GdkPixbuf
 #------------------------------------------------------------------------
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 _ = glocale.translation.gettext
+
+
+class _KeepUnknownFields(dict):
+    """format_map() mapping that leaves an unknown {field} as it is."""
+
+    def __missing__(self, key):
+        return "{" + key + "}"
+
+
+def fill_names(text, **names):
+    """
+    Fill the {name} fields of an already translated message.
+
+    File, folder and command names (addons-en.json, listings/,
+    MANIFEST, .gpr.py, xgettext ...) must stay in English, because the
+    code and the Addon Manager use exactly those names. They are kept
+    out of the translatable text as {fields}, so a translator sees
+    "{listing}" and cannot change the name itself::
+
+        fill_names(_("Open {listing} for editing"),
+                   listing="addons-en.json")
+
+    A field a translator misspelled is shown as "{field}" instead of
+    raising an error, and any other formatting problem returns the text
+    unfilled, so a bad translation can never stop a dialog from opening.
+
+    :param text: The translated message, with {name} fields.
+    :param names: The values for the fields.
+    :returns: The filled message.
+    """
+    try:
+        return text.format_map(_KeepUnknownFields(names))
+    except (IndexError, ValueError, AttributeError):
+        return text
+
 from gramps.version import major_version
 from gramps.gui.plug import tool
 from gramps.gui.dialog import OkDialog, ErrorDialog
@@ -334,8 +372,8 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         self._gang_in_progress = False  # re-entrancy guard for gang-select
         self.metadata_cache = {}   # Cache metadata to avoid re-reading files
         self.version_checkboxes = {}   # version code -> Gtk.CheckButton
-        self.pending_version_bumps = set()  # addon names flagged to bump
-        self.version_bump_widgets = {}      # addon name -> widget info dict
+        self.pending_version_bumps = set()  # plugin ids flagged to bump
+        self.version_bump_widgets = {}      # plugin id -> widget info dict
         self._listing_filter_names = None   # addon names to show, or None
 
         # One session ID per tool window, used to group every
@@ -1820,6 +1858,13 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         options_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         options_vbox.set_border_width(12)
 
+        # Checked before anything below can create APS.ini (the
+        # "default" configuration is seeded later, on idle): with no
+        # APS.ini yet, this is a first run, so the window opens on the
+        # Options tab to show a new user the settings that shape every
+        # build before they start one.
+        first_run = not os.path.exists(self._config_ini_path())
+
         # No separate title/info labels here -- the window titlebar
         # (set via set_window() above) already shows the tool name, and
         # the "Found N bundles…" summary moves to the bottom status row
@@ -1856,6 +1901,8 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         # Type filter combo — at the end of the mode row, no label needed
         self.type_filter_combo = Gtk.ComboBoxText()
         self.type_filter_combo.append_text(_("All Types"))
+        # Not a plugin type: shows only the plugins that are checked now
+        self.type_filter_combo.append_text(_("Selected"))
         all_types = sorted(set(
             t for info in self.addon_info.values()
             for t in info['types']
@@ -1866,14 +1913,14 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         self.type_filter_combo.set_active(0)
         self.type_filter_combo.set_tooltip_text(
             _("Filter list by plugin type.\n"
+              "Selected = only the plugins that are checked now\n"
               "VIEW = views/panels  GRAMPLET = dashboard gramplets\n"
               "TOOL = tools  REPORT = reports  GENERAL = utilities"))
         self.type_filter_combo.connect("changed", self.on_filter_changed)
         select_mode_box.pack_start(self.type_filter_combo, False, False, 0)
 
-        filter_box.pack_start(select_mode_box, False, False, 0)
-
-        # Row 2: SearchEntry with built-in magnifier and ✕ clear button
+        # SearchEntry with built-in magnifier and ✕ clear button, in the
+        # free space at the end of row 1 (it used to take a row of its own)
         self.author_filter_entry = Gtk.SearchEntry()
         self.author_filter_entry.set_placeholder_text(
             _("Search bundles and plugins…"))
@@ -1882,9 +1929,11 @@ class AddonPackShip(tool.Tool, ManagedWindow):
               "authors, version, category, and more.\n"
               "All words must match (order ignored, case-insensitive)."))
         self.author_filter_entry.connect("search-changed", self.on_filter_changed)
-        filter_box.pack_start(self.author_filter_entry, False, False, 0)
+        select_mode_box.pack_start(self.author_filter_entry, True, True, 0)
 
-        # Row 3: individual operation buttons (always visible — outside scroll area)
+        filter_box.pack_start(select_mode_box, False, False, 0)
+
+        # Row 2: individual operation buttons (always visible — outside scroll area)
         action_btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 
         build_btn = Gtk.Button(label=_("Build Selected"))
@@ -1893,19 +1942,41 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
         compile_btn = Gtk.Button(label=_("Compile Translations"))
         compile_btn.connect("clicked", self.on_compile)
+        missing_tool = self._missing_gettext_tool()
+        if missing_tool:
+            # Without xgettext no template.pot can be made, and without
+            # msgfmt no .po can be compiled, so the button could only
+            # fail. Checked once, when the window opens.
+            compile_btn.set_label(fill_names(
+                _("{tool} missing"), tool=missing_tool))
+            compile_btn.set_sensitive(False)
+            compile_btn.set_tooltip_text(fill_names(
+                _("The gettext translation tools are not installed, so"
+                  " translations cannot be compiled.\n"
+                  "Fedora: {fedora}\n"
+                  "Debian/Ubuntu: {debian}\n"
+                  "macOS: {macos}\n"
+                  "Windows: see the {readme} of this tool.\n"
+                  "Then close and reopen Addon Pack and Ship"
+                  " (on Windows, restart Gramps)."),
+                fedora="sudo dnf install gettext",
+                debian="sudo apt install gettext",
+                macos="brew install gettext",
+                readme="README.md"))
         action_btn_box.pack_start(compile_btn, False, False, 0)
 
         listing_btn = Gtk.Button(label=_("Amend Listings"))
-        listing_btn.set_tooltip_text(
-            _("Create or amend the addons-<lang>.json listing(s) for"
+        listing_btn.set_tooltip_text(fill_names(
+            _("Create or amend the {listing} listing(s) for"
               " selected addons, for each checked Gramps version above."
               " English plus any language the addon has a"
-              " po/<lang>-local.po for is listed automatically.\n"
+              " {po_file} for is listed automatically.\n"
               "Adds/updates entries — other entries are preserved.\n"
-              "To shrink a listing, delete that version's listings/"
-              " folder first, then rebuild only the addons you want"
-              " listed.")
-        )
+              "To shrink a listing, delete the {listings_dir} folder of"
+              " that version first, then rebuild only the addons you want"
+              " listed."),
+            listing="addons-<lang>.json", po_file="po/<lang>-local.po",
+            listings_dir="listings/"))
         listing_btn.connect("clicked", self.on_listing)
         action_btn_box.pack_start(listing_btn, False, False, 0)
 
@@ -1934,16 +2005,18 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 # load_named_config()) overrides this immediately after,
                 # same as it overrides every other default below.
                 checkbox.set_active(entry['code'] == running_code)
-                checkbox.set_tooltip_text(
+                checkbox.set_tooltip_text(fill_names(
                     _("Build and list packages for Gramps {label}"
-                      " (using {script}).\nThe same .addon.tgz is reused"
+                      " (using {script}).\nThe same {tgz} is reused"
                       " (duplicated) across every checked version — it"
                       " is only rebuilt once.\nListing entries are"
                       " generated by delegating to the real {script} from"
-                      " gramps-project/addons-source, so every language"
-                      " the addon has a po/*-local.po for is listed"
-                      " automatically.").format(
-                          label=entry['label'], script=entry['script']))
+                      " {repo}, so every language"
+                      " the addon has a {po_files} for is listed"
+                      " automatically."),
+                    label=entry['label'], script=entry['script'],
+                    tgz=".addon.tgz", repo="gramps-project/addons-source",
+                    po_files="po/*-local.po"))
                 self.version_checkboxes[entry['code']] = checkbox
                 version_row.pack_start(checkbox, False, False, 0)
         else:
@@ -2000,15 +2073,17 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                     " version folders"),
             action=Gtk.FileChooserAction.SELECT_FOLDER)
         self.output_dir_chooser.set_filename(default_output_dir)
-        self.output_dir_chooser.set_tooltip_text(
-            _("Where the gramps52/, gramps60/, etc. output folders"
-              " (each with download/ and listings/ subfolders) are"
-              " created. Defaults to this tool's own folder.\nSave a"
+        self.output_dir_chooser.set_tooltip_text(fill_names(
+            _("Where the {version_dirs} output folders"
+              " (each with {download_dir} and {listings_dir} subfolders)"
+              " are created. Defaults to the folder of this tool.\nSave a"
               " named configuration (see the icon and box to the"
               " right) to remember a different folder across sessions"
               " -- point it at a local Git repository clone if you"
               " plan to commit and push the generated packages and"
-              " listings with GitHub Desktop."))
+              " listings with GitHub Desktop."),
+            version_dirs="gramps52/, gramps60/, gramps61/",
+            download_dir="download/", listings_dir="listings/"))
 
         # GtkFileChooserButton's own compact dropdown only ever shows
         # recently-used folders plus "Other…" -- shortcuts added via
@@ -2061,16 +2136,16 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         self.config_combo = Gtk.ComboBoxText.new_with_entry()
         for name in self._list_saved_configs():
             self.config_combo.append_text(name)
-        self.config_combo.set_tooltip_text(
-            _("Named configurations, saved to APS.ini in this tool's"
-              " own folder. Each one remembers build mode, Gramps"
+        self.config_combo.set_tooltip_text(fill_names(
+            _("Named configurations, saved to {ini} in the folder of"
+              " this tool. Each one remembers build mode, Gramps"
               " version checkboxes, output location, filters, and"
               " which addons are selected.\nPick one to load it. Type a"
               " name (new or existing) and press Enter -- or click the"
               " icon to the left -- to save the current settings under"
               " that name, overwriting it if it already exists. The"
               " name shown here is also restored automatically the"
-              " next time this tool is opened."))
+              " next time this tool is opened."), ini="APS.ini"))
         self.config_combo.connect("changed", self.on_config_combo_changed)
         config_entry = self.config_combo.get_child()
         if config_entry is not None:
@@ -2112,10 +2187,10 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scrolled.set_vexpand(True)
-        scrolled.set_tooltip_text(
+        scrolled.set_tooltip_text(fill_names(
             _("Select installed addons to package and publish.\n"
               "Right-click for listing actions (filter by / open"
-              " addons-en.json)."))
+              " {listing})."), listing="addons-en.json"))
         vbox.pack_start(scrolled, True, True, 0)
 
         # Addon selection area, wrapped in an EventBox so right-clicks
@@ -2197,33 +2272,38 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         build_mode_frame.add(build_mode_box)
 
         self.radio_beta = Gtk.RadioButton.new_with_label(None, _("β  Beta"))
-        self.radio_beta.set_tooltip_text(
+        self.radio_beta.set_tooltip_text(fill_names(
             _("Beta build — includes everything for testers and translators:\n"
-              "• All core files (.py, .glade, .xml)\n"
-              "• README.md and all *.md files\n"
-              "• po/*.po translation source files\n"
-              "• po/template.pot translation template\n"
-              "• MANIFEST and MANIFEST.beta files\n"
+              "• All core files ({core})\n"
+              "• {readme} and all {md} files\n"
+              "• {po} translation source files\n"
+              "• {pot} translation template\n"
+              "• {manifest} and {manifest_beta} files\n"
               "• All subdirectory contents (data, layouts, etc.)\n"
-              "• locale/*.mo compiled translations\n\n"
-              "Uses MANIFEST.beta if present, otherwise auto-includes all extras.")
-        )
+              "• {mo} compiled translations\n\n"
+              "Uses {manifest_beta} if present, otherwise auto-includes"
+              " all extras."),
+            core=".py, .glade, .xml", readme="README.md", md="*.md",
+            po="po/*.po", pot="po/template.pot", manifest="MANIFEST",
+            manifest_beta="MANIFEST.beta", mo="locale/*.mo"))
         self.radio_beta.connect("toggled", self.on_build_mode_changed)
         build_mode_box.pack_start(self.radio_beta, False, False, 0)
 
         self.radio_release = Gtk.RadioButton.new_with_label_from_widget(
             self.radio_beta, _("Δ  Release")
         )
-        self.radio_release.set_tooltip_text(
+        self.radio_release.set_tooltip_text(fill_names(
             _("Release build — clean end-user package:\n"
-              "• All core files (.py, .glade, .xml)\n"
-              "• README.md only (no other .md files)\n"
-              "• locale/*.mo compiled translations only\n"
-              "• MANIFEST extras (if MANIFEST present)\n\n"
-              "⚠ Intentionally lossy — po/ source files,\n"
-              "CHANGELOG, dev notes are NOT included.\n"
-              "Uses MANIFEST if present.")
-        )
+              "• All core files ({core})\n"
+              "• {readme} only (no other {md} files)\n"
+              "• {mo} compiled translations only\n"
+              "• {manifest} extras (if {manifest} present)\n\n"
+              "⚠ Intentionally lossy — {po_dir} source files,\n"
+              "{changelog}, dev notes are NOT included.\n"
+              "Uses {manifest} if present."),
+            core=".py, .glade, .xml", readme="README.md", md=".md",
+            mo="locale/*.mo", manifest="MANIFEST", po_dir="po/",
+            changelog="CHANGELOG.md"))
         self.radio_release.connect("toggled", self.on_build_mode_changed)
         build_mode_box.pack_start(self.radio_release, False, False, 0)
 
@@ -2239,17 +2319,27 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         # Deselected by default: non-English listing JSON generation
         # is otherwise pruned back to English-only after the fact (see
         # make_addon.py's ENABLE_NON_ENGLISH_LISTINGS / this checkbox's
-        # multilingual= override) while that machinery gets more field
-        # testing. Checking this re-enables the other languages an
-        # addon already has po/<lang>-local.po files for.
+        # multilingual= override). When checked, make_addon.py's
+        # _apply_multilingual_rules() decides which language files the
+        # selected addon may create, and _reconcile_listing_with_gpr()
+        # updates the addon in every language file that exists.
         self.multilingual_check = Gtk.CheckButton(label=_("Multilingual"))
         self.multilingual_check.set_active(False)
-        self.multilingual_check.set_tooltip_text(
+        self.multilingual_check.set_tooltip_text(fill_names(
             _("Off (default): listings are English-only, regardless of"
               " how many languages an addon has translations for.\n"
-              "On: also generate/keep addons-<lang>.json for every"
-              " language the addon has a po/<lang>-local.po for."))
+              "On: every {listing} that already exists is"
+              " updated with the selected addon (translated where a"
+              " translation exists, English otherwise). A new"
+              " {listing} is created only when the name or"
+              " description in the {gpr} of the addon is actually"
+              " translated into that language."),
+            listing="addons-<lang>.json", gpr=".gpr.py"))
         listings_box.pack_start(self.multilingual_check, False, False, 0)
+
+        # Translation language + "Edit translation…" for translators
+        listings_box.pack_start(
+            self._build_translation_row(), False, False, 0)
 
         # Deselected by default: build_for_versions() normally refuses
         # to duplicate a built package into a version its own .gpr.py
@@ -2262,17 +2352,39 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         self.force_uncovered_check = Gtk.CheckButton(
             label=_("Duplicate into unverified/incompatible versions anyway"))
         self.force_uncovered_check.set_active(False)
-        self.force_uncovered_check.set_tooltip_text(
+        self.force_uncovered_check.set_tooltip_text(fill_names(
             _("Off (default): a multi-version build skips duplicating the"
-              " package into any Gramps version this addon's own .gpr.py"
-              " doesn't demonstrably support (an explicit version-range"
-              " gate that excludes it, or a hardcoded"
-              " gramps_target_version naming a different one).\n"
+              " package into any Gramps version that the {gpr} of the"
+              " addon does not demonstrably support (an explicit"
+              " version-range gate that excludes it, or a hardcoded"
+              " {target} naming a different one).\n"
               "On: duplicates into every checked version regardless."
-              " Nothing about the .gpr.py itself is ever changed either"
+              " Nothing about the {gpr} itself is ever changed either"
               " way -- this only controls whether a mismatched version"
-              " still gets a copy."))
+              " still gets a copy."),
+            gpr=".gpr.py", target="gramps_target_version"))
         listings_box.pack_start(self.force_uncovered_check, False, False, 0)
+
+        # An explicit action, not part of Pack and Ship: comparing
+        # every language file costs time on each run, and deleting
+        # files nobody asked to delete would surprise a new user.
+        remove_untranslated_btn = Gtk.Button(
+            label=_("Remove untranslated listings…"))
+        remove_untranslated_btn.set_halign(Gtk.Align.START)
+        remove_untranslated_btn.set_tooltip_text(fill_names(
+            _("For each checked Gramps Version, find every"
+              " {listing} whose names and descriptions are all"
+              " identical to {en_listing} -- files that only repeat the"
+              " English catalog -- and offer to delete them. The Addon"
+              " Manager falls back to {en_listing} for any language"
+              " without its own file. Files with any translated name or"
+              " description are kept, and no {po_dir} or {locale_dir}"
+              " translation files are touched."),
+            listing="addons-<lang>.json", en_listing="addons-en.json",
+            po_dir="po/", locale_dir="locale/"))
+        remove_untranslated_btn.connect(
+            "clicked", self.on_remove_untranslated_listings)
+        listings_box.pack_start(remove_untranslated_btn, False, False, 0)
 
         options_vbox.pack_start(listings_frame, False, False, 0)
 
@@ -2321,10 +2433,15 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
         notebook = Gtk.Notebook()
         notebook.append_page(vbox, Gtk.Label(_("Build")))
-        notebook.append_page(options_vbox, Gtk.Label(_("Options")))
+        options_page = notebook.append_page(
+            options_vbox, Gtk.Label(_("Options")))
         window.add(notebook)
 
         window.show_all()
+        if first_run:
+            # After show_all(): Gtk.Notebook ignores set_current_page()
+            # for a page whose child is not yet visible.
+            notebook.set_current_page(options_page)
 
     def get_addon_metadata(self, addon_name, use_cache=True):
         """
@@ -2487,8 +2604,14 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         type_filter  — must match pdata.ptype's string label, or '' for all.
         filter_text  — all words must appear in the plugin's search text.
         """
+        # "Selected" filter: keep only plugins that are checked now.
+        # all_selections is flushed from the visible checkboxes at the
+        # start of every list rebuild, so it is current here.
+        if type_filter == _("Selected"):
+            if not self.all_selections.get(getattr(pdata, 'id', None)):
+                return False
         # Type filter: compare against this plugin's own type
-        if type_filter and type_filter != _("All Types"):
+        elif type_filter and type_filter != _("All Types"):
             ptype_num = getattr(pdata, 'ptype', None)
             ptype_str = PTYPE_STR.get(ptype_num, '') if ptype_num is not None else ''
             if ptype_str != type_filter:
@@ -2511,6 +2634,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         plugins = info.get('plugins', [])
         if not plugins:
             # No pdata objects — fall back to directory-name text search
+            # (such a folder has no checkbox, so "Selected" hides it too)
             if type_filter and type_filter != _("All Types"):
                 return False
             return not filter_text or filter_text.lower() in addon_name.lower()
@@ -2549,62 +2673,82 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         return f"{version_str}.1"
 
     @staticmethod
-    def _increment_gpr_version_files(addon_path):
+    def _increment_gpr_plugin_version(gpr_dir, plugin_id):
         """
-        Increment the patch version number in every *gpr.py file under
-        addon_path in place, mirroring the same increment upstream
-        make.py performs automatically during its own 'build' command
-        -- but only ever run here for an addon explicitly flagged via
-        the version control next to its name, never automatically.
+        Increment the patch version of ONE registration in place: the
+        register() call whose id= is plugin_id, in one of the .gpr.py
+        files in gpr_dir. Other registrations in the same file (e.g. an
+        importer and an exporter registered together) are not touched.
 
-        :param addon_path: Real path to the addon's source directory.
-        :returns: list of (filename, old_version, new_version) for
-            every file actually changed.
+        The call is found with the ast module, and only the characters
+        of its version= string are replaced, so formatting, comments
+        and quote style stay as they were. A version= that is not a
+        plain one-line string (e.g. a variable) is left alone.
+
+        :param gpr_dir: Folder holding the .gpr.py (pdata.fpath).
+        :param plugin_id: The id= of the registration to bump.
+        :returns: (filename, old_version, new_version), or None when
+            nothing was changed.
         """
-        changed = []
-        pattern = re.compile(r"(version\s*=\s*['\"])(\d+(?:\.\d+)*)(['\"])")
-        for fname in glob.glob(os.path.join(addon_path, '*gpr.py')):
+        for fname in sorted(glob.glob(os.path.join(gpr_dir, '*gpr.py'))):
             try:
                 with open(fname, 'r', encoding='utf-8') as fh:
                     content = fh.read()
-            except OSError:
+                tree = ast.parse(content)
+            except (OSError, SyntaxError, ValueError):
                 continue
-
-            bumped = {}
-
-            def _bump(match, bumped=bumped):
-                old = match.group(2)
+            for node in ast.walk(tree):
+                if not (isinstance(node, ast.Call)
+                        and isinstance(node.func, ast.Name)
+                        and node.func.id == 'register'):
+                    continue
+                kwargs = {kw.arg: kw.value for kw in node.keywords if kw.arg}
+                id_node = kwargs.get('id')
+                ver_node = kwargs.get('version')
+                if not (isinstance(id_node, ast.Constant)
+                        and id_node.value == plugin_id):
+                    continue
+                if not (isinstance(ver_node, ast.Constant)
+                        and isinstance(ver_node.value, str)
+                        and ver_node.lineno == ver_node.end_lineno):
+                    return None
+                old = ver_node.value
                 parts = old.split('.')
-                if parts[-1].isdigit():
-                    parts[-1] = str(int(parts[-1]) + 1)
+                if not parts[-1].isdigit():
+                    return None
+                parts[-1] = str(int(parts[-1]) + 1)
                 new = '.'.join(parts)
-                bumped['old'], bumped['new'] = old, new
-                return f"{match.group(1)}{new}{match.group(3)}"
-
-            new_content = pattern.sub(_bump, content, count=1)
-            if bumped.get('old') and bumped.get('new') \
-                    and bumped['old'] != bumped['new']:
+                # ast column offsets count UTF-8 bytes, so edit bytes
+                lines = content.splitlines(keepends=True)
+                raw = lines[ver_node.lineno - 1].encode('utf-8')
+                literal = raw[ver_node.col_offset:ver_node.end_col_offset]
+                quote = literal[:1].decode('utf-8')
+                raw = (raw[:ver_node.col_offset]
+                       + f"{quote}{new}{quote}".encode('utf-8')
+                       + raw[ver_node.end_col_offset:])
+                lines[ver_node.lineno - 1] = raw.decode('utf-8')
                 try:
                     with open(fname, 'w', encoding='utf-8') as fh:
-                        fh.write(new_content)
-                    changed.append(
-                        (os.path.basename(fname), bumped['old'], bumped['new']))
+                        fh.write(''.join(lines))
                 except OSError:
-                    pass
-        return changed
+                    return None
+                return (os.path.basename(fname), old, new)
+        return None
 
-    def _build_version_increment_widget(self, addon_name, version):
+    def _build_version_increment_widget(self, pdata):
         """
-        Build the clickable version control shown after an addon's
-        name: a small icon + the current version, which toggles to a
-        preview of the bumped version (dark red) when clicked. Flagged
-        addons have their .gpr.py patch version actually incremented
-        the next time they're built (see build_for_versions()).
+        Build the clickable version control shown at the end of a
+        plugin row: a small icon + the current version, which toggles
+        to a preview of the bumped version (dark red) when clicked. A
+        flagged plugin has the version of its own register() call
+        incremented the next time its bundle is built (see
+        build_for_versions()).
 
-        :param addon_name: Directory name of the addon.
-        :param version: Current version string from its .gpr.py.
+        :param pdata: The plugin's registration data.
         :returns: a Gtk.ToggleButton.
         """
+        plugin_id = getattr(pdata, 'id', None)
+        version = getattr(pdata, 'version', None)
         button = Gtk.ToggleButton()
         button.set_relief(Gtk.ReliefStyle.NONE)
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
@@ -2615,31 +2759,34 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         box.pack_start(label, False, False, 0)
         button.add(box)
 
-        self.version_bump_widgets[addon_name] = {
+        self.version_bump_widgets[plugin_id] = {
             'button': button, 'icon': icon, 'label': label,
             'version': version,
+            'name': getattr(pdata, 'name', None) or plugin_id,
+            'gpr_dir': getattr(pdata, 'fpath', None),
         }
-        self._refresh_version_bump_widget(addon_name)
+        self._refresh_version_bump_widget(plugin_id)
 
-        button.set_active(addon_name in self.pending_version_bumps)
-        button.connect('toggled', self.on_toggle_version_bump, addon_name)
+        button.set_active(plugin_id in self.pending_version_bumps)
+        button.connect('toggled', self.on_toggle_version_bump, plugin_id)
         return button
 
-    def _refresh_version_bump_widget(self, addon_name):
+    def _refresh_version_bump_widget(self, plugin_id):
         """
         Update an addon's version-control icon/label/tooltip to match
         self.pending_version_bumps, without touching its toggled state
         (used both right after creating the widget and from the toggle
         handler itself).
         """
-        widget_info = self.version_bump_widgets.get(addon_name)
+        widget_info = self.version_bump_widgets.get(plugin_id)
         if not widget_info:
             return
         button = widget_info['button']
         icon, label = widget_info['icon'], widget_info['label']
         current_version = widget_info['version']
+        plugin_name = widget_info['name']
 
-        if addon_name in self.pending_version_bumps:
+        if plugin_id in self.pending_version_bumps:
             bumped = self._bump_patch_version(current_version)
             add_png = os.path.join(
                 os.path.expanduser('~'), '.local', 'share', 'gramps',
@@ -2653,7 +2800,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 '</small>'.format(bumped))
             button.set_tooltip_text(
                 _("Will bump {} to {} on next build. Click to"
-                  " cancel.").format(addon_name, bumped))
+                  " cancel.").format(plugin_name, bumped))
         else:
             icon.set_from_icon_name(
                 "preferences-system-sharing-symbolic", Gtk.IconSize.MENU)
@@ -2662,19 +2809,19 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             button.set_tooltip_text(
                 _("Click to flag {} for a patch version bump ({} →"
                   " {}) on its next build.").format(
-                      addon_name, current_version or '?',
+                      plugin_name, current_version or '?',
                       self._bump_patch_version(current_version)))
 
-    def on_toggle_version_bump(self, button, addon_name):
+    def on_toggle_version_bump(self, button, plugin_id):
         """
-        Handle clicking an addon's version control: toggle whether its
-        .gpr.py patch version will be bumped the next time it's built.
+        Handle clicking a plugin's version control: toggle whether the
+        version of its registration will be bumped at the next build.
         """
         if button.get_active():
-            self.pending_version_bumps.add(addon_name)
+            self.pending_version_bumps.add(plugin_id)
         else:
-            self.pending_version_bumps.discard(addon_name)
-        self._refresh_version_bump_widget(addon_name)
+            self.pending_version_bumps.discard(plugin_id)
+        self._refresh_version_bump_widget(plugin_id)
 
     def rebuild_addon_list(self):
         """
@@ -2787,10 +2934,11 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
             if is_multi:
                 # ── Group header row (non-interactive) ────────────────────
-                # Shows the directory name + combined types + version
-                # control + MANIFEST button. Not a checkbox; just an
-                # informational label (version applies to the whole
-                # addon directory, i.e. its shared .gpr.py file(s)).
+                # Shows the directory name + combined types + MANIFEST
+                # button. A bundle has no version of its own: each
+                # plugin row below carries its own version control.
+                # The MANIFEST stays here because it belongs to the
+                # folder, which becomes one .addon.tgz.
                 hdr_hbox = Gtk.Box(
                     orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
 
@@ -2812,14 +2960,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 hdr_vbox.pack_start(hdr_label,  False, False, 0)
                 hdr_vbox.pack_start(path_label, False, False, 0)
 
-                group_version = next(
-                    (getattr(p, 'version', None) for p in matching
-                     if getattr(p, 'version', None)), None)
-                version_widget = self._build_version_increment_widget(
-                    addon_name, group_version)
-
                 hdr_hbox.pack_start(hdr_vbox,          True,  True,  0)
-                hdr_hbox.pack_start(version_widget,     False, False, 0)
                 hdr_hbox.pack_start(_make_folder_btn(), False, False, 0)
                 self.addon_box.pack_start(hdr_hbox, False, False, 0)
 
@@ -2877,6 +3018,9 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                     cb_vbox.pack_start(id_lbl,   False, False, 0)
 
                     row.pack_start(cb_vbox, True, True, 0)
+                    row.pack_start(
+                        self._build_version_increment_widget(pdata),
+                        False, False, 0)
                     self.checkboxes[pid] = cb
                     self.addon_box.pack_start(row, False, False, 0)
                     filtered_plugin_count += 1
@@ -2939,8 +3083,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 detail.set_halign(Gtk.Align.START)
                 cb_vbox.pack_start(detail, False, False, 0)
 
-                version_widget = self._build_version_increment_widget(
-                    addon_name, getattr(pdata, 'version', None))
+                version_widget = self._build_version_increment_widget(pdata)
 
                 row_hbox.pack_start(cb_vbox,            True,  True,  0)
                 row_hbox.pack_start(version_widget,     False, False, 0)
@@ -3007,7 +3150,8 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         menu.append(filter_item)
 
         open_item = Gtk.MenuItem(
-            label=_("Open {}'s addons-en.json for editing").format(label))
+            label=fill_names(_("Open the {listing} of {version} for editing"),
+                             listing="addons-en.json", version=label))
         open_item.set_sensitive(available)
         open_item.connect('activate', self.cb_open_listing_json, listing_path)
         menu.append(open_item)
@@ -3460,12 +3604,12 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         duplicate the resulting .addon.tgz into the download/ directory
         of every other selected version.
 
-        If this addon is flagged in self.pending_version_bumps (via its
-        version control in the addon list), its .gpr.py patch version
-        is incremented in place *before* building, so the new version
+        For every plugin of this bundle flagged in
+        self.pending_version_bumps (via its version control in the
+        addon list), the version of its own register() call is
+        incremented in place *before* building, so the new version
         number is what actually gets packaged -- then the flag is
-        cleared and the addon list is refreshed to show the new
-        current version.
+        cleared and its version control shows the new version.
 
         The archive's contents (.py, .gpr.py, locale/*.mo, etc.) do not
         depend on which Gramps version is being targeted, so duplicating
@@ -3495,22 +3639,31 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         primary, *other_versions = versions
 
         bump_notes = []
-        if addon_name in self.pending_version_bumps:
-            changed = self._increment_gpr_version_files(addon_path)
-            for fname, old_version, new_version in changed:
+        bundle_ids = [
+            getattr(p, 'id', None)
+            for p in self.addon_info.get(addon_name, {}).get('plugins', [])]
+        for plugin_id in [pid for pid in bundle_ids
+                          if pid in self.pending_version_bumps]:
+            self.pending_version_bumps.discard(plugin_id)
+            widget_info = self.version_bump_widgets.get(plugin_id) or {}
+            changed = self._increment_gpr_plugin_version(
+                widget_info.get('gpr_dir') or addon_path, plugin_id)
+            if changed is None:
                 bump_notes.append(
-                    _("  Version bumped in {}: {} → {}").format(
-                        fname, old_version, new_version))
-            self.pending_version_bumps.discard(addon_name)
-            if changed:
-                # Reflect the new version directly rather than
-                # re-scanning: Gramps' plugin registry may still hold
-                # the pre-bump value cached from when Gramps started,
-                # so a rescan here isn't guaranteed to see the edit.
-                widget_info = self.version_bump_widgets.get(addon_name)
-                if widget_info:
-                    widget_info['version'] = changed[0][2]
-                    self._refresh_version_bump_widget(addon_name)
+                    _("  Version not bumped for {}: no plain version"
+                      " string found in its registration").format(plugin_id))
+                continue
+            fname, old_version, new_version = changed
+            bump_notes.append(
+                _("  Version bumped in {} ({}): {} → {}").format(
+                    fname, plugin_id, old_version, new_version))
+            # Reflect the new version directly rather than re-scanning:
+            # Gramps' plugin registry may still hold the pre-bump value
+            # cached from when Gramps started, so a rescan here isn't
+            # guaranteed to see the edit.
+            if widget_info:
+                widget_info['version'] = new_version
+                self._refresh_version_bump_widget(plugin_id)
 
         success, stdout, stderr = self.run_make_command(
             addon_path, 'build', build_mode=build_mode, version=primary)
@@ -3531,19 +3684,22 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             covered = coverage.get(version)
             if covered is False and not force_uncovered:
                 duplicate_notes.append(
-                    _("  Skipped {}: this addon's .gpr.py does not"
-                      " register under that version (its own"
-                      " version-range gate excludes it) — not"
-                      " duplicating a possibly-incompatible package."
-                      " Re-run with the override to duplicate anyway"
-                      " if you know it's actually compatible.").format(
-                        version))
+                    fill_names(
+                        _("  Skipped {version}: the {gpr} of this addon"
+                          " does not register under that version (its own"
+                          " version-range gate excludes it) — not"
+                          " duplicating a possibly-incompatible package."
+                          " Re-run with the override to duplicate anyway"
+                          " if you know it is actually compatible."),
+                        version=version, gpr=".gpr.py"))
                 continue
             if covered is False and force_uncovered:
                 duplicate_notes.append(
-                    _("  Warning: duplicating for {} anyway (forced) —"
-                      " this addon's .gpr.py does not register under"
-                      " that version.").format(version))
+                    fill_names(
+                        _("  Warning: duplicating for {version} anyway"
+                          " (forced) — the {gpr} of this addon does not"
+                          " register under that version."),
+                        version=version, gpr=".gpr.py"))
             elif covered is None:
                 # Most .gpr.py files have no explicit version-range
                 # gate at all, so this is the common case, not an
@@ -3555,11 +3711,14 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 # compatible" are different claims that were
                 # previously conflated.
                 duplicate_notes.append(
-                    _("  Note: {}'s .gpr.py has no version-range gate,"
-                      " so compatibility with {} was not verified —"
-                      " only assumed. Confirm the addon's actual code"
-                      " supports that Gramps version before"
-                      " publishing.").format(addon_name, version))
+                    fill_names(
+                        _("  Note: the {gpr} of {addon} has no"
+                          " version-range gate, so compatibility with"
+                          " {version} was not verified — only assumed."
+                          " Confirm that the actual code of the addon"
+                          " supports that Gramps version before"
+                          " publishing."),
+                        gpr=".gpr.py", addon=addon_name, version=version))
             versions_to_duplicate.append(version)
 
         builder_dir = self.get_output_parent_dir()
@@ -3905,7 +4064,8 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         if len(selected) != 1:
             OkDialog(
                 _("Single Selection Required"),
-                _("Please select exactly one addon to edit its MANIFEST."),
+                fill_names(_("Please select exactly one addon to edit"
+                             " its {manifest}."), manifest="MANIFEST"),
                 parent=self.window
             )
             return
@@ -4080,24 +4240,32 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                         continue
 
             OkDialog(
-                _("MANIFEST {}").format(action.capitalize()),
-                _("{} has been {} for {}.\n\n"
-                  "Location:\n  {}\n\n"
-                  "The file has been opened in your default text editor.\n\n"
-                  "The bottom of the file shows files not yet in the MANIFEST\n"
-                  "(auto-included files like .py and .glade are omitted).\n"
-                  "Copy any lines you want to include into the body above.").format(
-                      manifest_filename, action, addon_name, manifest_path),
+                manifest_filename,
+                fill_names(
+                    _("{file} is ready for {addon}.\n\n"
+                      "Location:\n  {path}\n\n"
+                      "The file has been opened in your default text"
+                      " editor.\n\n"
+                      "The bottom of the file shows files not yet in the"
+                      " {manifest}\n"
+                      "(auto-included files like {auto} are omitted).\n"
+                      "Copy any lines you want to include into the body"
+                      " above."),
+                    file=manifest_filename, addon=addon_name,
+                    path=manifest_path, manifest="MANIFEST",
+                    auto=".py, .glade"),
                 parent=self.window
             )
         except Exception as e:
             OkDialog(
-                _("MANIFEST {}").format(action.capitalize()),
-                _("{} has been {} for {}.\n\n"
-                  "Location:\n  {}\n\n"
-                  "Could not open editor automatically: {}\n"
-                  "Please open the file manually.").format(
-                      manifest_filename, action, addon_name, manifest_path, str(e)),
+                manifest_filename,
+                fill_names(
+                    _("{file} is ready for {addon}.\n\n"
+                      "Location:\n  {path}\n\n"
+                      "Could not open editor automatically: {error}\n"
+                      "Please open the file manually."),
+                    file=manifest_filename, addon=addon_name,
+                    path=manifest_path, error=str(e)),
                 parent=self.window
             )
 
@@ -4122,23 +4290,153 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 malformed.append((addon_name, metadata['malformed']))
 
         if malformed:
-            error_msg = _("Cannot build - the following addon(s) have malformed .gpr.py files:\n\n")
+            error_msg = fill_names(
+                _("Cannot build - the following addon(s) have malformed"
+                  " {gpr} files:"), gpr=".gpr.py") + "\n\n"
             for addon_name, fields in malformed:
                 error_msg += f"• {addon_name}: {', '.join(fields)}\n"
 
             error_msg += _("\n\nProblem: These fields contain commas INSIDE quoted strings.\n\n")
-            error_msg += _("Wrong:  authors = [\"Name1, Name2\"]\n")
-            error_msg += _("Correct: authors = [\"Name1\", \"Name2\"]\n\n")
-            error_msg += _("Please fix the .gpr.py file(s) and try again.")
+            error_msg += _("Wrong:") + '  authors = ["Name1, Name2"]\n'
+            error_msg += _("Correct:") + ' authors = ["Name1", "Name2"]\n\n'
+            error_msg += fill_names(
+                _("Please fix the {gpr} file(s) and try again."),
+                gpr=".gpr.py")
 
             ErrorDialog(
-                _("Malformed .gpr.py File"),
+                fill_names(_("Malformed {gpr} File"), gpr=".gpr.py"),
                 error_msg,
                 parent=self.window
             )
             return
 
         self.show_operation_results("Build", selected, "build")
+
+    def _build_translation_row(self) -> Gtk.Box:
+        """
+        Build the "Translation:" row: a language picker (the languages
+        Gramps itself is translated into, from GrampsLocale's own
+        get_language_dict()) and an "Edit translation…" button that
+        opens po/<lang>-local.po of each selected addon.
+
+        The current Gramps language is preselected unless it is
+        English, in which case the picker starts on "Choose a language"
+        and the button stays dimmed until a language is chosen.
+        """
+        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        row.pack_start(Gtk.Label(label=_("Translation:")), False, False, 0)
+
+        combo = Gtk.ComboBoxText()
+        combo.append("", _("Choose a language"))
+        languages = sorted(
+            ((name, code) for name, code in glocale.get_language_dict().items()
+             if not code.startswith("en")),
+            key=lambda item: glocale.sort_key(item[0]))
+        for name, code in languages:
+            combo.append(code, f"{name} ({code})")
+        current = (glocale.language[0] if glocale.language else "") or ""
+        codes = [code for _name, code in languages]
+        default = ""
+        if not current.startswith("en"):
+            if current in codes:
+                default = current
+            elif current[:2] in codes:
+                default = current[:2]
+        combo.set_active_id(default)
+        combo.set_tooltip_text(fill_names(
+            _("Language of the translation to edit. The file name uses"
+              " this code: {po_file}"), po_file="po/<code>-local.po"))
+        row.pack_start(combo, False, False, 0)
+
+        edit_btn = Gtk.Button(label=_("Edit translation…"))
+        edit_btn.set_tooltip_text(fill_names(
+            _("For each selected addon, open {po_file} in the"
+              " default editor for {po_ext} files (for example Poedit or a"
+              " text editor). The file is created from {pot} when it"
+              " does not exist yet, and new strings from {pot} are"
+              " merged into an existing file.\n"
+              "After saving, click Compile Translations, then restart"
+              " Gramps to see the result."),
+            po_file="po/<code>-local.po", po_ext=".po",
+            pot="template.pot"))
+        edit_btn.set_sensitive(bool(default))
+        edit_btn.connect("clicked", self.on_edit_translation)
+        combo.connect(
+            "changed",
+            lambda widget: edit_btn.set_sensitive(bool(widget.get_active_id())))
+        row.pack_start(edit_btn, False, False, 0)
+
+        self.translation_lang_combo = combo
+        return row
+
+    def on_edit_translation(self, _widget):
+        """
+        Prepare and open po/<lang>-local.po for every selected addon.
+        """
+        lang = self.translation_lang_combo.get_active_id()
+        if not lang:
+            return
+        selected = self.get_selected_addons()
+        if not selected:
+            OkDialog(
+                _("No Selection"),
+                _("Please select at least one addon to translate."),
+                parent=self.window)
+            return
+        if len(selected) > 5:
+            from gramps.gui.dialog import QuestionDialog2
+            question = QuestionDialog2(
+                _("Open Many Files?"),
+                _("This opens {count} translation files, one for each"
+                  " selected addon.").format(count=len(selected)),
+                _("Open them"),
+                _("Cancel"),
+                parent=self.window)
+            if not question.run():
+                return
+
+        make_addon = _get_make_addon_module()
+        if make_addon is None:
+            ErrorDialog(
+                _("Missing make_addon.py"),
+                _("make_addon.py was not found next to this tool."),
+                parent=self.window)
+            return
+
+        lines = []
+        for addon_name, addon_path in selected:
+            buffer = io.StringIO()
+            with contextlib.redirect_stdout(buffer):
+                po_path, notes = make_addon.prepare_local_po(addon_path, lang)
+            if po_path and os.path.exists(po_path):
+                open_file_with_default_application(po_path, self.user.uistate)
+                lines.append(f"✓ {addon_name}: {po_path}")
+            else:
+                lines.append(f"✗ {addon_name}")
+            lines.extend(f"    {note}" for note in notes)
+
+        lines.append("")
+        lines.append(
+            _("Next steps: translate and save each file, then click"
+              " Compile Translations."))
+        lines.append(
+            _("⚠ Restart Gramps to see the new translations. Gramps keeps"
+              " the translations cached until it restarts. Reloading the"
+              " plugin is not enough to see updated strings."))
+        self.show_scrollable_dialog(_("Edit Translation"), "\n".join(lines))
+
+    @staticmethod
+    def _missing_gettext_tool() -> str | None:
+        """
+        Return the name of the first gettext tool that Compile
+        Translations needs but cannot find on PATH, or None when both
+        are available. xgettext makes po/template.pot; msgfmt compiles
+        po/<lang>-local.po into locale/<lang>/LC_MESSAGES/addon.mo.
+        """
+        for tool_name in ("xgettext", "msgfmt"):
+            if shutil.which(tool_name) is None:
+                return tool_name
+        return None
 
     def on_compile(self, widget):
         """
@@ -4176,17 +4474,21 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 malformed.append((addon_name, metadata['malformed']))
 
         if malformed:
-            error_msg = _("Cannot create listing - the following addon(s) have malformed .gpr.py files:\n\n")
+            error_msg = fill_names(
+                _("Cannot create listing - the following addon(s) have malformed"
+                  " {gpr} files:"), gpr=".gpr.py") + "\n\n"
             for addon_name, fields in malformed:
                 error_msg += f"• {addon_name}: {', '.join(fields)}\n"
 
             error_msg += _("\n\nProblem: These fields contain commas INSIDE quoted strings.\n\n")
-            error_msg += _("Wrong:  authors = [\"Name1, Name2\"]\n")
-            error_msg += _("Correct: authors = [\"Name1\", \"Name2\"]\n\n")
-            error_msg += _("Please fix the .gpr.py file(s) and try again.")
+            error_msg += _("Wrong:") + '  authors = ["Name1, Name2"]\n'
+            error_msg += _("Correct:") + ' authors = ["Name1", "Name2"]\n\n'
+            error_msg += fill_names(
+                _("Please fix the {gpr} file(s) and try again."),
+                gpr=".gpr.py")
 
             ErrorDialog(
-                _("Malformed .gpr.py File"),
+                fill_names(_("Malformed {gpr} File"), gpr=".gpr.py"),
                 error_msg,
                 parent=self.window
             )
@@ -4211,11 +4513,15 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             from gramps.gui.dialog import QuestionDialog2
             question = QuestionDialog2(
                 _("Missing Package Files"),
-                _("The following addons don't have .addon.tgz files yet:\n\n{}\n\n"
-                  "Listings require built packages. Would you like to:\n"
-                  "• Build these addons first (recommended), or\n"
-                  "• Try creating listings anyway (may result in empty entries)").format(
-                      "\n".join(f"  • {n}" for n in missing_tgz)),
+                fill_names(
+                    _("The following addons do not have {tgz} files"
+                      " yet:\n\n{addons}\n\n"
+                      "Listings require built packages. Would you like to:\n"
+                      "• Build these addons first (recommended), or\n"
+                      "• Try creating listings anyway (may result in empty"
+                      " entries)"),
+                    tgz=".addon.tgz",
+                    addons="\n".join(f"  • {n}" for n in missing_tgz)),
                 _("Build First"),
                 _("Create Anyway"),
                 parent=self.window
@@ -4250,23 +4556,27 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
         question = QuestionDialog2(
             _("Clean Selected Addons?"),
-            _("This will remove Python cache files from:\n\n{}\n\n"
-              "═══════════════════════════════════════════\n"
-              "WILL BE REMOVED (Python regenerates these):\n"
-              "═══════════════════════════════════════════\n"
-              "• __pycache__/ directories\n"
-              "• *.pyc and *.pyo files (bytecode)\n"
-              "• *~ backup files (editor temps)\n\n"
-              "═══════════════════════════════════════════\n"
-              "WILL BE PRESERVED (your work):\n"
-              "═══════════════════════════════════════════\n"
-              "• locale/ (compiled translations - needed!)\n"
-              "• po/template.pot (translator reference)\n"
-              "• po/*.po (translation source files)\n"
-              "• All source code and data files\n\n"
-              "Python will automatically regenerate cache files\n"
-              "when you restart Gramps.\n\n"
-              "Continue with Clean?").format("\n".join(f"  • {n}" for n in addon_names)),
+            fill_names(
+                _("This will remove Python cache files from:\n\n{addons}\n\n"
+                  "═══════════════════════════════════════════\n"
+                  "WILL BE REMOVED (Python regenerates these):\n"
+                  "═══════════════════════════════════════════\n"
+                  "• {pycache} directories\n"
+                  "• {pyc} files (bytecode)\n"
+                  "• {backup} backup files (editor temps)\n\n"
+                  "═══════════════════════════════════════════\n"
+                  "WILL BE PRESERVED (your work):\n"
+                  "═══════════════════════════════════════════\n"
+                  "• {locale_dir} (compiled translations - needed!)\n"
+                  "• {pot} (translator reference)\n"
+                  "• {po} (translation source files)\n"
+                  "• All source code and data files\n\n"
+                  "Python will automatically regenerate cache files\n"
+                  "when you restart Gramps.\n\n"
+                  "Continue with Clean?"),
+                addons="\n".join(f"  • {n}" for n in addon_names),
+                pycache="__pycache__/", pyc="*.pyc, *.pyo", backup="*~",
+                locale_dir="locale/", pot="po/template.pot", po="po/*.po"),
             _("Yes, Clean Cache"),
             _("No, Cancel"),
             parent=self.window
@@ -4303,17 +4613,21 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 malformed.append((addon_name, metadata['malformed']))
 
         if malformed:
-            error_msg = _("Cannot package - the following addon(s) have malformed .gpr.py files:\n\n")
+            error_msg = fill_names(
+                _("Cannot package - the following addon(s) have malformed"
+                  " {gpr} files:"), gpr=".gpr.py") + "\n\n"
             for addon_name, fields in malformed:
                 error_msg += f"• {addon_name}: {', '.join(fields)}\n"
 
             error_msg += _("\n\nProblem: These fields contain commas INSIDE quoted strings.\n\n")
-            error_msg += _("Wrong:  authors = [\"Name1, Name2\"]\n")
-            error_msg += _("Correct: authors = [\"Name1\", \"Name2\"]\n\n")
-            error_msg += _("Please fix the .gpr.py file(s) and try again.")
+            error_msg += _("Wrong:") + '  authors = ["Name1, Name2"]\n'
+            error_msg += _("Correct:") + ' authors = ["Name1", "Name2"]\n\n'
+            error_msg += fill_names(
+                _("Please fix the {gpr} file(s) and try again."),
+                gpr=".gpr.py")
 
             ErrorDialog(
-                _("Malformed .gpr.py File"),
+                fill_names(_("Malformed {gpr} File"), gpr=".gpr.py"),
                 error_msg,
                 parent=self.window
             )
@@ -4327,27 +4641,32 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             from gramps.gui.dialog import QuestionDialog2
             question = QuestionDialog2(
                 _("Δ Release Build — Intentionally Lossy"),
+                fill_names(
                 _("You are about to create a RELEASE package for:\n\n"
-                  "{}\n\n"
+                  "{addons}\n\n"
                   "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                   "WILL BE INCLUDED:\n"
                   "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                  "• All core files (.py, .gpr.py, .glade, .xml)\n"
-                  "• README.md (if present)\n"
-                  "• Compiled translations (locale/*.mo)\n"
-                  "• MANIFEST extras (if MANIFEST present)\n\n"
+                  "• All core files ({core})\n"
+                  "• {readme} (if present)\n"
+                  "• Compiled translations ({mo})\n"
+                  "• {manifest} extras (if {manifest} present)\n\n"
                   "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                   "INTENTIONALLY EXCLUDED:\n"
                   "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                  "• po/*.po translation source files\n"
-                  "• po/template.pot\n"
-                  "• CHANGELOG.md and other .md files\n"
-                  "• MANIFEST.beta and development files\n\n"
+                  "• {po} translation source files\n"
+                  "• {pot}\n"
+                  "• {changelog} and other {md} files\n"
+                  "• {manifest_beta} and development files\n\n"
                   "⚠  This package is NOT suitable for translators\n"
                   "   or beta testers who need source files.\n\n"
                   "Use β Beta mode for development sharing.\n\n"
-                  "Continue with Release build?").format(
-                      "\n".join(f"  • {n}" for n in addon_names)),
+                  "Continue with Release build?"),
+                    addons="\n".join(f"  • {n}" for n in addon_names),
+                    core=".py, .gpr.py, .glade, .xml", readme="README.md",
+                    mo="locale/*.mo", manifest="MANIFEST", po="po/*.po",
+                    pot="po/template.pot", changelog="CHANGELOG.md",
+                    md=".md", manifest_beta="MANIFEST.beta"),
                 _("Yes, Build Release"),
                 _("No, Cancel"),
                 parent=self.window
@@ -4395,6 +4714,72 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                     details.append(f"    {line}")
         elif not success and stderr:
             details.append(f"    Error: {stderr[:200]}")
+
+    def on_remove_untranslated_listings(self, _widget):
+        """
+        Handle the Options tab's "Remove untranslated listings…"
+        button: for every checked Gramps Version, find the
+        addons-<lang>.json files that only repeat addons-en.json (see
+        make_addon.find_untranslated_listings()), list them, and
+        delete them only after the user confirms.
+
+        :param _widget: unused (the button itself)
+        """
+        make_addon = _get_make_addon_module()
+        if make_addon is None or not hasattr(
+                make_addon, 'find_untranslated_listings'):
+            ErrorDialog(
+                _("Remove untranslated listings"),
+                _("This needs a newer make_addon.py in the"
+                  " AddonPackShip folder."),
+                parent=self.window)
+            return
+
+        builder_dir = self.get_output_parent_dir()
+        found = []
+        for version in self.get_selected_versions():
+            listings_dir = os.path.join(builder_dir, version, 'listings')
+            found.extend(make_addon.find_untranslated_listings(listings_dir))
+
+        if not found:
+            OkDialog(
+                _("Remove untranslated listings"),
+                _("No untranslated language listings were found for the"
+                  " checked Gramps Versions."),
+                parent=self.window)
+            return
+
+        names = "\n".join(
+            "  • " + os.path.relpath(path, builder_dir) for path in found)
+        from gramps.gui.dialog import QuestionDialog2
+        question = QuestionDialog2(
+            _("Remove untranslated listings?"),
+            fill_names(
+                _("These language listings contain no translated names or"
+                  " descriptions -- every entry is identical to"
+                  " {en_listing}:\n\n{files}\n\nThe Addon Manager uses"
+                  " {en_listing} for any language without its own file."
+                  " Delete them?"),
+                en_listing="addons-en.json", files=names),
+            _("Delete"),
+            _("Cancel"),
+            parent=self.window)
+        if not question.run():
+            return
+
+        removed, failed = [], []
+        for path in found:
+            try:
+                os.remove(path)
+                removed.append(os.path.relpath(path, builder_dir))
+            except OSError as exc:
+                failed.append(f"{os.path.relpath(path, builder_dir)}: {exc}")
+        message = _("Removed {} file(s).").format(len(removed))
+        if failed:
+            message += "\n\n" + _("Could not remove:") + "\n" + "\n".join(
+                failed)
+        OkDialog(_("Remove untranslated listings"), message,
+                 parent=self.window)
 
     @staticmethod
     def _pump_gtk_events():
@@ -4510,6 +4895,26 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         # Create custom scrollable dialog
         self.show_scrollable_dialog(_("{} Complete").format(operation), message)
 
+    @staticmethod
+    def _highlight_restart_notices(buffer):
+        """
+        Show every line that starts with "⚠ Restart Gramps" (leading
+        spaces allowed) in bold red, so the restart needed after
+        compiling translations is hard to miss in a long results text.
+
+        :param buffer: The Gtk.TextBuffer of a results dialog.
+        """
+        tag = buffer.create_tag(
+            "restart-notice", foreground="#c01c28", weight=Pango.Weight.BOLD)
+        for line_no in range(buffer.get_line_count()):
+            start = buffer.get_iter_at_line(line_no)
+            end = start.copy()
+            if not end.ends_line():
+                end.forward_to_line_end()
+            text = buffer.get_text(start, end, False)
+            if text.lstrip().startswith("⚠ Restart Gramps"):
+                buffer.apply_tag(tag, start, end)
+
     def show_scrollable_dialog(self, title, message):
         """
         Show a scrollable dialog that fits on screen.
@@ -4553,6 +4958,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
         buffer = textview.get_buffer()
         buffer.set_text(message)
+        self._highlight_restart_notices(buffer)
 
         scrolled.add(textview)
 
@@ -4776,8 +5182,9 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         if not url:
             ErrorDialog(
                 _("No Help URL"),
-                _("This tool has no help_url registered in its"
-                  " .gpr.py."),
+                fill_names(
+                    _("This tool has no {field} registered in its {gpr}."),
+                    field="help_url", gpr=".gpr.py"),
                 parent=self.window)
             return
         try:

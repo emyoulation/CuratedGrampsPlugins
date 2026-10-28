@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: AddonPackShip 1.5.5\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-17 00:00+0000\n"
+"Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
+"POT-Creation-Date: 2026-10-22 22:39-0500\n"
 "PO-Revision-Date: 2026-02-17 00:00+0000\n"
 "Last-Translator: Claude (Anthropic AI)\n"
 "Language-Team: Danish\n"
@@ -17,182 +17,1011 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: AddonPackShip.py
+#: AddonPackShip.gpr.py:45 AddonPackShip.py:1841 AddonPackShip.py:1842
+#: AddonPackShip.py:5169 AddonPackShip.py:5246
 msgid "Addon Pack and Ship"
 msgstr "Tilføjelsesprogram: Pak og Send"
 
-#: AddonPackShip.py
-msgid "Packaging and distribution tool - create release-ready addon packages and listings for GitHub publishing"
-msgstr "Paknings- og distributionsværktøj - opret udgivelsesklare tilføjelsesprogrampakker og lister til GitHub"
+#: AddonPackShip.gpr.py:47
+#, fuzzy
+msgid ""
+"Packaging and distribution tool - create release-ready Gramps addon plugin "
+"packages and listings for GitHub publishing"
+msgstr ""
+"Paknings- og distributionsværktøj - opret udgivelsesklare "
+"tilføjelsesprogrampakker og lister til GitHub"
 
-#: AddonPackShip.py
-msgid "Select installed addons to package and publish.\nFound {} addon(s) in your Gramps installation."
-msgstr "Vælg installerede tilføjelsesprogrammer til pakning og publicering.\nFandt {} tilføjelsesprogram(mer) i din Gramps-installation."
-
-#: AddonPackShip.py
+#: AddonPackShip.py:400
 msgid "No Addons Found"
 msgstr "Ingen Tilføjelsesprogrammer Fundet"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:401
 msgid "No third-party addons found. Install some addons first."
-msgstr "Ingen tredjeparts tilføjelsesprogrammer fundet. Installer venligst nogle tilføjelsesprogrammer først."
+msgstr ""
+"Ingen tredjeparts tilføjelsesprogrammer fundet. Installer venligst nogle "
+"tilføjelsesprogrammer først."
 
-#: AddonPackShip.py
-msgid "Filter Addons"
+#: AddonPackShip.py:943
+msgid "Could Not Save Configuration"
+msgstr ""
+
+#: AddonPackShip.py:1195 AddonPackShip.py:1224 AddonPackShip.py:5237
+msgid "Folder Not Found"
+msgstr ""
+
+#: AddonPackShip.py:1196
+#, python-brace-format
+msgid ""
+"Output location folder does not exist yet:\n"
+"{}"
+msgstr ""
+
+#: AddonPackShip.py:1225
+#, python-brace-format
+msgid ""
+"Addon folder does not exist:\n"
+"{}"
+msgstr ""
+
+#: AddonPackShip.py:1547
+msgid ""
+"GitHub Desktop was not found on this computer. Install it from https://"
+"desktop.github.com/ (on Linux, the community-maintained build at https://"
+"github.com/shiftkey/desktop)."
+msgstr ""
+
+#: AddonPackShip.py:1573
+#, python-brace-format
+msgid "Could not start GitHub Desktop: {}"
+msgstr ""
+
+#: AddonPackShip.py:1585
+msgid "Could Not Open GitHub Desktop"
+msgstr ""
+
+#: AddonPackShip.py:1587
+msgid "Launched GitHub Desktop."
+msgstr ""
+
+#: AddonPackShip.py:1626
+msgid "GitHub Desktop"
+msgstr ""
+
+#: AddonPackShip.py:1646
+#, python-brace-format
+msgid ""
+"Start GitHub Desktop, or bring it to the front if it's already running.\n"
+"Detected local repositories: {}"
+msgstr ""
+
+#: AddonPackShip.py:1652
+msgid "Start GitHub Desktop, or bring it to the front if it's already running."
+msgstr ""
+
+#: AddonPackShip.py:1755
+#, fuzzy
+msgid "No Versions Found"
+msgstr "Ingen Tilføjelsesprogrammer Fundet"
+
+#: AddonPackShip.py:1756
+msgid ""
+"Could not find any local make<NN>.py to update, and the GitHub branch list "
+"could not be reached (check your network connection)."
+msgstr ""
+
+#: AddonPackShip.py:1765
+msgid "Update existing scripts:"
+msgstr ""
+
+#: AddonPackShip.py:1771
+msgid "Add newly available scripts:"
+msgstr ""
+
+#: AddonPackShip.py:1777
+msgid "Existing files are backed up (.bak) before being overwritten. Continue?"
+msgstr ""
+
+#: AddonPackShip.py:1782
+msgid "Update Scripts from GitHub?"
+msgstr ""
+
+#: AddonPackShip.py:1784
+msgid "Yes, Update"
+msgstr ""
+
+#: AddonPackShip.py:1785 AddonPackShip.py:4393 AddonPackShip.py:4765
+#, fuzzy
+msgid "Cancel"
+msgstr "Nej, Annullér"
+
+#: AddonPackShip.py:1828
+msgid "Update Scripts Results"
+msgstr ""
+
+#: AddonPackShip.py:1829
+msgid "Checked gramps-project/addons-source on GitHub:"
+msgstr ""
+
+#: AddonPackShip.py:1831
+msgid ""
+"Restart Addon Pack and Ship (or re-open this tool) to see any newly added "
+"Gramps version checkboxes."
+msgstr ""
+
+#: AddonPackShip.py:1882
+#, fuzzy
+msgid "Filter Addons:"
 msgstr "Filtrer Tilføjelsesprogrammer"
 
-#: AddonPackShip.py
-msgid "Name/Contributor contains:"
-msgstr "Navn/Bidragyder indeholder:"
-
-#: AddonPackShip.py
-msgid "e.g., addon name, your name, or email"
-msgstr "f.eks. tilføjelsesprogramnavn, dit navn eller e-mail"
-
-#: AddonPackShip.py
-msgid "Clear"
-msgstr "Ryd"
-
-#: AddonPackShip.py
+#: AddonPackShip.py:1890
 msgid "Select All Visible"
 msgstr "Vælg Alle Synlige"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:1894
 msgid "Deselect All"
 msgstr "Fravælg Alle"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:1903 AddonPackShip.py:2614 AddonPackShip.py:2638
+#: AddonPackShip.py:2651
+msgid "All Types"
+msgstr ""
+
+#: AddonPackShip.py:1905 AddonPackShip.py:2610
+#, fuzzy
+msgid "Selected"
+msgstr "Byg Valgte"
+
+#: AddonPackShip.py:1915
+msgid ""
+"Filter list by plugin type.\n"
+"Selected = only the plugins that are checked now\n"
+"VIEW = views/panels  GRAMPLET = dashboard gramplets\n"
+"TOOL = tools  REPORT = reports  GENERAL = utilities"
+msgstr ""
+
+#: AddonPackShip.py:1926
+msgid "Search bundles and plugins…"
+msgstr ""
+
+#: AddonPackShip.py:1928
+msgid ""
+"Search across all plugin fields: name, type, id, path, authors, version, "
+"category, and more.\n"
+"All words must match (order ignored, case-insensitive)."
+msgstr ""
+
+#: AddonPackShip.py:1939
 msgid "Build Selected"
 msgstr "Byg Valgte"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:1943
 msgid "Compile Translations"
 msgstr "Kompilér Oversættelser"
 
-#: AddonPackShip.py
-msgid "Create Listings"
+#: AddonPackShip.py:1951
+#, python-brace-format
+msgid "{tool} missing"
+msgstr ""
+
+#: AddonPackShip.py:1954
+#, python-brace-format
+msgid ""
+"The gettext translation tools are not installed, so translations cannot be "
+"compiled.\n"
+"Fedora: {fedora}\n"
+"Debian/Ubuntu: {debian}\n"
+"macOS: {macos}\n"
+"Windows: see the {readme} of this tool.\n"
+"Then close and reopen Addon Pack and Ship (on Windows, restart Gramps)."
+msgstr ""
+
+#: AddonPackShip.py:1968
+#, fuzzy
+msgid "Amend Listings"
 msgstr "Opret Lister"
 
-#: AddonPackShip.py
-msgid "Clean"
-msgstr "Ryd Op"
+#: AddonPackShip.py:1970
+#, python-brace-format
+msgid ""
+"Create or amend the {listing} listing(s) for selected addons, for each "
+"checked Gramps version above. English plus any language the addon has a "
+"{po_file} for is listed automatically.\n"
+"Adds/updates entries — other entries are preserved.\n"
+"To shrink a listing, delete the {listings_dir} folder of that version first, "
+"then rebuild only the addons you want listed."
+msgstr ""
 
-#: AddonPackShip.py
-msgid "📦 Pack and Ship (Build + Listing)"
-msgstr "📦 Pak og Send (Byg + List)"
+#: AddonPackShip.py:1988
+msgid "Package Targets:"
+msgstr ""
 
-#: AddonPackShip.py
+#: AddonPackShip.py:1996
+msgid "<b>Gramps Versions:</b>"
+msgstr ""
+
+#: AddonPackShip.py:2009
+#, python-brace-format
+msgid ""
+"Build and list packages for Gramps {label} (using {script}).\n"
+"The same {tgz} is reused (duplicated) across every checked version — it is "
+"only rebuilt once.\n"
+"Listing entries are generated by delegating to the real {script} from "
+"{repo}, so every language the addon has a {po_files} for is listed "
+"automatically."
+msgstr ""
+
+#: AddonPackShip.py:2024
+#, python-brace-format
+msgid "No make<NN>.py scripts found — using default '{}'."
+msgstr ""
+
+#: AddonPackShip.py:2057
+msgid "<b>Output location:</b>"
+msgstr ""
+
+#: AddonPackShip.py:2060
+msgid "Open the output location folder in your file browser."
+msgstr ""
+
+#: AddonPackShip.py:2072
+msgid "Choose a parent folder for the generated version folders"
+msgstr ""
+
+#: AddonPackShip.py:2077
+#, python-brace-format
+msgid ""
+"Where the {version_dirs} output folders (each with {download_dir} and "
+"{listings_dir} subfolders) are created. Defaults to the folder of this "
+"tool.\n"
+"Save a named configuration (see the icon and box to the right) to remember a "
+"different folder across sessions -- point it at a local Git repository clone "
+"if you plan to commit and push the generated packages and listings with "
+"GitHub Desktop."
+msgstr ""
+
+#: AddonPackShip.py:2097
+msgid "(pick a detected Git repo folder…)"
+msgstr ""
+
+#: AddonPackShip.py:2102
+msgid ""
+"Local Git repository clones found under common GitHub Desktop / developer "
+"folders (e.g. ~/Documents/GitHub). Selecting one sets the parent folder on "
+"the right."
+msgstr ""
+
+#: AddonPackShip.py:2124
+msgid ""
+"Save the current settings under the name typed in the box to the right (same "
+"as pressing Enter there). Overwrites a configuration of that name if one "
+"already exists."
+msgstr ""
+
+#: AddonPackShip.py:2140
+#, python-brace-format
+msgid ""
+"Named configurations, saved to {ini} in the folder of this tool. Each one "
+"remembers build mode, Gramps version checkboxes, output location, filters, "
+"and which addons are selected.\n"
+"Pick one to load it. Type a name (new or existing) and press Enter -- or "
+"click the icon to the left -- to save the current settings under that name, "
+"overwriting it if it already exists. The name shown here is also restored "
+"automatically the next time this tool is opened."
+msgstr ""
+
+#: AddonPackShip.py:2152
+msgid "Configuration name…"
+msgstr ""
+
+#: AddonPackShip.py:2191
+#, fuzzy, python-brace-format
+msgid ""
+"Select installed addons to package and publish.\n"
+"Right-click for listing actions (filter by / open {listing})."
+msgstr ""
+"Vælg installerede tilføjelsesprogrammer til pakning og publicering.\n"
+"Fandt {} tilføjelsesprogram(mer) i din Gramps-installation."
+
+#: AddonPackShip.py:2233
+msgid "Open this tool's documentation."
+msgstr ""
+
+#: AddonPackShip.py:2243
+#, fuzzy
+msgid "📦 Pack and Ship"
+msgstr "Tilføjelsesprogram: Pak og Send"
+
+#: AddonPackShip.py:2252
 msgid "Close"
 msgstr "Luk"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:2268
+msgid "Build Mode:"
+msgstr ""
+
+#: AddonPackShip.py:2274
+msgid "β  Beta"
+msgstr ""
+
+#: AddonPackShip.py:2276
+#, python-brace-format
+msgid ""
+"Beta build — includes everything for testers and translators:\n"
+"• All core files ({core})\n"
+"• {readme} and all {md} files\n"
+"• {po} translation source files\n"
+"• {pot} translation template\n"
+"• {manifest} and {manifest_beta} files\n"
+"• All subdirectory contents (data, layouts, etc.)\n"
+"• {mo} compiled translations\n"
+"\n"
+"Uses {manifest_beta} if present, otherwise auto-includes all extras."
+msgstr ""
+
+#: AddonPackShip.py:2293
+msgid "Δ  Release"
+msgstr ""
+
+#: AddonPackShip.py:2296
+#, python-brace-format
+msgid ""
+"Release build — clean end-user package:\n"
+"• All core files ({core})\n"
+"• {readme} only (no other {md} files)\n"
+"• {mo} compiled translations only\n"
+"• {manifest} extras (if {manifest} present)\n"
+"\n"
+"⚠ Intentionally lossy — {po_dir} source files,\n"
+"{changelog}, dev notes are NOT included.\n"
+"Uses {manifest} if present."
+msgstr ""
+
+#: AddonPackShip.py:2313
+#, fuzzy
+msgid "Listings:"
+msgstr "Opret Lister"
+
+#: AddonPackShip.py:2326
+msgid "Multilingual"
+msgstr ""
+
+#: AddonPackShip.py:2329
+#, python-brace-format
+msgid ""
+"Off (default): listings are English-only, regardless of how many languages "
+"an addon has translations for.\n"
+"On: every {listing} that already exists is updated with the selected addon "
+"(translated where a translation exists, English otherwise). A new {listing} "
+"is created only when the name or description in the {gpr} of the addon is "
+"actually translated into that language."
+msgstr ""
+
+#: AddonPackShip.py:2353
+msgid "Duplicate into unverified/incompatible versions anyway"
+msgstr ""
+
+#: AddonPackShip.py:2356
+#, python-brace-format
+msgid ""
+"Off (default): a multi-version build skips duplicating the package into any "
+"Gramps version that the {gpr} of the addon does not demonstrably support (an "
+"explicit version-range gate that excludes it, or a hardcoded {target} naming "
+"a different one).\n"
+"On: duplicates into every checked version regardless. Nothing about the "
+"{gpr} itself is ever changed either way -- this only controls whether a "
+"mismatched version still gets a copy."
+msgstr ""
+
+#: AddonPackShip.py:2372
+msgid "Remove untranslated listings…"
+msgstr ""
+
+#: AddonPackShip.py:2375
+#, python-brace-format
+msgid ""
+"For each checked Gramps Version, find every {listing} whose names and "
+"descriptions are all identical to {en_listing} -- files that only repeat the "
+"English catalog -- and offer to delete them. The Addon Manager falls back to "
+"{en_listing} for any language without its own file. Files with any "
+"translated name or description are kept, and no {po_dir} or {locale_dir} "
+"translation files are touched."
+msgstr ""
+
+#: AddonPackShip.py:2392
+msgid "Maintenance:"
+msgstr ""
+
+#: AddonPackShip.py:2398
+msgid "Update Scripts…"
+msgstr ""
+
+#: AddonPackShip.py:2405
+msgid ""
+"Fetch the current Gramps 5.2+ packaging scripts from gramps-project/addons-"
+"source on GitHub, overwriting this tool's bundled copies (a timestamped "
+"backup is kept). Also offers to add a script for any newly released Gramps "
+"version not yet bundled here.\n"
+"This is the only way these files are ever changed — they are never edited "
+"automatically."
+msgstr ""
+
+#: AddonPackShip.py:2427
+msgid "Session Logs"
+msgstr ""
+
+#: AddonPackShip.py:2428
+msgid "Open the session logs folder."
+msgstr ""
+
+#: AddonPackShip.py:2435
+#, fuzzy
+msgid "Build"
+msgstr "Byg Først"
+
+#: AddonPackShip.py:2437
+msgid "Options"
+msgstr ""
+
+#: AddonPackShip.py:2802
+#, python-brace-format
+msgid "Will bump {} to {} on next build. Click to cancel."
+msgstr ""
+
+#: AddonPackShip.py:2810
+#, python-brace-format
+msgid "Click to flag {} for a patch version bump ({} → {}) on its next build."
+msgstr ""
+
+#: AddonPackShip.py:2920
+#, python-brace-format
+msgid ""
+"Open {} for {}\n"
+"\n"
+"File exists — will append a refreshed directory listing and open in your "
+"text editor.\n"
+"\n"
+"Path: {}"
+msgstr ""
+
+#: AddonPackShip.py:2926
+#, python-brace-format
+msgid ""
+"Create {} for {}\n"
+"\n"
+"File does not exist yet — will create it with a header and directory "
+"listing, then open in your text editor.\n"
+"\n"
+"Folder: {}"
+msgstr ""
+
+#: AddonPackShip.py:2997 AddonPackShip.py:3065
+#, python-brace-format
+msgid "Open the folder for {} in your file browser."
+msgstr ""
+
+#: AddonPackShip.py:3134
+msgid "selected version"
+msgstr ""
+
+#: AddonPackShip.py:3141
+msgid "Show all addons (clear listing filter)"
+msgstr ""
+
+#: AddonPackShip.py:3145
+#, python-brace-format
+msgid "Filter list to addons in {}'s listing"
+msgstr ""
+
+#: AddonPackShip.py:3153
+#, python-brace-format
+msgid "Open the {listing} of {version} for editing"
+msgstr ""
+
+#: AddonPackShip.py:3235
+msgid "Could Not Open File"
+msgstr ""
+
+#: AddonPackShip.py:3236
+#, python-brace-format
+msgid ""
+"Could not open {}:\n"
+"{}"
+msgstr ""
+
+#: AddonPackShip.py:3434
+#, python-brace-format
+msgid ""
+"<small>Found <b>{bundle_count}</b> bundles (<b>{plugin_count}</b> registered "
+"plugins) in your Gramps installation.</small>"
+msgstr ""
+
+#: AddonPackShip.py:3559
+msgid "make_addon.py not found in AddonPackShip directory"
+msgstr ""
+
+#: AddonPackShip.py:3653
+#, python-brace-format
+msgid ""
+"  Version not bumped for {}: no plain version string found in its "
+"registration"
+msgstr ""
+
+#: AddonPackShip.py:3658
+#, python-brace-format
+msgid "  Version bumped in {} ({}): {} → {}"
+msgstr ""
+
+#: AddonPackShip.py:3688
+#, python-brace-format
+msgid ""
+"  Skipped {version}: the {gpr} of this addon does not register under that "
+"version (its own version-range gate excludes it) — not duplicating a "
+"possibly-incompatible package. Re-run with the override to duplicate anyway "
+"if you know it is actually compatible."
+msgstr ""
+
+#: AddonPackShip.py:3699
+#, python-brace-format
+msgid ""
+"  Warning: duplicating for {version} anyway (forced) — the {gpr} of this "
+"addon does not register under that version."
+msgstr ""
+
+#: AddonPackShip.py:3715
+#, python-brace-format
+msgid ""
+"  Note: the {gpr} of {addon} has no version-range gate, so compatibility "
+"with {version} was not verified — only assumed. Confirm that the actual code "
+"of the addon supports that Gramps version before publishing."
+msgstr ""
+
+#: AddonPackShip.py:3736
+#, python-brace-format
+msgid "  Duplicated package for {}"
+msgstr ""
+
+#: AddonPackShip.py:3739
+#, python-brace-format
+msgid "  Could not duplicate package for {}: {}"
+msgstr ""
+
+#: AddonPackShip.py:3743
+#, python-brace-format
+msgid "  Warning: built package not found — nothing to duplicate for {}"
+msgstr ""
+
+#: AddonPackShip.py:4066
+msgid "Single Selection Required"
+msgstr ""
+
+#: AddonPackShip.py:4067
+#, fuzzy, python-brace-format
+msgid "Please select exactly one addon to edit its {manifest}."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at liste."
+
+#: AddonPackShip.py:4245
+#, python-brace-format
+msgid ""
+"{file} is ready for {addon}.\n"
+"\n"
+"Location:\n"
+"  {path}\n"
+"\n"
+"The file has been opened in your default text editor.\n"
+"\n"
+"The bottom of the file shows files not yet in the {manifest}\n"
+"(auto-included files like {auto} are omitted).\n"
+"Copy any lines you want to include into the body above."
+msgstr ""
+
+#: AddonPackShip.py:4263
+#, python-brace-format
+msgid ""
+"{file} is ready for {addon}.\n"
+"\n"
+"Location:\n"
+"  {path}\n"
+"\n"
+"Could not open editor automatically: {error}\n"
+"Please open the file manually."
+msgstr ""
+
+#: AddonPackShip.py:4279 AddonPackShip.py:4382 AddonPackShip.py:4448
+#: AddonPackShip.py:4463 AddonPackShip.py:4546 AddonPackShip.py:4602
 msgid "No Selection"
 msgstr "Intet Valgt"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4280
 msgid "Please select at least one addon to build."
 msgstr "Vælg venligst mindst ét tilføjelsesprogram til at bygge."
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4294
+#, fuzzy, python-brace-format
+msgid "Cannot build - the following addon(s) have malformed {gpr} files:"
+msgstr ""
+"Kan ikke bygge - følgende tilføjelsesprogram(mer) har "
+"fejlformaterede .gpr.py-filer:\n"
+"\n"
+
+#: AddonPackShip.py:4299 AddonPackShip.py:4483 AddonPackShip.py:4622
+msgid ""
+"\n"
+"\n"
+"Problem: These fields contain commas INSIDE quoted strings.\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"Problem: Disse felter indeholder kommaer INDE I citerede strenge.\n"
+"\n"
+
+#: AddonPackShip.py:4300 AddonPackShip.py:4484 AddonPackShip.py:4623
+msgid "Wrong:"
+msgstr ""
+
+#: AddonPackShip.py:4301 AddonPackShip.py:4485 AddonPackShip.py:4624
+msgid "Correct:"
+msgstr ""
+
+#: AddonPackShip.py:4303 AddonPackShip.py:4487 AddonPackShip.py:4626
+#, fuzzy, python-brace-format
+msgid "Please fix the {gpr} file(s) and try again."
+msgstr "Ret venligst .gpr.py-filen(erne) og prøv igen."
+
+#: AddonPackShip.py:4307 AddonPackShip.py:4491 AddonPackShip.py:4630
+#, fuzzy, python-brace-format
+msgid "Malformed {gpr} File"
+msgstr "Fejlformateret .gpr.py-fil"
+
+#: AddonPackShip.py:4327
+#, fuzzy
+msgid "Translation:"
+msgstr "Kompilér Oversættelser"
+
+#: AddonPackShip.py:4330
+msgid "Choose a language"
+msgstr ""
+
+#: AddonPackShip.py:4347
+#, python-brace-format
+msgid ""
+"Language of the translation to edit. The file name uses this code: {po_file}"
+msgstr ""
+
+#: AddonPackShip.py:4351
+#, fuzzy
+msgid "Edit translation…"
+msgstr "Kompilér Oversættelser"
+
+#: AddonPackShip.py:4353
+#, python-brace-format
+msgid ""
+"For each selected addon, open {po_file} in the default editor for {po_ext} "
+"files (for example Poedit or a text editor). The file is created from {pot} "
+"when it does not exist yet, and new strings from {pot} are merged into an "
+"existing file.\n"
+"After saving, click Compile Translations, then restart Gramps to see the "
+"result."
+msgstr ""
+
+#: AddonPackShip.py:4383
+#, fuzzy
+msgid "Please select at least one addon to translate."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at liste."
+
+#: AddonPackShip.py:4389
+msgid "Open Many Files?"
+msgstr ""
+
+#: AddonPackShip.py:4390
+#, python-brace-format
+msgid "This opens {count} translation files, one for each selected addon."
+msgstr ""
+
+#: AddonPackShip.py:4392
+msgid "Open them"
+msgstr ""
+
+#: AddonPackShip.py:4401
+msgid "Missing make_addon.py"
+msgstr ""
+
+#: AddonPackShip.py:4402
+msgid "make_addon.py was not found next to this tool."
+msgstr ""
+
+#: AddonPackShip.py:4420
+msgid ""
+"Next steps: translate and save each file, then click Compile Translations."
+msgstr ""
+
+#: AddonPackShip.py:4423
+msgid ""
+"⚠ Restart Gramps to see the new translations. Gramps keeps the translations "
+"cached until it restarts. Reloading the plugin is not enough to see updated "
+"strings."
+msgstr ""
+
+#: AddonPackShip.py:4426
+#, fuzzy
+msgid "Edit Translation"
+msgstr "Kompilér Oversættelser"
+
+#: AddonPackShip.py:4449
 msgid "Please select at least one addon to compile."
 msgstr "Vælg venligst mindst ét tilføjelsesprogram til at kompilere."
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4464
 msgid "Please select at least one addon to list."
 msgstr "Vælg venligst mindst ét tilføjelsesprogram til at liste."
 
-#: AddonPackShip.py
-msgid "Please select at least one addon to clean."
-msgstr "Vælg venligst mindst ét tilføjelsesprogram til at rydde op."
+#: AddonPackShip.py:4478
+#, fuzzy, python-brace-format
+msgid ""
+"Cannot create listing - the following addon(s) have malformed {gpr} files:"
+msgstr ""
+"Kan ikke oprette liste - følgende tilføjelsesprogram(mer) har "
+"fejlformaterede .gpr.py-filer:\n"
+"\n"
 
-#: AddonPackShip.py
-msgid "Please select at least one addon to package."
-msgstr "Vælg venligst mindst ét tilføjelsesprogram til at pakke."
-
-#: AddonPackShip.py
-msgid "Malformed .gpr.py File"
-msgstr "Fejlformateret .gpr.py-fil"
-
-#: AddonPackShip.py
-msgid "Cannot build - the following addon(s) have malformed .gpr.py files:\n\n"
-msgstr "Kan ikke bygge - følgende tilføjelsesprogram(mer) har fejlformaterede .gpr.py-filer:\n\n"
-
-#: AddonPackShip.py
-msgid "Cannot create listing - the following addon(s) have malformed .gpr.py files:\n\n"
-msgstr "Kan ikke oprette liste - følgende tilføjelsesprogram(mer) har fejlformaterede .gpr.py-filer:\n\n"
-
-#: AddonPackShip.py
-msgid "Cannot package - the following addon(s) have malformed .gpr.py files:\n\n"
-msgstr "Kan ikke pakke - følgende tilføjelsesprogram(mer) har fejlformaterede .gpr.py-filer:\n\n"
-
-#: AddonPackShip.py
-msgid "\n\nProblem: These fields contain commas INSIDE quoted strings.\n\n"
-msgstr "\n\nProblem: Disse felter indeholder kommaer INDE I citerede strenge.\n\n"
-
-#: AddonPackShip.py
-msgid "Wrong:  authors = [\"Name1, Name2\"]\n"
-msgstr "Forkert:  authors = [\"Navn1, Navn2\"]\n"
-
-#: AddonPackShip.py
-msgid "Correct: authors = [\"Name1\", \"Name2\"]\n\n"
-msgstr "Korrekt: authors = [\"Navn1\", \"Navn2\"]\n\n"
-
-#: AddonPackShip.py
-msgid "Please fix the .gpr.py file(s) and try again."
-msgstr "Ret venligst .gpr.py-filen(erne) og prøv igen."
-
-#: AddonPackShip.py
+#: AddonPackShip.py:4515
 msgid "Missing Package Files"
 msgstr "Manglende Pakke-filer"
 
-#: AddonPackShip.py
-msgid "The following addons don't have .addon.tgz files yet:\n\n{}\n\nListings require built packages. Would you like to:\n• Build these addons first (recommended), or\n• Try creating listings anyway (may result in empty entries)"
-msgstr "Følgende tilføjelsesprogrammer har endnu ikke .addon.tgz-filer:\n\n{}\n\nLister kræver byggede pakker. Vil du:\n• Bygge disse tilføjelsesprogrammer først (anbefalet), eller\n• Forsøge at oprette lister alligevel (kan resultere i tomme poster)"
+#: AddonPackShip.py:4517
+#, fuzzy, python-brace-format
+msgid ""
+"The following addons do not have {tgz} files yet:\n"
+"\n"
+"{addons}\n"
+"\n"
+"Listings require built packages. Would you like to:\n"
+"• Build these addons first (recommended), or\n"
+"• Try creating listings anyway (may result in empty entries)"
+msgstr ""
+"Følgende tilføjelsesprogrammer har endnu ikke .addon.tgz-filer:\n"
+"\n"
+"{}\n"
+"\n"
+"Lister kræver byggede pakker. Vil du:\n"
+"• Bygge disse tilføjelsesprogrammer først (anbefalet), eller\n"
+"• Forsøge at oprette lister alligevel (kan resultere i tomme poster)"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4525
 msgid "Build First"
 msgstr "Byg Først"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4526
 msgid "Create Anyway"
 msgstr "Opret Alligevel"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4547
+msgid "Please select at least one addon to clean."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at rydde op."
+
+#: AddonPackShip.py:4558
 msgid "Clean Selected Addons?"
 msgstr "Ryd Op i Valgte Tilføjelsesprogrammer?"
 
-#: AddonPackShip.py
-msgid "This will remove Python cache files from:\n\n{}\n\n═══════════════════════════════════════════\nWILL BE REMOVED (Python regenerates these):\n═══════════════════════════════════════════\n• __pycache__/ directories\n• *.pyc and *.pyo files (bytecode)\n• *~ backup files (editor temps)\n\n═══════════════════════════════════════════\nWILL BE PRESERVED (your work):\n═══════════════════════════════════════════\n• locale/ (compiled translations - needed!)\n• po/template.pot (translator reference)\n• po/*.po (translation source files)\n• All source code and data files\n\nPython will automatically regenerate cache files\nwhen you restart Gramps.\n\nContinue with Clean?"
-msgstr "Dette fjerner Python-cache-filer fra:\n\n{}\n\n═══════════════════════════════════════════\nVIL BLIVE FJERNET (Python regenererer disse):\n═══════════════════════════════════════════\n• __pycache__/-mapper\n• *.pyc- og *.pyo-filer (bytekode)\n• *~-sikkerhedskopifiler (editor-midlertidige)\n\n═══════════════════════════════════════════\nVIL BLIVE BEVARET (dit arbejde):\n═══════════════════════════════════════════\n• locale/ (kompilerede oversættelser - nødvendige!)\n• po/template.pot (oversætter-reference)\n• po/*.po (oversættelses-kildefiler)\n• Al kildekode og datafiler\n\nPython regenererer automatisk cache-filer\nnår Gramps genstartes.\n\nFortsæt med at rydde op?"
+#: AddonPackShip.py:4560
+#, fuzzy, python-brace-format
+msgid ""
+"This will remove Python cache files from:\n"
+"\n"
+"{addons}\n"
+"\n"
+"═══════════════════════════════════════════\n"
+"WILL BE REMOVED (Python regenerates these):\n"
+"═══════════════════════════════════════════\n"
+"• {pycache} directories\n"
+"• {pyc} files (bytecode)\n"
+"• {backup} backup files (editor temps)\n"
+"\n"
+"═══════════════════════════════════════════\n"
+"WILL BE PRESERVED (your work):\n"
+"═══════════════════════════════════════════\n"
+"• {locale_dir} (compiled translations - needed!)\n"
+"• {pot} (translator reference)\n"
+"• {po} (translation source files)\n"
+"• All source code and data files\n"
+"\n"
+"Python will automatically regenerate cache files\n"
+"when you restart Gramps.\n"
+"\n"
+"Continue with Clean?"
+msgstr ""
+"Dette fjerner Python-cache-filer fra:\n"
+"\n"
+"{}\n"
+"\n"
+"═══════════════════════════════════════════\n"
+"VIL BLIVE FJERNET (Python regenererer disse):\n"
+"═══════════════════════════════════════════\n"
+"• __pycache__/-mapper\n"
+"• *.pyc- og *.pyo-filer (bytekode)\n"
+"• *~-sikkerhedskopifiler (editor-midlertidige)\n"
+"\n"
+"═══════════════════════════════════════════\n"
+"VIL BLIVE BEVARET (dit arbejde):\n"
+"═══════════════════════════════════════════\n"
+"• locale/ (kompilerede oversættelser - nødvendige!)\n"
+"• po/template.pot (oversætter-reference)\n"
+"• po/*.po (oversættelses-kildefiler)\n"
+"• Al kildekode og datafiler\n"
+"\n"
+"Python regenererer automatisk cache-filer\n"
+"når Gramps genstartes.\n"
+"\n"
+"Fortsæt med at rydde op?"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4580
 msgid "Yes, Clean Cache"
 msgstr "Ja, Ryd Cache Op"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4581 AddonPackShip.py:4671
 msgid "No, Cancel"
 msgstr "Nej, Annullér"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4603
+msgid "Please select at least one addon to package."
+msgstr "Vælg venligst mindst ét tilføjelsesprogram til at pakke."
+
+#: AddonPackShip.py:4617
+#, fuzzy, python-brace-format
+msgid "Cannot package - the following addon(s) have malformed {gpr} files:"
+msgstr ""
+"Kan ikke pakke - følgende tilføjelsesprogram(mer) har "
+"fejlformaterede .gpr.py-filer:\n"
+"\n"
+
+#: AddonPackShip.py:4643
+msgid "Δ Release Build — Intentionally Lossy"
+msgstr ""
+
+#: AddonPackShip.py:4645
+#, python-brace-format
+msgid ""
+"You are about to create a RELEASE package for:\n"
+"\n"
+"{addons}\n"
+"\n"
+"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+"WILL BE INCLUDED:\n"
+"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+"• All core files ({core})\n"
+"• {readme} (if present)\n"
+"• Compiled translations ({mo})\n"
+"• {manifest} extras (if {manifest} present)\n"
+"\n"
+"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+"INTENTIONALLY EXCLUDED:\n"
+"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+"• {po} translation source files\n"
+"• {pot}\n"
+"• {changelog} and other {md} files\n"
+"• {manifest_beta} and development files\n"
+"\n"
+"⚠  This package is NOT suitable for translators\n"
+"   or beta testers who need source files.\n"
+"\n"
+"Use β Beta mode for development sharing.\n"
+"\n"
+"Continue with Release build?"
+msgstr ""
+
+#: AddonPackShip.py:4670
+#, fuzzy
+msgid "Yes, Build Release"
+msgstr "Byg Valgte"
+
+#: AddonPackShip.py:4732 AddonPackShip.py:4746 AddonPackShip.py:4781
+msgid "Remove untranslated listings"
+msgstr ""
+
+#: AddonPackShip.py:4733
+msgid "This needs a newer make_addon.py in the AddonPackShip folder."
+msgstr ""
+
+#: AddonPackShip.py:4747
+msgid ""
+"No untranslated language listings were found for the checked Gramps Versions."
+msgstr ""
+
+#: AddonPackShip.py:4756
+msgid "Remove untranslated listings?"
+msgstr ""
+
+#: AddonPackShip.py:4758
+#, python-brace-format
+msgid ""
+"These language listings contain no translated names or descriptions -- every "
+"entry is identical to {en_listing}:\n"
+"\n"
+"{files}\n"
+"\n"
+"The Addon Manager uses {en_listing} for any language without its own file. "
+"Delete them?"
+msgstr ""
+
+#: AddonPackShip.py:4764
+msgid "Delete"
+msgstr ""
+
+#: AddonPackShip.py:4777
+#, python-brace-format
+msgid "Removed {} file(s)."
+msgstr ""
+
+#: AddonPackShip.py:4779
+msgid "Could not remove:"
+msgstr ""
+
+#: AddonPackShip.py:4809
+msgid "Preparing..."
+msgstr ""
+
+#: AddonPackShip.py:4852 AddonPackShip.py:4984
+#, python-brace-format
+msgid "Building {}"
+msgstr ""
+
+#: AddonPackShip.py:4865 AddonPackShip.py:5026
+#, python-brace-format
+msgid "Listing {} for {}"
+msgstr ""
+
+#: AddonPackShip.py:4886
+#, python-brace-format
 msgid "{} completed:"
 msgstr "{} fuldført:"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4896 AddonPackShip.py:5081
+#, python-brace-format
 msgid "{} Complete"
 msgstr "{} Fuldført"
 
-#: AddonPackShip.py
+#: AddonPackShip.py:4931
 msgid "OK"
 msgstr "OK"
 
-#: AddonPackShip.py
-msgid "Pack and Ship Complete"
-msgstr "Pakning og Forsendelse Fuldført"
+#: AddonPackShip.py:5061
+#, python-brace-format
+msgid "Build mode: {}"
+msgstr ""
 
-#: AddonPackShip.py
-msgid "\n\nYour addons are ready to share!"
-msgstr "\n\nDine tilføjelsesprogrammer er klar til at dele!"
+#: AddonPackShip.py:5071
+msgid "📁 Output location(s):"
+msgstr ""
 
-#: AddonPackShip.py
-msgid "\n\n📁 Output location:\n  {}/download/\n  {}/listings/"
-msgstr "\n\n📁 Outputplacering:\n  {}/download/\n  {}/listings/"
+#: AddonPackShip.py:5078
+#, fuzzy
+msgid "Your addons are ready to share!"
+msgstr ""
+"\n"
+"\n"
+"Dine tilføjelsesprogrammer er klar til at dele!"
+
+#: AddonPackShip.py:5184
+msgid "No Help URL"
+msgstr ""
+
+#: AddonPackShip.py:5186
+#, python-brace-format
+msgid "This tool has no {field} registered in its {gpr}."
+msgstr ""
+
+#: AddonPackShip.py:5198
+msgid "Could Not Open Browser"
+msgstr ""
+
+#: AddonPackShip.py:5199
+#, python-brace-format
+msgid "Could not open {}"
+msgstr ""
+
+#: AddonPackShip.py:5238
+#, python-brace-format
+msgid ""
+"No session logs yet — nothing has been run in this session:\n"
+"{}"
+msgstr ""
