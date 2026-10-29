@@ -23,6 +23,17 @@
     "h": "Addon:Biography_Quickview#Complete_Biography"
   },
   {
+    "n": "Citation Date Modifiers",
+    "i": "HasDateModifiersCitation",
+    "t": 13,
+    "d": "Filter rule: valid dates by Type and Quality, or invalid (Text only) dates by text.",
+    "v": "0.0.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "DateModifiersRule.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DateModifiersRule"
+  },
+  {
     "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
     "i": "ex_csv_enhanced",
     "t": 4,
@@ -80,6 +91,17 @@
     "z": "EnvironmentInspector.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
     "a": 0
+  },
+  {
+    "n": "Event Date Modifiers",
+    "i": "HasDateModifiersEvent",
+    "t": 13,
+    "d": "Filter rule: valid dates by Type and Quality, or invalid (Text only) dates by text.",
+    "v": "0.0.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "DateModifiersRule.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DateModifiersRule"
   },
   {
     "n": "Extension : Empaqueter et Expédier",
@@ -180,6 +202,17 @@
     "s": 3,
     "z": "MarkdownBased.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/MarkdownBased"
+  },
+  {
+    "n": "Media Date Modifiers",
+    "i": "HasDateModifiersMedia",
+    "t": 13,
+    "d": "Filter rule: valid dates by Type and Quality, or invalid (Text only) dates by text.",
+    "v": "0.0.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "DateModifiersRule.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DateModifiersRule"
   },
   {
     "n": "Metadata Inspector",
