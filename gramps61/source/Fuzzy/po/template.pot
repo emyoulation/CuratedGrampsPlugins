@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Translation template for the 0.5.6 Fuzzy Matching gramplet addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Fuzzy Matching package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Fuzzy Matching 0.5.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 00:10-0500\n"
+"POT-Creation-Date: 2026-10-29 01:29-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,104 +17,134 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.gpr.py:33
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.gpr.py:46
+#: FuzzyMatchLookupWindow.py:125
+msgid "Fuzzy Match Lookup"
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:223 FuzzyMatchingGramplet.py:446
+msgid "Surname:"
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:229 FuzzyMatchingGramplet.py:450
+msgid "Encoding system:"
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:243
+msgid "Given name contains:"
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:248
+msgid ""
+"Optional. Narrows the right-hand list to people whose given name contains "
+"this text - not a phonetic match, just a plain filter on top of the surname "
+"match."
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:283 FuzzyMatchingGramplet.py:573
+msgid "Surname"
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:296 FuzzyMatchingGramplet.py:608
+msgid "Person"
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:527
+msgid "Indexing…"
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:736 FuzzyMatchingGramplet.py:1464
+#, python-brace-format
+msgid "{surname} ({count})"
+msgstr ""
+
+#: FuzzyMatchingGramplet.gpr.py:33 FuzzyMatchingGramplet.gpr.py:46
 msgid "Fuzzy Matching"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.gpr.py:35
+#: FuzzyMatchingGramplet.gpr.py:35
 msgid ""
 "Gramplet for finding people in the Family Tree whose surname phonetically "
 "matches a given surname, using a cached per-tree index so it stays fast on "
 "large Family Trees"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:348
-msgid "Surname:"
+#: FuzzyMatchingGramplet.gpr.py:78
+msgid "Fuzzy Match API"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:352
-msgid "Encoding system:"
+#: FuzzyMatchingGramplet.gpr.py:80
+msgid ""
+"Library for other addons: phonetic surname matching (fuzzy_match_index.py), "
+"person-display formatting (fuzzy_match_display.py), and a standalone lookup "
+"window (FuzzyMatchLookupWindow.py) for a quick 'does someone like this "
+"already exist' check from another plugin. See FuzzyMatchAPI.md in this "
+"addon's own folder for the calling convention."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:362
+#: FuzzyMatchingGramplet.py:464
 msgid "Code(s):"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:380
+#: FuzzyMatchingGramplet.py:482
 msgid "Matches:"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:420
+#: FuzzyMatchingGramplet.py:516
 msgid "Code"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:453
-msgid "Surname"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:482
-msgid "Person"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:560
+#: FuzzyMatchingGramplet.py:708
 msgid "Select a person from the whole Family Tree"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:581
-msgid "Open the documentation for this gramplet"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:585
-msgid "Help"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:867
+#: FuzzyMatchingGramplet.py:1034
 msgid "Select a person"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:937
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:945
-msgid "surnames"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:969
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:979
-msgid "people"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1027
+#: FuzzyMatchingGramplet.py:1309
 #, python-brace-format
 msgid "Indexing {phase}… {done} / {total}"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1032
+#: FuzzyMatchingGramplet.py:1314
 #, python-brace-format
 msgid "Indexing {phase}…"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1114
+#: FuzzyMatchingGramplet.py:1371
+#, python-format
+msgid ""
+"The view uses a phonetic system that this list does not offer (for example "
+"None). Matches here use %s. Choose a system to use it here and in the view."
+msgstr ""
+
+#: FuzzyMatchingGramplet.py:1455
+#, python-brace-format
+msgid "All {code} ({count})"
+msgstr ""
+
+#: FuzzyMatchingGramplet.py:1471
 #, python-brace-format
 msgid "({count})"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1175
+#: FuzzyMatchingGramplet.py:1673
 #, python-brace-format
 msgid "No filter available for {algorithm}"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1179
+#: FuzzyMatchingGramplet.py:1677
 msgid ""
 "This Encoding system does not have a matching People filter rule yet, so a "
 "filter cannot be created from it."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1186
+#: FuzzyMatchingGramplet.py:1684
 #, python-brace-format
 msgid "Fuzzy match: {surname} ({algorithm})"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Fuzzy/FuzzyMatchingGramplet.py:1197
+#: FuzzyMatchingGramplet.py:1702
 #, python-format
 msgid "Created on %(year)4d/%(month)02d/%(day)02d by Fuzzy Matching gramplet"
 msgstr ""

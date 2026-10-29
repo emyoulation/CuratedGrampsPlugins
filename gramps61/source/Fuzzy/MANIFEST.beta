@@ -1,0 +1,11 @@
+# MANIFEST.beta for Fuzzy
+
+Fuzzy/*.md
+Fuzzy/*.py
+Fuzzy/locale/*
+Fuzzy/media/*
+Fuzzy/po/*
+Fuzzy/test/*
+Fuzzy/MANIFEST
+Fuzzy/MANIFEST.beta
+

@@ -1,0 +1,11 @@
+# MANIFEST.beta for FuzzyGroupingView
+
+FuzzyGroupingView/media/*
+FuzzyGroupingView/test/*
+FuzzyGroupingView/po/*
+FuzzyGroupingView/locale/*
+FuzzyGroupingView/*.md
+FuzzyGroupingView/MANIFEST
+FuzzyGroupingView/MANIFEST.beta
+
+

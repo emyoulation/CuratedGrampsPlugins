@@ -144,6 +144,7 @@ via :meth:`main`, and wiring the database's signals to it.
 # ------------------------
 import contextlib
 import logging
+import weakref
 import pickle
 import time
 from bisect import bisect_left
@@ -338,10 +339,61 @@ class FuzzyMatchingGramplet(Gramplet):
         # see db_changed, main, cb_person_changed, cb_person_deleted,
         # cb_person_rebuild, and _reset_phonetic_index.
         self._index = FuzzyMatchIndex(self.dbstate.db)
+        # Weak reference to a host view sharing its phonetic system (the
+        # Fuzzy Grouping view); None when docked anywhere else.
+        self._host_view_ref = None
 
         self.gui.WIDGET = self.build_gui()
         self.gui.get_container_widget().remove(self.gui.textview)
         self.gui.get_container_widget().add(self.gui.WIDGET)
+
+        # Docked in a view that shares its phonetic system? Follow it both
+        # ways. Duck-typed (PHONETIC_SYSTEM_SYNC protocol): no import.
+        view = getattr(self.gui, "view", None)
+        if getattr(view, "PHONETIC_SYSTEM_SYNC", 0) >= 1:
+            self._host_view_ref = weakref.ref(view)
+            view.connect_phonetic_system(self.cb_host_system_changed)
+            # no re-index here: the normal first update() indexes with
+            # whatever the combo shows
+            self._select_algorithm(view.phonetic_system_id())
+            self._update_algorithm_tooltip()
+
+    def _host_view(self):
+        """The host view followed for the phonetic system, or None."""
+        return self._host_view_ref() if self._host_view_ref else None
+
+    def cb_host_system_changed(self, system_id: str) -> None:
+        """
+        The host view changed phonetic system: select the same one here
+        and re-index, without sending the change back to the view. When
+        this list does not offer it (for example None), the list shows no
+        selection, so that choosing any system here, the default included,
+        is a real change that reaches the view.
+
+        :param system_id: The id of the system the view now uses.
+        """
+        if self._select_algorithm(system_id):
+            self._algorithm_changed()
+
+    def _select_algorithm(self, system_id: str) -> bool:
+        """
+        Select system_id without the "changed" handler. When it is not
+        offered: no selection while docked in a host view (matching then
+        uses the default system, see :meth:`_current_algorithm`), else the
+        default system. Returns True if the selection changed.
+        """
+        target = system_id
+        if target not in ALGORITHM_LABELS:
+            target = None if self._host_view() is not None else DEFAULT_ALGORITHM
+        if self.algo_combo.get_active_id() == target:
+            return False
+        self.algo_combo.handler_block(self._algo_changed_id)
+        if target is None:
+            self.algo_combo.set_active(-1)
+        else:
+            self.algo_combo.set_active_id(target)
+        self.algo_combo.handler_unblock(self._algo_changed_id)
+        return True
 
     def on_load(self) -> None:
         """
@@ -1268,24 +1320,37 @@ class FuzzyMatchingGramplet(Gramplet):
         current choice when it is still available; otherwise switch to
         the default system and re-index.
         """
-        current = self.algo_combo.get_active_id()
+        before = self._current_algorithm()
+        host = self._host_view()
+        wanted = host.phonetic_system_id() if host is not None else before
         self.algo_combo.handler_block(self._algo_changed_id)
         self.algo_combo.remove_all()
         for algorithm_id, display_name in ALGORITHM_LABELS.items():
             self.algo_combo.append(algorithm_id, _(display_name))
-        keep = current if current in ALGORITHM_LABELS else DEFAULT_ALGORITHM
-        self.algo_combo.set_active_id(keep)
         self.algo_combo.handler_unblock(self._algo_changed_id)
-        if keep != current:
-            self.cb_algorithm_changed(self.algo_combo)
+        self._select_algorithm(wanted)  # no selection when hosted and not offered
+        if self._current_algorithm() != before:
+            self._algorithm_changed()
+        else:
+            self._update_algorithm_tooltip()
 
     def cb_algorithm_changed(self, _combo: Gtk.ComboBoxText) -> None:
         """
         Update the tooltip for the newly-selected algorithm and
         re-index in the background.
 
+        Docked in a view that shares its phonetic system, the choice is
+        also sent to that view.
+
         :param _combo: The algorithm combo box that emitted the signal.
         """
+        host = self._host_view()
+        if host is not None:
+            host.set_phonetic_system(self._current_algorithm(), source=self)
+        self._algorithm_changed()
+
+    def _algorithm_changed(self) -> None:
+        """Update the tooltip and re-index for the selected algorithm."""
         self._update_algorithm_tooltip()
         if not self.dbstate.is_open():
             return
@@ -1300,6 +1365,16 @@ class FuzzyMatchingGramplet(Gramplet):
         dialog. A no-op, leaving whatever tooltip was already there,
         if the current algorithm has no description on file.
         """
+        if self.algo_combo.get_active_id() is None and self._host_view() is not None:
+            self.algo_combo.set_tooltip_text(
+                _(
+                    "The view uses a phonetic system that this list does not "
+                    "offer (for example None). Matches here use %s. Choose a "
+                    "system to use it here and in the view."
+                )
+                % _(ALGORITHM_LABELS.get(DEFAULT_ALGORITHM, DEFAULT_ALGORITHM))
+            )
+            return
         description = ALGORITHM_DESCRIPTIONS.get(self._current_algorithm())
         if description:
             self.algo_combo.set_tooltip_text(_(description))

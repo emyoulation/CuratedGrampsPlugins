@@ -1,4 +1,4 @@
-# Translation template for the 0.1.0 Fuzzy Grouping view addon for Gramps.
+# Translation template for the 0.2.0 Fuzzy Grouping view addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Fuzzy Grouping package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Fuzzy Grouping 0.1.0\n"
+"Project-Id-Version: Fuzzy Grouping 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 09:48-0500\n"
+"POT-Creation-Date: 2026-10-29 00:20-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,99 +17,154 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: FuzzyGrouping.gpr.py:32 fuzzygroupingview.py:452 fuzzygroupingview.py:744
+#: FuzzyGrouping.gpr.py:41 fuzzygroupingview.py:1338 fuzzygroupingview.py:1727
+#: fuzzygroupingview.py:1918
 msgid "Fuzzy Grouping"
 msgstr ""
 
-#: FuzzyGrouping.gpr.py:34
+#: FuzzyGrouping.gpr.py:43
 msgid ""
 "The view showing all people in the Family Tree grouped by phonetically "
 "similar family names"
 msgstr ""
 
-#: FuzzyGrouping.gpr.py:45
+#: FuzzyGrouping.gpr.py:52
 msgid "People"
 msgstr ""
 
-#: fuzzygroupingview.py:209
+#: fuzzygroupingview.py:225
+msgid ""
+"Fuzzy Grouping: the last index build did not finish, so subsorting is off. "
+"To turn it on again, use Configure, Subsorting tab."
+msgstr ""
+
+#: fuzzygroupingview.py:271
+msgid "None"
+msgstr ""
+
+#: fuzzygroupingview.py:272
 msgid "Soundex"
 msgstr ""
 
-#: fuzzygroupingview.py:326
+#: fuzzygroupingview.py:302
+msgid ","
+msgstr ""
+
+#: fuzzygroupingview.py:528
 msgid "No documentation available"
 msgstr ""
 
-#: fuzzygroupingview.py:327
+#: fuzzygroupingview.py:529
 msgid "This plugin has neither a README.md nor a registered help_url."
 msgstr ""
 
-#: fuzzygroupingview.py:361
+#: fuzzygroupingview.py:576
 msgid "View the ReadMe markdown docs for the Fuzzy Grouping person view mode"
 msgstr ""
 
-#: fuzzygroupingview.py:362
+#: fuzzygroupingview.py:578
 msgid "Browse to the Help URL for the Fuzzy Grouping person view mode"
 msgstr ""
 
-#: fuzzygroupingview.py:455
-msgid "Building the fuzzy grouping index"
+#: fuzzygroupingview.py:924
+msgid ""
+"Fuzzy Grouping: the index build was cancelled, so subsorting is off. To turn "
+"it on again, use Configure, Subsorting tab."
 msgstr ""
 
-#: fuzzygroupingview.py:628
+#: fuzzygroupingview.py:1015
+msgid "Subsorting people with equal sort values"
+msgstr ""
+
+#: fuzzygroupingview.py:1193 fuzzygroupingview.py:2252
+#: fuzzygroupingview.py:2355
+msgid "Name format"
+msgstr ""
+
+#: fuzzygroupingview.py:1296
+msgid "Grouping people"
+msgstr ""
+
+#: fuzzygroupingview.py:1573
 msgid "Display Name Editor"
 msgstr ""
 
-#: fuzzygroupingview.py:685
-#, python-format
-msgid "Default: %s"
-msgstr ""
-
-#: fuzzygroupingview.py:725
+#: fuzzygroupingview.py:1682
 msgid "Grouping"
 msgstr ""
 
-#: fuzzygroupingview.py:875
+#: fuzzygroupingview.py:1903
+msgid "Updating display..."
+msgstr ""
+
+#: fuzzygroupingview.py:1922
+msgid "Opening the groups"
+msgstr ""
+
+#: fuzzygroupingview.py:2132
 msgid "Subsorting"
 msgstr ""
 
-#: fuzzygroupingview.py:883
+#: fuzzygroupingview.py:2145
 msgid "Grouping:"
 msgstr ""
 
-#: fuzzygroupingview.py:884
-msgid "Fuzzy grouping ID"
-msgstr ""
-
-#: fuzzygroupingview.py:885
+#: fuzzygroupingview.py:2146
 msgid "Sample Surname"
 msgstr ""
 
-#: fuzzygroupingview.py:894
+#: fuzzygroupingview.py:2148
+msgid "Fuzzy grouping ID"
+msgstr ""
+
+#: fuzzygroupingview.py:2160
+msgid "Fuzzy (Phonetic encoding) system:"
+msgstr ""
+
+#: fuzzygroupingview.py:2164
+msgid "The phonetic system used to group people; None groups on exact surnames"
+msgstr ""
+
+#: fuzzygroupingview.py:2179
 #, python-format
 msgid "Tree View: first column \"%s\" cannot be changed"
 msgstr ""
 
-#: fuzzygroupingview.py:918
+#: fuzzygroupingview.py:2252
 #, python-format
 msgid "%s: "
 msgstr ""
 
-#: fuzzygroupingview.py:918 fuzzygroupingview.py:961
-msgid "Name format"
-msgstr ""
-
-#: fuzzygroupingview.py:924
+#: fuzzygroupingview.py:2261
 msgid "Drag and drop, or edit the numbers, to change the subsort order"
 msgstr ""
 
-#: fuzzygroupingview.py:944
+#: fuzzygroupingview.py:2282
+msgid "Use the whole list (when off, only number 1 is used)"
+msgstr ""
+
+#: fuzzygroupingview.py:2287
+msgid ""
+"Turned off by itself when a build is cancelled or does not finish. Number 1 "
+"alone is the fastest."
+msgstr ""
+
+#: fuzzygroupingview.py:2320
 msgid "Order"
 msgstr ""
 
-#: fuzzygroupingview.py:947
+#: fuzzygroupingview.py:2323
 msgid "Column Name"
 msgstr ""
 
-#: fuzzygroupingview.py:1081
-msgid "Select the phonetic system used to group people"
+#: fuzzygroupingview.py:2547
+msgid "Expand all Nodes"
+msgstr ""
+
+#: fuzzygroupingview.py:2551
+msgid "Collapse all Nodes"
+msgstr ""
+
+#: fuzzygroupingview.py:2554
+msgid "Grouping (Phonetic encoding)"
 msgstr ""

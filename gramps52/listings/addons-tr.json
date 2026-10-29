@@ -98,11 +98,11 @@
     "i": "Flat Filter",
     "t": 10,
     "d": "Gramplet providing a person filter on relationships, with a choice of phonetic matching systems",
-    "v": "2.0.2",
+    "v": "2.0.3",
     "g": "5.2",
     "s": 3,
     "z": "FlatFilter.addon.tgz",
-    "h": "Addon:FlatFilter"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/FlatFilter"
   },
   {
     "n": "Flat Filter rule",
@@ -112,7 +112,8 @@
     "v": "0.0.1",
     "g": "5.2",
     "s": 3,
-    "z": "FlatFilter.addon.tgz"
+    "z": "FlatFilter.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/FlatFilter/DefineFilter.md"
   },
   {
     "n": "Fotoğraf Etiketleme",
@@ -130,7 +131,7 @@
     "i": "fuzzygroupingview",
     "t": 8,
     "d": "The view showing all people in the Family Tree grouped by phonetically similar family names",
-    "v": "0.1.2",
+    "v": "0.2.0",
     "g": "5.2",
     "s": 3,
     "z": "FuzzyGroupingView.addon.tgz",
@@ -141,7 +142,7 @@
     "i": "Fuzzy Match API",
     "t": 6,
     "d": "Library for other addons: phonetic surname matching (fuzzy_match_index.py), person-display formatting (fuzzy_match_display.py), and a standalone lookup window (FuzzyMatchLookupWindow.py) for a quick 'does someone like this already exist' check from another plugin. See FuzzyMatchAPI.md in this addon's own folder for the calling convention.",
-    "v": "0.5.2",
+    "v": "0.5.3",
     "g": "5.2",
     "s": 3,
     "z": "Fuzzy.addon.tgz"
@@ -151,7 +152,7 @@
     "i": "Fuzzy Matching",
     "t": 10,
     "d": "Gramplet for finding people in the Family Tree whose surname phonetically matches a given surname, using a cached per-tree index so it stays fast on large Family Trees",
-    "v": "0.5.5",
+    "v": "0.5.6",
     "g": "5.2",
     "s": 3,
     "z": "Fuzzy.addon.tgz",
