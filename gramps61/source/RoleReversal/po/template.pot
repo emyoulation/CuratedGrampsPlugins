@@ -1,0 +1,68 @@
+# Translation template for the 1.0.0 Person Role Reversal filter rule addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Person Role Reversal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Person Role Reversal 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-29 10:55-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: RoleReversalRule.gpr.py:31
+msgid "Person Role Reversal"
+msgstr ""
+
+#: RoleReversalRule.gpr.py:32
+msgid "Family Role Reversal"
+msgstr ""
+
+#: RoleReversalRule.gpr.py:39
+msgid ""
+"Filter rule: reverse lookup of shared events where others hold a specified "
+"role."
+msgstr ""
+
+#: RoleReversalRule.py:45
+msgid "Shared with role:"
+msgstr ""
+
+#: RoleReversalRule.py:82
+msgid "any role"
+msgstr ""
+
+#: RoleReversalRule.py:85
+msgid ""
+"The role of the other person or family in the shared event. Leave empty to "
+"match any role."
+msgstr ""
+
+#: RoleReversalRule.py:123
+msgid "Event filters"
+msgstr ""
+
+#: RoleReversalRule.py:199 RoleReversalRule.py:219
+msgid "Role Reversal"
+msgstr ""
+
+#: RoleReversalRule.py:201
+msgid ""
+"Reverse lookup: matches people with the Primary role in shared events where "
+"others hold the specified role (for example, people with a Godparent at "
+"their baptism). Empty role: any role"
+msgstr ""
+
+#: RoleReversalRule.py:221
+msgid ""
+"Reverse lookup: matches families with the Family role in shared events where "
+"others hold the specified role (for example, families with a Witness at "
+"their marriage). Empty role: any role"
+msgstr ""

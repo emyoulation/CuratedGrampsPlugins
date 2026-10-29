@@ -94,6 +94,17 @@
     "a": 0
   },
   {
+    "n": "Family Role Reversal",
+    "i": "RoleReversalFamily",
+    "t": 13,
+    "d": "Filter rule: reverse lookup of shared events where others hold a specified role.",
+    "v": "1.0.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "RoleReversal.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+  },
+  {
     "n": "Flat Filter",
     "i": "Flat Filter",
     "t": 10,
@@ -206,6 +217,17 @@
       "pypdf"
     ],
     "h": "https://claude.ai/share/5499326c-cb83-453f-aa82-7f8248f94ca6"
+  },
+  {
+    "n": "Person Role Reversal",
+    "i": "RoleReversalPerson",
+    "t": 13,
+    "d": "Filter rule: reverse lookup of shared events where others hold a specified role.",
+    "v": "1.0.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "RoleReversal.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
   },
   {
     "n": "Photo Tagging",
