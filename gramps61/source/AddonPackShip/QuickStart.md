@@ -41,7 +41,7 @@ Click **📦 Pack and Ship** (bottom center of the window).
 ### Step 4: Upload
 1. Click **Output location** to open the folder with the new `gramps60/` folder (by default, the folder of Addon Pack and Ship).
 2. Upload the `gramps60/` folder to your GitHub repository.
-3. Share the URL `https://raw.githubusercontent.com/username/repo/main/gramps60` (the Addon Manager adds `/listings/addons-en.json` or the listing for its language).
+3. Share the project URL `https://raw.githubusercontent.com/username/repo/main/gramps60` (the Addon Manager adds `/listings/addons-<code>.json` for its language). ⚠ Not the `github.com/.../blob/...` address that your browser shows: the Addon Manager cannot read that web page.
 
 **Done!** Users can install from your repository with their Addon Manager.
 
@@ -51,7 +51,7 @@ Click **📦 Pack and Ship** (bottom center of the window).
 Before uploading to GitHub:
 
 1. **Edit** → **Addon Manager** → **Projects** tab
-2. Add `file:///<output-location>/gramps60/listings/addons-en.json` (click **Output location** to see the folder; on Windows, `file:///C:/Users/username/...`).
+2. Add `file:///<output-location>/gramps60`, the folder without `/listings/...` at the end (click **Output location** to see the folder; on Windows, `file:///C:/Users/username/...`).
 3. **Refresh** → install your addon → test that it works → **then** upload to GitHub.
 
 ---
@@ -59,6 +59,7 @@ Before uploading to GitHub:
 ## FAQ
 - [How do I choose between β Beta and Δ Release?](README.md#build-modes)
 - [Can I pack an addon for several Gramps versions at once? (Only when its .gpr.py is adaptive.)](README.md#packing-for-several-gramps-versions)
+- [Which URL do I share with users? (The raw.githubusercontent.com project URL, not the github.com address.)](README.md#which-url-to-share)
 - [How do I publish with GitHub Desktop instead of uploading by hand?](README.md#publishing-with-github-desktop)
 - [What do Build Selected, Compile Translations and Amend Listings do on their own?](README.md#build-operations)
 - [How do I control which files go into a package (MANIFEST files)?](README.md#manifest-files)

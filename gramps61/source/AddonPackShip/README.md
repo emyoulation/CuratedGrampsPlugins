@@ -1,9 +1,12 @@
 # AddonPackShip — Gramps Addon Packaging Tool
 [**QuickStart.md**](QuickStart.md) ● [**README.md**](README.md) ● [**Change Log**](CHANGELOG.md)
 
-**For Gramps 5.2+** desktop genealogy software — packages for one or several installed Gramps versions at once
+**For Gramps 5.2 (or newer)** desktop genealogy software — packages addons for one or several Gramps versions at once. (**Addon Pack and Ship**, or **APS**, is a graphical user interface for the `make.py` command-line build tool in the Gramps branches of the `addons-source` project.)
+
+APS covers 6 of the 13 `make.py` commands in the 6.0 version of the build script. This is a little under half (46%), but it includes all six that are used to package and translate one addon — `build`, `compile`, `listing`, `clean`, `init` and `update`. The other seven are mostly maintenance tasks for the whole repository. See [COMPARE_make_APS.md](COMPARE_make_APS.md#coverage-summary).
 
 Package your Gramps addons for distribution with a simple checkbox interface. Create release-ready `.addon.tgz` files and JSON listings for GitHub publishing in seconds.
+
 ![Addon Pack and Ship](media/APS.png)
 
 ---
@@ -488,12 +491,31 @@ your-repo/
 └── README.md
 ```
 
-**URL format**: `https://raw.githubusercontent.com/username/repo/main/gramps52/listings/addons-en.json`
+### Which URL to share
+⚠ **Do not share the `github.com` address that your web browser shows.** A `github.com` address opens a web page: GitHub wraps the file or folder in menus, buttons and line numbers. The Addon Manager cannot read that page. It needs the plain file, which GitHub serves from a different address that starts with `raw.githubusercontent.com`.
+
+The address to share is the **project URL**: the `gramps<NN>` folder of one Gramps version, on `raw.githubusercontent.com`, without `/blob/` and without `/listings/...` at the end:
+
+| | Address |
+|---|---|
+| Browser shows (do not share) | `https://github.com/username/repo/blob/main/gramps60/listings/addons-en.json` |
+| Project URL (share this) | `https://raw.githubusercontent.com/username/repo/main/gramps60` |
+
+To turn one into the other:
+1. Replace `https://github.com/` with `https://raw.githubusercontent.com/`.
+2. Delete `/blob` (or `/tree`).
+3. Delete everything after `gramps<NN>`.
+
+The `main` part is the name of the branch. Use the branch name that GitHub shows above the file list of your repository; older repositories often use `master` instead of `main`.
+
+The same project URL works for every language. The Addon Manager adds `/listings/addons-<code>.json` for the language that Gramps runs in by itself, and uses `addons-en.json` when there is no listing for that language. Share one project URL for each Gramps version: `.../gramps52`, `.../gramps60`, `.../gramps61`.
+
+Check a project URL before you share it: add `/listings/addons-en.json` to it and open it in a web browser. You should see plain text that starts with `[`, not a GitHub web page.
 
 ### Share with users
-**Users add your URL** in the Gramps Addon Manager:
+**Users add your project URL** in the Gramps Addon Manager:
 1. **Edit** → **Addon Manager** → **Projects** tab
-2. Add the URL of your repository, for example `https://raw.githubusercontent.com/username/repo/main/gramps60`
+2. Add the project URL for their Gramps version, for example `https://raw.githubusercontent.com/username/repo/main/gramps60` (see [Which URL to share](#which-url-to-share))
 3. Refresh → Install your addon
 
 ---
@@ -503,9 +525,9 @@ Test your addon package **before** uploading to GitHub using `file://` URLs:
 
 1. **Build** your addon with AddonPackShip
 2. Note the output path (shown in results dialog) — this depends on your chosen **Output location**
-3. **Tools** → **Addon Manager** → **Projects** tab
-4. Add: `file:///<output-location>/gramps52/listings/addons-en.json`
-   - Windows: `file:///C:/<output-location>/gramps52/listings/addons-en.json`
+3. **Edit** → **Addon Manager** → **Projects** tab
+4. Add the local project URL, which is the `gramps<NN>` folder, without `/listings/...` at the end: `file:///<output-location>/gramps52`
+   - Windows: `file:///C:/<output-location>/gramps52`
 5. Refresh and install from your local "repository"
 
 **Test both modes**:
@@ -578,7 +600,7 @@ When an installed addon does not appear in the addon list, start Gramps from a t
 1. Select the addon, and check that the build mode is **β Beta** (on the **Options** tab).
 2. Click **Compile Translations** to bring `po/template.pot` up to date.
 3. Click **📦 Pack and Ship**.
-4. Publish the files (see [Publishing with GitHub Desktop](#publishing-with-github-desktop)), then share the URL of your repository with translators and point them to [Translating an Addon](#translating-an-addon).
+4. Publish the files (see [Publishing with GitHub Desktop](#publishing-with-github-desktop)), then share the project URL (see [Which URL to share](#which-url-to-share)) with translators and point them to [Translating an Addon](#translating-an-addon).
 
 ### Publish a final release
 1. Select the addon, and choose **Δ Release** on the **Options** tab.
