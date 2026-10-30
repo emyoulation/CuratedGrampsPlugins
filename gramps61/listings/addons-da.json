@@ -23,6 +23,17 @@
     "h": "Addon:Biography_Quickview#Complete_Biography"
   },
   {
+    "n": "Capsule Sources",
+    "i": "capsulesources",
+    "t": 2,
+    "d": "Imports record captures saved by the Genealogy Capsule browser extension as Sources, Citations and Media, without creating people",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "CapsuleSources.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/CapsuleSources"
+  },
+  {
     "n": "Citation Date Modifiers",
     "i": "HasDateModifiersCitation",
     "t": 13,
