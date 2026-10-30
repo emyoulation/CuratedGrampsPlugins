@@ -35,6 +35,6 @@ if VERSION_TUPLE >= (5, 2, 0):
         tool_modes=[TOOL_MODE_GUI],
         help_url=(
             "https://github.com/emyoulation/CuratedGrampsPlugins/"
-            "tree/main/CapsuleSources"
+            "tree/main/gramps61/source/CapsuleSources"
         ),
     )

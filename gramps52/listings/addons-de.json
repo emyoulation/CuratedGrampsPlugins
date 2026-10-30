@@ -27,11 +27,11 @@
     "i": "capsulesources",
     "t": 2,
     "d": "Imports record captures saved by the Genealogy Capsule browser extension as Sources, Citations and Media, without creating people",
-    "v": "0.1.0",
+    "v": "0.1.1",
     "g": "5.2",
     "s": 1,
     "z": "CapsuleSources.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/CapsuleSources"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/CapsuleSources"
   },
   {
     "n": "Citation Date Modifiers",
