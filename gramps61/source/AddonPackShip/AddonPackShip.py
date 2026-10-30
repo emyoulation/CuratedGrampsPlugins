@@ -2316,22 +2316,21 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         listings_box.set_border_width(6)
         listings_frame.add(listings_box)
 
-        # Deselected by default: non-English listing JSON generation
-        # is otherwise pruned back to English-only after the fact (see
-        # make_addon.py's ENABLE_NON_ENGLISH_LISTINGS / this checkbox's
-        # multilingual= override). When checked, make_addon.py's
-        # _apply_multilingual_rules() decides which language files the
-        # selected addon may create, and _reconcile_listing_with_gpr()
-        # updates the addon in every language file that exists.
+        # Deselected by default. Either way, make_addon.py's
+        # _reconcile_listing_with_gpr() updates the selected addon in
+        # every addons-<lang>.json that already exists, so published
+        # language catalogs never keep an old entry. The checkbox only
+        # decides whether NEW language files may be created: on, by
+        # _apply_multilingual_rules(); off, any file the listing run
+        # created is removed by _remove_new_non_english_listings().
         self.multilingual_check = Gtk.CheckButton(label=_("Multilingual"))
         self.multilingual_check.set_active(False)
         self.multilingual_check.set_tooltip_text(fill_names(
-            _("Off (default): listings are English-only, regardless of"
-              " how many languages an addon has translations for.\n"
-              "On: every {listing} that already exists is"
-              " updated with the selected addon (translated where a"
-              " translation exists, English otherwise). A new"
-              " {listing} is created only when the name or"
+            _("Every {listing} that already exists is always updated"
+              " with the selected addons (translated where a"
+              " translation exists, English otherwise).\n"
+              "Off (default): no new {listing} is created.\n"
+              "On: a new {listing} is created when the name or"
               " description in the {gpr} of the addon is actually"
               " translated into that language."),
             listing="addons-<lang>.json", gpr=".gpr.py"))
@@ -2353,15 +2352,15 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             label=_("Duplicate into unverified/incompatible versions anyway"))
         self.force_uncovered_check.set_active(False)
         self.force_uncovered_check.set_tooltip_text(fill_names(
-            _("Off (default): a multi-version build skips duplicating the"
-              " package into any Gramps version that the {gpr} of the"
-              " addon does not demonstrably support (an explicit"
-              " version-range gate that excludes it, or a hardcoded"
-              " {target} naming a different one).\n"
-              "On: duplicates into every checked version regardless."
-              " Nothing about the {gpr} itself is ever changed either"
-              " way -- this only controls whether a mismatched version"
-              " still gets a copy."),
+            _("Off (default): an addon with an adaptive {gpr} (one with a"
+              " version check) is not packed or listed for a checked"
+              " Gramps version that its version check rejects.\n"
+              "On: it is packed and listed for every checked version"
+              " regardless.\n"
+              "Addons whose {gpr} is not adaptive (no version check, or"
+              " a hardcoded {target}) are never packed for several"
+              " versions silently: Pack and Ship warns and asks first."
+              " Nothing about the {gpr} itself is ever changed."),
             gpr=".gpr.py", target="gramps_target_version"))
         listings_box.pack_start(self.force_uncovered_check, False, False, 0)
 
@@ -2384,7 +2383,31 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             po_dir="po/", locale_dir="locale/"))
         remove_untranslated_btn.connect(
             "clicked", self.on_remove_untranslated_listings)
-        listings_box.pack_start(remove_untranslated_btn, False, False, 0)
+
+        # Listing runs never delete a language listing that already
+        # exists, so pruning a listings folder back to English only is
+        # this explicit, confirmed action.
+        remove_all_btn = Gtk.Button(
+            label=_("Remove all language listings…"))
+        remove_all_btn.set_tooltip_text(fill_names(
+            _("For each checked Gramps Version, offer to delete every"
+              " {listing} except {en_listing}, including files with"
+              " translated names and descriptions. Afterwards the Addon"
+              " Manager shows the English catalog in every language."
+              " Files that contain translations are marked in the list"
+              " before you confirm. No {po_dir} or {locale_dir}"
+              " translation files are touched, and a later listing run"
+              " with Multilingual on can create the files again."),
+            listing="addons-<lang>.json", en_listing="addons-en.json",
+            po_dir="po/", locale_dir="locale/"))
+        remove_all_btn.connect(
+            "clicked", self.on_remove_all_language_listings)
+
+        remove_row = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        remove_row.pack_start(remove_untranslated_btn, False, False, 0)
+        remove_row.pack_start(remove_all_btn, False, False, 0)
+        listings_box.pack_start(remove_row, False, False, 0)
 
         options_vbox.pack_start(listings_frame, False, False, 0)
 
@@ -3304,6 +3327,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         selected_dirs = self._get_selected_addon_dirs()
 
         coverage = {}
+        not_adaptive = False
         if len(selected_dirs) == 1:
             addon_name = next(iter(selected_dirs))
             addon_path = self.addon_info.get(addon_name, {}).get('path')
@@ -3311,6 +3335,25 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             if make_addon is not None and addon_path:
                 coverage = make_addon.check_gpr_version_coverage(
                     addon_path, list(self.version_checkboxes.keys()))
+                if hasattr(make_addon, 'gpr_is_adaptive'):
+                    not_adaptive = (
+                        make_addon.gpr_is_adaptive(addon_path) is False)
+        # For a non-adaptive addon with no hardcoded target version,
+        # only the running Gramps version is known to be safe: mark
+        # the others orange (still selectable -- the warning at build
+        # time can be overridden).
+        running = self._running_gramps_version_code()
+        unsafe_codes = set()
+        if not_adaptive and not any(
+                value is True for value in coverage.values()):
+            unsafe_codes = {code for code in self.version_checkboxes
+                            if code != running}
+        unsafe_tip = fill_names(
+            _("The {gpr} of the selected addon is not adaptive: it has no"
+              " version check. Packing it for this Gramps version lists"
+              " it there as compatible without any check. Pack and Ship"
+              " asks before doing so."),
+            gpr=".gpr.py")
 
         version_labels = {
             entry['code']: entry['label'] for entry in self.available_versions}
@@ -3328,8 +3371,23 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 if incompatible:
                     label_widget.set_markup(
                         '<span foreground="red">{}</span>'.format(plain_label))
+                elif code in unsafe_codes:
+                    label_widget.set_markup(
+                        '<span foreground="#d97700">⚠ {}</span>'.format(
+                            plain_label))
                 else:
                     label_widget.set_text(plain_label)
+            # Remember the normal tooltip the first time, so it can be
+            # put back when the warning no longer applies.
+            if not hasattr(self, '_version_tooltips'):
+                self._version_tooltips = {}
+            normal_tip = self._version_tooltips.setdefault(
+                code, checkbox.get_tooltip_text())
+            if code in unsafe_codes:
+                checkbox.set_tooltip_text(
+                    unsafe_tip + "\n\n" + (normal_tip or ""))
+            else:
+                checkbox.set_tooltip_text(normal_tip)
 
     def on_build_mode_changed(self, widget):
         """
@@ -3531,9 +3589,10 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         third-party code and kept process-isolated rather than
         imported.
 
-        Whether the resulting listing(s) actually keep those other
-        languages, or get pruned back to English-only, follows this
-        tool's own "Multilingual" checkbox (deselected by default) --
+        Every addons-<lang>.json that already exists is updated with
+        the addon either way. Whether a run may also create NEW
+        language files follows this tool's own "Multilingual"
+        checkbox (deselected by default) --
         read fresh on every call, not just once at startup, so
         toggling it takes effect on the very next action.
 
@@ -3596,6 +3655,176 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             # able to take the whole Gramps process down with it.
             LOG.exception("run_make_command(%s) failed", command)
             return False, "", str(e)
+
+    def _version_label_for(self, code):
+        """
+        Return the human label (e.g. '6.0') of a version code such as
+        'gramps60', falling back to the code itself.
+        """
+        for entry in self.available_versions:
+            if entry['code'] == code:
+                return entry['label']
+        return code
+
+    def _plan_addon_versions(self, addons, versions):
+        """
+        Decide, before anything is built or listed, which of the
+        checked Gramps `versions` each addon is packed and listed for,
+        and object when a non-adaptive addon is about to be packed for
+        more than one version.
+
+        An adaptive .gpr.py (see make_addon.gpr_is_adaptive()) has a
+        version-range gate, so each Gramps version checks the claim
+        itself; it is packed for every checked version its gate
+        accepts. Versions its gate rejects are left out, of the
+        listing as well as of the package, unless the Options tab
+        override "Duplicate into unverified/incompatible versions
+        anyway" is on.
+
+        A non-adaptive .gpr.py was written for one Gramps version.
+        Packing it for several versions lists it in each of them as
+        compatible, without anyone having checked. When that would
+        happen, a dialog explains the danger and offers: only the safe
+        version (the hardcoded ``gramps_target_version``, or else the
+        running Gramps version, where the installed copy is known to
+        load), every checked version anyway, or cancel.
+
+        :param addons: list of (addon_name, addon_path) tuples.
+        :param versions: the checked version codes.
+        :returns: ``(plan, notes, forced)`` -- `plan` maps each addon
+            name to its list of version codes (possibly empty),
+            `notes` maps addon names to lines for the results window,
+            and `forced` is the set of addon names whose versions were
+            overridden. ``None`` when the user cancelled.
+        """
+        plan = {name: list(versions) for name, _path in addons}
+        notes = {}
+        forced = set()
+        if len(versions) <= 1:
+            return plan, notes, forced
+        make_addon = _get_make_addon_module()
+        if make_addon is None or not hasattr(make_addon, 'gpr_is_adaptive'):
+            return plan, notes, forced
+
+        force_checkbox = (self.force_uncovered_check.get_active()
+                          if hasattr(self, 'force_uncovered_check')
+                          else False)
+        running = self._running_gramps_version_code()
+        objections = []   # (addon_name, reason, safe_versions)
+        for name, path in addons:
+            adaptive = make_addon.gpr_is_adaptive(path)
+            coverage = make_addon.check_gpr_version_coverage(path, versions)
+            if adaptive is None:
+                continue  # could not be tested: behave as before
+            if adaptive:
+                rejected = [v for v in versions if coverage.get(v) is False]
+                if rejected and not force_checkbox:
+                    plan[name] = [v for v in versions if v not in rejected]
+                    notes.setdefault(name, []).append(fill_names(
+                        _("  Not packed or listed for {versions}: the"
+                          " version check in the {gpr} of this addon"
+                          " rejects them."),
+                        versions=", ".join(rejected), gpr=".gpr.py"))
+                continue
+            matching = [v for v in versions if coverage.get(v) is True]
+            if matching:
+                reason = fill_names(
+                    _("its {gpr} names one Gramps version in {target}"),
+                    gpr=".gpr.py", target="gramps_target_version")
+                safe = matching
+            else:
+                reason = fill_names(
+                    _("its {gpr} has no version check"), gpr=".gpr.py")
+                safe = [running] if running in versions else []
+            objections.append((name, reason, safe))
+
+        if not objections:
+            return plan, notes, forced
+
+        choice = self._ask_about_non_adaptive_addons(objections, versions)
+        if choice is None:
+            return None
+        for name, _reason, safe in objections:
+            if choice == 'all':
+                forced.add(name)
+                notes.setdefault(name, []).append(fill_names(
+                    _("  ⚠ Packed for every checked Gramps version on"
+                      " request, although its {gpr} is not adaptive."
+                      " Make sure that the code really works in each"
+                      " of them."),
+                    gpr=".gpr.py"))
+            else:
+                plan[name] = safe
+                if safe:
+                    notes.setdefault(name, []).append(fill_names(
+                        _("  Packed and listed only for {versions}: its"
+                          " {gpr} is not adaptive."),
+                        versions=", ".join(safe), gpr=".gpr.py"))
+                else:
+                    notes.setdefault(name, []).append(fill_names(
+                        _("  Skipped: its {gpr} is not adaptive, and"
+                          " the Gramps version it was written for is"
+                          " not checked."),
+                        gpr=".gpr.py"))
+        return plan, notes, forced
+
+    def _ask_about_non_adaptive_addons(self, objections, versions):
+        """
+        Show the warning about packing non-adaptive addons for several
+        Gramps versions, and return the choice.
+
+        :param objections: list of (addon_name, reason, safe_versions).
+        :param versions: the checked version codes.
+        :returns: ``'safe'``, ``'all'``, or ``None`` for Cancel.
+        """
+        lines = []
+        for name, reason, safe in objections:
+            if safe:
+                target = ", ".join(self._version_label_for(v) for v in safe)
+            else:
+                target = _("none of the checked versions")
+            lines.append(_("  • {addon}: {reason}. Safe: {target}").format(
+                addon=name, reason=reason, target=target))
+        checked = ", ".join(self._version_label_for(v) for v in versions)
+
+        dialog = Gtk.MessageDialog(
+            transient_for=self.window, modal=True,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE,
+            text=_("Packing these addons for several Gramps versions"
+                   " can break them for users"))
+        dialog.format_secondary_text(fill_names(
+            _("You checked Gramps {checked}. These addons are not"
+              " adaptive:\n\n{addons}\n\n"
+              "An adaptive {gpr} checks the running Gramps version"
+              " before it registers the addon (for example"
+              " {example}). Without that check, the same package is"
+              " listed in the Addon Manager of every checked Gramps"
+              " version as compatible, although it was written for one"
+              " version only. Users of the other versions can then"
+              " install an addon that fails to load or does not work"
+              " correctly.\n\n"
+              "Only the safe versions (recommended): pack and list each"
+              " of these addons only for the version shown.\n"
+              "All checked versions anyway: only when you have tested"
+              " the addon in every checked version."),
+            checked=checked, addons="\n".join(lines), gpr=".gpr.py",
+            example="if VERSION_TUPLE >= (5, 2, 0):"))
+        dialog.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
+        all_button = dialog.add_button(
+            _("All checked versions anyway"), 1)
+        all_button.get_style_context().add_class("destructive-action")
+        safe_button = dialog.add_button(
+            _("Only the safe versions"), 2)
+        safe_button.get_style_context().add_class("suggested-action")
+        dialog.set_default_response(2)
+        response = dialog.run()
+        dialog.destroy()
+        if response == 2:
+            return 'safe'
+        if response == 1:
+            return 'all'
+        return None
 
     def build_for_versions(self, addon_path, build_mode, versions,
                             force_uncovered=None):
@@ -4751,8 +4980,8 @@ class AddonPackShip(tool.Tool, ManagedWindow):
 
         names = "\n".join(
             "  • " + os.path.relpath(path, builder_dir) for path in found)
-        from gramps.gui.dialog import QuestionDialog2
-        question = QuestionDialog2(
+        self._confirm_and_remove_listings(
+            found, builder_dir, _("Remove untranslated listings"),
             _("Remove untranslated listings?"),
             fill_names(
                 _("These language listings contain no translated names or"
@@ -4760,7 +4989,84 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                   " {en_listing}:\n\n{files}\n\nThe Addon Manager uses"
                   " {en_listing} for any language without its own file."
                   " Delete them?"),
-                en_listing="addons-en.json", files=names),
+                en_listing="addons-en.json", files=names))
+
+    def on_remove_all_language_listings(self, _widget):
+        """
+        Handle the Options tab's "Remove all language listings…"
+        button: for every checked Gramps Version, list every
+        addons-<lang>.json except addons-en.json (see
+        make_addon.find_non_english_listings()), marking the ones
+        that hold translations, and delete them only after the user
+        confirms.
+
+        :param _widget: unused (the button itself)
+        """
+        title = _("Remove all language listings")
+        make_addon = _get_make_addon_module()
+        if make_addon is None or not hasattr(
+                make_addon, 'find_non_english_listings'):
+            ErrorDialog(
+                title,
+                _("This needs a newer make_addon.py in the"
+                  " AddonPackShip folder."),
+                parent=self.window)
+            return
+
+        builder_dir = self.get_output_parent_dir()
+        found, untranslated = [], set()
+        for version in self.get_selected_versions():
+            listings_dir = os.path.join(builder_dir, version, 'listings')
+            found.extend(make_addon.find_non_english_listings(listings_dir))
+            untranslated.update(
+                make_addon.find_untranslated_listings(listings_dir))
+
+        if not found:
+            OkDialog(
+                title,
+                fill_names(
+                    _("No language listings other than {en_listing}"
+                      " were found for the checked Gramps Versions."),
+                    en_listing="addons-en.json"),
+                parent=self.window)
+            return
+
+        translated_mark = _("contains translations")
+        lines = []
+        for path in found:
+            line = "  • " + os.path.relpath(path, builder_dir)
+            if path not in untranslated:
+                line += f"  ⚠ {translated_mark}"
+            lines.append(line)
+        self._confirm_and_remove_listings(
+            found, builder_dir, title,
+            _("Remove all language listings?"),
+            fill_names(
+                _("These language listings will be deleted, so that only"
+                  " {en_listing} remains:\n\n{files}\n\nTranslated"
+                  " names and descriptions in files marked ⚠ are lost"
+                  " from the listings (the {po_dir} translation files of"
+                  " each addon are kept). Delete them?"),
+                en_listing="addons-en.json", files="\n".join(lines),
+                po_dir="po/"))
+
+    def _confirm_and_remove_listings(self, found, builder_dir, title,
+                                     question_title, question_text):
+        """
+        Ask for confirmation, then delete the given listing files and
+        report what was removed. Shared by the two "Remove … listings"
+        buttons on the Options tab.
+
+        :param found: Absolute paths of the files to delete.
+        :param builder_dir: The output parent folder, used to show
+            short relative paths.
+        :param title: Title of the result dialog.
+        :param question_title: Title of the confirmation dialog.
+        :param question_text: Text of the confirmation dialog.
+        """
+        from gramps.gui.dialog import QuestionDialog2
+        question = QuestionDialog2(
+            question_title, question_text,
             _("Delete"),
             _("Cancel"),
             parent=self.window)
@@ -4778,8 +5084,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         if failed:
             message += "\n\n" + _("Could not remove:") + "\n" + "\n".join(
                 failed)
-        OkDialog(_("Remove untranslated listings"), message,
-                 parent=self.window)
+        OkDialog(title, message, parent=self.window)
 
     @staticmethod
     def _pump_gtk_events():
@@ -4839,27 +5144,50 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             versions = [GRAMPS_VERSION]
         multi_version = len(versions) > 1
 
+        if command in ('build', 'listing'):
+            planned = self._plan_addon_versions(addons, versions)
+            if planned is None:
+                return  # cancelled in the non-adaptive warning
+            plan, plan_notes, forced = planned
+        else:
+            plan = {name: versions for name, _path in addons}
+            plan_notes, forced = {}, set()
+
         results = []
         details = []
 
-        steps_per_addon = len(versions) if command == 'listing' else 1
-        progress = self._start_progress(
-            operation, len(addons) * steps_per_addon)
+        if command == 'listing':
+            total_steps = sum(len(plan[name]) for name, _path in addons)
+        else:
+            total_steps = len(addons)
+        progress = self._start_progress(operation, total_steps)
         try:
             for addon_name, addon_path in addons:
+                for note in plan_notes.get(addon_name, []):
+                    details.append(f"{addon_name}:{note}")
+                addon_versions = plan[addon_name]
+                if command in ('build', 'listing') and not addon_versions:
+                    results.append(
+                        _("– {}: skipped (see the notes below)").format(
+                            addon_name))
+                    if command == 'build':
+                        progress.step()
+                    continue
                 if command == 'build':
                     self._progress_note(
                         progress, _("Building {}").format(addon_name))
                     success, stdout, stderr = self.build_for_versions(
-                        addon_path, build_mode, versions)
+                        addon_path, build_mode, addon_versions,
+                        force_uncovered=(
+                            True if addon_name in forced else None))
                     progress.step()
-                    version_tag = (f" [{', '.join(versions)}]"
+                    version_tag = (f" [{', '.join(addon_versions)}]"
                                    if multi_version else "")
                     self._collect_command_result(
                         results, details, addon_name, version_tag, command,
                         addon_path, success, stdout, stderr)
                 elif command == 'listing':
-                    for version in versions:
+                    for version in addon_versions:
                         self._progress_note(
                             progress,
                             _("Listing {} for {}").format(addon_name, version))
@@ -4970,20 +5298,33 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         dialog.run()
         dialog.destroy()
 
-    def _run_combined_steps(self, addons, build_mode, versions,
+    def _run_combined_steps(self, addons, build_mode, plan, forced,
                             multi_version, all_results, details, progress):
         """
         The build and listing steps of :meth:`show_combined_results`,
         appending each outcome to `all_results`/`details` and
         advancing `progress` after each step.
+
+        :param plan: addon name -> list of version codes to pack and
+            list it for (see :meth:`_plan_addon_versions`).
+        :param forced: addon names packed for every checked version
+            on request, although not adaptive.
         """
         # Build once per addon; the resulting .tgz is duplicated across
-        # every other selected version (see build_for_versions()).
+        # every other version planned for it (see build_for_versions()).
         for addon_name, addon_path in addons:
+            versions = plan[addon_name]
+            if not versions:
+                all_results.append(
+                    _("– Build: {}: skipped (see the notes below)").format(
+                        addon_name))
+                progress.step()
+                continue
             self._progress_note(
                 progress, _("Building {}").format(addon_name))
             success, stdout, stderr = self.build_for_versions(
-                addon_path, build_mode, versions)
+                addon_path, build_mode, versions,
+                force_uncovered=True if addon_name in forced else None)
             progress.step()
             status = "✓" if success else "✗"
             version_tag = f" [{', '.join(versions)}]" if multi_version else ""
@@ -5020,7 +5361,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         # delegates to the matching bundled make<NN>.py (when present)
         # which generates every language the addon has translations for.
         for addon_name, addon_path in addons:
-            for version in versions:
+            for version in plan[addon_name]:
                 self._progress_note(
                     progress,
                     _("Listing {} for {}").format(addon_name, version))
@@ -5046,10 +5387,19 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         details = []
         mode_label = "β Beta" if build_mode == 'beta' else "Δ Release"
 
+        planned = self._plan_addon_versions(addons, versions)
+        if planned is None:
+            return  # cancelled in the non-adaptive warning
+        plan, plan_notes, forced = planned
+        for addon_name, _path in addons:
+            for note in plan_notes.get(addon_name, []):
+                details.append(f"{addon_name}:{note}")
+
         progress = self._start_progress(
-            operation, len(addons) * (1 + len(versions)))
+            operation,
+            sum(1 + len(plan[name]) for name, _path in addons))
         try:
-            self._run_combined_steps(addons, build_mode, versions,
+            self._run_combined_steps(addons, build_mode, plan, forced,
                                      multi_version, all_results, details,
                                      progress)
         finally:

@@ -1,18 +1,16 @@
 # Quick Start (AddonPackShip — Gramps Addon Packaging Tool)
 [**QuickStart.md**](QuickStart.md) ● [**README.md**](README.md) ● [**Change Log**](CHANGELOG.md)
 
-**Version 1.9.19** — 5-Minute Guide 
+**5-Minute Guide** — package and publish your first addon. Everything else is in the [FAQ](#faq) at the bottom.
 
 ---
 
 ## Install
-**Via Addon Manager** (not the Plugin Manager): 
+**Via Addon Manager** (not the Plugin Manager):
 
-1. **Tools** → **Addon Manager** → **Projects** tab
-2. Add repository URL:  
-   `https://raw.githubusercontent.com/emyoulation/CuratedGrampsPlugins/main/gramps60`
-   (The Addon Manager will append the `/listings/addons-en.json` to find the listings.)
-3. **Refresh** → Find "Addon Pack and Ship" → **Install** → **Restart Gramps**
+1. **Edit** → **Addon Manager** → **Projects** tab
+2. Add the repository URL `https://raw.githubusercontent.com/emyoulation/CuratedGrampsPlugins/main/gramps60` (the Addon Manager adds `/listings/addons-en.json` by itself).
+3. **Refresh** → find **Addon Pack and Ship** → **Install** → restart Gramps
 
 ---
 
@@ -23,136 +21,54 @@
 
 ## Package Your First Addon
 ### Step 1: Select
-✅ Check the addon(s) you want to package in the scrollable list
+✅ Check the addon(s) you want to package in the scrollable list.
 
-**Filter** if you have many addons — type name, author, or email in the "Name/Contributor contains:" box
+**Filter** if you have many addons — type any part of a name, author, id or path in the **Search bundles and plugins…** box, or pick a plugin type in the type filter.
 
-### Step 2: Choose Mode
-The **β Beta** and **Δ Release** radio buttons are in the **Filter Addons** frame at the top — they stay visible as the list scrolls.
+### Step 2: Check the mode
+Keep the default **β Beta** mode (on the **Options** tab). It includes translation sources and documents, which is right for testing and translation work. Use **Δ Release** only for a final release.
 
-**β Beta** (default) — Includes translation source files, docs, everything except `__pycache__`  
-**Δ Release** — Clean end-user package only
-
-💡 **Use β Beta** for beta testing and translation work
+⚠ Check more than one **Gramps Versions** box only when the `.gpr.py` of the addon is adaptive (has a version check). Otherwise keep only the version you are running checked. See the FAQ below.
 
 ### Step 3: Pack and Ship
-Click **📦 Pack and Ship** (bottom center of window)
+Click **📦 Pack and Ship** (bottom center of the window).
 
-✅ Shows a progress window naming each step  
-✅ Builds `.addon.tgz` package  
-✅ Generates `template.pot` if missing  
-✅ Creates/amends JSON listings, sorted by addon name, and repairs any outdated entries for the selected addons  
-✅ Shows output location  
-✅ A **📁 folder icon** appears next to the button — click it to see the exact command that ran, in `logs/`
+- Shows a progress window naming each step
+- Builds the `.addon.tgz` package
+- Creates or amends the JSON listings
+- Shows where the files were written
 
 ### Step 4: Upload
-1. Find files in `~/.gramps/gramps60/plugins/AddonPackShip/gramps60/`
-2. Upload the `gramps60/` folder to your GitHub repository
-3. Share URL: `https://raw.githubusercontent.com/username/repo/main/gramps60` 
-(The Addon Manager will append the `/listings/addons-en.json` or appropriate localized variant.)
+1. Click **Output location** to open the folder with the new `gramps60/` folder (by default, the folder of Addon Pack and Ship).
+2. Upload the `gramps60/` folder to your GitHub repository.
+3. Share the URL `https://raw.githubusercontent.com/username/repo/main/gramps60` (the Addon Manager adds `/listings/addons-en.json` or the listing for its language).
 
-**Done!** Users can install from your repository via their Addon Manager.
+**Done!** Users can install from your repository with their Addon Manager.
 
 ---
 
 ## Test Locally First
 Before uploading to GitHub:
 
-1. **Tools** → **Addon Manager** → **Projects** tab
-2. Add: `file:///home/username/.gramps/gramps60/plugins/AddonPackShip/gramps60/listings/addons-en.json`
-   - (Windows: `file:///C:/Users/username/...`)
-3. **Refresh** → Install your addon → **Test** it works correctly → **Then** upload to GitHub
+1. **Edit** → **Addon Manager** → **Projects** tab
+2. Add `file:///<output-location>/gramps60/listings/addons-en.json` (click **Output location** to see the folder; on Windows, `file:///C:/Users/username/...`).
+3. **Refresh** → install your addon → test that it works → **then** upload to GitHub.
 
 ---
 
-## Individual Operations
-**Build Selected** — Just create `.addon.tgz` packages
-
-**Compile Translations** — Generate `template.pot` + compile `.po` → `.mo` files
-
-**Amend Listings** — Add/update JSON metadata entries  
-> ℹ️ This *adds or updates* entries — it does not remove old ones.  
-> To shrink the listing (e.g., remove a retired addon), **delete the `gramps60/listings/` folder** first, then re-run for only the addons you want listed.
-
-**Translation:** + **Edit translation…** (Options tab, Listings frame) — Choose a language, select addons, and click to open each `po/<code>-local.po` in your `.po` editor (created or updated from `template.pot` first). After saving: **Compile Translations**, then **restart Gramps** — a reload is not enough. See the README section *Translating an Addon*.
-
-**Right-click the addon list** → **Filter list to addons in Gramps 6.0's listing**, then **Select All Visible** — selects exactly the addons already in that version's `addons-en.json` (needs exactly one Gramps Version checked)
-
-**📂 Folder icon button** (on each addon row) — Create or open the MANIFEST.beta / MANIFEST for that addon  
-You do not need to select the addon first — just click its folder button directly.
-
----
-
-## Build Modes Explained
-### β Beta
-**Includes**: Everything — source files, docs, translations, data
-**For**: Translators, beta testers, developers
-**Use when**: Sharing work-in-progress or requesting help
-
-### Δ Release
-**Includes**: Core files, README.md, compiled translations only
-**For**: End users installing finished addons
-**Use when**: Publishing final stable release
-⚠ **Warning dialog** appears before Δ Release to confirm you understand it's lossy
-
----
-
-## MANIFEST Files (Optional)
-**Without MANIFEST**:
-- β Beta auto-includes everything
-- Δ Release auto-includes core + README.md
-**With MANIFEST / MANIFEST.beta**:
-- Explicit control over what's included
-**When to use**: You have custom data directories or want to exclude specific files
-**How to create/edit**: Click the **📂 folder icon button** on the right side of any addon's row — this opens the correct MANIFEST file (beta or release, based on current mode) in your text editor, creating it if it doesn't exist. The file includes an annotated directory listing to help you identify which files need manual entries.
-
----
-
-## Common Tasks
-### Share Beta for Translation
-1. Select addon → **β Beta** mode
-2. **Compile Translations** (generates `template.pot`)
-3. **Pack and Ship**
-4. Upload to GitHub → Share URL with translators
-
-### Publish Final Release
-1. Select addon → **Δ Release** mode
-2. **Pack and Ship** (confirm warning)
-3. Upload to GitHub → Announce on forums
-
-### Remove an Addon from Listings
-1. Delete the `gramps60/listings/` folder
-2. Select only the addons you want listed
-3. **Amend Listings** (or **Pack and Ship**)
-
-### Update Translation Template
-1. Edit your `.py` files to add/change strings
-2. **Compile Translations** — updates `template.pot`
-3. Share updated `template.pot` with translators
-
----
-
-## Troubleshooting
-**"No Addons Found"** → Install at least one addon first via the Addon Manager
-**"Malformed .gpr.py"** → Fix commas in list fields:
-- Wrong: `authors = ["Smith, John"]`
-- Right: `authors = ["Smith", "John"]`
-**Translations not compiling** → Install `gettext` tools:
-- Linux: `sudo apt install gettext`
-- Windows: https://mlocati.github.io/articles/gettext-iconv-windows.html
-- macOS: `brew install gettext`
-**Old listing entries not disappearing** → Delete `gramps60/listings/` folder, then re-run
-**An addon listed at an older version** → Run **Amend Listings** (or **Pack and Ship**) for it again with that Gramps Version checked — the listing is checked and repaired
-
----
-
-## Next Steps
-📖 **Read [README.md](README.md)** for complete documentation
-🔧 **Use 📂 folder buttons** to manage MANIFEST files per addon
-🧪 **Test locally** with `file://` URLs before publishing
-🌍 **Request translations** by sharing β Beta packages
-📦 **Publish** when ready!
-
----
-
-**AddonPackShip** — Your addon packaging simplified!
+## FAQ
+- [How do I choose between β Beta and Δ Release?](README.md#build-modes)
+- [Can I pack an addon for several Gramps versions at once? (Only when its .gpr.py is adaptive.)](README.md#packing-for-several-gramps-versions)
+- [How do I publish with GitHub Desktop instead of uploading by hand?](README.md#publishing-with-github-desktop)
+- [What do Build Selected, Compile Translations and Amend Listings do on their own?](README.md#build-operations)
+- [How do I control which files go into a package (MANIFEST files)?](README.md#manifest-files)
+- [How do I save my settings for next time?](README.md#named-configurations)
+- [How do I share a Beta for translators?](README.md#share-a-beta-for-translators)
+- [How do I publish a final release?](README.md#publish-a-final-release)
+- [How do I update the translation template after changing strings?](README.md#update-the-translation-template)
+- [How do I rebuild every addon I have already published?](README.md#rebuild-everything-already-published)
+- [How do I remove a retired addon from the listings?](README.md#remove-an-addon-from-the-listings)
+- [How do I translate an addon, with a .po editor or an AI assistant?](README.md#translating-an-addon)
+- [Why does my new translation not appear?](README.md#why-gramps-must-restart)
+- [Where can I see the exact commands that ran, and learn make.py from them?](README.md#learning-from-the-session-logs)
+- [Something went wrong. Where do I look?](README.md#troubleshooting)

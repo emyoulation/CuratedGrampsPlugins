@@ -90,8 +90,10 @@ if _gramps_pythonpath:
 # below (_stage_addon()'s po stub generation, create_listing()'s
 # per-language loop, the upstream make<NN>.py delegation's own
 # language detection all still run exactly as before) -- it only
-# prunes non-English listing files as a final step in run_command()
-# when neither the GUI nor a CLI caller has said otherwise.
+# stops a run from creating NEW non-English listing files when
+# neither the GUI nor a CLI caller has said otherwise. Listing files
+# that already exist are always kept and updated (see
+# _remove_new_non_english_listings()).
 ENABLE_NON_ENGLISH_LISTINGS = False
 
 # Set by run_command() for the duration of one command, from its
@@ -801,33 +803,69 @@ def _write_listing_file(listings_dir, lang, addon_entries):
         return False
 
 
-def _prune_non_english_listings(listings_dir):
+def _remove_new_non_english_listings(listings_dir, preexisting):
     """
-    Delete every ``addons-<lang>.json``/``.txt`` in ``listings_dir``
-    except the English one.
+    With Multilingual off, delete the non-English listing files that
+    this run created, and keep every one that already existed.
 
-    Callers decide whether English-only is actually wanted for this
-    run (see run_command()'s ``multilingual`` parameter and
-    ``effective_multilingual``) and only call this when it is -- this
-    function itself no longer re-checks the module-level
-    ``ENABLE_NON_ENGLISH_LISTINGS`` default, so a caller's explicit
-    per-call choice is never silently overridden by it.
+    A listing file that existed before the run is a catalog the
+    maintainer has published: it can hold translated entries for
+    other addons. It must stay, and _reconcile_listing_with_gpr()
+    updates the selected addon in it (translated where a translation
+    exists, English otherwise), so that its entry is not left at an
+    old version. Earlier versions deleted every non-English file
+    here, which removed published catalogs whenever Multilingual was
+    off.
 
-    :param listings_dir: The ``listings/`` directory to prune.
+    A file that did not exist before was created by the listing
+    generator (an upstream make<NN>.py writes one for each
+    po/<lang>-local.po of the addon). With Multilingual off, new
+    language files are not wanted, so those are removed.
+
+    :param listings_dir: The ``listings/`` directory of this run.
+    :param preexisting: Language codes that had a listing file before
+        this run (see _listing_file_languages()).
     """
     if not os.path.isdir(listings_dir):
         return
-    for fname in os.listdir(listings_dir):
-        if fname in ('addons-en.json', 'addons-en.txt'):
+    for fname in sorted(os.listdir(listings_dir)):
+        # Legacy addons-<lang>.txt files (Gramps before 5.2) are left
+        # alone; only JSON listings are created by these generators.
+        if not (fname.startswith('addons-') and fname.endswith('.json')):
             continue
-        if fname.startswith('addons-') and (
-                fname.endswith('.json') or fname.endswith('.txt')):
-            try:
-                os.remove(os.path.join(listings_dir, fname))
-                print(f"  (non-English listings disabled for now -- "
-                      f"removed {fname})")
-            except OSError as exc:
-                print(f"  Warning: could not remove {fname}: {exc}")
+        lang = fname[len('addons-'):-len('.json')]
+        if lang == 'en' or lang in preexisting:
+            continue
+        try:
+            os.remove(os.path.join(listings_dir, fname))
+            print(f"  Not creating {fname}: Multilingual is off"
+                  " (existing language listings are still updated)")
+        except OSError as exc:
+            print(f"  Warning: could not remove {fname}: {exc}")
+
+
+def find_non_english_listings(listings_dir):
+    """
+    Return every non-English addons-<lang>.json in listings_dir,
+    translated or not. addons-en.json and legacy addons-<lang>.txt
+    files are never included.
+
+    Used by AddonPackShip's "Remove all language listings" action,
+    which deliberately prunes a listings folder back to English
+    only. Listing runs themselves never delete a language listing
+    that already exists (see _remove_new_non_english_listings()).
+
+    :param listings_dir: A <version>/listings/ folder.
+    :returns: A sorted list of file paths (empty if there are none,
+        or if the folder does not exist).
+    """
+    if not os.path.isdir(listings_dir):
+        return []
+    return sorted(
+        os.path.join(listings_dir, fname)
+        for fname in os.listdir(listings_dir)
+        if fname.startswith('addons-') and fname.endswith('.json')
+        and fname != 'addons-en.json')
 
 
 def find_untranslated_listings(listings_dir):
@@ -1721,6 +1759,67 @@ def _extract_literal_target_version(source):
                 literals.add(kw.value.value)
 
     return literals.pop() if len(literals) == 1 else None
+
+
+def gpr_is_adaptive(addon_path: str) -> bool | None:
+    """
+    Whether this addon's .gpr.py is "adaptive": it decides for itself
+    which Gramps versions it registers under, with a version-range
+    gate such as ``if VERSION_TUPLE >= (5, 2, 0):`` around its
+    register() calls.
+
+    Only an adaptive .gpr.py can safely be packed into several
+    Gramps versions at once, because only then does each Gramps
+    version check the claim when it loads the addon. A .gpr.py that
+    registers unconditionally, or that names one hardcoded
+    ``gramps_target_version``, was written for one Gramps version;
+    duplicating it into other versions lists it there as compatible
+    without anyone having checked.
+
+    Tested the same way as check_gpr_version_coverage(): the .gpr.py
+    is run once with an impossible Gramps version (0.0.0). An
+    adaptive .gpr.py registers nothing for that version.
+
+    :param addon_path: Path to the addon's source directory.
+    :returns: ``True`` when a version-range gate was found, ``False``
+        when the .gpr.py registers even under the impossible version,
+        or ``None`` when this could not be tested (no .gpr.py, Gramps
+        not importable, or the .gpr.py raised an error).
+    """
+    gpr_file = _find_gpr_file(addon_path)
+    if not gpr_file:
+        return None
+    try:
+        import gramps.version as gramps_version_module
+        from gramps.gen.plug import make_environment
+    except ImportError:
+        return None
+    try:
+        with open(gpr_file, encoding='utf-8',
+                  errors='backslashreplace') as fh:
+            code_obj = compile(fh.read(), gpr_file, 'exec')
+    except (OSError, SyntaxError):
+        return None
+
+    registered = []
+
+    def register(*_args, **_kwargs):
+        registered.append(True)
+
+    original_tuple = gramps_version_module.VERSION_TUPLE
+    original_major = gramps_version_module.major_version
+    gramps_version_module.VERSION_TUPLE = (0, 0, 0)
+    gramps_version_module.major_version = '0.0'
+    try:
+        exec(code_obj,  # pylint: disable=exec-used
+             make_environment(_=lambda text: text),
+             {'register': register, 'build_script': True})
+    except Exception:  # pylint: disable=broad-except
+        return None
+    finally:
+        gramps_version_module.VERSION_TUPLE = original_tuple
+        gramps_version_module.major_version = original_major
+    return not registered
 
 
 def check_gpr_version_coverage(addon_path: str,
@@ -2750,11 +2849,14 @@ def run_command(
         developer can read to learn how to drive make.py by hand.
         ``None`` (the default, used by this module's own CLI
         ``main()``) skips logging entirely.
-    :param multilingual: Only used by ``'listing'``. ``True``
-        generates/keeps ``addons-<lang>.json`` for every language the
-        addon has a ``po/<lang>-local.po`` for; ``False`` restricts
-        the result to English only, regardless of how many
-        translations the addon actually has. ``None`` (the default,
+    :param multilingual: Only used by ``'listing'``. Every
+        ``addons-<lang>.json`` that already exists is updated with the
+        addon either way (translated where a translation exists,
+        English otherwise). ``True`` also lets the run create a new
+        ``addons-<lang>.json`` when the .gpr.py name or description is
+        translated into that language (see
+        _apply_multilingual_rules()); ``False`` creates no new
+        language files. ``None`` (the default,
         used by this module's own CLI ``main()``) falls back to the
         module-level ``ENABLE_NON_ENGLISH_LISTINGS`` constant.
         AddonPackShip.py's GUI always passes an explicit value here,
@@ -2830,6 +2932,7 @@ def _run_command(command, addon_path, output_dir, build_mode,
                 # this run -- see _apply_multilingual_rules().
                 languages_before = _listing_file_languages(
                     os.path.join(output_dir, 'listings'))
+                listings_dir = os.path.join(output_dir, 'listings')
                 upstream_result = None
                 upstream_failure_detail = None
                 if upstream_script:
@@ -2924,7 +3027,7 @@ def _run_command(command, addon_path, output_dir, build_mode,
                         # Cheap early narrowing for this path only (we
                         # control it entirely, unlike the upstream
                         # script): avoids compiling/exec'ing languages
-                        # that _prune_non_english_listings() would
+                        # that _remove_new_non_english_listings() would
                         # just delete again below. create_listing()
                         # itself is untouched and still accepts
                         # target_languages normally.
@@ -2955,6 +3058,15 @@ def _run_command(command, addon_path, output_dir, build_mode,
                     if effective_multilingual:
                         _apply_multilingual_rules(
                             addon_path, output_dir, languages_before)
+                    else:
+                        # Remove only the language files this run
+                        # created; files that already existed are
+                        # kept and updated just below.
+                        _remove_new_non_english_listings(
+                            listings_dir, languages_before)
+                    # Updates the selected addon in EVERY listing file
+                    # that is left, whatever its language and whether
+                    # or not the addon has a translation for it.
                     _reconcile_listing_with_gpr(addon_path, output_dir)
                     # Correct 'g' (target version) for this addon's own
                     # entries: the addon's .gpr.py computed it from
@@ -2962,9 +3074,6 @@ def _run_command(command, addon_path, output_dir, build_mode,
                     # not from version_code.
                     _patch_listing_target_version(output_dir, addon_name,
                                                    target_label)
-                    listings_dir = os.path.join(output_dir, 'listings')
-                    if not effective_multilingual:
-                        _prune_non_english_listings(listings_dir)
                     if os.path.isdir(listings_dir) and any(
                             fn.startswith('addons-') and fn.endswith('.txt')
                             for fn in os.listdir(listings_dir)):

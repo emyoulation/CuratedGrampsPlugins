@@ -28,8 +28,6 @@ Date: February 2026
 🤖 Generated with Claude Code https://claude.com/claude-code
 """
 
-from gramps.gen.const import GRAMPS_LOCALE as glocale
-_ = glocale.translation.gettext
 from gramps.version import major_version, VERSION_TUPLE
 
 #------------------------------------------------------------------------
@@ -47,7 +45,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6,2,0):
             "Packaging and distribution tool - create release-ready "
             "Gramps addon plugin packages and listings for GitHub publishing"
         ),
-        version = '1.9.18',
+        version = '1.9.20',  # build 20261028.1548
         gramps_target_version = major_version,
         status = STABLE,
         audience = EXPERT,
@@ -59,6 +57,9 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6,2,0):
         category = TOOL_UTILS,
         toolclass = 'AddonPackShip',
         tool_modes = [TOOL_MODE_GUI],
-        help_url = ("https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonPackShip/README.md"),
+        help_url=(
+            "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/"
+            "gramps61/source/AddonPackShip"
+        ),
         optionclass = 'AddonPackShipOptions',
     )
