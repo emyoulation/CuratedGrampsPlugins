@@ -24,10 +24,10 @@
   },
   {
     "n": "Capsule Sources",
-    "i": "capsulesources",
+    "i": "CapsuleSources",
     "t": 2,
-    "d": "Imports record captures saved by the Genealogy Capsule browser extension as Sources, Citations and Media, without creating people",
-    "v": "0.1.1",
+    "d": "Imports record captures saved by the Genealogy Capsule browser extension as Sources, Citations and Media, and links each one to the person you choose",
+    "v": "0.2.0",
     "g": "6.0",
     "s": 1,
     "z": "CapsuleSources.addon.tgz",
