@@ -13,16 +13,26 @@
 
 """Phase 1 importer: Repository, Source, Citation, Media and Notes only.
 
+Structure (revision 2): the Genealogy Capsule captures archive is the
+Repository, each web site is a Source held by that Repository, and each
+capture (one memorial, one census page...) is a Citation of that Source,
+dated with the day it was captured.
+
 No people, events or facts are created here; that is Phase 2, behind a review
 step, because Capsule never merges people without the researcher deciding.
 This module uses gramps.gen only (no GTK), so it can run headless in tests.
 """
 
+import re
+from pathlib import Path
+
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gen.db import DbTxn
+from gramps.gen.errors import HandleError
 from gramps.gen.lib import (
     Attribute,
     Citation,
+    Date,
     Media,
     MediaRef,
     Note,
@@ -53,6 +63,13 @@ ATTR_ACCESSED = "Accessed"
 ATTR_ARCHIVED_URL = "Archived URL"
 ATTR_SHA256 = "SHA-256"
 ATTR_CAPSULE_FILE = "Capsule file"
+ATTR_SITE = "Capsule site"  # on a Source: which web site it stands for
+
+# The one Repository: the Capsule captures archive. A proper name plus the
+# folder name, so it is not translated (it is also the lookup key).
+REPO_NAME = "Genealogy Capsule captures"
+CAPSULE_HOME = "https://github.com/mjlawless/capsule-genealogy"
+URL_TYPE_ARCHIVE = "Capsule archive folder"
 
 
 def _attr_value(obj, name):
@@ -94,7 +111,14 @@ class TreeIndex:
 
     def __init__(self, db):
         self.repos = {r.get_name(): r.get_handle() for r in db.iter_repositories()}
-        self.sources = {s.get_title(): s.get_handle() for s in db.iter_sources()}
+        # Sources are found by their "Capsule site" attribute, not their title,
+        # so the user may retitle them ("Find a Grave") and never collide
+        # with a Source of their own that happens to share the name.
+        self.sources = {}
+        for source in db.iter_sources():
+            site = _attr_value(source, ATTR_SITE)
+            if site:
+                self.sources[site] = source.get_handle()
         self.media = {m.get_path(): m.get_handle() for m in db.iter_media()}
         self.captures = imported_capture_ids(db)
 
@@ -125,8 +149,14 @@ class ImportResult:
         )
 
 
-def import_captures(db, captures):
-    """Add each capture to the tree in one transaction. Returns ImportResult."""
+def import_captures(db, captures, root="", links=None):
+    """Add each capture to the tree in one transaction. Returns ImportResult.
+
+    root is the captures folder (recorded on the Repository); links maps
+    capture_id -> the handle of the primary Person linked in the tool, who
+    then cites the new Citation.
+    """
+    links = links or {}
     result = ImportResult()
     index = TreeIndex(db)
     with DbTxn(_("Import Capsule captures"), db) as trans:
@@ -136,49 +166,80 @@ def import_captures(db, captures):
                 continue
             for text in cap.problems:
                 result.problems.append((cap.capture_id, text))
-            _import_one(db, trans, index, cap, result)
+            _import_one(db, trans, index, cap, result, root, links.get(cap.capture_id))
     return result
 
 
-def _import_one(db, trans, index, cap, result):
+def _capture_date(cap):
+    """The day of the capture (UTC, as Capsule writes it) as a Gramps Date."""
+    for text in (cap.captured_at, cap.access_date):
+        match = re.match(r"(\d{4})-(\d{2})-(\d{2})", text or "")
+        if match:
+            date = Date()
+            date.set_yr_mon_day(*(int(part) for part in match.groups()))
+            return date
+    return None
+
+
+def _archive_repository(db, trans, index, root, result):
+    """The Repository standing for the Capsule captures archive."""
+    handle = index.repos.get(REPO_NAME)
+    if handle is not None:
+        return handle
+    repo = Repository()
+    repo.set_name(REPO_NAME)
+    repo.set_type(RepositoryType.COLLECTION)
+    home = Url()
+    home.set_path(CAPSULE_HOME)
+    home.set_type(UrlType.WEB_HOME)
+    home.set_description("Genealogy Capsule")
+    repo.add_url(home)
+    if root:
+        folder = Url()
+        folder.set_path(Path(root).as_uri())
+        folder.set_type((UrlType.CUSTOM, URL_TYPE_ARCHIVE))
+        repo.add_url(folder)
+    handle = db.add_repository(repo, trans)
+    index.repos[REPO_NAME] = handle
+    result.repositories += 1
+    return handle
+
+
+def _site_source(db, trans, index, cap, repo_handle, result):
+    """The Source standing for the web site the capture came from."""
+    site = cap.site_label
+    handle = index.sources.get(site)
+    if handle is not None:
+        return handle
+    source = Source()
+    source.set_title(site)
+    if cap.site_root_url:
+        source.set_publication_info(cap.site_root_url)
+    source.add_attribute(_src_attr(ATTR_SITE, site))
+    reporef = RepoRef()
+    reporef.set_reference_handle(repo_handle)
+    reporef.set_media_type(SourceMediaType.ELECTRONIC)
+    source.add_repo_reference(reporef)
+    handle = db.add_source(source, trans)
+    index.sources[site] = handle
+    result.sources += 1
+    return handle
+
+
+def _import_one(db, trans, index, cap, result, root, person_handle):
     private = cap.is_private
 
-    # --- Repository: one per site ----------------------------------------
-    repo_name = cap.site_name or cap.host or _("Unknown web site")
-    repo_handle = index.repos.get(repo_name)
-    if repo_handle is None:
-        repo = Repository()
-        repo.set_name(repo_name)
-        repo.set_type(RepositoryType.WEBSITE)
-        if cap.site_root_url:
-            url = Url()
-            url.set_path(cap.site_root_url)
-            url.set_type(UrlType.WEB_HOME)
-            repo.add_url(url)
-        repo_handle = db.add_repository(repo, trans)
-        index.repos[repo_name] = repo_handle
-        result.repositories += 1
-
-    # --- Source: keyed on the Evidence Explained source-list entry --------
-    src_title = cap.source_list_entry or cap.title or cap.url or cap.capture_id
-    src_handle = index.sources.get(src_title)
-    if src_handle is None:
-        source = Source()
-        source.set_title(src_title)
-        if cap.site_name:
-            source.set_abbreviation(cap.site_name)
-        reporef = RepoRef()
-        reporef.set_reference_handle(repo_handle)
-        reporef.set_media_type(SourceMediaType.ELECTRONIC)
-        source.add_repo_reference(reporef)
-        src_handle = db.add_source(source, trans)
-        index.sources[src_title] = src_handle
-        result.sources += 1
+    # --- Repository: the Capsule archive; Source: the web site -----------
+    repo_handle = _archive_repository(db, trans, index, root, result)
+    src_handle = _site_source(db, trans, index, cap, repo_handle, result)
 
     # --- Citation: one per capture ----------------------------------------
     citation = Citation()
     citation.set_reference_handle(src_handle)
-    citation.set_page(cap.reference_note or cap.display_title)
+    citation.set_page(cap.display_title)
+    date = _capture_date(cap)
+    if date is not None:
+        citation.set_date_object(date)
     citation.set_privacy(private)
     citation.add_attribute(_src_attr(ATTR_CAPTURE_ID, cap.capture_id))
     if cap.source_id:
@@ -237,6 +298,46 @@ def _import_one(db, trans, index, cap, result):
     db.add_citation(citation, trans)
     index.captures[cap.capture_id] = citation.get_handle()
     result.citations += 1
+    if person_handle:
+        _cite(db, trans, person_handle, citation.get_handle())
+
+
+def get_person(db, handle):
+    """The Person for handle, or None when it is gone from this tree."""
+    if not handle:
+        return None
+    try:
+        return db.get_person_from_handle(handle)
+    except HandleError:
+        return None
+
+
+def _cite(db, trans, person_handle, citation_handle):
+    person = get_person(db, person_handle)
+    # the Person's own citation list only, not those on its names, events...
+    if person is not None and citation_handle not in person.get_citation_list():
+        person.add_citation(citation_handle)
+        db.commit_person(person, trans)
+
+
+def cite_person(db, person_handle, citation_handle):
+    """The linked primary Person cites the capture's Citation (shown on
+    the Source Citations tab of the Person editor)."""
+    with DbTxn(_("Link Capsule capture to a person"), db) as trans:
+        _cite(db, trans, person_handle, citation_handle)
+
+
+def uncite_person(db, person_handle, citation_handle):
+    """Undo cite_person(): the Person no longer cites the Citation."""
+    person = get_person(db, person_handle)
+    if person is None or citation_handle not in person.get_citation_list():
+        return
+    # own list only: a citation the user put on a Name or Event stays
+    person.set_citation_list(
+        [h for h in person.get_citation_list() if h != citation_handle]
+    )
+    with DbTxn(_("Unlink Capsule capture from a person"), db) as trans:
+        db.commit_person(person, trans)
 
 
 def _add_note(db, trans, text, note_type, private):

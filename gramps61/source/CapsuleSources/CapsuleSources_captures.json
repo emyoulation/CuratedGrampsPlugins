@@ -1,0 +1,29 @@
+{
+  "captures": {
+    "20261031-enwikipediaorg-8fcf9aa1": {
+      "given": "George",
+      "name": "George Washington",
+      "people": {
+        "6ada8391": "104fc35e3abc767d9b5fd3e8e229"
+      },
+      "surname": "Washington"
+    },
+    "20261031-findagravecom-4fed9c7a": {
+      "given": "Sir Walter",
+      "name": "Sir Walter Raleigh",
+      "surname": "Raleigh"
+    },
+    "20261031-findagravecom-f8cc49d9": {
+      "given": "George",
+      "name": "George Washington",
+      "people": {
+        "6ada8391": "104fc35e3abc767d9b5fd3e8e229"
+      },
+      "surname": "Washington"
+    }
+  },
+  "meta": {
+    "plugin_id": "CapsuleSources",
+    "schema_version": "1"
+  }
+}

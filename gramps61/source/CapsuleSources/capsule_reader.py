@@ -39,18 +39,32 @@ UNCLASSIFIED = "Unclassified"
 _CATEGORY_RULES = (
     ("Reference lists", r"coverage|holdings"),
     ("Church registers", r"church register|kirchenbuch"),
-    ("Probate & wills", r"probate|\bwills?\b|letters of administration|administration records|testament"),
+    (
+        "Probate & wills",
+        r"probate|\bwills?\b|letters of administration|administration records|testament",
+    ),
     ("Military", r"military|draft|pension|soldier|\bwar\b|regiment|enlist"),
-    ("Immigration & naturalization", r"passenger|naturali[sz]|immigra|emigra|ship manifest|border crossing"),
-    ("Census & household", r"census|household|husförhör|house interrogation|clerical survey"),
+    (
+        "Immigration & naturalization",
+        r"passenger|naturali[sz]|immigra|emigra|ship manifest|border crossing",
+    ),
+    (
+        "Census & household",
+        r"census|household|husförhör|house interrogation|clerical survey",
+    ),
     ("Land & property", r"valuation|tithe|\bland\b|property|deed|estate map"),
     ("Marriage", r"marri|wedding|banns|trau"),
     ("Birth & baptism", r"baptis|birth|christening|taufe"),
-    ("Death & burial", r"death|burial|obituar|grave|memorial|cemetery|funeral|beerdigung"),
+    (
+        "Death & burial",
+        r"death|burial|obituar|grave|memorial|cemetery|funeral|beerdigung",
+    ),
     ("Directories & books", r"directory|book|almanac|yearbook"),
     ("Public records", r"social security|public records|voter|court"),
 )
-_CATEGORY_COMPILED = tuple((n, re.compile(p, re.IGNORECASE)) for n, p in _CATEGORY_RULES)
+_CATEGORY_COMPILED = tuple(
+    (n, re.compile(p, re.IGNORECASE)) for n, p in _CATEGORY_RULES
+)
 _EMPTY_TYPES = {"", "none", "unknown", "unclassified", "n/a"}
 
 
@@ -132,6 +146,7 @@ class Capture:
     transcribed_at: str | None = None
     file_types: list = field(default_factory=list)  # "html", "pdf", "image" ...
     files: list = field(default_factory=list)  # list of CaptureFile
+    snapshot: CaptureFile | None = None  # snapshot.html, viewed but not attached
     problems: list = field(default_factory=list)
 
     @property
@@ -164,7 +179,9 @@ class Capture:
     @property
     def awaiting_reading(self):
         """Archived without a key and not read yet."""
-        return self.extraction_pending and not self.superseded and not self.ever_superseded
+        return (
+            self.extraction_pending and not self.superseded and not self.ever_superseded
+        )
 
     @property
     def category(self):
@@ -212,6 +229,13 @@ class Capture:
     @property
     def media_count(self):
         return sum(1 for f in self.files if f.rel_path.startswith("media/"))
+
+    @property
+    def viewable_files(self):
+        """Files the preview offers to open: the attachable ones, then the
+        page text copy (snapshot.html), which is never attached to Gramps."""
+        extra = [self.snapshot] if self.snapshot is not None else []
+        return [f for f in self.files + extra if f.exists]
 
     @property
     def display_title(self):
@@ -313,7 +337,8 @@ def read_capture(folder):
     for ref in extraction.get("external_refs") or []:
         if isinstance(ref, dict):
             text = " ".join(
-                str(ref.get(k) or "") for k in ("authority", "identifier", "url", "label")
+                str(ref.get(k) or "")
+                for k in ("authority", "identifier", "url", "label")
             ).strip()
             cap.external_refs.append(text)
     cap.extraction_notes = _str_or_none(extraction.get("notes"))
@@ -325,8 +350,12 @@ def read_capture(folder):
     if isinstance(result.get("verify_shortfall"), list):
         cap.verify_shortfall = [str(x) for x in result["verify_shortfall"]]
     for tpath in (folder / "transcript").glob("*/transcript.json"):
-        created = (_load_json(tpath, problems).get("transcription") or {}).get("created_at")
-        if isinstance(created, str) and (cap.transcribed_at is None or created > cap.transcribed_at):
+        created = (_load_json(tpath, problems).get("transcription") or {}).get(
+            "created_at"
+        )
+        if isinstance(created, str) and (
+            cap.transcribed_at is None or created > cap.transcribed_at
+        ):
             cap.transcribed_at = created
 
     # --- file types, like the Files column of the Captures Index ----------
@@ -342,6 +371,14 @@ def read_capture(folder):
         elif rel.endswith(".html"):
             types.add("html")
     cap.file_types = sorted(types)
+    if primary and not cap.is_document and ".." not in primary.split("/"):
+        cap.snapshot = CaptureFile(
+            rel_path=primary,
+            abs_path=folder / primary,
+            mime="text/html" if primary.endswith(".html") else None,
+            sha256=_str_or_none(hashes.get(primary)),
+            label="page text copy",
+        )
 
     if manifest.get("capture_id") and manifest.get("capture_id") != folder.name:
         problems.append("manifest capture_id differs from folder name")

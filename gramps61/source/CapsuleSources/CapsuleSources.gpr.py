@@ -15,16 +15,17 @@ from gramps.version import major_version, VERSION_TUPLE
 if VERSION_TUPLE >= (5, 2, 0):
     register(
         TOOL,
-        id="capsulesources",
+        id="CapsuleSources",
         name=_("Capsule Sources"),
         description=_(
             "Imports record captures saved by the Genealogy Capsule browser "
-            "extension as Sources, Citations and Media, without creating people"
+            "extension as Sources, Citations and Media, and links each one to "
+            "the person you choose"
         ),
-        version="0.1.0",  # build 20261030.1949
+        version="0.2.0",  # build 20261031.1937
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
-        fname="capsule_sources.py",
+        fname="CapsuleSources.py",
         authors=["Genealogy Capsule authors", "mjlawless"],
         # authors_email=["", ""],
         maintainers=["Claude AI", "Brian McCullough"],

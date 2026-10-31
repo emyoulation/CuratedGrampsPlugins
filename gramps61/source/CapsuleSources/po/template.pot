@@ -1,4 +1,4 @@
-# Translation template for the 0.1.0 Capsule Sources tool addon for Gramps.
+# Translation template for the 0.2.0 Capsule Sources tool addon for Gramps.
 # Copyright (C) 2026 Claude AI, Brian McCullough
 # This file is distributed under the same license as the Capsule Sources package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Capsule Sources 0.1.0\n"
+"Project-Id-Version: Capsule Sources 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 16:30-0500\n"
+"POT-Creation-Date: 2026-10-31 15:20-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,320 +17,491 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: CapsuleSources.gpr.py:19 capsule_sources.py:126 capsule_sources.py:337
+#: CapsuleSources.gpr.py:19 CapsuleSources.py:141 CapsuleSources.py:427
 msgid "Capsule Sources"
 msgstr ""
 
 #: CapsuleSources.gpr.py:21
 msgid ""
 "Imports record captures saved by the Genealogy Capsule browser extension as "
-"Sources, Citations and Media, without creating people"
+"Sources, Citations and Media, and links each one to the person you choose"
 msgstr ""
 
-#: capsule_import.py:117
+#: CapsuleSources.py:124
+msgid "No help available"
+msgstr ""
+
+#: CapsuleSources.py:125
+msgid "This addon has no README.md and no help_url."
+msgstr ""
+
+#: CapsuleSources.py:155
+msgid "Help"
+msgstr ""
+
+#: CapsuleSources.py:157
+msgid "Open the Capsule Sources documentation."
+msgstr ""
+
+#: CapsuleSources.py:187
+msgid "Link"
+msgstr ""
+
+#: CapsuleSources.py:188
+msgid "Add a new person"
+msgstr ""
+
+#: CapsuleSources.py:189
+msgid "Clear Reference"
+msgstr ""
+
+#: CapsuleSources.py:351
+msgid "Clear"
+msgstr ""
+
+#: CapsuleSources.py:474
+msgid "Refresh"
+msgstr ""
+
+#: CapsuleSources.py:478
+msgid ""
+"Refresh: read the Capsule captures folder again, to show captures made since "
+"this window opened."
+msgstr ""
+
+#: CapsuleSources.py:484
+msgid "Capsule captures folder:"
+msgstr ""
+
+#: CapsuleSources.py:486
+msgid "Select the Capsule captures folder"
+msgstr ""
+
+#: CapsuleSources.py:506
+msgid "Filter captures…"
+msgstr ""
+
+#: CapsuleSources.py:509
+msgid ""
+"Matches record type, person, site, status, citation, capture id, address, "
+"referenced documents and your notes."
+msgstr ""
+
+#: CapsuleSources.py:515
+msgid "All records"
+msgstr ""
+
+#: CapsuleSources.py:515
+msgid "record types"
+msgstr ""
+
+#: CapsuleSources.py:516
+msgid "All sites"
+msgstr ""
+
+#: CapsuleSources.py:516
+msgid "sites"
+msgstr ""
+
+#: CapsuleSources.py:517
+msgid "All statuses"
+msgstr ""
+
+#: CapsuleSources.py:518
+msgid "Read or not"
+msgstr ""
+
+#: CapsuleSources.py:519
+msgid "In tree or not"
+msgstr ""
+
+#: CapsuleSources.py:525
+msgid "Show superseded"
+msgstr ""
+
+#: CapsuleSources.py:548
+msgid "Select all new"
+msgstr ""
+
+#: CapsuleSources.py:549
+msgid "Select none"
+msgstr ""
+
+#: CapsuleSources.py:554
+msgid "Import selected"
+msgstr ""
+
+#: CapsuleSources.py:596
+msgid "Import"
+msgstr ""
+
+#: CapsuleSources.py:606
+msgid "Status"
+msgstr ""
+
+#: CapsuleSources.py:607
+msgid "Record"
+msgstr ""
+
+#: CapsuleSources.py:608
+msgid "Person"
+msgstr ""
+
+#: CapsuleSources.py:609
+msgid "Site"
+msgstr ""
+
+#: CapsuleSources.py:610 CapsuleSources.py:727
+msgid "Captured"
+msgstr ""
+
+#: CapsuleSources.py:611 CapsuleSources.py:757
+msgid "Files"
+msgstr ""
+
+#: CapsuleSources.py:708
+#, python-brace-format
+msgid "Copy the {section}"
+msgstr ""
+
+#: CapsuleSources.py:723
+msgid "Primary person"
+msgstr ""
+
+#: CapsuleSources.py:724
+msgid "Source"
+msgstr ""
+
+#: CapsuleSources.py:725
+msgid "Record type"
+msgstr ""
+
+#: CapsuleSources.py:726
+msgid "Local"
+msgstr ""
+
+#: CapsuleSources.py:728
+msgid "Accessed"
+msgstr ""
+
+#: CapsuleSources.py:729
+msgid "Gating"
+msgstr ""
+
+#: CapsuleSources.py:730
+msgid "Copyright"
+msgstr ""
+
+#: CapsuleSources.py:731
+msgid "Media"
+msgstr ""
+
+#: CapsuleSources.py:732
+msgid "Transcribed"
+msgstr ""
+
+#: CapsuleSources.py:733 CapsuleSources.py:885
+msgid "In this tree"
+msgstr ""
+
+#: CapsuleSources.py:762
+msgid "Citation"
+msgstr ""
+
+#: CapsuleSources.py:763
+msgid "Reference note"
+msgstr ""
+
+#: CapsuleSources.py:766
+msgid "Short note"
+msgstr ""
+
+#: CapsuleSources.py:770
+msgid "Source list entry"
+msgstr ""
+
+#: CapsuleSources.py:775
+msgid "People on this record"
+msgstr ""
+
+#: CapsuleSources.py:780
+msgid "Your notes"
+msgstr ""
+
+#: CapsuleSources.py:833
+#, python-brace-format
+msgid "Captures: {n}"
+msgstr ""
+
+#: CapsuleSources.py:834
+#, python-brace-format
+msgid "Sites: {n}"
+msgstr ""
+
+#: CapsuleSources.py:840
+#, python-brace-format
+msgid "In this tree: {n}"
+msgstr ""
+
+#: CapsuleSources.py:841
+#, python-brace-format
+msgid "Not yet in this tree: {n}"
+msgstr ""
+
+#: CapsuleSources.py:842
+#, python-brace-format
+msgid "Superseded: {n}"
+msgstr ""
+
+#: CapsuleSources.py:843
+#, python-brace-format
+msgid "Not read yet: {n}"
+msgstr ""
+
+#: CapsuleSources.py:844
+#, python-brace-format
+msgid "Private (subscription or copyright): {n}"
+msgstr ""
+
+#: CapsuleSources.py:845
+#, python-brace-format
+msgid "Linked to a person in this tree: {n}"
+msgstr ""
+
+#: CapsuleSources.py:847
+#, python-brace-format
+msgid "Captured: {span}"
+msgstr ""
+
+#: CapsuleSources.py:848
+#, python-brace-format
+msgid "Size on disk: {size}"
+msgstr ""
+
+#: CapsuleSources.py:885
+msgid "Not in this tree"
+msgstr ""
+
+#: CapsuleSources.py:899
+msgid "in tree"
+msgstr ""
+
+#: CapsuleSources.py:902
+msgid "superseded"
+msgstr ""
+
+#: CapsuleSources.py:904
+msgid "not read yet"
+msgstr ""
+
+#: CapsuleSources.py:906
+msgid "incomplete"
+msgstr ""
+
+#: CapsuleSources.py:914
+msgid "source"
+msgstr ""
+
+#: CapsuleSources.py:945
+#, python-brace-format
+msgid "Record type: {type}"
+msgstr ""
+
+#: CapsuleSources.py:950
+#, python-brace-format
+msgid "Genealogy Capsule read: {name}"
+msgstr ""
+
+#: CapsuleSources.py:952
+msgid "Double-click to edit its Citation."
+msgstr ""
+
+#: CapsuleSources.py:973
+#, python-brace-format
+msgid "{n} of {total} shown"
+msgstr ""
+
+#: CapsuleSources.py:976
+#, python-brace-format
+msgid "{new} of the captures shown are not yet in this tree."
+msgstr ""
+
+#: CapsuleSources.py:985
+msgid "No captures match these filters."
+msgstr ""
+
+#: CapsuleSources.py:987
+msgid "Please select a Capsule Captures folder."
+msgstr ""
+
+#: CapsuleSources.py:1002
+msgid "No capture selected"
+msgstr ""
+
+#: CapsuleSources.py:1029
+msgid "Click to edit the Person."
+msgstr ""
+
+#: CapsuleSources.py:1034
+msgid "(not linked)"
+msgstr ""
+
+#: CapsuleSources.py:1039
+msgid "Right-click the row in the list to link a person."
+msgstr ""
+
+#: CapsuleSources.py:1053
+#, python-brace-format
+msgid ""
+"Click to open the capture folder.\n"
+"{path}"
+msgstr ""
+
+#: CapsuleSources.py:1057
+msgid "The capture folder is missing."
+msgstr ""
+
+#: CapsuleSources.py:1062
+msgid "flagged"
+msgstr ""
+
+#: CapsuleSources.py:1062
+msgid "not flagged"
+msgstr ""
+
+#: CapsuleSources.py:1070
+#, python-brace-format
+msgid "yes, citation {id}"
+msgstr ""
+
+#: CapsuleSources.py:1071
+msgid "Click to edit the Citation."
+msgstr ""
+
+#: CapsuleSources.py:1073
+msgid "no"
+msgstr ""
+
+#: CapsuleSources.py:1080
+#, python-brace-format
+msgid "Superseded by {id}."
+msgstr ""
+
+#: CapsuleSources.py:1082
+msgid "Superseded."
+msgstr ""
+
+#: CapsuleSources.py:1086
+#, python-brace-format
+msgid "Incomplete: {why}"
+msgstr ""
+
+#: CapsuleSources.py:1088
+msgid "the capture does not hold the record"
+msgstr ""
+
+#: CapsuleSources.py:1215
+msgid "See the person details"
+msgstr ""
+
+#: CapsuleSources.py:1216
+msgid "See ancestor family details"
+msgstr ""
+
+#: CapsuleSources.py:1219
+msgid "See descendant family details"
+msgstr ""
+
+#: CapsuleSources.py:1222
+msgid "Make the person active"
+msgstr ""
+
+#: CapsuleSources.py:1227
+msgid "Fuzzy Match Lookup…"
+msgstr ""
+
+#: CapsuleSources.py:1229
+msgid "Edit the Citation"
+msgstr ""
+
+#: CapsuleSources.py:1230
+msgid "Clipboard the Citation"
+msgstr ""
+
+#: CapsuleSources.py:1231
+msgid "Open the capture folder"
+msgstr ""
+
+#: CapsuleSources.py:1232
+msgid "Copy the reference note"
+msgstr ""
+
+#: CapsuleSources.py:1262
+msgid "Needs the Fuzzy Matching addon."
+msgstr ""
+
+#: CapsuleSources.py:1319
+msgid "Select the primary person"
+msgstr ""
+
+#: CapsuleSources.py:1432
+msgid "Open"
+msgstr ""
+
+#: CapsuleSources.py:1432
+msgid "Open with…"
+msgstr ""
+
+#: CapsuleSources.py:1459
+msgid ""
+"Choose a program to show this kind of file. Capsule Sources will use it for "
+"these files from now on."
+msgstr ""
+
+#: CapsuleSources.py:1495
+msgid "Could not open the file"
+msgstr ""
+
+#: CapsuleSources.py:1716
+#, python-brace-format
+msgid "{n} were already in the tree."
+msgstr ""
+
+#: CapsuleSources.py:1724
+msgid "Imported with problems"
+msgstr ""
+
+#: CapsuleSources.py:1729
+msgid "Import finished"
+msgstr ""
+
+#: capsule_import.py:141
 #, python-brace-format
 msgid ""
 "Added {cit} citations, {src} sources, {repo} repositories, {med} media "
 "objects and {note} notes."
 msgstr ""
 
-#: capsule_import.py:132
+#: capsule_import.py:162
 msgid "Import Capsule captures"
 msgstr ""
 
-#: capsule_import.py:147
-msgid "Unknown web site"
-msgstr ""
-
-#: capsule_import.py:196
+#: capsule_import.py:257
 msgid "Reference note:"
 msgstr ""
 
-#: capsule_import.py:198
+#: capsule_import.py:259
 msgid "Short note:"
 msgstr ""
 
-#: capsule_import.py:200
+#: capsule_import.py:261
 msgid "Source list entry:"
 msgstr ""
 
-#: capsule_sources.py:109
-msgid "No help available"
+#: capsule_import.py:326
+msgid "Link Capsule capture to a person"
 msgstr ""
 
-#: capsule_sources.py:110
-msgid "This addon has no README.md and no help_url."
-msgstr ""
-
-#: capsule_sources.py:140
-msgid "Help"
-msgstr ""
-
-#: capsule_sources.py:142
-msgid "Open the Capsule Sources documentation."
-msgstr ""
-
-#: capsule_sources.py:261
-msgid "Clear"
-msgstr ""
-
-#: capsule_sources.py:367
-msgid "Capsule captures folder:"
-msgstr ""
-
-#: capsule_sources.py:369
-msgid "Select the Capsule captures folder"
-msgstr ""
-
-#: capsule_sources.py:379
-msgid "Filter captures…"
-msgstr ""
-
-#: capsule_sources.py:381
-msgid ""
-"Matches record type, person, site, status, citation, capture id, address, "
-"referenced documents and your notes."
-msgstr ""
-
-#: capsule_sources.py:386
-msgid "All records"
-msgstr ""
-
-#: capsule_sources.py:386
-msgid "record types"
-msgstr ""
-
-#: capsule_sources.py:387
-msgid "All sites"
-msgstr ""
-
-#: capsule_sources.py:387
-msgid "sites"
-msgstr ""
-
-#: capsule_sources.py:388
-msgid "All statuses"
-msgstr ""
-
-#: capsule_sources.py:389
-msgid "Read or not"
-msgstr ""
-
-#: capsule_sources.py:390
-msgid "In tree or not"
-msgstr ""
-
-#: capsule_sources.py:396
-msgid "Show superseded"
-msgstr ""
-
-#: capsule_sources.py:419
-msgid "Select all new"
-msgstr ""
-
-#: capsule_sources.py:420
-msgid "Select none"
-msgstr ""
-
-#: capsule_sources.py:425
-msgid "Close"
-msgstr ""
-
-#: capsule_sources.py:427
-msgid "Import selected"
-msgstr ""
-
-#: capsule_sources.py:470
-msgid "Import"
-msgstr ""
-
-#: capsule_sources.py:475
-msgid "Status"
-msgstr ""
-
-#: capsule_sources.py:476
-msgid "Record"
-msgstr ""
-
-#: capsule_sources.py:477
-msgid "Person"
-msgstr ""
-
-#: capsule_sources.py:478
-msgid "Site"
-msgstr ""
-
-#: capsule_sources.py:479 capsule_sources.py:543
-msgid "Captured"
-msgstr ""
-
-#: capsule_sources.py:480
-msgid "Files"
-msgstr ""
-
-#: capsule_sources.py:540
-msgid "Source"
-msgstr ""
-
-#: capsule_sources.py:541
-msgid "Record type"
-msgstr ""
-
-#: capsule_sources.py:542
-msgid "Local"
-msgstr ""
-
-#: capsule_sources.py:544
-msgid "Accessed"
-msgstr ""
-
-#: capsule_sources.py:545
-msgid "Gating"
-msgstr ""
-
-#: capsule_sources.py:546
-msgid "Copyright"
-msgstr ""
-
-#: capsule_sources.py:547
-msgid "Media"
-msgstr ""
-
-#: capsule_sources.py:548
-msgid "Transcribed"
-msgstr ""
-
-#: capsule_sources.py:549 capsule_sources.py:638
-msgid "In this tree"
-msgstr ""
-
-#: capsule_sources.py:560
-msgid "Open folder"
-msgstr ""
-
-#: capsule_sources.py:573
-msgid "Citation"
-msgstr ""
-
-#: capsule_sources.py:574
-msgid "Reference note"
-msgstr ""
-
-#: capsule_sources.py:577
-msgid "Copy"
-msgstr ""
-
-#: capsule_sources.py:581
-msgid "Short note"
-msgstr ""
-
-#: capsule_sources.py:584
-msgid "Source list entry"
-msgstr ""
-
-#: capsule_sources.py:588
-msgid "People on this record"
-msgstr ""
-
-#: capsule_sources.py:593
-msgid "Your notes"
-msgstr ""
-
-#: capsule_sources.py:638
-msgid "Not in this tree"
-msgstr ""
-
-#: capsule_sources.py:651
-msgid "superseded"
-msgstr ""
-
-#: capsule_sources.py:653
-msgid "not read yet"
-msgstr ""
-
-#: capsule_sources.py:655
-msgid "incomplete"
-msgstr ""
-
-#: capsule_sources.py:657
-msgid "in tree"
-msgstr ""
-
-#: capsule_sources.py:665
-msgid "source"
-msgstr ""
-
-#: capsule_sources.py:692
-#, python-brace-format
-msgid "Record type: {type}"
-msgstr ""
-
-#: capsule_sources.py:715
-#, python-brace-format
-msgid "{n} of {total} shown"
-msgstr ""
-
-#: capsule_sources.py:718
-#, python-brace-format
-msgid "{new} of the captures shown are not yet in this tree."
-msgstr ""
-
-#: capsule_sources.py:727
-msgid "No captures match these filters."
-msgstr ""
-
-#: capsule_sources.py:729
-msgid "Please select a Capsule Captures folder."
-msgstr ""
-
-#: capsule_sources.py:743
-msgid "No capture selected"
-msgstr ""
-
-#: capsule_sources.py:768
-msgid "flagged"
-msgstr ""
-
-#: capsule_sources.py:768
-msgid "not flagged"
-msgstr ""
-
-#: capsule_sources.py:774
-#, python-brace-format
-msgid "yes, citation {id}"
-msgstr ""
-
-#: capsule_sources.py:776
-msgid "no"
-msgstr ""
-
-#: capsule_sources.py:782
-#, python-brace-format
-msgid "Superseded by {id}."
-msgstr ""
-
-#: capsule_sources.py:784
-msgid "Superseded."
-msgstr ""
-
-#: capsule_sources.py:787
-#, python-brace-format
-msgid "Incomplete: {why}"
-msgstr ""
-
-#: capsule_sources.py:788
-msgid "the capture does not hold the record"
-msgstr ""
-
-#: capsule_sources.py:876
-#, python-brace-format
-msgid "{n} were already in the tree."
-msgstr ""
-
-#: capsule_sources.py:884
-msgid "Imported with problems"
-msgstr ""
-
-#: capsule_sources.py:889
-msgid "Import finished"
+#: capsule_import.py:339
+msgid "Unlink Capsule capture from a person"
 msgstr ""
