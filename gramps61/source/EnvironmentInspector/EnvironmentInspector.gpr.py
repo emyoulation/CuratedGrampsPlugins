@@ -32,9 +32,10 @@ if VERSION_TUPLE >= (5, 2, 0):
         GRAMPLET,
         id="EnvironmentInspector",
         name=_("Environment Inspector"),
-        description=_("Two-tab developer reference gramplet showing the current locale "
-                      "and a searchable, sortable table of all Gramps string constants."),
-        version="1.0.5",
+        description=_("Developer reference gramplet showing the current locale, "
+                      "a searchable, sortable table of all Gramps string constants, "
+                      "and a preview of other Gramps translations."),
+        version="2.0.0",  # build 20261101.0508
         gramps_target_version=major_version,
         status=STABLE,
         audience=EVERYONE,
@@ -48,6 +49,8 @@ if VERSION_TUPLE >= (5, 2, 0):
         gramplet_title=_("Environment Inspector"),
         navtypes=["Dashboard"],
         include_in_listing=True,
-        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/"
-                 "gramps61/source/EnvironmentInspector",
+        help_url=(
+            "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/"
+            "gramps61/source/EnvironmentInspector"
+        ),
     )

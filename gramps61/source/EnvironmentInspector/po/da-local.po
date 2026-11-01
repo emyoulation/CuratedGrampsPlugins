@@ -1,0 +1,117 @@
+# Translation template for the 1.0.6 Environment Inspector gramplet addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Environment Inspector package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Environment Inspector 1.0.6\n"
+"Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
+"POT-Creation-Date: 2026-08-23 09:59-0500\n"
+"PO-Revision-Date: 2026-08-23 09:59-0500\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: EnvironmentInspector.gpr.py:34 EnvironmentInspector.gpr.py:48
+msgid "Environment Inspector"
+msgstr ""
+
+#: EnvironmentInspector.gpr.py:35
+msgid ""
+"Two-tab developer reference gramplet showing the current locale and a "
+"searchable, sortable table of all Gramps string constants."
+msgstr ""
+
+#: EnvironmentInspector.py:127
+msgid "Remote Directory"
+msgstr ""
+
+#: EnvironmentInspector.py:129 EnvironmentInspector.py:131
+msgid "Directory"
+msgstr ""
+
+#: EnvironmentInspector.py:129
+msgid "Hidden"
+msgstr ""
+
+#: EnvironmentInspector.py:131
+msgid "Not hidden"
+msgstr ""
+
+#: EnvironmentInspector.py:133
+msgid "Glade interface layout file"
+msgstr ""
+
+#: EnvironmentInspector.py:135
+msgid "File"
+msgstr ""
+
+#: EnvironmentInspector.py:136 EnvironmentInspector.py:399
+msgid "Value"
+msgstr ""
+
+#: EnvironmentInspector.py:196 EnvironmentInspector.py:301
+msgid "Language"
+msgstr ""
+
+#: EnvironmentInspector.py:197
+msgid "Gramps Constants"
+msgstr ""
+
+#: EnvironmentInspector.py:208
+msgid "Copy to clipboard"
+msgstr ""
+
+#: EnvironmentInspector.py:242 EnvironmentInspector.py:284
+msgid "Unknown"
+msgstr ""
+
+#: EnvironmentInspector.py:285
+msgid "N/A"
+msgstr ""
+
+#: EnvironmentInspector.py:300
+msgid "Locale Code"
+msgstr ""
+
+#: EnvironmentInspector.py:302
+msgid "Lang"
+msgstr ""
+
+#: EnvironmentInspector.py:303
+msgid "Region"
+msgstr ""
+
+#: EnvironmentInspector.py:304
+msgid "English Name"
+msgstr ""
+
+#: EnvironmentInspector.py:307
+msgid "Locale Directory"
+msgstr ""
+
+#: EnvironmentInspector.py:320
+msgid "Current Locale"
+msgstr ""
+
+#: EnvironmentInspector.py:328
+#, python-format
+msgid "Installed Languages (%d)"
+msgstr ""
+
+#: EnvironmentInspector.py:346
+msgid "Filter by name or value…"
+msgstr ""
+
+#: EnvironmentInspector.py:353
+msgid "Filter constants by Type metadata"
+msgstr ""
+
+#: EnvironmentInspector.py:388
+msgid "Name"
+msgstr ""
