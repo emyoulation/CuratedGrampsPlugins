@@ -112,7 +112,7 @@ def can_restart():
     return os.name == "posix"
 
 
-def spawn_restart(code, log_path=None):
+def spawn_restart(code, log_path=None, extra_args=None):
     """
     Start a new Gramps that waits until this process has exited.
 
@@ -129,6 +129,11 @@ def spawn_restart(code, log_path=None):
     else:
         env.pop("LANGUAGE", None)
     argv = list(getattr(sys, "orig_argv", None) or [sys.executable] + sys.argv)
+    # Reopen the current tree, unless the command already names one.
+    if extra_args and not any(
+        arg in ("-O", "--open") or arg.startswith("--open=") for arg in argv
+    ):
+        argv += list(extra_args)
     script = 'while kill -0 "$0" 2>/dev/null; do sleep 0.5; done; exec "$@"'
     output = None
     if log_path:

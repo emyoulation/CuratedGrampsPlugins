@@ -1,5 +1,6 @@
-[back](../README.md)
-# Gramps Developer Reference: 
+# Developer Reference: Gramps Environment Constants
+[README.md](../README.md) ● [CHANGELOG.md](../CHANGELOG.md) ● [Constants](EfficientConstants.md)
+
 **Efficient Constants in Gramps Addon Design**
 
 ---

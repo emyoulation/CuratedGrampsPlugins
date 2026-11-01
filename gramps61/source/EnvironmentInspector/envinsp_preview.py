@@ -54,6 +54,18 @@ def _table_titles():
     return (_("Kind"), _("Original (English)"), _("Current"), _("Preview"), _("Status"))
 
 
+def _same_text_language(code):
+    """
+    A key that is equal for languages that show the same text: the
+    untranslated source text is US English, so "en", "en_US" and "C" are
+    the Original column; other English variants (en_GB...) are translations.
+    """
+    code = (code or "en").split(".")[0]
+    if code in ("C", "POSIX", "en", "en_US"):
+        return "en"
+    return code
+
+
 # ------------------------------------------------------------
 # Collecting interface text from a widget tree
 # ------------------------------------------------------------
@@ -182,10 +194,12 @@ def resolve_source(uistate, descriptor):
 class TranslationPreview(Gtk.Box):
     """The Translation Preview tab."""
 
-    def __init__(self, uistate):
+    def __init__(self, uistate, config=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.set_border_width(6)
         self.uistate = uistate
+        self._config = config  # EnvironmentInspector.ini, or None
+        self.status_checks = {}
         self._matchers = {}
         self._locales = {}
         self._sources = []
@@ -204,6 +218,10 @@ class TranslationPreview(Gtk.Box):
         self.wrap_check.connect("toggled", self.cb_wrap_toggled)
         row.pack_end(self.wrap_check, False, False, 0)
         self._views = []
+        self._lang_columns = []  # (Current column, Preview column) per table
+        self._lang_names = {
+            code: name for name, code in glocale.get_language_dict().items()
+        }
         self._wrap_cache = {}
         self._last_width = {}
         self._remeasure_pending = set()
@@ -231,9 +249,36 @@ class TranslationPreview(Gtk.Box):
         windows_box.pack_start(top, False, False, 0)
 
         options = Gtk.Box(spacing=6)
-        self.hide_missing = Gtk.CheckButton(label=_("Hide text not in the catalog"))
-        self.hide_missing.connect("toggled", self.cb_source_changed)
-        options.pack_start(self.hide_missing, False, False, 0)
+        options.pack_start(Gtk.Label(label=_("Show catalog text:")), False, False, 0)
+        hidden = self._hidden_statuses()
+        # One check box per status; the label is translated, the key is not.
+        for status, label, tip in (
+            (catalog.STATUS_TRANSLATED, _("translated"),
+             _("The text is in the catalog, and the preview language "
+               "translates it into different text.")),
+            (catalog.STATUS_SAME, _("same"),
+             _("The text is in the catalog, but the preview language shows "
+               "the same text: it is not translated yet, or it is the same "
+               "word in both languages (such as an abbreviation or a name).")),
+            (catalog.STATUS_PATTERN, _("pattern"),
+             _("Text built while Gramps runs, such as \"Edit Person (Smith, "
+               "John)\", that matches a catalog entry with placeholders. The "
+               "preview fills the placeholders in.")),
+            (catalog.STATUS_AMBIGUOUS, _("ambiguous"),
+             _("The text matches a catalog entry that the preview language "
+               "translates in more than one way (for example by context). "
+               "The preview shows the first translation.")),
+            (catalog.STATUS_MISSING, _("not in catalog"),
+             _("The text is not in the Gramps catalog: usually genealogy "
+               "data, text from an addon with its own catalog, or text from "
+               "GTK or the system.")),
+        ):
+            check = Gtk.CheckButton(label=label)
+            check.set_tooltip_text(tip)
+            check.set_active(status not in hidden)
+            check.connect("toggled", self.cb_status_toggled)
+            self.status_checks[status] = check
+            options.pack_start(check, False, False, 0)
         windows_copy = Gtk.Button(label=_("Copy table"))
         options.pack_end(windows_copy, False, False, 0)
         windows_box.pack_start(options, False, False, 0)
@@ -248,6 +293,7 @@ class TranslationPreview(Gtk.Box):
         self.pack_start(notebook, True, True, 0)
 
         self._fill_languages()
+        self._update_language_columns()
         self.lang_combo.connect("changed", self.cb_language_changed)
         self.source_combo.connect("changed", self.cb_source_changed)
         # Build locales and catalogs only when the tab is first shown.
@@ -282,7 +328,42 @@ class TranslationPreview(Gtk.Box):
             view.append_column(column)
         view.set_tooltip_column(COL_PREVIEW)
         self._views.append(view)
+        self._lang_columns.append((view.get_column(COL_CURRENT), view.get_column(COL_PREVIEW)))
         return store, view
+
+    # --- language column titles ------------------------------------------
+    def _language_name(self, code):
+        if not code:
+            return "?"
+        return (
+            self._lang_names.get(code)
+            or self._lang_names.get(code.split("_")[0])
+            or catalog.english_name(code)
+            or code
+        )
+
+    def _update_language_columns(self):
+        """
+        Title the Current and Preview columns with their language, and hide
+        a column that repeats the language of a column to its left
+        (Original is US English).
+        """
+        current = catalog.session_language(glocale)
+        preview = self.lang_combo.get_active_id() or current
+        show_current = _same_text_language(current) != "en"
+        show_preview = _same_text_language(preview) not in (
+            "en",
+            _same_text_language(current),
+        )
+        current_title = "%s (%s)" % (_("Current"), self._language_name(current))
+        preview_title = "%s (%s)" % (_("Preview"), self._language_name(preview))
+        for current_col, preview_col in self._lang_columns:
+            current_col.set_title(current_title)
+            preview_col.set_title(preview_title)
+            current_col.set_visible(show_current)
+            preview_col.set_visible(show_preview)
+        for view in self._views:
+            self._queue_remeasure(view)
 
     # --- wrapping ------------------------------------------------------------
     def _wrapped(self, view, text, width):
@@ -401,12 +482,16 @@ class TranslationPreview(Gtk.Box):
             self.summary.set_text(_("Not available any more; click Refresh."))
             return
         counts = {}
-        hide = self.hide_missing.get_active()
+        shown = {s for s, check in self.status_checks.items() if check.get_active()}
         for kind, text in collect_strings(root, title):
             preview, status, original = matcher.lookup(text)
             counts[status] = counts.get(status, 0) + 1
-            if hide and status == catalog.STATUS_MISSING:
+            if status in self.status_checks and status not in shown:
                 continue
+            if not original and _same_text_language(catalog.session_language(glocale)) == "en":
+                # The Current column is hidden in a US English session:
+                # keep text that is not in the catalog visible in Original.
+                original = text
             self.windows_store.append([kind, original, text, preview, status])
         total = sum(counts.values())
         detail = ", ".join("%s %d" % (status, n) for status, n in sorted(counts.items()))
@@ -439,6 +524,7 @@ class TranslationPreview(Gtk.Box):
             self._busy(False)
 
     def cb_language_changed(self, *obj):
+        self._update_language_columns()
         if self._shown:
             self._refresh_visible()
 
@@ -475,10 +561,28 @@ class TranslationPreview(Gtk.Box):
         finally:
             self._busy(False)
 
+    def _hidden_statuses(self):
+        if self._config is None:
+            return set()
+        try:
+            return set(self._config.get("preview.hidden-statuses") or [])
+        except Exception:  # missing or damaged setting: show everything
+            return set()
+
+    def cb_status_toggled(self, *obj):
+        if self._config is not None:
+            hidden = [s for s, check in self.status_checks.items() if not check.get_active()]
+            self._config.set("preview.hidden-statuses", hidden)
+            self._config.save()
+        self.cb_source_changed()
+
     def cb_copy(self, _button, store):
-        lines = ["\t".join(_table_titles())]
+        # The visible columns only, with their titles as shown.
+        view = self._views[0] if store is self.samples_store else self._views[1]
+        shown = [i for i, col in enumerate(view.get_columns()) if col.get_visible()]
+        lines = ["\t".join(view.get_column(i).get_title() for i in shown)]
         for row in store:
-            lines.append("\t".join(row[i] or "" for i in range(5)))
+            lines.append("\t".join(row[i] or "" for i in shown))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text("\n".join(lines), -1)
         clipboard.store()

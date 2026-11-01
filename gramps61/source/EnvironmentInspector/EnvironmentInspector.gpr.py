@@ -33,9 +33,10 @@ if VERSION_TUPLE >= (5, 2, 0):
         id="EnvironmentInspector",
         name=_("Environment Inspector"),
         description=_("Developer reference gramplet showing the current locale, "
+                      "the related locale settings and where each is set, "
                       "a searchable, sortable table of all Gramps string constants, "
                       "and a preview of other Gramps translations."),
-        version="2.0.0",  # build 20261101.0508
+        version="2.1.0",  # build 20261101.1856
         gramps_target_version=major_version,
         status=STABLE,
         audience=EVERYONE,

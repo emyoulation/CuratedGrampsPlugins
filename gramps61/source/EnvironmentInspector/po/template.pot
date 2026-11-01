@@ -1,4 +1,4 @@
-# Translation template for the 2.0.0 Environment Inspector gramplet addon for Gramps.
+# Translation template for the 2.1.0 Environment Inspector gramplet addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Environment Inspector package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Environment Inspector 2.0.0\n"
+"Project-Id-Version: Environment Inspector 2.1.0\n"
 "Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
-"POT-Creation-Date: 2026-11-01 01:01-0500\n"
+"POT-Creation-Date: 2026-11-01 13:58-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,89 +17,98 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: EnvironmentInspector.gpr.py:34 EnvironmentInspector.gpr.py:49
+#: EnvironmentInspector.gpr.py:34 EnvironmentInspector.gpr.py:50
 msgid "Environment Inspector"
 msgstr ""
 
 #: EnvironmentInspector.gpr.py:35
 msgid ""
-"Developer reference gramplet showing the current locale, a searchable, "
-"sortable table of all Gramps string constants, and a preview of other Gramps "
-"translations."
+"Developer reference gramplet showing the current locale, the related locale "
+"settings and where each is set, a searchable, sortable table of all Gramps "
+"string constants, and a preview of other Gramps translations."
 msgstr ""
 
-#: EnvironmentInspector.py:200
+#: EnvironmentInspector.py:210
 msgid "Remote Directory"
 msgstr ""
 
-#: EnvironmentInspector.py:202 EnvironmentInspector.py:204
+#: EnvironmentInspector.py:212 EnvironmentInspector.py:214
 msgid "Directory"
 msgstr ""
 
-#: EnvironmentInspector.py:202
+#: EnvironmentInspector.py:212 EnvironmentInspector.py:219
 msgid "Hidden"
 msgstr ""
 
-#: EnvironmentInspector.py:204
+#: EnvironmentInspector.py:214 EnvironmentInspector.py:219
 msgid "Not hidden"
 msgstr ""
 
-#: EnvironmentInspector.py:206
-msgid "Glade interface layout file"
+#: EnvironmentInspector.py:219 EnvironmentInspector.py:221
+msgid "Glade Interface"
 msgstr ""
 
-#: EnvironmentInspector.py:208
+#: EnvironmentInspector.py:223
 msgid "File"
 msgstr ""
 
-#: EnvironmentInspector.py:209 EnvironmentInspector.py:724
+#: EnvironmentInspector.py:224 EnvironmentInspector.py:903
+#: envinsp_settings.py:361
 msgid "Value"
 msgstr ""
 
-#: EnvironmentInspector.py:292 EnvironmentInspector.py:620
+#: EnvironmentInspector.py:307 EnvironmentInspector.py:760
 msgid "Language"
 msgstr ""
 
-#: EnvironmentInspector.py:293
+#: EnvironmentInspector.py:308
+msgid "Locale Settings"
+msgstr ""
+
+#: EnvironmentInspector.py:309
 msgid "Translation Preview"
 msgstr ""
 
-#: EnvironmentInspector.py:294
+#: EnvironmentInspector.py:310
 msgid "Gramps Constants"
 msgstr ""
 
-#: EnvironmentInspector.py:305
+#: EnvironmentInspector.py:311
+msgid "Help"
+msgstr ""
+
+#: EnvironmentInspector.py:320
 msgid "Copy to clipboard"
 msgstr ""
 
-#: EnvironmentInspector.py:343 envinsp_preview.py:54
+#: EnvironmentInspector.py:399 envinsp_preview.py:54 envinsp_preview.py:358
 msgid "Current"
 msgstr ""
 
-#: EnvironmentInspector.py:354 EnvironmentInspector.py:576
-#: EnvironmentInspector.py:622
+#: EnvironmentInspector.py:410 EnvironmentInspector.py:716
+#: EnvironmentInspector.py:762
 msgid "Region"
 msgstr ""
 
-#: EnvironmentInspector.py:355 EnvironmentInspector.py:576
+#: EnvironmentInspector.py:411 EnvironmentInspector.py:716
 msgid "Code"
 msgstr ""
 
-#: EnvironmentInspector.py:356 EnvironmentInspector.py:576
-#: EnvironmentInspector.py:713
+#: EnvironmentInspector.py:412 EnvironmentInspector.py:716
+#: EnvironmentInspector.py:892
 msgid "Name"
 msgstr ""
 
-#: EnvironmentInspector.py:357 EnvironmentInspector.py:576
-#: EnvironmentInspector.py:624
+#: EnvironmentInspector.py:413 EnvironmentInspector.py:716
+#: EnvironmentInspector.py:764
 msgid "Endonym"
 msgstr ""
 
-#: EnvironmentInspector.py:358 EnvironmentInspector.py:576
+#: EnvironmentInspector.py:414 EnvironmentInspector.py:716
 msgid "Strings"
 msgstr ""
 
-#: EnvironmentInspector.py:366
+#: EnvironmentInspector.py:422
 msgid ""
 "Double-click a language to use it the next time Gramps starts; double-click "
 "it again to go back. Region: the region named in the translation code, or "
@@ -107,91 +116,155 @@ msgid ""
 "translated entries in the catalog."
 msgstr ""
 
-#: EnvironmentInspector.py:448
+#: EnvironmentInspector.py:507
 msgid "Restart"
 msgstr ""
 
-#: EnvironmentInspector.py:539
+#: EnvironmentInspector.py:598
 msgid "the system language"
 msgstr ""
 
-#: EnvironmentInspector.py:545
+#: EnvironmentInspector.py:604
 #, python-format
 msgid "Restart Gramps in %s?"
 msgstr ""
 
-#: EnvironmentInspector.py:548
+#: EnvironmentInspector.py:607
 #, python-format
 msgid ""
 "Gramps closes normally, including the backup on exit, and then starts again. "
 "Its terminal messages are written to %s."
 msgstr ""
 
-#: EnvironmentInspector.py:552
+#: EnvironmentInspector.py:611
 msgid ""
 "This is for one start only. If you choose Later, the next start from the "
 "desktop menu uses this language once; starting Gramps from a terminal does "
 "not."
 msgstr ""
 
-#: EnvironmentInspector.py:556
+#: EnvironmentInspector.py:615
 #, python-format
 msgid "Desktop menu entry not changed: %s"
 msgstr ""
 
-#: EnvironmentInspector.py:558
+#: EnvironmentInspector.py:617
 msgid ""
 "Restarting automatically is not available on this system; restart Gramps "
 "yourself."
 msgstr ""
 
-#: EnvironmentInspector.py:560
+#: EnvironmentInspector.py:619
+msgid ""
+"Open editors with unsaved changes ask whether to save them first. The family "
+"tree that is open now is opened again."
+msgstr ""
+
+#: EnvironmentInspector.py:622
+msgid ""
+"Spell checking keeps using the dictionary of the system language; see the "
+"Locale Settings tab."
+msgstr ""
+
+#: EnvironmentInspector.py:625
 msgid "Later"
 msgstr ""
 
-#: EnvironmentInspector.py:562
+#: EnvironmentInspector.py:627
 msgid "Restart now"
 msgstr ""
 
-#: EnvironmentInspector.py:602
+#: EnvironmentInspector.py:671
+msgid "Save Changes?"
+msgstr ""
+
+#: EnvironmentInspector.py:672
+msgid ""
+"Gramps is about to restart. If you close without saving, the changes you "
+"have made will be lost."
+msgstr ""
+
+#: EnvironmentInspector.py:688
+msgid "Restart cancelled"
+msgstr ""
+
+#: EnvironmentInspector.py:691
+msgid ""
+"An editor still has unsaved changes. Save or close it, then double-click the "
+"language again, or restart Gramps yourself."
+msgstr ""
+
+#: EnvironmentInspector.py:742
 msgid "Unknown"
 msgstr ""
 
-#: EnvironmentInspector.py:604
+#: EnvironmentInspector.py:744
 msgid "N/A"
 msgstr ""
 
-#: EnvironmentInspector.py:619
+#: EnvironmentInspector.py:759
 msgid "Locale Code"
 msgstr ""
 
-#: EnvironmentInspector.py:621
+#: EnvironmentInspector.py:761
 msgid "Lang"
 msgstr ""
 
-#: EnvironmentInspector.py:623
+#: EnvironmentInspector.py:763
 msgid "English Name"
 msgstr ""
 
-#: EnvironmentInspector.py:628
+#: EnvironmentInspector.py:768
 msgid "Locale Directory"
 msgstr ""
 
-#: EnvironmentInspector.py:641
+#: EnvironmentInspector.py:797
 msgid "Current Locale"
 msgstr ""
 
-#: EnvironmentInspector.py:653
+#: EnvironmentInspector.py:828
 #, python-format
 msgid "Gramps Translations (%d)"
 msgstr ""
 
-#: EnvironmentInspector.py:671
+#: EnvironmentInspector.py:833
+msgid "Double-click to expand or collapse the list"
+msgstr ""
+
+#: EnvironmentInspector.py:850
 msgid "Filter by name or value…"
 msgstr ""
 
-#: EnvironmentInspector.py:678
+#: EnvironmentInspector.py:857
 msgid "Filter constants by Type metadata"
+msgstr ""
+
+#: envinsp_help.py:166
+#, python-format
+msgid "Cannot read %(file)s: %(error)s"
+msgstr ""
+
+#: envinsp_help.py:173
+msgid ""
+"The Markdown rendering addon (MarkdownUtils) is installed but deactivated. "
+"Activate it in Help > Plugin Manager (Hide/Unhide)."
+msgstr ""
+
+#: envinsp_help.py:177
+msgid ""
+"The Markdown rendering addon (MarkdownUtils) is not installed or not "
+"registered. Install it with Edit > Addon Manager, from the same collection "
+"as Environment Inspector."
+msgstr ""
+
+#: envinsp_help.py:182 envinsp_help.py:199
+msgid "Help is shown unformatted."
+msgstr ""
+
+#: envinsp_help.py:200
+msgid ""
+"The Markdown rendering addon (MarkdownUtils) failed; see the terminal for "
+"details."
 msgstr ""
 
 #: envinsp_preview.py:54
@@ -202,7 +275,7 @@ msgstr ""
 msgid "Original (English)"
 msgstr ""
 
-#: envinsp_preview.py:54
+#: envinsp_preview.py:54 envinsp_preview.py:359
 msgid "Preview"
 msgstr ""
 
@@ -210,81 +283,529 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: envinsp_preview.py:80
+#: envinsp_preview.py:92
 msgid "Tooltip"
 msgstr ""
 
-#: envinsp_preview.py:86 envinsp_preview.py:112
+#: envinsp_preview.py:98 envinsp_preview.py:124
 msgid "Title"
 msgstr ""
 
-#: envinsp_preview.py:88
+#: envinsp_preview.py:100
 msgid "Label"
 msgstr ""
 
-#: envinsp_preview.py:92
+#: envinsp_preview.py:104
 msgid "Column"
 msgstr ""
 
-#: envinsp_preview.py:136
+#: envinsp_preview.py:148
 msgid "Main window"
 msgstr ""
 
-#: envinsp_preview.py:139
+#: envinsp_preview.py:151
 msgid "Sidebar"
 msgstr ""
 
-#: envinsp_preview.py:139
+#: envinsp_preview.py:151
 msgid "Bottombar"
 msgstr ""
 
-#: envinsp_preview.py:148
+#: envinsp_preview.py:160
 #, python-format
 msgid "Dashboard: %s"
 msgstr ""
 
-#: envinsp_preview.py:154
+#: envinsp_preview.py:166
 #, python-format
 msgid "Window: %s"
 msgstr ""
 
-#: envinsp_preview.py:199
+#: envinsp_preview.py:213
 msgid "Preview language:"
 msgstr ""
 
-#: envinsp_preview.py:202
+#: envinsp_preview.py:216
 msgid "Wrap long text (up to 5 lines)"
 msgstr ""
 
-#: envinsp_preview.py:217 envinsp_preview.py:237
+#: envinsp_preview.py:235 envinsp_preview.py:282 envinsp_settings.py:394
 msgid "Copy table"
 msgstr ""
 
-#: envinsp_preview.py:220
+#: envinsp_preview.py:238
 msgid "Samples"
 msgstr ""
 
-#: envinsp_preview.py:228
+#: envinsp_preview.py:246
 msgid "Refresh the list of windows and gramplets"
 msgstr ""
 
-#: envinsp_preview.py:234
-msgid "Hide text not in the catalog"
+#: envinsp_preview.py:252
+msgid "Show catalog text:"
 msgstr ""
 
-#: envinsp_preview.py:246
+#: envinsp_preview.py:256
+msgid "translated"
+msgstr ""
+
+#: envinsp_preview.py:257
+msgid ""
+"The text is in the catalog, and the preview language translates it into "
+"different text."
+msgstr ""
+
+#: envinsp_preview.py:259
+msgid "same"
+msgstr ""
+
+#: envinsp_preview.py:260
+msgid ""
+"The text is in the catalog, but the preview language shows the same text: it "
+"is not translated yet, or it is the same word in both languages (such as an "
+"abbreviation or a name)."
+msgstr ""
+
+#: envinsp_preview.py:263
+msgid "pattern"
+msgstr ""
+
+#: envinsp_preview.py:264
+msgid ""
+"Text built while Gramps runs, such as \"Edit Person (Smith, John)\", that "
+"matches a catalog entry with placeholders. The preview fills the "
+"placeholders in."
+msgstr ""
+
+#: envinsp_preview.py:267
+msgid "ambiguous"
+msgstr ""
+
+#: envinsp_preview.py:268
+msgid ""
+"The text matches a catalog entry that the preview language translates in "
+"more than one way (for example by context). The preview shows the first "
+"translation."
+msgstr ""
+
+#: envinsp_preview.py:271
+msgid "not in catalog"
+msgstr ""
+
+#: envinsp_preview.py:272
+msgid ""
+"The text is not in the Gramps catalog: usually genealogy data, text from an "
+"addon with its own catalog, or text from GTK or the system."
+msgstr ""
+
+#: envinsp_preview.py:291
 msgid "Windows"
 msgstr ""
 
-#: envinsp_preview.py:381
+#: envinsp_preview.py:462
 msgid "Error"
 msgstr ""
 
-#: envinsp_preview.py:401
+#: envinsp_preview.py:482
 msgid "Not available any more; click Refresh."
 msgstr ""
 
-#: envinsp_preview.py:413
+#: envinsp_preview.py:498
 #, python-format
 msgid "%(total)d strings: %(detail)s"
+msgstr ""
+
+#: envinsp_settings.py:53
+msgid "unavailable"
+msgstr ""
+
+#: envinsp_settings.py:55 envinsp_settings.py:337
+msgid "(not set)"
+msgstr ""
+
+#: envinsp_settings.py:71
+msgid "not used on this system"
+msgstr ""
+
+#: envinsp_settings.py:76
+msgid "Yes"
+msgstr ""
+
+#: envinsp_settings.py:76
+msgid "No"
+msgstr ""
+
+#: envinsp_settings.py:124
+msgid "Metric"
+msgstr ""
+
+#: envinsp_settings.py:124
+msgid "Inches"
+msgstr ""
+
+#: envinsp_settings.py:132 envinsp_settings.py:140
+msgid "not installed"
+msgstr ""
+
+#: envinsp_settings.py:133
+msgid "installed"
+msgstr ""
+
+#: envinsp_settings.py:141
+msgid "unknown"
+msgstr ""
+
+#: envinsp_settings.py:161 envinsp_settings.py:190
+msgid "none (Gspell missing)"
+msgstr ""
+
+#: envinsp_settings.py:167
+msgid "none found"
+msgstr ""
+
+#: envinsp_settings.py:169
+msgid "Gspell default"
+msgstr ""
+
+#: envinsp_settings.py:192
+msgid "none"
+msgstr ""
+
+#: envinsp_settings.py:197 envinsp_settings.py:202
+msgid "Right to left"
+msgstr ""
+
+#: envinsp_settings.py:198 envinsp_settings.py:202
+msgid "Left to right"
+msgstr ""
+
+#: envinsp_settings.py:207
+msgid ""
+"A colon-separated list of interface languages, tried in order, for example "
+"LANGUAGE=de:en. It overrides LANG and LC_MESSAGES for the interface "
+"language. Set it in a terminal (LANGUAGE=de gramps) or in the Exec line of "
+"the Gramps desktop launcher."
+msgstr ""
+
+#: envinsp_settings.py:213
+msgid ""
+"The default locale for every category that is not set on its own. Normally "
+"set by the desktop from its language and region settings."
+msgstr ""
+
+#: envinsp_settings.py:217
+msgid ""
+"Overrides LANG and every LC_ variable at once. Usually left unset; set it "
+"only for testing, for example LC_ALL=fr_FR.UTF-8 gramps."
+msgstr ""
+
+#: envinsp_settings.py:220
+msgid "The locale for interface text, when LANGUAGE is not set."
+msgstr ""
+
+#: envinsp_settings.py:221
+msgid "The locale for dates and times (month and day names)."
+msgstr ""
+
+#: envinsp_settings.py:222
+msgid "The locale for sorting."
+msgstr ""
+
+#: envinsp_settings.py:223
+msgid "The locale for numbers (decimal separator)."
+msgstr ""
+
+#: envinsp_settings.py:224
+msgid "The locale for currency amounts."
+msgstr ""
+
+#: envinsp_settings.py:226
+msgid ""
+"Read by Gramps itself, only with PyICU installed: an ICU locale for sorting "
+"that overrides LC_COLLATE, for example COLLATION=sv. It can also choose a "
+"special sort order, such as the German phone book order: "
+"COLLATION=de_DE@collation=phonebook."
+msgstr ""
+
+#: envinsp_settings.py:233
+msgid ""
+"Environment variables are read once, when Gramps starts. Set them in a "
+"terminal before the gramps command, in the desktop launcher, or (on Windows) "
+"in the system environment variables."
+msgstr ""
+
+#: envinsp_settings.py:242
+#, python-format
+msgid ""
+"Normally set by the desktop region or formats settings. Overridden by the "
+"%(var)s environment variable, or by LC_ALL; when neither is set, LANG "
+"decides."
+msgstr ""
+
+#: envinsp_settings.py:246
+#, python-format
+msgid "Edit > Preferences > %(tab)s > %(label)s."
+msgstr ""
+
+#: envinsp_settings.py:248
+msgid "(system, no PyICU)"
+msgstr ""
+
+#: envinsp_settings.py:250
+msgid "Language and Translation"
+msgstr ""
+
+#: envinsp_settings.py:251
+msgid "Translation Order"
+msgstr ""
+
+#: envinsp_settings.py:252
+msgid ""
+"Chosen at startup: the LANGUAGE environment variable if it is set, else "
+"LC_MESSAGES or LANG, which follow the language of the desktop. The Language "
+"tab of this gramplet can choose a language for the next start."
+msgstr ""
+
+#: envinsp_settings.py:256
+msgid "Messages (LC_MESSAGES)"
+msgstr ""
+
+#: envinsp_settings.py:258
+msgid "Encoding"
+msgstr ""
+
+#: envinsp_settings.py:259
+msgid ""
+"The part of the locale after the dot, as in en_US.UTF-8. Comes from LANG or "
+"LC_ALL; Gramps expects UTF-8."
+msgstr ""
+
+#: envinsp_settings.py:262
+msgid "Formats"
+msgstr ""
+
+#: envinsp_settings.py:263
+msgid "Dates (LC_TIME)"
+msgstr ""
+
+#: envinsp_settings.py:265
+msgid "A LANGUAGE override also changes it."
+msgstr ""
+
+#: envinsp_settings.py:266
+msgid "Date Handler"
+msgstr ""
+
+#: envinsp_settings.py:267
+msgid ""
+"Chosen by Gramps from the Dates locale: it decides month names and how typed "
+"dates are read. Not set directly."
+msgstr ""
+
+#: envinsp_settings.py:269
+msgid "Numbers (LC_NUMERIC)"
+msgstr ""
+
+#: envinsp_settings.py:271
+msgid "Currency (LC_MONETARY)"
+msgstr ""
+
+#: envinsp_settings.py:274
+msgid "Sorting"
+msgstr ""
+
+#: envinsp_settings.py:275
+msgid "Sorting (LC_COLLATE)"
+msgstr ""
+
+#: envinsp_settings.py:277
+msgid ""
+"With PyICU, the COLLATION variable overrides it and can choose a special "
+"sort order, for example COLLATION=de_DE@collation=phonebook."
+msgstr ""
+
+#: envinsp_settings.py:280
+msgid "PyICU"
+msgstr ""
+
+#: envinsp_settings.py:281
+msgid ""
+"Optional Python package (python3-pyicu on Fedora). Without it Gramps sorts "
+"with the system rules and warns at startup."
+msgstr ""
+
+#: envinsp_settings.py:283
+msgid "ICU"
+msgstr ""
+
+#: envinsp_settings.py:284
+msgid "The ICU library that PyICU was built with."
+msgstr ""
+
+#: envinsp_settings.py:286
+msgid "Spelling"
+msgstr ""
+
+#: envinsp_settings.py:287
+msgid "Spell Checker"
+msgstr ""
+
+#: envinsp_settings.py:288
+msgid "General"
+msgstr ""
+
+#: envinsp_settings.py:288
+msgid "Enable spell checker"
+msgstr ""
+
+#: envinsp_settings.py:289
+msgid "Gspell"
+msgstr ""
+
+#: envinsp_settings.py:290
+msgid ""
+"Optional library (gspell and its GObject introspection files). Without it "
+"the spell checker setting has no effect."
+msgstr ""
+
+#: envinsp_settings.py:292
+msgid "Dictionary"
+msgstr ""
+
+#: envinsp_settings.py:294
+msgid "not the interface language"
+msgstr ""
+
+#: envinsp_settings.py:296
+msgid ""
+"Chosen when a note editor opens, from the system locale code (LANG: first "
+"en_US, then en), not from the interface language (LANGUAGE), so starting "
+"Gramps in another language does not change it. For one text box, choose "
+"another from the Language item of the right-click menu; Gramps does not "
+"remember that choice."
+msgstr ""
+
+#: envinsp_settings.py:302
+msgid "Installed Dictionaries"
+msgstr ""
+
+#: envinsp_settings.py:303
+msgid ""
+"Come from Hunspell or Aspell dictionary packages (on Fedora, hunspell-xx). "
+"Install one to add a language."
+msgstr ""
+
+#: envinsp_settings.py:306
+msgid "Text Direction"
+msgstr ""
+
+#: envinsp_settings.py:307
+msgid "Interface (GTK)"
+msgstr ""
+
+#: envinsp_settings.py:308
+msgid ""
+"Set by GTK from its own translation for the interface language. It follows "
+"the language; there is no separate setting."
+msgstr ""
+
+#: envinsp_settings.py:311
+msgid "Gramps"
+msgstr ""
+
+#: envinsp_settings.py:312
+msgid ""
+"Set by Gramps from a fixed list of right-to-left languages (Arabic and "
+"Hebrew). It follows the language; there is no separate setting."
+msgstr ""
+
+#: envinsp_settings.py:316
+msgid "Gramps Preferences"
+msgstr ""
+
+#: envinsp_settings.py:317
+msgid "Date Format"
+msgstr ""
+
+#: envinsp_settings.py:318 envinsp_settings.py:322 envinsp_settings.py:325
+#: envinsp_settings.py:327 envinsp_settings.py:329 envinsp_settings.py:331
+msgid "Data"
+msgstr ""
+
+#: envinsp_settings.py:318
+msgid "Date format"
+msgstr ""
+
+#: envinsp_settings.py:319
+msgid "A change takes effect after Gramps restarts."
+msgstr ""
+
+#: envinsp_settings.py:320
+msgid "Calendar on Input"
+msgstr ""
+
+#: envinsp_settings.py:322
+msgid "Calendar on input"
+msgstr ""
+
+#: envinsp_settings.py:323
+msgid "Calendar on Reports"
+msgstr ""
+
+#: envinsp_settings.py:325
+msgid "Calendar on reports"
+msgstr ""
+
+#: envinsp_settings.py:326
+msgid "Name Format"
+msgstr ""
+
+#: envinsp_settings.py:327
+msgid "Name format"
+msgstr ""
+
+#: envinsp_settings.py:328
+msgid "Place Format"
+msgstr ""
+
+#: envinsp_settings.py:329
+msgid "Place format"
+msgstr ""
+
+#: envinsp_settings.py:330
+msgid "Surname Guessing"
+msgstr ""
+
+#: envinsp_settings.py:331
+msgid "Surname guessing"
+msgstr ""
+
+#: envinsp_settings.py:332
+msgid "Paper"
+msgstr ""
+
+#: envinsp_settings.py:333
+msgid ""
+"The Paper Options tab of any report dialog; the last choice is remembered "
+"for the next report."
+msgstr ""
+
+#: envinsp_settings.py:336
+msgid "Environment Variables"
+msgstr ""
+
+#: envinsp_settings.py:354
+msgid "Hover over a setting to see where it is set."
+msgstr ""
+
+#: envinsp_settings.py:361
+msgid "Setting"
+msgstr ""
+
+#: envinsp_settings.py:378
+msgid "Expand all Nodes"
+msgstr ""
+
+#: envinsp_settings.py:379
+msgid "Collapse all Nodes"
 msgstr ""

@@ -17,8 +17,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-"""EnvironmentInspector — three-tab reference gramplet for Gramps locale, constants
-and translations.
+"""EnvironmentInspector — five-tab reference gramplet for Gramps locale, locale
+settings, translations and constants.
+
+Tab order: Language, Locale Settings (envinsp_settings.py), Translation
+Preview, Gramps Constants, Help (envinsp_help.py).
 
 Tab 1 — Language
 -----------------
@@ -56,7 +59,7 @@ import webbrowser
 
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gdk, GdkPixbuf, GLib, Gtk
+from gi.repository import Gdk, GdkPixbuf, Gio, GLib, Gtk
 
 import gramps.gen.const as _gramps_const
 from gramps.gen.const import GRAMPS_LOCALE as glocale
@@ -67,6 +70,8 @@ from gramps.gui.utils import open_file_with_default_application
 # Sibling modules: Gramps puts the plugin folder on sys.path only while it
 # imports this module, so these imports must stay at module level.
 from envinsp_preview import TranslationPreview
+from envinsp_settings import LocaleSettings
+from envinsp_help import HelpTab
 import envinsp_catalog
 import envinsp_restart
 from gramps.gen.config import config as _configman
@@ -79,6 +84,9 @@ CONFIG.register("meta.plugin_id", "")
 CONFIG.register("meta.schema_version", "")
 CONFIG.register("language.restart-override", "")
 CONFIG.register("language.restart-override-pid", 0)
+# Status values hidden on the Windows sub-tab of the Translation Preview.
+# Hidden ones are stored (not shown ones) so a new status starts visible.
+CONFIG.register("preview.hidden-statuses", [])
 CONFIG.load()
 CONFIG.set("meta.plugin_id", "EnvironmentInspector")
 CONFIG.set("meta.schema_version", "1")
@@ -177,6 +185,10 @@ def _path_status(name: str, value: str) -> str:
     if name.startswith("URL_"):
         return "REMOTE dir"
     try:
+        # Every Glade related constant (GLADE_DIR, GLADE_FILE, PERSON_GLADE,
+        # ...) and any .glade file, so the type filter finds them together.
+        if "GLADE" in name or (os.path.isfile(value) and value.lower().endswith(".glade")):
+            return "GLADE dir" if os.path.isdir(value) else "GLADE"
         if os.path.isdir(value):
             if sys.platform.startswith("win"):
                 import ctypes
@@ -186,15 +198,13 @@ def _path_status(name: str, value: str) -> str:
                 hidden = os.path.basename(value).startswith(".")
             return "HIDDEN dir" if hidden else "VISIBLE dir"
         if os.path.isfile(value):
-            if value.lower().endswith(".glade"):
-                return "GLADE"
             return "FILE"
     except (OSError, ValueError):
         pass
     return "string"
 
 
-def _status_icons_and_tips(status: str) -> tuple[str, str, str, str]:
+def _status_icons_and_tips(status: str, value: str = "") -> tuple[str, str, str, str]:
     """Provide specific UI visual icon properties and matching translations based on type."""
     if status == "REMOTE dir":
         return ("folder-remote-symbolic", "", _("Remote Directory"), "")
@@ -202,8 +212,13 @@ def _status_icons_and_tips(status: str) -> tuple[str, str, str, str]:
         return ("folder-symbolic", "view-conceal-symbolic", _("Directory"), _("Hidden"))
     if status == "VISIBLE dir":
         return ("folder-symbolic", "view-reveal-symbolic", _("Directory"), _("Not hidden"))
+    if status == "GLADE dir":
+        hidden = os.path.basename(value).startswith(".") if value else False
+        return ("glade-brand-symbolic",
+                "view-conceal-symbolic" if hidden else "view-reveal-symbolic",
+                _("Glade Interface"), _("Hidden") if hidden else _("Not hidden"))
     if status == "GLADE":
-        return ("glade-brand-symbolic", "", _("Glade interface layout file"), "")
+        return ("glade-brand-symbolic", "", _("Glade Interface"), "")
     if status == "FILE":
         return ("folder-documents-symbolic", "", _("File"), "")
     return ("insert-text", "", _("Value"), "")
@@ -219,7 +234,7 @@ def _build_constants_rows() -> list[tuple[str, str, str, str, str, str]]:
         if not isinstance(value, str):
             continue
         status = _path_status(name, value)
-        type_icon, vis_icon, type_tip, vis_tip = _status_icons_and_tips(status)
+        type_icon, vis_icon, type_tip, vis_tip = _status_icons_and_tips(status, value)
         rows.append((name, type_icon, vis_icon, value, type_tip, vis_tip))
     rows.sort(key=lambda r: r[0].casefold())
 
@@ -286,20 +301,20 @@ class EnvironmentInspector(Gramplet):
         self._notebook.set_show_border(True)
         self._lang_sw = lang_sw
         lang_sw.connect("size-allocate", self._cb_lang_area_allocated)
-        self._preview = TranslationPreview(self.uistate)
+        self._preview = TranslationPreview(self.uistate, CONFIG)
         self._syncing_language = False
         self._preview.lang_combo.connect("changed", self._cb_preview_language_changed)
         self._notebook.append_page(lang_sw, Gtk.Label(label=_("Language")))
+        self._notebook.append_page(LocaleSettings(), Gtk.Label(label=_("Locale Settings")))
         self._notebook.append_page(self._preview, Gtk.Label(label=_("Translation Preview")))
         self._notebook.append_page(const_box, Gtk.Label(label=_("Gramps Constants")))
+        self._notebook.append_page(HelpTab(self.uistate), Gtk.Label(label=_("Help")))
 
         orig_sw.add(self._notebook)
         orig_sw.show_all()
 
-    def _insert_icon_header(self, icon_name: str, markup: str, clip_callback: object, newline_before: bool = True) -> None:
-        """Inject interactive anchor frameworks inside standard Gtk.TextBuffer objects."""
-        if newline_before:
-            self.append_text("\n")
+    def _make_icon_header(self, icon_name: str, markup: str, clip_callback: object) -> Gtk.Box:
+        """A section header: clickable icon (copies the section) and bold title."""
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         ebox = Gtk.EventBox()
         ebox.set_tooltip_text(_("Copy to clipboard"))
@@ -310,19 +325,60 @@ class EnvironmentInspector(Gramplet):
         else:
             img.set_from_icon_name(icon_name, Gtk.IconSize.DIALOG)
         ebox.add(img)
-        ebox.connect("button-press-event", lambda _w, _e: clip_callback() or True)
+        ebox.connect("button-press-event", self._cb_header_icon_pressed, clip_callback)
         hbox.pack_start(ebox, False, False, 0)
 
         lbl = Gtk.Label()
         lbl.set_markup(markup)
         lbl.set_xalign(0.0)
         hbox.pack_start(lbl, False, False, 0)
-        hbox.show_all()
+        return hbox
 
+    @staticmethod
+    def _cb_header_icon_pressed(_widget: Gtk.Widget, event: Gdk.EventButton, clip_callback: object) -> bool:
+        """A click on a header icon copies the section."""
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1:
+            clip_callback()
+        return True
+
+    def _insert_icon_header(self, icon_name: str, markup: str, clip_callback: object,
+                            newline_before: bool = True, row_double_click: object = None) -> Gtk.Widget:
+        """
+        Insert a section header into the text view. With row_double_click,
+        the header is put in an event box (widened to the tab on resize by
+        the caller) and a double-click anywhere on it calls row_double_click.
+        """
+        if newline_before:
+            self.append_text("\n")
+        widget = self._make_icon_header(icon_name, markup, clip_callback)
+        if row_double_click is not None:
+            row = Gtk.EventBox()
+            row.set_visible_window(False)
+            row.add(widget)
+            # A gesture in the capture phase sees every press on the row,
+            # including presses on the icon, before any child handles them;
+            # it works the same on X11 and Wayland.
+            gesture = Gtk.GestureMultiPress.new(row)
+            gesture.set_button(Gdk.BUTTON_PRIMARY)
+            gesture.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+            gesture.connect(
+                "pressed",
+                lambda _g, n_press, _x, _y: n_press == 2 and row_double_click(),
+            )
+            row.envinsp_gesture = gesture  # a gesture must be kept referenced
+            widget = row
+        widget.show_all()
         buf = self.gui.textview.get_buffer()
         anchor = buf.create_child_anchor(buf.get_end_iter())
-        self.gui.textview.add_child_at_anchor(hbox, anchor)
+        self.gui.textview.add_child_at_anchor(widget, anchor)
         self.append_text("\n")
+        return widget
+
+    def _cb_toggle_language_expander(self) -> None:
+        """Double-click on the Gramps Translations header: expand or collapse."""
+        expander = getattr(self, "_expander", None)
+        if expander is not None:
+            expander.set_expanded(not expander.get_expanded())
 
     def _insert_language_expander(self, current_lang: str, current_name: str, langs: list[str], code_to_name: dict[str, str]) -> None:
         """Embed a collapsible, sortable table of the Gramps translations."""
@@ -403,6 +459,9 @@ class EnvironmentInspector(Gramplet):
         label = self._expander.get_label_widget()
         label_height = label.get_allocated_height() if label else 24
         width = max(200, area.width - 40)
+        header = getattr(self, "_lang_header", None)
+        if header is not None and header.get_size_request()[0] != width:
+            header.set_size_request(width, -1)  # the whole row is the hotspot
         height = max(150, area.height - top - label_height - 24)
         if tuple(self._lang_scroller.get_size_request()) != (width, height):
             self._lang_scroller.set_size_request(width, height)
@@ -556,15 +615,96 @@ class EnvironmentInspector(Gramplet):
             details.append(_("Desktop menu entry not changed: %s") % note)
         if not envinsp_restart.can_restart():
             details.append(_("Restarting automatically is not available on this system; restart Gramps yourself."))
+        else:
+            details.append(_("Open editors with unsaved changes ask whether to save them "
+                             "first. The family tree that is open now is opened again."))
+        if code:
+            details.append(_("Spell checking keeps using the dictionary of the system "
+                             "language; see the Locale Settings tab."))
         dialog.format_secondary_text("\n\n".join(details))
         dialog.add_button(_("Later"), Gtk.ResponseType.CANCEL)
         if envinsp_restart.can_restart():
             dialog.add_button(_("Restart now"), Gtk.ResponseType.OK)
         response = dialog.run()
         dialog.destroy()
-        if response == Gtk.ResponseType.OK and envinsp_restart.spawn_restart(code, _RESTART_LOG):
+        if response != Gtk.ResponseType.OK:
+            return
+        # Gramps quits without asking about open editors: settle them first.
+        if not self._resolve_unsaved_editors():
+            self._restart_cancelled()
+            return
+        if envinsp_restart.spawn_restart(code, _RESTART_LOG, self._open_tree_args()):
             LOG.warning("EnvironmentInspector: restarting Gramps; its output goes to %s", _RESTART_LOG)
             self.uistate.viewmanager.quit()
+
+    def _dirty_editors(self) -> list:
+        """Open primary-object editors (Edit Person, ...) with unsaved changes."""
+        from gramps.gui.editors.editprimary import EditPrimary
+
+        gwm = getattr(self.uistate, "gwm", None)
+        editors = []
+        for item in list(getattr(gwm, "id2item", {}).values()):
+            try:
+                if isinstance(item, EditPrimary) and item.data_has_changed():
+                    editors.append(item)
+            except Exception:  # editor half-closed: nothing to save
+                LOG.debug("EnvironmentInspector: cannot check an editor", exc_info=True)
+        return editors
+
+    def _resolve_unsaved_editors(self) -> bool:
+        """
+        Ask Save / Close without saving / Cancel for every editor with
+        unsaved changes, using the Save Changes dialog of Gramps. The dialog
+        is shown even when "Do not ask again" was chosen before, because a
+        restart must never discard work silently; that choice is kept.
+        :returns: True when no editor with unsaved changes is left open.
+        """
+        from gramps.gui.dialog import SaveDialog
+
+        dont_ask = _configman.get("interface.dont-ask")
+        try:
+            for editor in self._dirty_editors():
+                if editor not in getattr(self.uistate.gwm, "id2item", {}).values():
+                    continue  # closed together with an earlier editor
+                editor.window.present()
+                SaveDialog(
+                    _("Save Changes?"),
+                    _("Gramps is about to restart. If you close without saving, "
+                      "the changes you have made will be lost."),
+                    editor._do_close,
+                    editor.save,
+                    parent=editor.window,
+                )
+        finally:
+            _configman.set("interface.dont-ask", dont_ask)
+        return not self._dirty_editors()
+
+    def _restart_cancelled(self) -> None:
+        dialog = Gtk.MessageDialog(
+            transient_for=self.gui.textview.get_toplevel(),
+            modal=True,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text=_("Restart cancelled"),
+        )
+        dialog.format_secondary_text(
+            _("An editor still has unsaved changes. Save or close it, then "
+              "double-click the language again, or restart Gramps yourself.")
+        )
+        dialog.run()
+        dialog.destroy()
+
+    def _open_tree_args(self) -> list[str]:
+        """Command-line options that reopen the family tree open now."""
+        dbstate = self.dbstate
+        try:
+            if dbstate is not None and dbstate.is_open():
+                path = dbstate.db.get_save_path()
+                if path and os.path.isdir(path):
+                    return ["-O", path]
+        except Exception:
+            LOG.debug("EnvironmentInspector: cannot find the open tree", exc_info=True)
+        return []
 
     def _cb_copy_locale_section(self) -> None:
         """Clipboard helper for the current environment metadata blocks."""
@@ -613,22 +753,58 @@ class EnvironmentInspector(Gramplet):
         localedir = getattr(gl, "localedir", "") or ""
         return _LocaleInfo(lang_base, english_name, region_display, localedir)
 
-    def _render_locale_fields(self, gl: GrampsLocale, info: _LocaleInfo) -> str:
-        """Append translated platform strings into active visual text frames."""
-        lines = [
-            f"{_('Locale Code')}: {gl.locale_code()}",
-            f"{_('Language')}: {info.lang_base}",
-            f"{_('Lang')}: {glocale.lang}",
-            f"{_('Region')}: {info.region_display}",
-            f"{_('English Name')}: {info.english_name} ({info.lang_base})",
-            f"{_('Endonym')}: "
-            f"{envinsp_catalog.endonym(envinsp_catalog.session_language(glocale), glocale)}",
+    def _language_fields(self, gl: GrampsLocale, info: _LocaleInfo) -> list[tuple[str, str]]:
+        """Left column of Current Locale: the language Gramps chose."""
+        fields = [
+            (_("Locale Code"), gl.locale_code()),
+            (_("Language"), info.lang_base),
+            (_("Lang"), glocale.lang),
+            (_("Region"), info.region_display),
+            (_("English Name"), f"{info.english_name} ({info.lang_base})"),
+            (_("Endonym"),
+             envinsp_catalog.endonym(envinsp_catalog.session_language(glocale), glocale)),
         ]
         if info.localedir:
-            lines.append(f"{_('Locale Directory')}: {info.localedir}")
-        for line in lines:
-            self.render_text(f"{line}\n")
-        return "\n".join(lines)
+            fields.append((_("Locale Directory"), info.localedir))
+        return fields
+
+    @staticmethod
+    def _field_grid(fields: list[tuple[str, str]]) -> Gtk.Grid:
+        """A two-column grid of name: value labels (no wrapping)."""
+        grid = Gtk.Grid(column_spacing=8, row_spacing=1)
+        grid.set_valign(Gtk.Align.START)
+        for row, (name, value) in enumerate(fields):
+            name_lbl = Gtk.Label(label=f"{name}:", xalign=0.0)
+            value_lbl = Gtk.Label(label=value, xalign=0.0)
+            value_lbl.set_selectable(True)
+            value_lbl.set_can_focus(False)  # no select-all highlight on focus
+            grid.attach(name_lbl, 0, row, 1, 1)
+            grid.attach(value_lbl, 1, row, 1, 1)
+        return grid
+
+    def _insert_locale_panels(self, gl: GrampsLocale, info: _LocaleInfo) -> None:
+        """
+        The Current Locale panel: icon header (copies the fields) above a
+        grid of fields. The other locale settings are on the Locale
+        Settings tab.
+        """
+        language = self._language_fields(gl, info)
+        self._locale_clip_text = "\n".join(f"{n}: {v}" for n, v in language)
+        panels = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        panels.pack_start(
+            self._make_icon_header(
+                "preferences-desktop-locale",
+                f"<b>{GLib.markup_escape_text(_('Current Locale'))}</b>",
+                self._cb_copy_locale_section,
+            ),
+            False, False, 0,
+        )
+        panels.pack_start(self._field_grid(language), False, False, 0)
+        panels.show_all()
+        buf = self.gui.textview.get_buffer()
+        anchor = buf.create_child_anchor(buf.get_end_iter())
+        self.gui.textview.add_child_at_anchor(panels, anchor)
+        self.append_text("\n")
 
     def _populate_language_tab(self) -> None:
         """Clear and refresh the Language reference pane information."""
@@ -638,8 +814,7 @@ class EnvironmentInspector(Gramplet):
         code_to_name = {v: k for k, v in language_dict.items()}
         info = self._get_locale_info(gl)
 
-        self._insert_icon_header("preferences-desktop-locale", f"<b>{_('Current Locale')}</b>", self._cb_copy_locale_section, newline_before=False)
-        self._locale_clip_text = self._render_locale_fields(gl, info)
+        self._insert_locale_panels(gl, info)
 
         if info.localedir and os.path.isdir(info.localedir):
             # Only folders holding a Gramps translation (LC_MESSAGES/gramps.mo).
@@ -651,7 +826,11 @@ class EnvironmentInspector(Gramplet):
             if info.lang_base not in langs:
                 total += 1
             _count_str = _("Gramps Translations (%d)") % total
-            self._insert_icon_header("cs-language", f"<b>{_count_str}</b>", self._cb_copy_language_section, newline_before=True)
+            self._lang_header = self._insert_icon_header(
+                "cs-language", f"<b>{_count_str}</b>", self._cb_copy_language_section,
+                newline_before=True, row_double_click=self._cb_toggle_language_expander,
+            )
+            self._lang_header.set_tooltip_text(_("Double-click to expand or collapse the list"))
             self._insert_language_expander(info.lang_base, info.english_name, langs, code_to_name)
 
     # ------------------------------------------------------------------
@@ -678,7 +857,7 @@ class EnvironmentInspector(Gramplet):
         filter_btn.set_tooltip_text(_("Filter constants by Type metadata"))
 
         type_menu = Gtk.Menu()
-        types = ["All types", "Remote Directory", "Directory", "Glade interface layout file", "File", "Value"]
+        types = ["All types", "Remote Directory", "Directory", "Glade Interface", "File", "Value"]
         for t in types:
             item = Gtk.MenuItem(label=_(t))
             item.connect("activate", self._cb_type_filter_selected, t)
@@ -781,7 +960,7 @@ class EnvironmentInspector(Gramplet):
         # Handle popup type filters
         if self._selected_type_filter != "All types":
             tip_text = model.get_value(tree_iter, _COL_TYPE_TIP) or ""
-            if tip_text != self._selected_type_filter:
+            if tip_text != _(self._selected_type_filter):
                 return False
 
         needle = self._const_search_entry.get_text().casefold().strip()
@@ -843,8 +1022,38 @@ class EnvironmentInspector(Gramplet):
                 webbrowser.open(value)
             except Exception:
                 LOG.warning("EnvironmentInspector: Failed to open URL route value via standard system browser.")
+        elif os.path.isfile(value) and value.lower().endswith(".glade"):
+            self._open_glade_file(value)
         elif os.path.isdir(value) or os.path.isfile(value):
             open_file_with_default_application(value, self.gui.uistate)
+
+    def _open_glade_file(self, path: str) -> None:
+        """
+        Open a .glade file with the program set for Glade files, or else
+        with the text editor.
+
+        Glade files are XML, so without a program for Glade files the
+        desktop falls back to the one for XML, often a web browser, which
+        saves a copy in the Downloads folder instead of showing the file.
+        Only a program that names the Glade file type itself counts, not
+        one inherited from XML.
+        """
+        ctype, _uncertain = Gio.content_type_guess(path, None)
+        default = Gio.AppInfo.get_default_for_type(ctype, False)
+        exact = Gio.AppInfo.get_recommended_for_type(ctype)
+        if default is not None and any(app.equal(default) for app in exact):
+            app = default
+        else:
+            app = Gio.AppInfo.get_default_for_type("text/plain", False)
+        if app is None:
+            open_file_with_default_application(path, self.gui.uistate)
+            return
+        try:
+            app.launch([Gio.File.new_for_path(path)], None)
+        except GLib.Error as err:
+            LOG.warning("EnvironmentInspector: cannot open %s with %s: %s",
+                        path, app.get_name(), err.message)
+            open_file_with_default_application(path, self.gui.uistate)
 
     # ------------------------------------------------------------------
     # Gramplet Lifecycle Entry point
