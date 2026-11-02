@@ -1,0 +1,20 @@
+Warning: History: Exception occurred in callback function.
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/gramps/gen/utils/callback.py", line 424, in emit
+    fn(*args)
+    ~~^^^^^^^
+  File "/usr/lib/python3.14/site-packages/gramps/gen/plug/_gramplet.py", line 316, in update
+    self._generator = self.main()
+                      ~~~~~~~~~^^
+  File "/usr/lib/python3.14/site-packages/gramps/plugins/gramplet/placedetails.py", line 111, in main
+    self.display_place(place)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/usr/lib/python3.14/site-packages/gramps/plugins/gramplet/placedetails.py", line 131, in display_place
+    self.add_row(_("Type"), place.get_type())
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/gramps/plugins/gramplet/placedetails.py", line 80, in add_row
+    value = Gtk.Label(label=value, halign=Gtk.Align.START)
+  File "/usr/lib64/python3.14/site-packages/gi/overrides/__init__.py", line 357, in new_init
+    return super_init_func(self, **new_kwargs)
+TypeError: Must be string, not PlaceType
+

@@ -285,6 +285,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
   },
   {
+    "n": "Strict PyGObject Compatibility",
+    "i": "StrictPyGObjectCompat",
+    "t": 6,
+    "d": "On systems with PyGObject 3.56 or newer, prevents crashes such as the Place Details gramplet 'Must be string' error, and stops a small memory leak when editing table cells in editors. Does nothing on older systems.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "StrictPyGObjectCompat.addon.tgz",
+    "h": "https://gramps.discourse.group/t/10178"
+  },
+  {
     "n": "Theme preferences",
     "i": "ThemesPrefs",
     "t": 6,

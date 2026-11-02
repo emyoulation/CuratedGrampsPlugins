@@ -1,0 +1,49 @@
+# Translation template for the 0.1.0 Strict PyGObject Compatibility general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Strict PyGObject Compatibility package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Strict PyGObject Compatibility 0.1.0\n"
+"Report-Msgid-Bugs-To: https://gramps.discourse.group/t/10178\n"
+"POT-Creation-Date: 2026-11-02 10:26-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: StrictPyGObjectCompat.gpr.py:26
+msgid "Strict PyGObject Compatibility"
+msgstr ""
+
+#: StrictPyGObjectCompat.gpr.py:28
+msgid ""
+"On systems with PyGObject 3.56 or newer, prevents crashes such as the Place "
+"Details gramplet 'Must be string' error, and stops a small memory leak when "
+"editing table cells in editors. Does nothing on older systems."
+msgstr ""
+
+#: placedetails.py:130
+msgid "Name"
+msgstr ""
+
+#: placedetails.py:131
+msgid "Type"
+msgstr ""
+
+#: placedetails.py:141
+msgid "Latitude"
+msgstr ""
+
+#: placedetails.py:143
+msgid "Longitude"
+msgstr ""
+
+#: placedetails.py:158
+msgid "Alternative Names"
+msgstr ""
