@@ -35,7 +35,7 @@ if (5, 2, 0) <= VERSION_TUPLE < (6, 2, 0):
             "that tests web and local addon repositories. "
             "To switch it off, hide this plugin and restart Gramps."
         ),
-        version="0.1.0",  # build 20261102.2314
+        version="0.1.1",  # build 20261102.2314
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="AddonMarketplace.py",

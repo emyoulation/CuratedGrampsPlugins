@@ -1833,25 +1833,30 @@ class GetAddons(threading.Thread):
     option are honoured; see :func:`_load_projects`.
     """
 
-    def __init__(self, callback, projects, include_english=False):
+    def __init__(self, callback, projects, include_english=False, cache=None):
         threading.Thread.__init__(self)
         self.callback = callback
         self.projects = [list(project) for project in projects]
         self.include_english = include_english
+        self.cache = dict(cache or {})  # a snapshot; the window owns the cache
         self.addon_list = []
         self.problems = []  # [(project name, url, reason, is_ssl), ...]
         self.enabled = 0
+        self.fetched = {}
 
     def emit_signal(self):
-        self.callback(self.addon_list, self.problems, self.enabled)
+        self.callback(self.addon_list, self.problems, self.enabled, self.fetched)
 
     def run(self):
         # Never let an exception escape here: emit_signal would then never
         # run and the list would show "Loading..." forever.
         try:
-            self.addon_list, self.problems, self.enabled = _load_projects(
-                self.projects, self.include_english
-            )
+            (
+                self.addon_list,
+                self.problems,
+                self.enabled,
+                self.fetched,
+            ) = _load_projects(self.projects, self.include_english, self.cache)
         except Exception:  # pylint: disable=broad-except
             LOG.warning("Addon Marketplace: loading the catalogs failed", exc_info=True)
             self.enabled = sum(1 for project in self.projects if project[2])
@@ -1934,7 +1939,62 @@ def _get_addons_in(project, url, langs):
     return addon_list
 
 
-def _load_projects(projects, include_english=False):
+def _catalog_key(name, url, lang):
+    """
+    The cache key of one catalog: project name (it is written into each
+    addon), comparison form of the address and language ("+en" for the
+    extra English catalog).
+    """
+    return (name, _url_key(url), lang)
+
+
+def _project_keys(projects, include_english):
+    """
+    The catalog keys that the enabled *projects* need.
+    """
+    keys = []
+    for project in projects:
+        if not project[2]:
+            continue
+        lang = project[3].strip() if len(project) > 3 and project[3] else ""
+        keys.append(_catalog_key(project[0], project[1], lang))
+        if include_english and _project_needs_english(lang):
+            keys.append(_catalog_key(project[0], project[1], "+en"))
+    return keys
+
+
+def _fetch_catalog(name, url, lang):
+    """
+    Download one catalog. *lang* is a language code, "" for the Gramps
+    languages, or "+en" for the extra English catalog.
+
+    :returns: (addons, problem); *problem* is None or (reason, is_ssl).
+    """
+    if lang == "+en":
+        try:
+            english = _get_addons_in(name, url, ["en"])
+        except Exception:  # pylint: disable=broad-except
+            english = []
+        for addon in english:
+            addon["_p"] = "%s + en" % name
+        return english, None  # its main catalog reports any problem
+    try:
+        if lang:
+            langs = [lang] + [
+                code for code in glocale.get_language_list() if code != lang
+            ]
+            addons = _get_addons_in(name, url, langs)
+        else:
+            addons = get_addons(name, url)
+    except Exception:  # e.g. a listing that is not valid JSON
+        LOG.warning("Addon Marketplace: the %s catalog failed to load", name)
+        addons = []
+    if not addons:
+        return [], _probe_listing(url)
+    return addons, None
+
+
+def _load_projects(projects, include_english=False, cache=None):
     """
     Load the catalogs of the enabled *projects* ([name, url, enabled,
     language code]).
@@ -1943,10 +2003,14 @@ def _load_projects(projects, include_english=False):
     *include_english*, a project read in another language also gets its
     English catalog, listed as the project "<name> + en".
 
-    :returns: (addon_list, problems, enabled count); *problems* has a
-        (name, url, reason, is_ssl) entry for each enabled project that
-        gave no addons.
+    :param cache: {catalog key: (addons, problem)} of catalogs already
+        downloaded; only the others are downloaded.
+    :returns: (addon_list, problems, enabled count, fetched); *problems*
+        has a (name, url, reason, is_ssl) entry for each enabled project
+        that gave no addons, *fetched* the newly downloaded catalogs.
     """
+    cache = cache or {}
+    fetched = {}
     addon_list, problems, enabled = [], [], 0
     for project in projects:
         name, url, active = project[0], project[1], project[2]
@@ -1954,32 +2018,20 @@ def _load_projects(projects, include_english=False):
         if not active:
             continue
         enabled += 1
-        try:
-            if lang:
-                langs = [lang] + [
-                    code for code in glocale.get_language_list() if code != lang
-                ]
-                addons = _get_addons_in(name, url, langs)
-            else:
-                addons = get_addons(name, url)
-        except Exception:  # e.g. a listing that is not valid JSON
-            LOG.warning("Addon Marketplace: the %s catalog failed to load", name)
-            addons = []
-        if not addons:
-            reason, is_ssl = _probe_listing(url)
-            problems.append((name, url, reason, is_ssl))
-            continue
-        addon_list.extend(addons)
+        wanted = [lang]
         if include_english and _project_needs_english(lang):
-            try:
-                english = _get_addons_in(name, url, ["en"])
-            except Exception:  # pylint: disable=broad-except
-                english = []
-            virtual_name = "%s + en" % name
-            for addon in english:
-                addon["_p"] = virtual_name
-            addon_list.extend(english)
-    return addon_list, problems, enabled
+            wanted.append("+en")
+        for code in wanted:
+            key = _catalog_key(name, url, code)
+            if key in cache:
+                addons, problem = cache[key]
+            else:
+                addons, problem = fetched[key] = _fetch_catalog(name, url, code)
+            if problem:
+                problems.append((name, url) + tuple(problem))
+                break  # no English catalog for a project that failed
+            addon_list.extend(addons)
+    return addon_list, problems, enabled, fetched
 
 
 def _available_updates_for(projects):
@@ -1993,7 +2045,7 @@ def _available_updates_for(projects):
     skip_seen = config.get("behavior.do-not-show-previously-seen-addon-updates")
     seen = config.get("behavior.previously-seen-addon-updates")
     updates = []
-    addon_list, _problems, _enabled = _load_projects(projects)
+    addon_list, _problems, _enabled, _fetched = _load_projects(projects)
     for plugin_dict in addon_list:
         if skip_seen and plugin_dict["i"] in seen:
             continue
@@ -2195,7 +2247,7 @@ class ProjectRow(Gtk.ListBoxRow):
         projects = [row.project[:3] for row in self.manager.project_list]
         config.set("behavior.addons-projects", projects)
         self.manager.update_project_list()
-        self.manager.refresh()
+        self.manager.schedule_refresh()
 
     def update(self):
         """
@@ -2261,6 +2313,14 @@ class AddonRow(Gtk.ListBoxRow):
 
         context = self.get_style_context()
         context.add_class("addon-row")
+
+        # the installed version, from the live plugin registry: the catalog
+        # may have been read before an install or update
+        pdata = GuiPluginManager.get_instance().get_plugin(addon["i"])
+        if pdata is not None:
+            addon["_v"] = pdata.version
+        else:
+            addon.pop("_v", None)
 
         self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.vbox.set_spacing(6)
@@ -2489,19 +2549,6 @@ class AddonRow(Gtk.ListBoxRow):
         self.manager.update_addon(addon["i"])
         self.manager.refresh()
 
-    def rebuild_version_ui(self):
-        """
-        Read the installed version again from the live plugin registry and
-        rebuild the version lozenges and buttons of this addon.
-        """
-        pdata = GuiPluginManager.get_instance().get_plugin(self.addon["i"])
-        if pdata is not None:
-            self.addon["_v"] = pdata.version
-        else:
-            self.addon.pop("_v", None)
-        self.__build_gui(self.vbox, self.addon, self.req)
-        self.show_all()
-
     def __create_status_lozenge(self):
         """
         The first lozenge: it shows the installed-state filter (for example
@@ -2644,7 +2691,10 @@ class AddonMarketplace(ManagedWindow):
     def __init__(self, dbstate, uistate, track):
         self.dbstate = dbstate
         self.title = _("Addon Marketplace")
-        ManagedWindow.__init__(self, uistate, [], self)
+        # The class (not the instance) is the window key, so a second
+        # "Addon Marketplace..." brings the open window to the front and
+        # raises WindowActiveError, which the menu handler of Gramps catches.
+        ManagedWindow.__init__(self, uistate, [], self.__class__)
 
         self.__pmgr = GuiPluginManager.get_instance()
         self.__preg = PluginRegister.get_instance()
@@ -2672,6 +2722,12 @@ class AddonMarketplace(ManagedWindow):
             area.set_child_secondary(help_button, True)
 
         self.req = Requirements()
+        self._catalogs = {}  # downloaded catalogs, see refresh()
+        self._load_generation = 0
+        self._refresh_source = 0
+        # media/gramps.ini projects: read when the Projects tab is shown and
+        # again when the gtk-index button is clicked (see __reread_ini)
+        self._ini_projects = []
 
         self.setup_configs("interface.addonmanager", 750, 400)
         self.window.connect("response", self.__on_dialog_button)
@@ -2720,7 +2776,9 @@ class AddonMarketplace(ManagedWindow):
         ]
         self.project_combo = Gtk.ComboBoxText()
         self.project_combo.set_entry_text_column(0)
-        self.project_combo.connect("changed", self.__combo_changed)
+        self._project_combo_handler = self.project_combo.connect(
+            "changed", self.__combo_changed
+        )
         hbox.pack_start(self.project_combo, False, False, 0)
 
         type_store = Gtk.ListStore(int, str)
@@ -2792,6 +2850,8 @@ class AddonMarketplace(ManagedWindow):
 
         grid = self.create_projects_panel()
         book.append_page(grid, Gtk.Label(label=_("Projects")))
+        # after the pages are added: adding them emits switch-page too
+        book.connect("switch-page", self.__on_switch_page)
 
         for project in self.projects:
             self.project_list.add(ProjectRow(self, project))
@@ -2849,18 +2909,31 @@ class AddonMarketplace(ManagedWindow):
         Fill the Project filter, with a "<name> + en" entry for each project
         that gets an extra English catalog while "Include English" is on.
         """
-        self.project_combo.remove_all()
-        self.project_combo.append_text(_("All projects"))
+        # keep the chosen project if it is still in the list, and filter
+        # only once, after the rebuild
+        current = self.project_combo.get_active_text()
+        entries = [_("All projects")]
         include_english = self.include_english_check.get_active()
         for project in self.projects:
-            self.project_combo.append_text(project[0])
+            entries.append(project[0])
             if (
                 include_english
                 and project[2]
                 and _project_needs_english(project[3] if len(project) > 3 else "")
             ):
-                self.project_combo.append_text("%s + en" % project[0])
-        self.project_combo.set_active(0)
+                entries.append("%s + en" % project[0])
+        old_entries = [row[0] for row in self.project_combo.get_model()]
+        if entries == old_entries:
+            return
+        self.project_combo.handler_block(self._project_combo_handler)
+        self.project_combo.remove_all()
+        for text in entries:
+            self.project_combo.append_text(text)
+        index = entries.index(current) if current in entries else 0
+        self.project_combo.set_active(index)
+        self.project_combo.handler_unblock(self._project_combo_handler)
+        if hasattr(self, "lb") and current != entries[index]:
+            self.__combo_changed(self.project_combo)
 
     def __on_include_english_toggled(self, check):
         """
@@ -2873,7 +2946,25 @@ class AddonMarketplace(ManagedWindow):
             manager.save()
         if hasattr(self, "lb"):
             self.__rebuild_project_combo()
-            self.refresh()
+            self.schedule_refresh()
+
+    def __on_switch_page(self, _book, _page, page_num):
+        """
+        Read media/gramps.ini again each time the Projects tab is shown,
+        so the gtk-index button there is up to date.
+        """
+        if page_num == 2:
+            self.__reread_ini()
+
+    def __reread_ini(self):
+        """
+        Read the projects of media/gramps.ini and update the gtk-index
+        button.
+        """
+        if getattr(self, "ini_btn", None) is None:
+            return  # no media/gramps.ini when the window opened
+        self._ini_projects = _read_ini_projects(PROJECTS_INI)
+        self.__update_ini_button()
 
     def __new_ini_projects(self):
         """
@@ -2882,7 +2973,7 @@ class AddonMarketplace(ManagedWindow):
         """
         known = {_url_key(project[1]) for project in self.projects}
         new, seen = [], set()
-        for project in _read_ini_projects(PROJECTS_INI):
+        for project in [list(p) for p in self._ini_projects]:
             # offer (and add) the fixed address, e.g. raw instead of a
             # GitHub web page
             project[1] = _normalize_location_text(project[1])
@@ -2925,6 +3016,7 @@ class AddonMarketplace(ManagedWindow):
         Show the projects of media/gramps.ini that are not in the list yet,
         each with a check box, and add the checked ones.
         """
+        self.__reread_ini()  # pick up any edit to the file
         candidates = self.__new_ini_projects()
         if not candidates:
             self.__update_ini_button()
@@ -2933,31 +3025,69 @@ class AddonMarketplace(ManagedWindow):
         if not chosen:
             return
         for project in chosen:
-            self.project_list.add(ProjectRow(self, list(project[:3]) + [""]))
+            # Only name and address come from media/gramps.ini; its on/off
+            # flags are ignored. A project picked here is wanted, so it is
+            # added turned on.
+            self.project_list.add(ProjectRow(self, [project[0], project[1], True, ""]))
         self.update_project_list()
         self.refresh()
 
-    def refresh(self):
+    def refresh(self, reload=False):
         """
-        Refresh the addons list.
+        Show the addons of the enabled projects.
+
+        Catalogs are downloaded once per window and kept; turning a project
+        on or off, or "Include English", only downloads catalogs that are
+        not kept yet, and shows the list at once when none are missing.
+
+        :param reload: download every catalog again (the Refresh button).
         """
+        if self._refresh_source:
+            GLib.source_remove(self._refresh_source)
+            self._refresh_source = 0
+        if reload:
+            self._catalogs.clear()
+        # A newer refresh makes the results of older threads stale
+        self._load_generation += 1
+        generation = self._load_generation
+        include_english = self.include_english_check.get_active()
+        keys = _project_keys(self.projects, include_english)
+        if all(key in self._catalogs for key in keys):
+            addons, problems, enabled, fetched = _load_projects(
+                self.projects, include_english, self._catalogs
+            )
+            self.load_addons(addons, problems, enabled, generation, fetched)
+            return
         for child in self.lb.get_children():
             self.lb.remove(child)
-
         self.__placeholder(_("Loading..."))
         self.problem_bar.hide()
-
-        # A newer refresh makes the results of older threads stale
-        self._load_generation = getattr(self, "_load_generation", 0) + 1
-        generation = self._load_generation
+        self.__update_count_label()
         thread = GetAddons(
-            lambda addons, problems, enabled: self.load_addons(
-                addons, problems, enabled, generation
+            lambda addons, problems, enabled, fetched: self.load_addons(
+                addons, problems, enabled, generation, fetched
             ),
             self.projects,
-            self.include_english_check.get_active(),
+            include_english,
+            self._catalogs,
         )
         thread.start()
+
+    def schedule_refresh(self):
+        """
+        Refresh a moment later, so several quick check box clicks give one
+        refresh instead of one each.
+        """
+        if self._refresh_source:
+            GLib.source_remove(self._refresh_source)
+        self._refresh_source = GLib.timeout_add(400, self.__scheduled_refresh)
+
+    def __scheduled_refresh(self):
+        self._refresh_source = 0
+        # the window may have been closed while the refresh was waiting
+        if self.uistate.gwm.get_item_from_id(self.window_id) is self:
+            self.refresh()
+        return False
 
     def update_addon(self, addon_id):
         """
@@ -3055,16 +3185,27 @@ class AddonMarketplace(ManagedWindow):
         box.show_all()
         self.lb.set_placeholder(box)
 
-    def load_addons(self, addon_list, problems=(), enabled=1, generation=None):
+    def load_addons(
+        self, addon_list, problems=(), enabled=1, generation=None, fetched=None
+    ):
         """
         Populate the list box, report projects that gave no addons, and
         set an actionable message for when no rows are visible.
         """
+        if fetched:
+            self._catalogs.update(fetched)  # keep them, even from an old load
         if generation is not None and generation != self._load_generation:
             return  # a newer refresh is on its way
+        selected = self.lb.get_selected_row()
+        selected_key = (selected.addon["i"], selected.addon["_p"]) if selected else None
+        for child in self.lb.get_children():
+            self.lb.remove(child)
         self._addon_list = addon_list
         for addon in addon_list:
-            self.lb.add(AddonRow(self, addon, self.req, self.window))
+            row = AddonRow(self, addon, self.req, self.window)
+            self.lb.add(row)
+            if selected_key == (addon["i"], addon["_p"]):
+                self.lb.select_row(row)  # keep the selected addon selected
 
         if problems:
             lines = [
@@ -3169,27 +3310,13 @@ class AddonMarketplace(ManagedWindow):
 
     def __recenter_selection(self):
         """
-        Scroll so the selected addon is in the middle of the list; if it is
-        filtered out, select the first addon with a different version
-        available, else the first addon shown. Runs once from idle_add.
+        Keep the selected addon in view after a filter change, scrolled to
+        the middle of the list. The selection itself is never changed.
+        Runs once from idle_add.
         """
-        rows = [r for r in self.lb.get_children() if isinstance(r, AddonRow)]
-        visible = [r for r in rows if r.get_child_visible()]
-        if not visible:
-            return False
         target = self.lb.get_selected_row()
-        if target not in visible:
-            target = next(
-                (
-                    r
-                    for r in visible
-                    if "_v" in r.addon
-                    and version_str_to_tup(r.addon["v"], 3)
-                    != version_str_to_tup(r.addon["_v"], 3)
-                ),
-                visible[0],
-            )
-            self.lb.select_row(target)
+        if target is None or not target.get_child_visible():
+            return False
         adj = self.addon_sw.get_vadjustment()
         alloc = target.get_allocation()
         middle = alloc.y + alloc.height / 2 - self.addon_sw.get_allocation().height / 2
@@ -3295,14 +3422,14 @@ class AddonMarketplace(ManagedWindow):
 
     def __refresh_lozenge_colours(self):
         """
-        Rebuild the version lozenges and buttons of every addon from the
-        live plugin registry (an addon may have been installed or updated
-        since), then set the colours of the filter lozenges.
+        Set the colours of the filter lozenges of every addon to match the
+        filters. (Version lozenges are right already: each row reads the
+        installed version when it is built, and rows are rebuilt after an
+        install or update.)
         """
         for row in self.lb.get_children():
             if not isinstance(row, AddonRow):
                 continue
-            row.rebuild_version_ui()
             # The lozenge hbox is the second child of vbox (index 1)
             vbox = row.vbox
             children = vbox.get_children()
@@ -3410,7 +3537,7 @@ class AddonMarketplace(ManagedWindow):
         if response_id == Gtk.ResponseType.CLOSE:
             self.close(dialog)
         elif response_id == RELOAD:
-            self.refresh()
+            self.refresh(reload=True)
 
     def create_projects_panel(self):
         """
