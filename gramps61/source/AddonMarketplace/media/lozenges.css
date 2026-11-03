@@ -1,0 +1,44 @@
+/*
+Addon Marketplace lozenges and addon rows.
+Derived from Gramps data/gramps.css (maintenance/gramps60).
+Every rule is scoped to the .addon-marketplace window class, so other
+windows and addons that use .lozenge keep their own look.
+*/
+
+.addon-marketplace .lozenge {
+  font-size: small;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #0F9D58; /* #1b6ee7; */
+  padding: 2px 7px;
+  border-radius: 6px;
+  box-shadow: 1px 3px 2px rgba(50, 50, 75, 0.33); /* Default dark blue shadow */
+  /* box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22); */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.addon-marketplace .lozenge-active { /* filter set by this lozenge */
+  background-color: #D99A00; /* #E67E22; */
+  padding: 3px;
+}
+
+.addon-marketplace .lozenge-warn { /* installed version newer: Revert */
+  background-color: @error_color;
+}
+
+.addon-marketplace .lozenge-caution { /* installed version older: Update */
+  background-color: #a3730b;
+}
+
+.addon-marketplace .lozenge-button {
+  padding: 2px;
+  min-height: 0;
+}
+
+.addon-marketplace .addon-row {
+  border-width: 1px;
+  border-style: solid;
+  border-color: alpha(currentColor, .2);
+  border-radius: 10px;
+  margin: 1px;
+}

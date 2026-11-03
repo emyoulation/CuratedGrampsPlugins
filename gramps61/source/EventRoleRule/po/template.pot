@@ -1,0 +1,51 @@
+# Translation template for the 0.0.0 Events with participants in the <role> filter rule addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Events with participants in the <role> package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Events with participants in the <role> 0.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-02 14:45-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: EventRoleRule.gpr.py:30 EventRoleRule.py:64
+msgid "Events with participants in the <role>"
+msgstr ""
+
+#: EventRoleRule.gpr.py:32 EventRoleRule.py:66
+msgid ""
+"Matches events in which a person or family takes part in the selected role."
+msgstr ""
+
+#: EventRoleRule.py:39
+msgid "Person or family"
+msgstr ""
+
+#: EventRoleRule.py:39
+msgid "Person"
+msgstr ""
+
+#: EventRoleRule.py:39
+msgid "Family"
+msgstr ""
+
+#: EventRoleRule.py:61 EventRoleRule.py:114
+msgid "Role:"
+msgstr ""
+
+#: EventRoleRule.py:62 EventRoleRule.py:116
+msgid "Participant:"
+msgstr ""
+
+#: EventRoleRule.py:69
+msgid "General filters"
+msgstr ""

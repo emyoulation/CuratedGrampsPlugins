@@ -1,5 +1,16 @@
 [
   {
+    "n": "Addon Marketplace",
+    "i": "AddonMarketplace",
+    "t": 6,
+    "d": "Replaces the Addon Manager with the Addon Marketplace: clickable filter lozenges, Update and Revert buttons, and a project dialog that tests web and local addon repositories. To switch it off, hide this plugin and restart Gramps.",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "AddonMarketplace.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AddonMarketplace"
+  },
+  {
     "n": "Beta What's Next",
     "i": "Beta What's Next",
     "t": 10,
@@ -113,6 +124,17 @@
     "s": 1,
     "z": "DateModifiersRule.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DateModifiersRule"
+  },
+  {
+    "n": "Events with participants in the <role>",
+    "i": "EventRoleRule",
+    "t": 13,
+    "d": "Matches events in which a person or family takes part in the selected role.",
+    "v": "0.0.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "EventRoleRule.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EventRoleRule"
   },
   {
     "n": "Family Role Reversal",
