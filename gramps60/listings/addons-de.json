@@ -4,7 +4,7 @@
     "i": "AddonMarketplace",
     "t": 6,
     "d": "Replaces the Addon Manager with the Addon Marketplace: clickable filter lozenges, Update and Revert buttons, and a project dialog that tests web and local addon repositories. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.1.0",
+    "v": "0.1.1",
     "g": "6.0",
     "s": 1,
     "z": "AddonMarketplace.addon.tgz",
