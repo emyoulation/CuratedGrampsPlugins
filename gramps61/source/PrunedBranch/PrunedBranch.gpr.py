@@ -34,6 +34,6 @@ if VERSION_TUPLE >= (6, 0, 0):
         tool_modes=[TOOL_MODE_GUI],
         help_url=(
             "https://github.com/emyoulation/CuratedGrampsPlugins/"
-            "tree/main/PrunedBranch"
+            "tree/main/gramps61/source/PrunedBranch"
         ),
     )
