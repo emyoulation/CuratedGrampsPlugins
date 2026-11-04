@@ -1,0 +1,217 @@
+# Translation template for the 0.1.0 Pruned Branch tool addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Pruned Branch package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Pruned Branch 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-04 15:07-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PrunedBranch.gpr.py:18 PrunedBranch.py:721 PrunedBranch.py:791
+#: PrunedBranch.py:915
+msgid "Pruned Branch"
+msgstr ""
+
+#: PrunedBranch.gpr.py:20
+msgid ""
+"Limit views, filters, tools and reports to one branch of the Family Tree for "
+"an editing session (prototype)."
+msgstr ""
+
+#: PrunedBranch.py:239
+msgid "Editor"
+msgstr ""
+
+#: PrunedBranch.py:257
+msgid "Close the open editors first"
+msgstr ""
+
+#: PrunedBranch.py:261
+#, python-format
+msgid "and %d more"
+msgstr ""
+
+#: PrunedBranch.py:264
+#, python-format
+msgid ""
+"%(action)s reloads every view, and Gramps closes open editors without saving "
+"when that happens. Save or cancel these editors, then try again:"
+msgstr ""
+
+#: PrunedBranch.py:432
+msgid ""
+"Gramps did not switch the views to the branch. The session was not started."
+msgstr ""
+
+#: PrunedBranch.py:489
+msgid "Ending the Pruned Branch session"
+msgstr ""
+
+#: PrunedBranch.py:615
+msgid "Click to return to the full tree"
+msgstr ""
+
+#: PrunedBranch.py:631
+#, python-format
+msgid "PRUNED BRANCH: %(label)s (%(count)s of %(total)s people)"
+msgstr ""
+
+#: PrunedBranch.py:638
+msgid "Click for full tree"
+msgstr ""
+
+#: PrunedBranch.py:670
+msgid "A Pruned Branch session is active"
+msgstr ""
+
+#: PrunedBranch.py:675
+#, python-format
+msgid ""
+"'%s' repairs the whole Family Tree and cannot run on a branch. End the "
+"Pruned Branch session first?"
+msgstr ""
+
+#: PrunedBranch.py:683
+#, python-format
+msgid ""
+"'%(tool)s' would only see the branch (%(count)s people). Run it on the "
+"branch, or end the session and run it on the full tree?"
+msgstr ""
+
+#: PrunedBranch.py:689
+msgid "Cancel"
+msgstr ""
+
+#: PrunedBranch.py:690
+msgid "End branch, then run"
+msgstr ""
+
+#: PrunedBranch.py:692
+msgid "Run on branch"
+msgstr ""
+
+#: PrunedBranch.py:740
+msgid "People:"
+msgstr ""
+
+#: PrunedBranch.py:744
+msgid "Listing method:"
+msgstr ""
+
+#: PrunedBranch.py:746 PrunedBranch.py:856
+msgid "SQL keep-table join"
+msgstr ""
+
+#: PrunedBranch.py:747
+msgid "Python, one read per record"
+msgstr ""
+
+#: PrunedBranch.py:754
+msgid "Start branch"
+msgstr ""
+
+#: PrunedBranch.py:756
+msgid "End branch"
+msgstr ""
+
+#: PrunedBranch.py:758
+msgid "Run benchmark"
+msgstr ""
+
+#: PrunedBranch.py:760
+msgid ""
+"Times the full tree against the branch. With no session active, a trial "
+"branch is built from the People choice without switching to it. The People "
+"choice is also timed as a filter."
+msgstr ""
+
+#: PrunedBranch.py:766
+msgid "Customize colors"
+msgstr ""
+
+#: PrunedBranch.py:768
+#, python-format
+msgid "Open the session stylesheet in your text editor: %s"
+msgstr ""
+
+#: PrunedBranch.py:771
+msgid "Copy report"
+msgstr ""
+
+#: PrunedBranch.py:773
+msgid "Close"
+msgstr ""
+
+#: PrunedBranch.py:807 PrunedBranch.py:815
+#, python-format
+msgid "Tag: %s"
+msgstr ""
+
+#: PrunedBranch.py:823
+#, python-format
+msgid "Filter: %s"
+msgstr ""
+
+#: PrunedBranch.py:858
+msgid "Python only (not SQLite)"
+msgstr ""
+
+#: PrunedBranch.py:863
+msgid "Pruned Branch ACTIVE:"
+msgstr ""
+
+#: PrunedBranch.py:866
+#, python-format
+msgid "Available listing method: %s"
+msgstr ""
+
+#: PrunedBranch.py:872
+msgid "Full tree."
+msgstr ""
+
+#: PrunedBranch.py:872
+msgid "Choose people, then Start branch."
+msgstr ""
+
+#: PrunedBranch.py:892
+msgid "Starting a Pruned Branch session"
+msgstr ""
+
+#: PrunedBranch.py:901
+#, python-format
+msgid "No people match %s; nothing started."
+msgstr ""
+
+#: PrunedBranch.py:944
+msgid "Choose a tag or filter in People first."
+msgstr ""
+
+#: PrunedBranch.py:957
+#, python-format
+msgid "No people match %s; nothing to measure."
+msgstr ""
+
+#: PrunedBranch.py:971
+msgid "Benchmark failed; see the terminal for the traceback."
+msgstr ""
+
+#: PrunedBranch.py:983
+#, python-format
+msgid "Editing %s"
+msgstr ""
+
+#: PrunedBranch.py:985
+msgid ""
+"Color changes apply the next time a session starts. Keep a copy of your "
+"changes: updating the addon replaces this file."
+msgstr ""

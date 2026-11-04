@@ -1,0 +1,178 @@
+/* pruned-branch-css-version: 3 */
+/* Pruned Branch - session colors (a dusty rose tint instead of grey).
+ *
+ * This stylesheet is only loaded while a session is active, and it is
+ * removed when the session ends. Most rules are also scoped to
+ * .pruned-branch (the main window) or .pruned-branch-alert (the status
+ * bar button). Pop-up menus are the exception: GTK draws each menu in its
+ * own pop-up window, outside the main window, so the menu rules at the
+ * end cannot be scoped. They inherit the text color of the menu bar
+ * unless they set their own, which is why they set every color.
+ *
+ * The aim is a light tint over the normal window, so the session is
+ * obvious but text stays easy to read. Icons are never recolored.
+ *
+ * To customize: use "Customize colors" in the Pruned Branch tool. It
+ * copies this file to <USER_CSS>/pruned-branch/pruned_branch.css, which
+ * is then used instead of this one and survives addon updates.
+ * Changes apply the next time a session starts.
+ *
+ * The version line at the top tells Pruned Branch which default this
+ * file was copied from. Keep it in your own copy; Pruned Branch warns
+ * when a user copy is older than the addon's default. Raise it in the
+ * default whenever rules are added or changed in a way users need.
+ *
+ * Loaded at GTK priority APPLICATION + 10: above gramps.css and Themes2
+ * CSS themes and patches, below Themes2 gramps_user.css (USER priority).
+ *
+ * Palette
+ *   #ecdede  window background
+ *   #e6d0d0  menu bar, toolbar, status bar
+ *   #f3e7e7  lists and text entries
+ *   #e3c4c4  column headers, buttons, combo boxes
+ *   #d9a6a3  notebook tab strips
+ *   #c99a9a  borders and pane separators
+ *   #4a1414  text
+ *   #3f2a8f  selected row
+ */
+
+/* --- window and chrome --------------------------------------------- */
+.pruned-branch,
+.pruned-branch scrolledwindow,
+.pruned-branch viewport {
+    background-color: #ecdede;
+    color: #4a1414;
+}
+.pruned-branch menubar,
+.pruned-branch toolbar,
+.pruned-branch .toolbar {
+    background-image: none;
+    background-color: #e6d0d0;
+    color: #4a1414;
+}
+.pruned-branch menubar > menuitem,
+.pruned-branch menubar > menuitem label,
+.pruned-branch toolbar button label { color: #4a1414; }
+.pruned-branch menubar > menuitem:hover {
+    background-color: #d9b4b4;
+}
+
+/* --- lists ----------------------------------------------------------- */
+.pruned-branch treeview.view {
+    background-color: #f3e7e7;
+    color: #4a1414;
+}
+.pruned-branch treeview.view:selected,
+.pruned-branch treeview.view:selected:focus {
+    background-color: #3f2a8f;
+    color: #f3e6e6;
+}
+.pruned-branch treeview.view header button {
+    background-image: none;
+    background-color: #e3c4c4;
+    color: #4a1414;
+    border-color: #c99a9a;
+}
+
+/* --- notebooks (sidebar/bottombar tabs) ------------------------------ */
+.pruned-branch notebook header {
+    background-image: none;
+    background-color: #d9a6a3;
+    border-color: #c99a9a;
+}
+.pruned-branch notebook tab label { color: #4a1414; }
+.pruned-branch notebook tab:checked {
+    background-color: #e6c6c4;
+    box-shadow: inset 0 -3px #8e2b2b;
+}
+.pruned-branch notebook > stack {
+    background-color: #ecdede;
+}
+
+/* --- inputs ------------------------------------------------------------ */
+.pruned-branch entry {
+    background-image: none;
+    background-color: #f3e7e7;
+    color: #4a1414;
+    border-color: #c99a9a;
+}
+/* Only buttons that normally show a frame. Flat buttons (sidebar
+ * categories, gramplet title bars, tab close buttons, small icon buttons)
+ * keep their normal borderless look; they are only tinted when hovered or
+ * when they are the checked one. */
+.pruned-branch button:not(.flat):not(.pruned-branch-alert),
+.pruned-branch combobox button {
+    background-image: none;
+    background-color: #e3c4c4;
+    border-color: #c99a9a;
+}
+.pruned-branch button.flat:hover {
+    background-image: none;
+    background-color: #e3c4c4;
+}
+.pruned-branch button.flat:checked {
+    background-image: none;
+    background-color: #dcb6b6;
+}
+.pruned-branch toolbar button {
+    background-color: transparent;
+    border-color: transparent;
+}
+.pruned-branch toolbar button:hover {
+    background-color: #d9b4b4;
+}
+
+/* --- separators, scrollbars, status bar --------------------------- */
+.pruned-branch paned > separator,
+.pruned-branch separator {
+    background-color: #c99a9a;
+}
+.pruned-branch scrollbar { background-color: #e6d0d0; }
+.pruned-branch scrollbar slider { background-color: #c08a8a; }
+.pruned-branch statusbar {
+    background-color: transparent;
+    color: #4a1414;
+}
+
+/* --- the status bar button --------------------------------------- */
+.pruned-branch-alert {
+    background-image: none;
+    background-color: #d32f2f;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: larger;
+    border-color: #8e1b1b;
+    padding: 2px 14px;
+}
+.pruned-branch-alert:hover { background-color: #e53935; }
+.pruned-branch-alert label { color: #ffffff; }
+
+/* --- pop-up menus (cannot be scoped; see the note at the top) -------- */
+menu,
+.menu,
+.context-menu {
+    background-image: none;
+    background-color: #f6eded;
+    color: #4a1414;
+    border: 1px solid #c99a9a;
+}
+menu menuitem,
+menu menuitem label,
+menu menuitem accelerator,
+menu menuitem arrow {
+    color: #4a1414;
+}
+menu menuitem accelerator { color: #8a5a5a; }
+menu menuitem:hover,
+menu menuitem:hover label,
+menu menuitem:hover accelerator,
+menu menuitem:hover arrow {
+    background-color: #3f2a8f;
+    color: #f3e6e6;
+}
+menu menuitem:disabled,
+menu menuitem:disabled label,
+menu menuitem:disabled accelerator {
+    color: #b08e8e;
+}
+menu separator { background-color: #dcc0c0; }
