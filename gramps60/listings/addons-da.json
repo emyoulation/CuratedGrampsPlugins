@@ -137,6 +137,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EventRoleRule"
   },
   {
+    "n": "Families in the immediate families of <anchor>",
+    "i": "ImmediateFamilyRules_ImmediateFamilyFamilies",
+    "t": 13,
+    "d": "Matches the families of a person or family, as child or as parent, and the families of the people in those families",
+    "v": "0.1.1",
+    "g": "6.0",
+    "s": 1,
+    "z": "ImmediateFamilyRules.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/ImmediateFamilyRules"
+  },
+  {
     "n": "Family Role Reversal",
     "i": "RoleReversalFamily",
     "t": 13,
@@ -271,6 +282,17 @@
       "pypdf"
     ],
     "h": "https://claude.ai/share/5499326c-cb83-453f-aa82-7f8248f94ca6"
+  },
+  {
+    "n": "People in the immediate families of <anchor>",
+    "i": "ImmediateFamilyRules_ImmediateFamilyPeople",
+    "t": 13,
+    "d": "Matches the members of the immediate families of a person or family: parents, siblings, spouses, children, in-laws and associations",
+    "v": "0.1.1",
+    "g": "6.0",
+    "s": 1,
+    "z": "ImmediateFamilyRules.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/ImmediateFamilyRules"
   },
   {
     "n": "Person Role Reversal",
