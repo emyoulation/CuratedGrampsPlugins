@@ -1,0 +1,280 @@
+#
+# Gramps - a GTK+/GNOME based genealogy program
+#
+# Copyright (C) 2026  Phonetic Matching Gramplet contributors
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+"""
+Custom Soundex encoder with specific consonant mappings for the
+Fuzzy Matching Gramplet.
+
+This implementation provides a variant of the classic Soundex algorithm
+with customized consonant mappings and special multi-character combinations
+designed to better handle specific phonetic patterns in genealogical data.
+Unlike the standard Soundex which uses a fixed set of consonant groups,
+this variant allows for more precise control over phonetic equivalences.
+
+Both the encoding function and the corresponding filter rule are provided
+in this single file to maintain consistency with Gramps' plugin discovery
+mechanism: the gramplet auto-discovers encoding systems by querying the
+plugin registry for RULE-type plugins with IDs prefixed by
+``phonetic_codes._ENCODER_ID_PREFIX`` (``"FuzzyMatchingEncoder:"``).
+
+Using this rule directly in a Custom Filter
+--------------------------------------------
+
+This rule can be used independently in Gramps' Person Filter Editor.
+Open Edit > Person Filter Editor, create or edit a filter, "Add Rule...",
+and it appears under *General filters* as "Soundex Custom match of People
+with the <surname>". Provide a surname and it matches every person whose
+primary surname produces the same custom Soundex code.
+
+About the Custom Soundex Algorithm
+-----------------------------------
+
+The algorithm follows these steps:
+1. Clean the input, keeping only alphabetic characters and converting to uppercase
+2. Apply special multi-character combinations (PH→F, KN→N, GH→∅, WR→R)
+3. Map individual consonants according to custom rules:
+   - B, P, V, F → B
+   - C, K, Q, G, J → C
+   - S, Z, X → S
+   - D, T → D
+   - L → L
+   - M, N → M
+   - R → R
+4. Remove consecutive duplicate letters
+5. Remove vowels (except the first letter)
+6. Pad the result to 4 characters with zeros
+
+This variant produces more precise phonetic matching for certain name
+patterns while maintaining the standard Soundex 4-character code format.
+"""
+
+# Deferred annotation evaluation (PEP 563), required for Python 3.8/3.9
+# compatibility: this module's type hints use `Set[str]` (PEP 585 syntax),
+# which those Python versions cannot evaluate at runtime even though they
+# parse it fine.
+from __future__ import annotations
+
+# ------------------------
+# Python modules
+# ------------------------
+import logging
+from typing import Set
+
+# ------------------------
+# Gramps modules
+# ------------------------
+from gramps.gen.const import GRAMPS_LOCALE as glocale
+from gramps.gen.filters.rules import Rule
+
+try:
+    _trans = glocale.get_addon_translator(__file__)
+except ValueError:
+    _trans = glocale.translation
+_ = _trans.gettext
+
+LOG = logging.getLogger(__name__)
+
+#: Registry key. See the contract in ``phonetic_codes.py`` for why
+#: this should be treated as stable once shipped.
+ALGORITHM_ID = "soundex_custom"
+
+#: Display label shown in the gramplet's "Encoding system" dropdown.
+ALGORITHM_LABEL = "Soundex Custom"
+
+#: Shown as a tooltip on the Encoding system dropdown when this
+#: algorithm is selected. See the contract in ``phonetic_codes.py``.
+ALGORITHM_DESCRIPTION = (
+    "Custom Soundex with specific consonant mappings (B,P,V,F→B; C,K,Q,G,J→C;"
+    " S,Z,X→S; D,T→D; M,N→M) and special combinations (PH→F, KN→N, GH→∅, WR→R)."
+)
+
+# Consonant mapping rules
+_CONSONANT_MAP = {
+    "B": "B",
+    "P": "B",
+    "V": "B",
+    "F": "B",
+    "C": "C",
+    "K": "C",
+    "Q": "C",
+    "G": "C",
+    "J": "C",
+    "S": "S",
+    "Z": "S",
+    "X": "S",
+    "D": "D",
+    "T": "D",
+    "L": "L",
+    "M": "M",
+    "N": "M",
+    "R": "R",
+}
+
+# Special combinations (applied first)
+_SPECIAL_COMBINATIONS = [
+    ("PH", "F"),
+    ("KN", "N"),
+    ("GH", ""),  # removed
+    ("WR", "R"),
+]
+
+def _clean_and_upper(name: str) -> str:
+    """Keep only letters, convert to uppercase."""
+    return "".join(c for c in name if c.isalpha()).upper()
+
+def _apply_special_combinations(name: str) -> str:
+    """Apply special multi-character combinations first."""
+    for old, new in _SPECIAL_COMBINATIONS:
+        name = name.replace(old, new)
+    return name
+
+def _map_consonants(name: str) -> str:
+    """Map individual consonants according to the rules."""
+    return "".join(_CONSONANT_MAP.get(c, c) for c in name)
+
+def _remove_duplicates(name: str) -> str:
+    """Remove consecutive duplicate letters."""
+    if not name:
+        return name
+    result = [name[0]]
+    for c in name[1:]:
+        if c != result[-1]:
+            result.append(c)
+    return "".join(result)
+
+def _pad_to_four(code: str) -> str:
+    """Pad code with zeros to 4 characters."""
+    return (code + "000")[:4]
+
+def _soundex_custom(name: str) -> str:
+    """
+    Compute custom Soundex code.
+
+    Steps:
+    1. Keep first letter
+    2. Apply special combinations
+    3. Map consonants
+    4. Remove duplicates
+    5. Remove vowels (except first)
+    6. Pad to 4 characters
+    """
+    if not name:
+        return "0000"
+
+    cleaned = _clean_and_upper(name)
+    if not cleaned:
+        return "0000"
+
+    # Keep first letter
+    first_letter = cleaned[0]
+    rest = cleaned[1:]
+
+    # Apply special combinations to the rest
+    rest = _apply_special_combinations(rest)
+
+    # Map consonants
+    rest = _map_consonants(rest)
+
+    # Remove vowels from rest
+    rest = "".join(c for c in rest if c not in "AEIOUY")
+
+    # Remove duplicates
+    rest = _remove_duplicates(rest)
+
+    # Combine and pad
+    code = first_letter + rest
+    return _pad_to_four(code)
+
+def encode(name: str) -> Set[str]:
+    """
+    Return the Soundex code as a set (for compatibility with phonetic_codes.py).
+
+    :param name: The surname to encode.
+    :returns: A one-element set containing the 4-character Soundex code.
+    """
+    try:
+        code = _soundex_custom(name)
+        return {code}
+    except Exception:
+        LOG.debug("Soundex custom encoding failed for %r", name)
+        return {"0000"}
+
+# -------------------------------------------------------------------------
+#
+# HasSoundexCustomName
+#
+# -------------------------------------------------------------------------
+class HasSoundexCustomName(Rule):
+    """
+    Rule that checks for a Soundex Custom match of a person's primary surname.
+
+    Deliberately checks the primary name's surname only, matching what
+    the Fuzzy Matching Gramplet's own "Surname" field and Matches columns
+    actually search.
+    """
+
+    labels = [_("Surname:")]
+    name = _("Soundex Custom match of People with the <surname>")
+    description = _(
+        "Matches people whose primary surname has a specified Soundex Custom code"
+    )
+    category = _("General filters")
+    allow_regex = False
+
+    def __init__(self, arg, use_regex=False, use_case=False):
+        super().__init__(arg, use_regex, use_case)
+        self._target_codes = None
+
+    def prepare(self, _db, _user):
+        """
+        Prepare the rule.
+
+        :param _db: The active database. Unused: the target codes only
+            depend on the typed name, not on any database content.
+        :param _user: The active :class:`gramps.gen.user.User`. Unused.
+        """
+        self._target_codes = (
+            encode(self.list[0]) if self.list and self.list[0] else set()
+        )
+
+    def apply_to_one(self, _db, obj) -> bool:
+        """
+        Apply the rule. Return True on a match.
+
+        :param _db: The active database. Unused.
+        :param obj: The :class:`gramps.gen.lib.Person` being tested.
+        :returns: True if ``obj``'s primary surname's Soundex Custom code
+            intersects the target codes.
+        """
+        if not self._target_codes:
+            return False
+        surname = obj.get_primary_name().get_surname()
+        return bool(encode(surname) & self._target_codes)
+
+    def apply(self, db, obj) -> bool:
+        """
+        Alias for :meth:`apply_to_one`, needed for Gramps 5.2
+        compatibility.
+
+        :param db: The active database. Unused; forwarded as-is.
+        :param obj: The :class:`gramps.gen.lib.Person` being tested.
+        :returns: See :meth:`apply_to_one`.
+        """
+        return self.apply_to_one(db, obj)
