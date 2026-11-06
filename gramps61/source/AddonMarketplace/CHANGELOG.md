@@ -4,6 +4,29 @@
 
 All notable changes to the Addon Marketplace addon are listed here, newest first. Changes are compared with the Addon Manager of Gramps.
 
+## 0.1.2 - 2026-11-06
+Shows what is missing in the list of new and updated addons, copes with changes in the catalogs of projects, and stops update offers that came back at every start of Gramps.
+
+### Fixed
+- A catalog with changes the Addon Marketplace does not expect no longer breaks it. Each addon in a catalog is checked when the catalog loads: missing values get defaults, values of the wrong kind are corrected, new keys are kept, and an addon of a type, audience or status that this Gramps does not know (for example from a newer Gramps) shows as "Unknown". Only an entry without an addon ID or download file is skipped, and the terminal says how many. Before, one unusable entry lost every addon of that project, and one unknown type stopped the Addons tab with an error.
+- The same new and updated addons are no longer offered at every start of Gramps, even after you install them. Gramps offered again, as "New", every installed addon that it cannot use because a module or program it requires is missing, and offered again every addon whose download contains another version than its catalog says, or that is installed twice in two folders. The check at startup now skips these offers until the project publishes a new version, and writes the reason to the log at info level.
+- Gramps no longer stops responding while the Install button installs the Python modules an addon requires. A small window shows which module is being installed, and its **Cancel** button stops the installation. Large modules, such as the `litellm` module of the Chat With Tree addons, can take several minutes. On Gramps 6.1 without pip, the installation cannot be stopped, so Cancel is dimmed.
+- An addon that was installed once before, and that Gramps could not use then (for example because a module it requires was missing), now works at once when you install it again after its requirements are installed. Before, Gramps did not look at its folder again until it was restarted.
+- When Gramps cannot use a downloaded addon because something it requires is missing, the message names what is missing, instead of saying that the addon was probably made for another Gramps version.
+- The Help button now comes from MarkdownUtils, which shows a color icon also on themes without one (such as current Adwaita), and names the addon in its tooltip. The warning about a missing help icon is no longer written to the terminal. Without MarkdownUtils, the Help button is a plain text button that opens the web page of this addon.
+- The description of the addon in the Plugin Manager names the **Downgrade** button, instead of a "Revert" button that does not exist.
+
+### Added
+- The list of new and updated addons (at startup, and from **Check for updated addons now** on the Settings tab) has a **Requires** column. A warning icon and the missing Python modules, GObject libraries or programs show there, and a tooltip on the row explains what to do. The warning icon comes from the icon theme when it has a color one, otherwise from the new `media/warning.png`.
+- **Check for updated addons now** also lists installed addons that Gramps cannot use, so you can see what they miss. Every addon in the list has a check box, and **Select All** checks every addon.
+- A green check mark (the new `media/installed.svg`) before the addon name shows that the addon is already installed.
+- A click on the warning icon of an addon in that list, or on the **Requires** button of an addon on the Addons tab, opens a checklist of what the addon needs: each missing Python module, GObject library or program, whether Gramps can install it, and commands to copy. On Fedora and Debian or Ubuntu, the commands find the system package that has each missing item.
+- A catalog may also list each addon with the field names of its `.gpr.py` registration (`name`, `version`, `authors`, `maintainers` and every other field), next to or instead of the short keys of today; a field name wins over its short key. The search box finds addons by the names and e-mail addresses of their authors and maintainers when a catalog lists them. This prepares the Addon Marketplace for a fuller catalog that lists every field of each addon.
+- When **Allow Gramps to install required Python modules** is on, the list of new and updated addons installs the missing Python modules of the checked addons before it downloads them, in the same small window as the Install button. Before, it only downloaded the addons, which then stayed inactive. Modules that are published only as source code get their ready-made "binary" version, such as `psycopg2-binary` for `psycopg2`.
+
+### Changed
+- The list of known addon collections now ships as `media/addons-projects.ini` instead of `media/gramps.ini`. A `gramps.ini` file put in the `media` folder (your own from your Gramps user folder, or one shared by another user) is used instead, without editing, and an update of the addon no longer overwrites it. The tooltip of the index card button names the file in use.
+
 ## 0.1.1 - 2026-11-03
 Fixes the project check boxes, and brings the documentation up to date.
 
@@ -54,7 +77,7 @@ First field-test release. The addon replaces the Addon Manager window of Gramps 
 ## Outstanding issues
 ### Planned or not yet implemented
 - Translations of the new texts of the addon.
-- The Help button shows no icon on themes without a color help icon. A bundled color icon, and a tooltip that names the addon, wait for the shared Help button code in [MarkdownUtils](https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/MarkdownBased) to get them, so that every addon gets the same fix.
+- The color Help button needs the next release of [MarkdownUtils](https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/MarkdownBased). With MarkdownUtils 0.2.2 or older, the Help button is the plain text button.
 
 ### Needs discussion
 - Whether the menu item should keep the name "Addon Manager...".
@@ -64,5 +87,22 @@ First field-test release. The addon replaces the Addon Manager window of Gramps 
 
 ### Beyond scope
 - The reason a project failed is found by reading its English catalog a second time, because `get_addons()` in Gramps only writes errors to the terminal. A change in Gramps itself to return the error would remove the second request.
+- A catalog that lists another version than its download contains (in November 2026, the PostgreSQL addon of the Gramps project lists 1.0.23, but its download contains 1.0.22) must be fixed by that project. The Addon Marketplace only stops offering the same version again.
 - The catalogs published today list no authors or maintainers, so searching for a person finds nothing until the catalog generator of Gramps adds them.
 - Installing Python modules without pip (all-in-one Windows installer, Flatpak) on Gramps 5.2 and 6.0: the PyPI installer exists only in Gramps 6.1 and newer.
+
+### Wishlist
+Ideas for making shopping for addons more pleasant, and for helping people follow through on what they installed. Roughly in the suggested order of work.
+- **A receipt of each install session.** After installing or updating, keep a list in `AddonMarketplace.ini` of each addon: name, type, old version and new version (or "new"), date, and whether Gramps can use it. People remember to try one to three new addons, but lose track of more than that.
+- **Where to find each addon** in the receipt, from its type: a gramplet is added from the right-click menu of a gramplet bar or the Dashboard, a view appears in its category after a restart of Gramps, a tool or report in its menu and category, a filter rule in the filter editor, a quick view in the right-click menu of its object type.
+- **Links in the receipt**, shown only when they exist: the local README (through Markdown Dash), the local CHANGELOG for updates (opened at the heading of the new version), and the web help (`help_url`).
+- **"Explored" check boxes** in the receipt, with a count of the addons still to explore on a lozenge or tab, and in the menu item ("Addon Marketplace (4 new)") after Gramps restarts, instead of a popup.
+- **A changelog excerpt for updates:** only the part of the CHANGELOG between the old and the new version headings, to show what is different from what you had.
+- **"New since your last visit":** keep a snapshot of the catalog ids and versions when the window closes, and offer a lozenge that shows only the addons that are new or changed since then. The catalogs have no dates, so this is the only way to see what is recent.
+- **A duplicate-id warning:** before installing, warn when another installed folder already registers the same plugin id (as with the Themes and Themes2 folders), and offer to replace that folder instead of adding a second copy.
+- **The cost before buying:** show the requirements of an addon in its row before it is installed, with a "Works now" badge or the warning icon and checklist, and a note for very large modules (such as `litellm`).
+- **A wish list:** a star on an addon puts it on an "Install later" list, for example while a system package that it needs is installed first.
+- **A project trust badge:** mark the addons of the Gramps project differently from those of other collections, and always show the project name.
+- **A catalog and download mismatch report:** when Gramps registers another version than the catalog promised (as with the PostgreSQL addon, 1.0.23 in the catalog and 1.0.22 in its download), say so, and offer to open the issue page of the project with the details filled in.
+- **Preview before installing:** download the `.tgz` of an addon to a cache without installing it, and show its README and screenshots in Markdown Dash.
+- **Undo an update:** keep the previous folder of an addon as a backup before an update replaces it, and offer **Undo update** in the receipt. The Downgrade button only works while the project still offers the older version.

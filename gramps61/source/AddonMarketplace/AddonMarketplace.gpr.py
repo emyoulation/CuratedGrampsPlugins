@@ -31,11 +31,11 @@ if (5, 2, 0) <= VERSION_TUPLE < (6, 2, 0):
         name=_("Addon Marketplace"),
         description=_(
             "Replaces the Addon Manager with the Addon Marketplace: clickable "
-            "filter lozenges, Update and Revert buttons, and a project dialog "
+            "filter lozenges, Update and Downgrade buttons, and a project dialog "
             "that tests web and local addon repositories. "
             "To switch it off, hide this plugin and restart Gramps."
         ),
-        version="0.1.1",  # build 20261103.0409
+        version="0.1.2",  # build 20261106.1640
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="AddonMarketplace.py",

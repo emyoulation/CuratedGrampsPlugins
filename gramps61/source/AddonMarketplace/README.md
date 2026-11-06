@@ -100,6 +100,12 @@ The Settings tab is the same as in the Addon Manager, and changes here also appl
 - **Do not ask about previously notified addons**: skips addons that Gramps already told you about.
 - **Check for updated addons now**: checks at once, using the language codes of your projects.
 
+The list of new and updated addons has a **Requires** column. When an addon needs something that is missing, such as a Python module, a GObject library or a program, a warning icon and the missing items show in that column. Point at the row to see a tooltip that explains what to do. A green check mark before the name shows that the addon is already installed. An installed addon with a warning icon is not active: Gramps cannot use it until its requirements are installed. Each addon has a check box, and **Select All** checks every addon.
+
+![The updates list](media/check_updates.png)
+
+When Gramps starts, the check skips installed addons that are not active, and addons that you already installed from the list but that Gramps still sees as older. These offers come back when the project publishes a new version. **Check for updated addons now** always shows the installed addons that are not active.
+
 ## The Projects tab
 The Projects tab lists the addon projects (the places addons come from). Each project shows a check box, a folder icon and the project name:
 - The **check box** turns the project on or off. The Addons tab shows the change a moment later. A project that was already loaded shows again at once, without a new download.
@@ -120,7 +126,7 @@ The index card button opens the **Add projects** dialog. It lists the known cura
 
 ![The Add projects dialog](media/AddProject.png)
 
-Check the projects you want, then click **Add**. The projects you add are turned on. Each project has a folder icon too: double-click it to look at the project on GitHub before you add it. The list comes from the `gramps.ini` file in the `media` folder of the Addon Marketplace. It is read again each time you open the Projects tab and each time you click the button, so a changed list shows at once. When every project in the list is already in your project list, the button is dimmed.
+Check the projects you want, then click **Add**. The projects you add are turned on. Each project has a folder icon too: double-click it to look at the project on GitHub before you add it. The list comes from the `addons-projects.ini` file in the `media` folder of the Addon Marketplace. To use another list, put a `gramps.ini` file in that folder, for example your own `gramps.ini` from your Gramps user folder, or one that another user shares with you. No editing is needed: when a `gramps.ini` file is there, the Addon Marketplace uses it instead, and an update of the addon does not replace it. The file is read again each time you open the Projects tab and each time you click the button, so a changed list shows at once. When every project in the list is already in your project list, the button is dimmed.
 
 ### The project dialog
 Double-click a project, or click the **+** button, to open the project dialog:
@@ -144,7 +150,7 @@ When you test or save a project, the dialog changes some common mistakes into th
 - A **slash at the end** of the address is removed.
 
 ## The Help button
-The Help button at the lower left opens this document in Markdown Dash, when Markdown Dash is installed and active. Otherwise it opens the web page of this addon.
+The Help button at the lower left opens this document in Markdown Dash, when Markdown Dash is installed and active. Otherwise it opens the web page of this addon. The colored Help button comes from the Markdown Utils library. Without it, the Help button is a plain text button that opens the web page of this addon.
 
 ## Where the settings are kept
 The project names, addresses and check boxes are kept in the `gramps.ini` file of Gramps, as for the Addon Manager. The language code of each project and the Include English setting are kept in the `AddonMarketplace.ini` file, next to the addon in your Gramps plugins folder.
@@ -176,7 +182,7 @@ This addon was substantially written with an AI tool, as the Gramps [AI generate
 Generated-by: Claude Sonnet 4.6 (claude-sonnet-4-6), Claude Sonnet 5 (claude-sonnet-5) and Claude Opus 5.5 (claude-opus-5-5), Anthropic, via the claude.ai chat interface, 2026
 Prompted by: Brian McCullough
 ```
-- **Prompts (summary):** first an enhanced project dialog and Update/Downgrade handling inside a changed copy of the Addon Manager file of Gramps 6.0, and in a later copy the Validation Status links, the language code, Include English, the certificate handling, the addon count and the New or Updated filter; then the first copy turned into a monkey-patch addon named Addon Marketplace for Gramps 5.2 to 6.1, with its own lozenge style sheet; then a Help button that opens this README, messages that tell the user what to do when the Addons tab is empty, a warning bar for projects that could not be loaded, conversion of GitHub web page addresses, the list of known addon collections, the folder icons of the projects, the features of the later copy, one window at a time, and catalogs that are kept instead of downloaded again after each change.
+- **Prompts (summary):** first an enhanced project dialog and Update/Downgrade handling inside a changed copy of the Addon Manager file of Gramps 6.0, and in a later copy the Validation Status links, the language code, Include English, the certificate handling, the addon count and the New or Updated filter; then the first copy turned into a monkey-patch addon named Addon Marketplace for Gramps 5.2 to 6.1, with its own lozenge style sheet; then a Help button that opens this README, messages that tell the user what to do when the Addons tab is empty, a warning bar for projects that could not be loaded, conversion of GitHub web page addresses, the list of known addon collections, the folder icons of the projects, the features of the later copy, one window at a time, and catalogs that are kept instead of downloaded again after each change; then, from field feedback, a color Help icon for themes without one, a stop to update offers that came back at every start, and a Requires column with warning and installed icons in the list of new and updated addons.
 - **Guidelines:** written in "draft mode", so the Gramps [AGENTS.md](https://github.com/gramps-project/gramps/blob/master/AGENTS.md) style rules (type hints, Black, pylint and others) were not fully applied.
 - **Testing:** the AI checked the addon with the source code of Gramps 5.2 and 6.1 in a simulated display, with live addon projects on GitHub. Brian McCullough tested the user interface on Gramps 6.0.
 
@@ -186,6 +192,6 @@ This section is for review while the addon is in draft. Remove it before release
 - The README describes the Edit menu, which is where the menu item is in Gramps 5.2 to 6.1.
 - The Settings tab and the window size stay shared with the Addon Manager, so switching the addon off loses nothing.
 - The lozenge colors are described by name (green, gold, dark gold, red), as they look in the default theme. A dark theme can change the red, because it comes from the theme.
-- I called the button with the index card icon "Add projects from the list", after its purpose. Its tooltip says "Add projects from the gramps.ini file of the Addon Marketplace".
+- I called the button with the index card icon "Add projects from the list", after its purpose. Its tooltip says "Add projects from the addons-projects.ini file of the Addon Marketplace", or names `gramps.ini` when that file is used.
 - The Help button falls back to the GitHub folder of the addon, which only works after the addon is committed to the repository.
 - "Report problems" has no link yet: I assumed you will start a Gramps Discourse thread, as for other field-test addons.

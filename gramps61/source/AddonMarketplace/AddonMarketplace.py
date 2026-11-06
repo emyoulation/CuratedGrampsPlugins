@@ -71,9 +71,8 @@ from urllib.request import Request, url2pathname, urlopen
 # GTK modules
 #
 # -------------------------------------------------------------------------
-from collections.abc import Callable
 
-from gi.repository import Gtk, Gdk, Gio, GLib, Pango
+from gi.repository import Gtk, Gdk, GdkPixbuf, Gio, GLib, Pango
 
 # -------------------------------------------------------------------------
 #
@@ -86,14 +85,14 @@ from gramps.gen.config import config
 from gramps.gen.utils.configmanager import ConfigManager
 from gramps.gen.constfunc import win
 from gramps.gen.plug import PluginRegister, PTYPE_STR, load_addon_file
-from gramps.gen.plug._pluginreg import PluginData
 from gramps.gen.plug import AUDIENCETEXT, STATUSTEXT
-from gramps.gen.plug.utils import get_addons
 from gramps.gen.plug.utils import urlopen_maybe_no_check_cert
 from gramps.gen.plug.utils import version_str_to_tup
 from gramps.gen.utils.requirements import Requirements
 from gramps.version import major_version
 from gramps.gui.managedwindow import ManagedWindow
+from gramps.gui.glade import Glade
+from gramps.gui.listmodel import ListModel, NOSORT, TOGGLE
 from gramps.gui.pluginmanager import GuiPluginManager
 from gramps.gui.dialog import InfoDialog, OkDialog, QuestionDialog2
 from gramps.gui.display import display_help, display_url
@@ -134,9 +133,26 @@ PLUGIN_ID = "AddonMarketplace"  # the id= in AddonMarketplace.gpr.py
 
 MEDIA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "media")
 CSS_FILE = os.path.join(MEDIA_DIR, "lozenges.css")
-# Optional: a gramps.ini whose [behavior] addons-projects list offers
-# extra projects (the gtk-index button on the Projects tab)
-PROJECTS_INI = os.path.join(MEDIA_DIR, "gramps.ini")
+# Projects file: a [behavior] addons-projects list that offers extra
+# projects (the gtk-index button on the Projects tab). A gramps.ini that a
+# user drops into the media folder (their own, or one from another user)
+# wins, unedited; the addon ships only addons-projects.ini, so an update
+# of the addon never overwrites the dropped-in file.
+PROJECTS_INI_NAMES = ("gramps.ini", "addons-projects.ini")
+
+
+def _projects_ini_path():
+    """
+    The projects file in use: media/gramps.ini when it exists, else
+    media/addons-projects.ini, else None.
+    """
+    for name in PROJECTS_INI_NAMES:
+        path = os.path.join(MEDIA_DIR, name)
+        if os.path.isfile(path):
+            return path
+    return None
+
+
 # Gramps Discourse list of curated third-party addon collections
 CURATED_COLLECTIONS_URL = (
     "https://gramps.discourse.group/t/" "curated-third-party-addon-collections/7170/18"
@@ -164,6 +180,9 @@ def _settings():
     manager.register("meta.schema_version", "")
     manager.register("projects.languages", {})
     manager.register("projects.include-english", False)
+    # {addon id: catalog version} of offers already installed, so an
+    # offer that installing did not satisfy is not repeated each start
+    manager.register("updates.installed-offers", {})
     manager.load()
     if (
         manager.get("meta.plugin_id") != PLUGIN_ID
@@ -202,7 +221,8 @@ def _save_project_languages(projects):
 
 def _read_ini_projects(path):
     """
-    Return the addons-projects list of a gramps.ini file, read with the
+    Return the addons-projects list of a projects file (gramps.ini
+    format), read with the
     Gramps ConfigManager, as [[name, url, enabled], ...]. Malformed
     entries are skipped; a missing or unreadable file gives [].
     """
@@ -308,16 +328,23 @@ def _project_name_label():
     return label
 
 
-def _find_addon_folder(addon_id):
+_GPR_ID_PATTERN = re.compile(r"""\bid\s*=\s*["']([^"']+)["']""")
+
+
+def _addon_folder_index():
     """
-    The folder in the user plugins folder whose .gpr.py registers
-    *addon_id*, or None.
+    Map each plugin id found in the .gpr.py files of the user plugins
+    folder to the list of folders that register it. More than one folder
+    means duplicate copies, of which Gramps registers whichever it
+    happens to scan last.
+
+    :returns: {plugin id: [folder, ...]}
     """
-    pattern = re.compile(r"""\bid\s*=\s*["']%s["']""" % re.escape(addon_id))
+    index = {}
     try:
-        entries = os.listdir(USER_PLUGINS)
+        entries = sorted(os.listdir(USER_PLUGINS))
     except OSError:
-        return None
+        return index
     for entry in entries:
         folder = os.path.join(USER_PLUGINS, entry)
         if not os.path.isdir(folder):
@@ -327,11 +354,21 @@ def _find_addon_folder(addon_id):
                 continue
             try:
                 with open(os.path.join(folder, name), encoding="utf-8") as fp:
-                    if pattern.search(fp.read()):
-                        return folder
+                    ids = set(_GPR_ID_PATTERN.findall(fp.read()))
             except OSError:
                 continue
-    return None
+            for addon_id in ids:
+                index.setdefault(addon_id, []).append(folder)
+    return index
+
+
+def _find_addon_folder(addon_id):
+    """
+    The folder in the user plugins folder whose .gpr.py registers
+    *addon_id*, or None.
+    """
+    folders = _addon_folder_index().get(addon_id)
+    return folders[0] if folders else None
 
 
 def _url_key(url):
@@ -342,225 +379,188 @@ def _url_key(url):
     return _normalize_location_text(url).rstrip("/").lower()
 
 
-# ======================================================================
-# BEGIN HELP BUTTON BLOCK -- paste from here to the END marker.
-# (Pasted from the MarkdownBased reference help_doc_button.py, recipe:
-# HelpDocButton.md; this module's own `_` and LOG are used.)
-# ======================================================================
-_MARKDOWNDASH_ID = "markdowndash"
-_HELP_ICON_NAME = "help-browser"
+# ----------------------------------------------------------------------
+# Help button: the color Help button of MarkdownUtils (README.md in
+# Markdown Dash, else help_url), or a plain text Help button that opens
+# help_url when MarkdownUtils is missing, too old, or fails to load.
+# Recipe: HelpDocButton.md in the MarkdownBased folder.
+# ----------------------------------------------------------------------
+try:
+    # pylint: disable-next=import-error
+    from MarkdownUtils import add_help_button
+except Exception:  # pylint: disable=broad-except
+
+    def add_help_button(container, uistate, plugin, *, size=16):
+        """
+        Pack a plain text "Help" button that opens the help_url of the
+        plugin. Stand-in for MarkdownUtils.add_help_button(); *size* is
+        accepted for the same call signature and not used.
+        """
+        if isinstance(plugin, str):
+            plugin = PluginRegister.get_instance().get_plugin(plugin)
+        button = Gtk.Button(label=_("Help"))
+        help_url = getattr(plugin, "help_url", None)
+        if help_url:
+            button.connect("clicked", lambda _btn: display_url(help_url))
+        else:
+            button.set_sensitive(False)
+        container.pack_start(button, False, False, 0)
+        button.show()
+        return button
 
 
-def resolve_help_icon(size: int = 16) -> Gtk.Image:
+# Import names whose PyPI distribution has another name. The first part is
+# a copy of _IMPORT_TO_PYPI in gramps/gen/utils/pypi.py of Gramps 6.1, for
+# Gramps 5.2 and 6.0, which do not have it.
+_IMPORT_TO_PYPI_FALLBACK = {
+    "PIL": "Pillow",
+    "cv2": "opencv-python",
+    "sklearn": "scikit-learn",
+    "yaml": "PyYAML",
+    "dateutil": "python-dateutil",
+    "bs4": "beautifulsoup4",
+    "serial": "pyserial",
+    "usb": "pyusb",
+    "nacl": "PyNaCl",
+    "Crypto": "pycryptodome",
+    "OpenSSL": "pyOpenSSL",
+    "wx": "wxPython",
+}
+# Modules published as source code only (which needs build tools to
+# install), with a ready-made "binary" distribution that provides the
+# same import name. Used on every Gramps version.
+_BINARY_ALTERNATIVES = {
+    "psycopg2": ["psycopg2-binary"],
+    "psycopg": ["psycopg", "psycopg-binary"],  # -binary brings libpq along
+}
+
+
+def _pypi_names(package):
     """
-    Return a Gtk.Image of the full-color help-browser icon.
-
-    :param size: icon size in pixels (square).
-    :returns: the image; empty (with a logged warning) if the theme has
-        no such icon at that size.
+    The PyPI distributions that provide the import name *package*.
     """
-    theme = Gtk.IconTheme.get_default()
-    flags = (
-        Gtk.IconLookupFlags.FORCE_REGULAR  # color, not the symbolic variant
-        | Gtk.IconLookupFlags.USE_BUILTIN
-        | Gtk.IconLookupFlags.FORCE_SIZE  # exactly `size`, not nearest
-    )
-    info = theme.lookup_icon(_HELP_ICON_NAME, size, flags)
-    image = Gtk.Image()
-    if info is not None:
-        image.set_from_pixbuf(info.load_icon())
-    else:
-        # Deliberately no new_from_icon_name() fallback: that is the
-        # unreliable variant/size lookup this function exists to avoid.
-        LOG.warning(
-            "resolve_help_icon: theme has no '%s' icon at size %d",
-            _HELP_ICON_NAME,
-            size,
-        )
-    return image
-
-
-def find_local_readme(pdata: PluginData | None) -> str | None:
-    """
-    Return the canonical README.md path of the plugin, or None if the
-    plugin has no README of any kind.
-
-    "Any kind" is decided by ``MarkdownUtils.resolve_localized_path()``:
-    ``README.md``, a source-language ``README_<lang>.md``, or a
-    ``locale/<lang>/README.md`` translation. The returned path need not
-    exist on disk; Markdown Dash resolves it to the best variant for the
-    user's language, falling back to the English baseline. If
-    MarkdownUtils cannot be imported, only a literal ``README.md`` counts.
-
-    :param pdata: the plugin's PluginData; None is tolerated.
-    """
-    if pdata is None or not pdata.fpath:
-        return None
-    readme_path = os.path.join(pdata.fpath, "README.md")
-    try:
-        # Imported here, not at module level, so a missing MarkdownUtils
-        # never stops the host module from loading. Since MarkdownUtils
-        # 0.2.1 (load_on_reg=True), Gramps imports it at startup, so this
-        # normally succeeds; cb_show_help() also loads Markdown Dash
-        # first, which imports it too, as a fallback for older installs.
-        # pylint: disable-next=import-outside-toplevel,import-error
-        from MarkdownUtils import resolve_localized_path
-    except ImportError:
-        return readme_path if os.path.isfile(readme_path) else None
-    return readme_path if resolve_localized_path(readme_path).exists() else None
-
-
-def resolve_markdown_dash_opener() -> Callable[..., Gtk.Dialog] | None:
-    """
-    Return Markdown Dash's open_markdown_file(), or None.
-
-    None means Markdown Dash is deactivated, not registered, fails to
-    load, or lacks that function -- callers treat all four the same way
-    (fall back to help_url). Each case logs a warning naming itself, so
-    a Help button that unexpectedly opens the browser can be diagnosed
-    from the terminal; they only appear when Help is clicked.
-    """
-    gpm = GuiPluginManager.get_instance()
-    if _MARKDOWNDASH_ID in gpm.get_hidden_plugin_ids():
-        LOG.warning("help button: Markdown Dash is deactivated")
-        return None
-    pdata = PluginRegister.get_instance().get_plugin(_MARKDOWNDASH_ID)
-    if pdata is None or not pdata.fpath:
-        LOG.warning("help button: no plugin registered as '%s'", _MARKDOWNDASH_ID)
-        return None
-    mod = gpm.load_plugin(pdata)
-    if not mod:
-        LOG.warning(
-            "help button: Markdown Dash at %s failed to load (see the "
-            "'Plugin error' above, often a missing MarkdownUtils)",
-            pdata.fpath,
-        )
-        return None
-    opener = getattr(mod, "open_markdown_file", None)
-    if opener is None:
-        LOG.warning(
-            "help button: Markdown Dash at %s has no open_markdown_file()",
-            pdata.fpath,
-        )
-    return opener
-
-
-def open_help_url(pdata: PluginData | None, parent: Gtk.Window | None) -> None:
-    """
-    Open the plugin's registered help_url in the default browser.
-
-    A bare wiki page title is resolved against gramps-project.org; a full
-    http(s) URL is used as-is.
-
-    :param pdata: the plugin's PluginData.
-    :param parent: transient parent for the "no documentation" notice.
-    """
-    help_url = getattr(pdata, "help_url", None)
-    if not help_url:
-        OkDialog(
-            _("No documentation available"),
-            _("This plugin has neither a README.md nor a registered help_url."),
-            parent=parent,
-        )
-        return
-    full_url = (
-        help_url
-        if help_url.startswith(("http://", "https://"))
-        else "https://gramps-project.org/wiki/index.php?title="
-        + quote(help_url, safe=":")
-    )
-    try:
-        Gio.AppInfo.launch_default_for_uri(full_url, None)
-    except GLib.Error:
-        LOG.exception("help button: could not open help_url: %s", full_url)
-
-
-def cb_show_help(_button: Gtk.Button, uistate, pdata: PluginData | None) -> None:
-    """
-    Show the best documentation available: the plugin's own README.md in
-    a Markdown Dash window if possible, else its help_url in a browser.
-
-    :param uistate: the Gramps UiState (its main window parents the reader).
-    :param pdata: the calling plugin's own PluginData.
-    """
-    # Load Markdown Dash first. MarkdownUtils is normally already loaded at
-    # startup (load_on_reg in MarkdownUtils 0.2.1), but loading Markdown
-    # Dash also imports it, so find_local_readme() can recognize
-    # translated READMEs even with an older MarkdownUtils installed.
-    open_markdown_file = resolve_markdown_dash_opener()
-    if open_markdown_file is not None:
-        readme_path = find_local_readme(pdata)
-        if readme_path is not None:
-            open_markdown_file(
-                readme_path,
-                uistate,
-                parent=uistate.window,
-                addon_name=pdata.name,
-            )
-            return
-    open_help_url(pdata, uistate.window)
-
-
-def add_help_button(
-    container: Gtk.Box,
-    uistate,
-    plugin: PluginData | str | None,
-    *,
-    size: int = 16,
-) -> Gtk.Button:
-    """
-    Pack a color "Help" button (icon plus visible label) into container.
-
-    :param container: the Gtk.Box to pack into -- a gramplet's button row,
-        or a dialog's action area.
-    :param uistate: the Gramps UiState.
-    :param plugin: the calling plugin's own registered id (the id= in its
-        .gpr.py), or its PluginData.
-    :param size: icon size in pixels; the default suits a row of ordinary
-        text buttons.
-    :returns: the created, already-packed button.
-    """
-    if isinstance(plugin, str):
-        plugin_id = plugin
-        plugin = PluginRegister.get_instance().get_plugin(plugin_id)
-        if plugin is None:
-            LOG.warning("add_help_button: no registered plugin '%s'", plugin_id)
-    button = Gtk.Button()
-    button.set_image(resolve_help_icon(size))
-    button.set_always_show_image(True)  # else some themes hide the icon
-    button.set_label(_("Help"))
-    # Tooltip on the button: a Gtk.Image inside a button never shows its own.
-    button.set_tooltip_text(_("Show documentation for this plugin"))
-    button.connect("clicked", cb_show_help, uistate, plugin)
-    container.pack_start(button, False, False, 0)
-    button.show_all()
-    return button
-
-
-# END HELP BUTTON BLOCK
-
-
-def _pip_install(package):
-    """
-    Install one Python module into the Gramps plugin lib folder.
-
-    Raises PyPIInstallError, subprocess.CalledProcessError or OSError.
-    """
+    if package in _BINARY_ALTERNATIVES:
+        return list(_BINARY_ALTERNATIVES[package])
     if HAVE_PYPI:
-        pypi_name = resolve_pypi_name(package)
+        return [resolve_pypi_name(package)]
+    return [_IMPORT_TO_PYPI_FALLBACK.get(package, package)]
+
+
+def _pip_command(package):
+    """
+    How to install one Python module into the Gramps plugin lib folder.
+
+    :returns: (command, pypi_names); command is None when the Gramps 6.1
+        PyPI installer must be used instead of pip (frozen Gramps, or no
+        pip available).
+    """
+    names = _pypi_names(package)
+    if HAVE_PYPI:
         if is_frozen() or not _pip_available():
-            install_package(pypi_name, LIB_PATH)
-            return
+            return None, names
         cmd = [sys.executable, "-m", "pip"]
     else:
-        pypi_name = package
         # Same choice the 5.2/6.0 Addon Manager makes on Windows (AIO);
         # elsewhere "python -m pip" finds the pip that matches Gramps.
         cmd = ["pip.exe"] if win() else [sys.executable, "-m", "pip"]
-    subprocess.check_output(
-        cmd + ["install", "--target", LIB_PATH, pypi_name],
-        stderr=subprocess.STDOUT,
-    )
+    return cmd + ["install", "--target", LIB_PATH] + names, names
+
+
+class _PipProgress:
+    """
+    Install Python modules in a background thread, behind a small modal
+    progress dialog, so Gramps keeps drawing its windows. Large modules
+    (litellm, for one) can take minutes, and on a new Python version pip
+    may have to build parts of them from source. Cancel stops pip; the
+    Gramps 6.1 PyPI installer cannot be interrupted, so Cancel is dimmed
+    while it runs.
+    """
+
+    def __init__(self, parent):
+        self.cancelled = False
+        self._proc = None
+        self.dialog = Gtk.Dialog(
+            title=_("Installing Python modules"), transient_for=parent, modal=True
+        )
+        self.dialog.set_deletable(False)
+        self.dialog.set_resizable(False)  # fit the content, no empty space
+        area = self.dialog.get_content_area()
+        area.set_spacing(12)
+        area.set_border_width(12)
+        row = Gtk.Box(spacing=12)
+        spinner = Gtk.Spinner()
+        spinner.start()
+        row.pack_start(spinner, False, False, 0)
+        self.label = Gtk.Label(xalign=0)
+        self.label.set_line_wrap(True)
+        self.label.set_max_width_chars(50)
+        row.pack_start(self.label, True, True, 0)
+        area.pack_start(row, False, False, 0)
+        note = Gtk.Label(
+            label=_(
+                "Large modules can take several minutes, especially when "
+                "parts of them must be built on this computer."
+            ),
+            xalign=0,
+        )
+        note.set_line_wrap(True)
+        note.set_max_width_chars(50)
+        area.pack_start(note, False, False, 0)
+        self.cancel_button = self.dialog.add_button(
+            _("Cancel"), Gtk.ResponseType.CANCEL
+        )
+        self.dialog.connect("response", self._cb_response)
+        self.dialog.show_all()
+
+    def _cb_response(self, _dialog, _response_id):
+        self.cancelled = True
+        self.cancel_button.set_sensitive(False)
+        proc = self._proc
+        if proc is not None and proc.poll() is None:
+            proc.terminate()
+
+    def install(self, package):
+        """
+        Install one module, keeping the GTK main loop running meanwhile.
+
+        :returns: None on success, else the error text ("" when the user
+            cancelled).
+        """
+        cmd, pypi_names = _pip_command(package)
+        self.label.set_markup(
+            _("Installing <b>%s</b>...") % escape(", ".join(pypi_names))
+        )
+        self.cancel_button.set_sensitive(cmd is not None and not self.cancelled)
+        result = {}
+
+        def work():
+            try:
+                if cmd is None:
+                    for name in pypi_names:
+                        install_package(name, LIB_PATH)
+                    return
+                self._proc = subprocess.Popen(
+                    cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+                )
+                output, _err = self._proc.communicate()
+                if self._proc.returncode:
+                    result["error"] = output.decode("utf-8", "replace")
+            except (PyPIInstallError, OSError) as err:
+                result["error"] = str(err)
+
+        thread = threading.Thread(target=work, daemon=True)
+        thread.start()
+        while thread.is_alive():
+            while Gtk.events_pending():
+                Gtk.main_iteration()
+            thread.join(0.05)
+        if self.cancelled:
+            return ""
+        return result.get("error")
+
+    def close(self):
+        """Close the progress dialog."""
+        self.dialog.destroy()
 
 
 # A typed or pasted Windows drive path, e.g. "C:\Users\Name\addons\"
@@ -1900,6 +1900,158 @@ def _should_offer_include_english(projects):
     )
 
 
+def _as_str_list(value):
+    """
+    A catalog list of names: a list of strings; a single string becomes a
+    one-item list; anything else becomes an empty list.
+    """
+    if isinstance(value, str):
+        return [value] if value.strip() else []
+    if isinstance(value, (list, tuple)):
+        return [item for item in value if isinstance(item, str) and item.strip()]
+    return []
+
+
+def _as_int(value, default):
+    """
+    A catalog number: an int (not a bool), or an int written as text;
+    else *default*.
+    """
+    if isinstance(value, bool):
+        return default
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str) and value.strip().lstrip("-").isdigit():
+        return int(value)
+    return default
+
+
+# The register() field name of each short catalog key. Catalogs written by
+# Gramps' make.py use only the short keys, and Gramps 5.2 to 6.1 read only
+# those; a catalog may also carry any register() field under its own name
+# (preferred when both are present). The rest of this module reads the
+# short keys, so _normalize_catalog_entry() fills both.
+_REGISTER_TO_SHORT = {
+    "id": "i",
+    "name": "n",
+    "version": "v",
+    "description": "d",
+    "ptype": "t",
+    "status": "s",
+    "audience": "a",
+    "help_url": "h",
+    "gramps_target_version": "g",
+    "requires_mod": "rm",
+    "requires_gi": "rg",
+    "requires_exe": "re",
+    "depends_on": "do",
+}
+# register() fields that are lists of names
+_NAME_LIST_FIELDS = (
+    "authors",
+    "authors_email",
+    "maintainers",
+    "maintainers_email",
+)
+
+
+def _normalize_catalog_entry(entry):
+    """
+    One addon of a catalog (listings/addons-xx.json), made safe for the
+    rest of this module, which then reads its keys directly.
+
+    Catalogs are written by many projects and change over time, so every
+    key is checked here, once. Unknown keys are kept as they are. An
+    entry without a usable id ("i") or download file ("z") is useless and
+    gives None. Unknown type, audience or status numbers are kept; the
+    lozenges show them through _catalog_label().
+
+    :returns: a new dict, or None to skip the entry.
+    """
+    if not isinstance(entry, dict):
+        return None
+    entry = dict(entry)
+    for long_key, short_key in _REGISTER_TO_SHORT.items():
+        if entry.get(long_key) is not None:  # register() name wins
+            entry[short_key] = entry[long_key]
+    addon_id = entry.get("i")
+    download = entry.get("z")
+    if not isinstance(addon_id, str) or not addon_id.strip():
+        return None
+    if not isinstance(download, str) or not download.strip():
+        return None
+    addon = dict(entry)  # unknown keys pass through
+    addon["i"] = addon_id.strip()
+    addon["z"] = download.strip()
+    name = entry.get("n")
+    addon["n"] = name if isinstance(name, str) and name.strip() else addon["i"]
+    version = entry.get("v")
+    if isinstance(version, (int, float)) and not isinstance(version, bool):
+        version = str(version)
+    addon["v"] = version.strip() if isinstance(version, str) else ""
+    for key in ("d", "h"):
+        addon[key] = entry.get(key) if isinstance(entry.get(key), str) else ""
+    addon["t"] = _as_int(entry.get("t"), -1)  # -1: no type given
+    addon["a"] = _as_int(entry.get("a"), 0)
+    addon["s"] = _as_int(entry.get("s"), 0)
+    for key in ("rm", "re", "do"):
+        if key in entry:
+            addon[key] = _as_str_list(entry.get(key))
+    for key in _NAME_LIST_FIELDS:
+        if key in entry:
+            addon[key] = _as_str_list(entry.get(key))
+    # keep the register() names equal to the checked short keys
+    for long_key, short_key in _REGISTER_TO_SHORT.items():
+        if long_key in entry and short_key in addon:
+            addon[long_key] = addon[short_key]
+    if "rg" in entry:
+        specs = entry.get("rg")
+        addon["rg"] = [
+            [spec[0], spec[1]]
+            for spec in (specs if isinstance(specs, (list, tuple)) else [])
+            if isinstance(spec, (list, tuple))
+            and len(spec) >= 2
+            and isinstance(spec[0], str)
+            and isinstance(spec[1], str)
+        ]
+        if "requires_gi" in entry:
+            addon["requires_gi"] = addon["rg"]
+    return addon
+
+
+def _normalize_catalog(entries, source=""):
+    """
+    All usable addons of a loaded catalog (see _normalize_catalog_entry).
+    A catalog that is not a list gives []. Skipped entries are logged.
+    """
+    if not isinstance(entries, list):
+        LOG.warning("Addon Marketplace: the catalog %s is not a list", source)
+        return []
+    addons = [_normalize_catalog_entry(entry) for entry in entries]
+    skipped = addons.count(None)
+    if skipped:
+        LOG.warning(
+            "Addon Marketplace: skipped %d unusable entries (no id or no "
+            "download file) in the catalog %s",
+            skipped,
+            source,
+        )
+    return [addon for addon in addons if addon is not None]
+
+
+def _catalog_label(table, value):
+    """
+    The text for a catalog type, audience or status number; an unknown
+    number (for example a type added in a newer Gramps) gets a plain
+    "Unknown" text instead of an error.
+    """
+    if value in table:
+        return table[value]
+    if value == -1:
+        return _("Unknown")
+    return _("Unknown (%s)") % value
+
+
 def _get_addons_in(project, url, langs):
     """
     Like gramps.gen.plug.utils.get_addons(), but trying the catalogs of
@@ -1925,12 +2077,9 @@ def _get_addons_in(project, url, langs):
     if fptr is None:
         return []
     with fptr:
-        addon_list = json.load(fptr)
+        addon_list = _normalize_catalog(json.load(fptr), "%s (%s)" % (project, url))
     pmgr = GuiPluginManager.get_instance()
     for plugin_dict in addon_list:
-        plugin_dict.setdefault("a", 0)
-        plugin_dict.setdefault("s", 0)
-        plugin_dict.setdefault("h", "")
         plugin_dict["_p"] = project
         plugin_dict["_u"] = url
         plugin = pmgr.get_plugin(plugin_dict["i"])
@@ -1985,7 +2134,9 @@ def _fetch_catalog(name, url, lang):
             ]
             addons = _get_addons_in(name, url, langs)
         else:
-            addons = get_addons(name, url)
+            # not Gramps' get_addons(): one bad entry there loses the
+            # whole catalog; _get_addons_in() normalizes each entry
+            addons = _get_addons_in(name, url, glocale.get_language_list())
     except Exception:  # e.g. a listing that is not valid JSON
         LOG.warning("Addon Marketplace: the %s catalog failed to load", name)
         addons = []
@@ -2351,15 +2502,19 @@ class AddonRow(Gtk.ListBoxRow):
         )
         hbox.pack_start(lozenge, False, False, 0)
         lozenge = self.__create_lozenge_button(
-            _("Type"), PTYPE_STR[addon["t"]], self.manager.type_combo
+            _("Type"), _catalog_label(PTYPE_STR, addon["t"]), self.manager.type_combo
         )
         hbox.pack_start(lozenge, False, False, 0)
         lozenge = self.__create_lozenge_button(
-            _("Audience"), AUDIENCETEXT[addon["a"]], self.manager.audience_combo
+            _("Audience"),
+            _catalog_label(AUDIENCETEXT, addon["a"]),
+            self.manager.audience_combo,
         )
         hbox.pack_start(lozenge, False, False, 0)
         lozenge = self.__create_lozenge_button(
-            _("Status"), STATUSTEXT[addon["s"]], self.manager.status_combo
+            _("Status"),
+            _catalog_label(STATUSTEXT, addon["s"]),
+            self.manager.status_combo,
         )
         hbox.pack_start(lozenge, False, False, 0)
         # version_status is None when the installed and repository versions
@@ -2450,20 +2605,23 @@ class AddonRow(Gtk.ListBoxRow):
         back to pip. Returns True on success. On failure, disables
         *button*, shows an error dialog and returns False.
         """
-        for package in self.req.install(addon):
-            try:
-                _pip_install(package)
-            except (PyPIInstallError, subprocess.CalledProcessError, OSError) as err:
-                button.set_sensitive(False)
-                output = getattr(err, "output", None)
-                if isinstance(output, bytes):
-                    output = output.decode("utf-8", "replace")
-                InfoDialog(
-                    _("Module installation failed"),
-                    output or str(err),
-                    parent=self.window,
-                )
+        packages = self.req.install(addon)
+        if not packages:
+            return True
+        progress = _PipProgress(self.window)
+        try:
+            for package in packages:
+                error = progress.install(package)
+                if error is None:
+                    continue
+                if error:  # failed, not cancelled
+                    button.set_sensitive(False)
+                    InfoDialog(
+                        _("Module installation failed"), error, parent=self.window
+                    )
                 return False
+        finally:
+            progress.close()
         return True
 
     def __on_install_clicked(self, button, addon):
@@ -2507,6 +2665,7 @@ class AddonRow(Gtk.ListBoxRow):
                 parent=self.window,
             )
             return
+        _remember_installed_offers({addon["i"]: addon["v"]})
         self.manager.install_addon(addon["i"])
         self.manager.refresh()
 
@@ -2523,7 +2682,7 @@ class AddonRow(Gtk.ListBoxRow):
         """
         Display the requirements for the addon.
         """
-        InfoDialog(_("Requirements"), self.req.info(addon), parent=self.window)
+        _show_requirements_checklist(self.window, addon)
 
     def __on_update_clicked(self, button, addon):
         """
@@ -2546,6 +2705,7 @@ class AddonRow(Gtk.ListBoxRow):
                 parent=self.window,
             )
             return
+        _remember_installed_offers({addon["i"]: addon["v"]})
         self.manager.update_addon(addon["i"])
         self.manager.refresh()
 
@@ -2725,7 +2885,7 @@ class AddonMarketplace(ManagedWindow):
         self._catalogs = {}  # downloaded catalogs, see refresh()
         self._load_generation = 0
         self._refresh_source = 0
-        # media/gramps.ini projects: read when the Projects tab is shown and
+        # projects-file projects: read when the Projects tab is shown and
         # again when the gtk-index button is clicked (see __reread_ini)
         self._ini_projects = []
 
@@ -2950,7 +3110,7 @@ class AddonMarketplace(ManagedWindow):
 
     def __on_switch_page(self, _book, _page, page_num):
         """
-        Read media/gramps.ini again each time the Projects tab is shown,
+        Read the projects file again each time the Projects tab is shown,
         so the gtk-index button there is up to date.
         """
         if page_num == 2:
@@ -2958,17 +3118,19 @@ class AddonMarketplace(ManagedWindow):
 
     def __reread_ini(self):
         """
-        Read the projects of media/gramps.ini and update the gtk-index
-        button.
+        Read the projects of the projects file (see _projects_ini_path)
+        and update the gtk-index button.
         """
         if getattr(self, "ini_btn", None) is None:
-            return  # no media/gramps.ini when the window opened
-        self._ini_projects = _read_ini_projects(PROJECTS_INI)
+            return  # no projects file when the window opened
+        path = _projects_ini_path()
+        self._ini_file = os.path.basename(path) if path else ""
+        self._ini_projects = _read_ini_projects(path) if path else []
         self.__update_ini_button()
 
     def __new_ini_projects(self):
         """
-        Projects in media/gramps.ini whose address is not already used by
+        Projects in the projects file whose address is not already used by
         a project in the list.
         """
         known = {_url_key(project[1]) for project in self.projects}
@@ -2985,35 +3147,37 @@ class AddonMarketplace(ManagedWindow):
 
     def __update_ini_button(self):
         """
-        Make the gtk-index button available only while media/gramps.ini
+        Make the gtk-index button available only while the projects file
         offers projects that are not in the list yet.
         """
         if getattr(self, "ini_btn", None) is None:
             return
         count = len(self.__new_ini_projects())
+        filename = getattr(self, "_ini_file", "") or PROJECTS_INI_NAMES[-1]
         self.ini_btn.set_sensitive(count > 0)
         if count:
             self.ini_btn.set_tooltip_text(
                 ngettext(
-                    "Add projects from the gramps.ini file of the Addon "
-                    "Marketplace (%d project not in your list yet)",
-                    "Add projects from the gramps.ini file of the Addon "
-                    "Marketplace (%d projects not in your list yet)",
+                    "Add projects from the %(file)s file of the Addon "
+                    "Marketplace (%(count)d project not in your list yet)",
+                    "Add projects from the %(file)s file of the Addon "
+                    "Marketplace (%(count)d projects not in your list yet)",
                     count,
                 )
-                % count
+                % {"file": filename, "count": count}
             )
         else:
             self.ini_btn.set_tooltip_text(
                 _(
-                    "Every project in the gramps.ini file of the Addon "
+                    "Every project in the %s file of the Addon "
                     "Marketplace is in your list"
                 )
+                % filename
             )
 
     def __add_ini_projects(self, button):
         """
-        Show the projects of media/gramps.ini that are not in the list yet,
+        Show the projects of the projects file that are not in the list yet,
         each with a check box, and add the checked ones.
         """
         self.__reread_ini()  # pick up any edit to the file
@@ -3025,7 +3189,7 @@ class AddonMarketplace(ManagedWindow):
         if not chosen:
             return
         for project in chosen:
-            # Only name and address come from media/gramps.ini; its on/off
+            # Only name and address come from the projects file; its on/off
             # flags are ignored. A project picked here is wanted, so it is
             # added turned on.
             self.project_list.add(ProjectRow(self, [project[0], project[1], True, ""]))
@@ -3100,6 +3264,8 @@ class AddonMarketplace(ManagedWindow):
             )
             pdata = self.__preg.get_plugin(addon_id)
         if pdata is None:
+            pdata = self.__rescan_addon_folder(addon_id)
+        if pdata is None:
             self.__registration_failed(addon_id)
             return
         self.__pmgr.load_plugin(pdata)
@@ -3114,29 +3280,66 @@ class AddonMarketplace(ManagedWindow):
         )
         pdata = self.__preg.get_plugin(addon_id)
         if pdata is None:
+            pdata = self.__rescan_addon_folder(addon_id)
+        if pdata is None:
             self.__registration_failed(addon_id)
             return
         self.__pmgr.load_plugin(pdata)
         self.__pmgr.emit("plugins-reloaded")
 
-    def __registration_failed(self, addon_id):
+    def __rescan_addon_folder(self, addon_id):
         """
-        A downloaded addon that Gramps will not register (almost always an
-        addon made for another Gramps version): offer to keep its files,
-        for someone who wants to adapt its .gpr.py, or to remove them.
+        Scan the folder of a freshly installed addon again. Gramps scans
+        each plugin folder once and skips it afterwards, so an addon whose
+        folder was scanned at startup (and dropped then, for example for a
+        missing Python module that is installed now) is never registered
+        by reg_plugins(); reg_plugin_dir() forgets the folder and scans it
+        again.
+
+        :returns: the PluginData, or None.
         """
         folder = _find_addon_folder(addon_id)
-        keep = QuestionDialog2(
-            _("Addon Version Mismatch"),
-            _(
+        if folder is None:
+            return None
+        try:
+            self.__pmgr.reg_plugin_dir(
+                folder, self.dbstate, self.uistate, load_on_reg=True
+            )
+        except ValueError:
+            pass  # not scanned before, so reg_plugins() already tried it
+        return self.__preg.get_plugin(addon_id)
+
+    def __registration_failed(self, addon_id):
+        """
+        A downloaded addon that Gramps will not register. When something
+        it requires is missing, say so; otherwise it was almost always
+        made for another Gramps version. Offer to keep its files, or to
+        remove them.
+        """
+        folder = _find_addon_folder(addon_id)
+        addon = self.find_addon(addon_id)
+        missing = _missing_requirements(Requirements(), addon) if addon else []
+        if missing:
+            title = _("Addon Requirements Missing")
+            text = _(
+                "The addon '%(addon_id)s' was installed, but Gramps cannot "
+                "use it until these are installed: %(missing)s.\n\n"
+                "Keep its files, so that it works after you install them and "
+                "restart Gramps, or remove them?"
+            ) % {"addon_id": addon_id, "missing": ", ".join(missing)}
+        else:
+            title = _("Addon Version Mismatch")
+            text = _(
                 "The addon '%(addon_id)s' was downloaded, but Gramps "
                 "%(major_version)s cannot use it. It was probably made for "
                 "another Gramps version, or its project (on the Projects tab "
                 "of this window) is for another Gramps version.\n\n"
                 "Keep its files to adapt its .gpr.py registration file "
                 "yourself, or remove them?"
-            )
-            % {"addon_id": addon_id, "major_version": major_version},
+            ) % {"addon_id": addon_id, "major_version": major_version}
+        keep = QuestionDialog2(
+            title,
+            text,
             _("Keep the files"),
             _("Remove the files"),
             parent=self.window,
@@ -3522,10 +3725,10 @@ class AddonMarketplace(ManagedWindow):
             # name, description, ID, authors, maintainers, their e-mail
             # addresses and the help address
             addon = row.addon
-            searchable = " ".join(
-                str(addon.get(key, "") or "")
-                for key in ("n", "d", "i", "au", "ae", "ma", "me", "h")
-            ).lower()
+            parts = [addon.get(key, "") for key in ("n", "d", "i", "h")]
+            for key in _NAME_LIST_FIELDS:  # lists after normalization
+                parts.extend(addon.get(key, []))
+            searchable = " ".join(parts).lower()
             if search_text.lower() not in searchable:
                 return False
         return True
@@ -3583,9 +3786,9 @@ class AddonMarketplace(ManagedWindow):
         vbox.pack_start(sw, True, True, 0)
 
         hbox = Gtk.Box()
-        # Offer projects from media/gramps.ini; only when that file exists
+        # Offer projects from the projects file; only when one exists
         self.ini_btn = None
-        if os.path.isfile(PROJECTS_INI):
+        if _projects_ini_path() is not None:
             self.ini_btn = SimpleButton("gtk-index", self.__add_ini_projects)
             hbox.pack_start(self.ini_btn, False, False, 0)
         add_btn = SimpleButton("list-add", self.__add_project)
@@ -3825,7 +4028,9 @@ class AddonMarketplace(ManagedWindow):
 
     def check_for_updates(self, button):
         try:
-            addon_update_list = _available_updates_for(self.projects)
+            addon_update_list = _filter_update_offers(
+                _available_updates_for(self.projects), show_inactive=True
+            )
         except:
             OkDialog(
                 _("Checking Addons Failed"),
@@ -3839,7 +4044,7 @@ class AddonMarketplace(ManagedWindow):
 
         if len(addon_update_list) > 0:
             rescan = PluginWindows.UpdateAddons(
-                self.uistate, self.track, addon_update_list
+                self.uistate, self.track, addon_update_list, show_inactive=True
             ).rescan
             self.uistate.viewmanager.do_reg_plugins(
                 self.dbstate, self.uistate, rescan=rescan
@@ -3885,6 +4090,613 @@ class AddonMarketplace(ManagedWindow):
 #
 # PluginStatus: overview of all plugins
 #
+
+
+# -------------------------------------------------------------------------
+#
+# Update offers that installing does not satisfy
+#
+# -------------------------------------------------------------------------
+def _remember_installed_offers(offers):
+    """
+    Record that these offers were installed.
+
+    :param offers: {addon id: catalog version that was installed}
+    """
+    if not offers:
+        return
+    settings = _settings()
+    saved = dict(settings.get("updates.installed-offers"))
+    saved.update(offers)
+    settings.set("updates.installed-offers", saved)
+    settings.save()
+
+
+def _filter_update_offers(addon_update_list, show_inactive=False):
+    """
+    Drop the offers that installing again would not satisfy, so they do
+    not come back at every start of Gramps:
+
+    * "New" addons that are already installed but that Gramps does not
+      register (nearly always a Python module or GObject library it
+      requires is missing), so Gramps never sees them as installed;
+    * offers whose catalog version was already installed, but Gramps
+      still has an older version: the download holds another version
+      than its catalog says, or duplicate copies of the addon (with the
+      same id in two folders) hide the new one.
+
+    An offer comes back when its catalog version changes, or when the
+    addon is no longer on disk. The reason for each dropped offer is
+    logged at info level.
+
+    :param addon_update_list: [(status, download url, addon dict), ...]
+        as made by Gramps' available_updates().
+    :param show_inactive: keep the installed addons that Gramps does not
+        register (for an explicit check, which shows what they miss).
+    :returns: the offers to show, in the same form.
+    """
+    if not addon_update_list:
+        return addon_update_list
+    # Gramps' own startup check passes its catalog entries unchecked
+    normalized = []
+    for entry in addon_update_list:
+        plugin_dict = _normalize_catalog_entry(entry[2]) if len(entry) > 2 else None
+        if plugin_dict is not None:
+            normalized.append((entry[0], entry[1], plugin_dict))
+    addon_update_list = normalized
+    folders = _addon_folder_index()
+    preg = PluginRegister.get_instance()
+    installed = dict(_settings().get("updates.installed-offers"))
+    changed = False
+    kept = []
+    for entry in addon_update_list:
+        plugin_dict = entry[2]
+        addon_id, version = plugin_dict["i"], plugin_dict["v"]
+        on_disk = folders.get(addon_id, [])
+        if not on_disk or installed.get(addon_id, version) != version:
+            # gone from disk, or a new catalog version: offer it again
+            changed |= installed.pop(addon_id, None) is not None
+            kept.append(entry)
+            continue
+        pdata = preg.get_plugin(addon_id)
+        if pdata is None and show_inactive:
+            kept.append(entry)
+            continue
+        if pdata is None:
+            reason = (
+                "it is installed in %s but Gramps does not register it "
+                "(check its requirements)" % ", ".join(on_disk)
+            )
+        elif addon_id in installed:
+            if len(on_disk) > 1:
+                reason = "%d copies are installed (%s); Gramps uses version %s" % (
+                    len(on_disk),
+                    ", ".join(on_disk),
+                    pdata.version,
+                )
+            else:
+                reason = (
+                    "version %s was installed, but its download contains version %s"
+                    % (version, pdata.version)
+                )
+        else:
+            kept.append(entry)  # an ordinary offer
+            continue
+        LOG.info(
+            "Addon Marketplace: not offering '%s' (%s) again: %s",
+            plugin_dict.get("n", addon_id),
+            version,
+            reason,
+        )
+    if changed:
+        _settings().set("updates.installed-offers", installed)
+        _settings().save()
+    return kept
+
+
+_WARN_ICON_NAME = "dialog-warning"
+_WARN_ICON_FILE = os.path.join(MEDIA_DIR, "warning.png")
+# green check for "installed"; bundled only, since the theme icons with
+# that look ("emblem-default" and the like) mean different things in
+# different themes
+_INSTALLED_ICON_FILE = os.path.join(MEDIA_DIR, "installed.svg")
+
+
+def _file_pixbuf(path, size=16):
+    """
+    A bundled icon file at *size* pixels, or None (logged).
+    """
+    try:
+        return GdkPixbuf.Pixbuf.new_from_file_at_size(path, size, size)
+    except GLib.Error:
+        LOG.warning("Addon Marketplace: cannot load %s", path)
+        return None
+
+
+def _warning_pixbuf(size=16):
+    """
+    The full-color warning icon: from the icon theme, else the bundled
+    media/warning.png. Never the symbolic (monochrome) variant.
+
+    :returns: a GdkPixbuf.Pixbuf, or None.
+    """
+    info = Gtk.IconTheme.get_default().lookup_icon(
+        _WARN_ICON_NAME,
+        size,
+        Gtk.IconLookupFlags.FORCE_REGULAR
+        | Gtk.IconLookupFlags.USE_BUILTIN
+        | Gtk.IconLookupFlags.FORCE_SIZE,
+    )
+    if info is not None:
+        try:
+            return info.load_icon()
+        except GLib.Error:
+            pass
+    return _file_pixbuf(_WARN_ICON_FILE, size)
+
+
+def _add_leading_icon(column, pixbuf, show_column):
+    """
+    Put *pixbuf* before the text of a tree column, on the rows where
+    the boolean model column *show_column* is true.
+    """
+    renderer = Gtk.CellRendererPixbuf()
+    renderer.set_property("pixbuf", pixbuf)
+    column.pack_start(renderer, False)
+    column.reorder(renderer, 0)
+    column.add_attribute(renderer, "visible", show_column)
+
+
+def _add_requires_column(tree, model_column, warn_column):
+    """
+    Insert a "Requires" text column after Name (the third column), with
+    a warning icon before the text where *warn_column* is true.
+    """
+    renderer = Gtk.CellRendererText()
+    renderer.set_fixed_height_from_font(True)
+    renderer.set_property("ellipsize", Pango.EllipsizeMode.END)
+    column = Gtk.TreeViewColumn(_("Requires"), renderer, text=model_column)
+    _add_leading_icon(column, _warning_pixbuf(), warn_column)
+    # the tree is in fixed-height mode, which needs fixed-size columns
+    column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
+    column.set_fixed_width(180)
+    column.set_resizable(True)
+    column.set_sort_column_id(model_column)
+    tree.insert_column(column, 3)
+    return column
+
+
+def _missing_requirements(req, plugin_dict):
+    """
+    What an addon of a catalog requires that is not installed.
+
+    :param req: a gramps.gen.utils.requirements.Requirements (it caches
+        what it found, so one is shared by all addons of a list).
+    :param plugin_dict: the addon dict of a catalog ("rm" Python modules,
+        "rg" GObject introspection modules, "re" executables).
+    :returns: display names of the missing items; empty if none.
+    """
+    missing = [
+        module for module in plugin_dict.get("rm", []) if not req.check_mod(module)
+    ]
+    missing += [
+        " ".join(spec) for spec in plugin_dict.get("rg", []) if not req.check_gi(spec)
+    ]
+    missing += [exe for exe in plugin_dict.get("re", []) if not req.check_exe(exe)]
+    return missing
+
+
+def _package_manager():
+    """
+    "dnf" on Fedora and its relatives, "apt" on Debian and Ubuntu and
+    their relatives, else None (other Linux, Windows, macOS).
+    """
+    if win() or sys.platform == "darwin":
+        return None
+    try:
+        with open("/etc/os-release", encoding="utf-8") as fp:
+            text = fp.read().lower()
+    except OSError:
+        return None
+    ids = set()
+    for line in text.splitlines():
+        if line.startswith(("id=", "id_like=")):
+            ids.update(line.split("=", 1)[1].strip().strip('"').split())
+    if ids & {"fedora", "rhel", "centos"}:
+        return "dnf"
+    if ids & {"debian", "ubuntu"}:
+        return "apt"
+    return None
+
+
+def _requirement_steps(plugin_dict, req):
+    """
+    What an addon is missing, and how to get each item.
+
+    :returns: [(title, explanation, [command, ...]), ...]
+    """
+    manager = _package_manager()
+    allowed = config.get("behavior.addons-allow-install")
+    frozen = HAVE_PYPI and is_frozen()
+    steps = []
+    for module in plugin_dict.get("rm", []):
+        if req.check_mod(module):
+            continue
+        names = _pypi_names(module)
+        if allowed:
+            text = _(
+                "Gramps can try to install this module: check the addon in "
+                "the list of new and updated addons and click Install "
+                "Selected Addons, or click Install on the Addons tab. If that "
+                "fails, install it yourself with one of these commands:"
+            )
+        else:
+            text = _(
+                "Turn on \u201cAllow Gramps to install required Python "
+                "modules\u201d on the Settings tab, so that Gramps can install "
+                "it. You can also install it yourself:"
+            )
+        commands = []
+        if not frozen:
+            commands.append(
+                "%s -m pip install --target '%s' %s"
+                % (sys.executable, LIB_PATH, " ".join(names))
+            )
+        if manager == "dnf":
+            # a system package carries the original name (python3-psycopg2),
+            # not the name of a binary substitute from PyPI
+            dist = module if module in _BINARY_ALTERNATIVES else names[0]
+            commands.append("dnf provides 'python3dist(%s)'" % dist.lower())
+        elif manager == "apt":
+            commands.append(
+                "apt-cache search --names-only '^python3-%s$'" % module.lower()
+            )
+        steps.append((_("%s (Python module)") % module, text, commands))
+    for spec in plugin_dict.get("rg", []):
+        if req.check_gi(spec):
+            continue
+        name, versions = spec[0], [v.strip() for v in spec[1].split(",")]
+        commands = []
+        if manager == "dnf":
+            commands.append(
+                "dnf provides "
+                + " ".join(
+                    "'*/girepository-1.0/%s-%s.typelib'" % (name, v) for v in versions
+                )
+            )
+        elif manager == "apt":
+            commands.append("apt-file search %s-%s.typelib" % (name, versions[0]))
+        steps.append(
+            (
+                _("%s (GObject library)") % " ".join(spec),
+                _(
+                    "Install it with the package manager of your system. "
+                    "Gramps cannot install it."
+                ),
+                commands,
+            )
+        )
+    for exe in plugin_dict.get("re", []):
+        if req.check_exe(exe):
+            continue
+        commands = []
+        if manager == "dnf":
+            commands.append("dnf provides '*/bin/%s'" % exe)
+        elif manager == "apt":
+            commands.append("apt-file search --regexp 'bin/%s$'" % exe)
+        steps.append(
+            (
+                _("%s (program)") % exe,
+                _(
+                    "Install it with the package manager of your system. "
+                    "Gramps cannot install it."
+                ),
+                commands,
+            )
+        )
+    return steps
+
+
+def _show_requirements_checklist(parent, plugin_dict):
+    """
+    Show what an addon needs that is missing, with copyable commands.
+    """
+    steps = _requirement_steps(plugin_dict, Requirements())
+    name = plugin_dict.get("n", plugin_dict.get("i", ""))
+    dialog = Gtk.Dialog(title=_("What %s needs") % name, transient_for=parent)
+    dialog.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+    dialog.set_default_size(620, -1)
+    dialog.set_resizable(False)  # fit the content, no empty space
+    area = dialog.get_content_area()
+    area.set_spacing(10)
+    area.set_border_width(12)
+
+    def label(markup):
+        widget = Gtk.Label(xalign=0)
+        widget.set_markup(markup)
+        widget.set_line_wrap(True)
+        widget.set_max_width_chars(70)
+        return widget
+
+    if not steps:
+        area.pack_start(
+            label(escape(_("Everything this addon requires is installed."))),
+            False,
+            False,
+            0,
+        )
+    clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+    for title, text, commands in steps:
+        area.pack_start(label("<b>%s</b>" % escape(title)), False, False, 0)
+        area.pack_start(label(escape(text)), False, False, 0)
+        for command in commands:
+            row = Gtk.Box(spacing=6)
+            cmd_label = label("<tt>%s</tt>" % escape(command))
+            cmd_label.set_selectable(True)
+            row.pack_start(cmd_label, True, True, 0)
+            copy = Gtk.Button(label=_("Copy"))
+            copy.set_valign(Gtk.Align.START)
+            copy.connect("clicked", lambda _b, c=command: clipboard.set_text(c, -1))
+            row.pack_start(copy, False, False, 0)
+            area.pack_start(row, False, False, 0)
+    if steps:
+        manager = _package_manager()
+        if manager == "dnf":
+            hint = _(
+                "A dnf provides command shows the name of the package that "
+                "has the file; install that package with "
+                "sudo dnf install <package name>."
+            )
+        elif manager == "apt":
+            hint = _(
+                "An apt command shows the name of the package that has the "
+                "file; install that package with sudo apt install <package "
+                "name>. apt-file may need to be installed and updated first."
+            )
+        else:
+            hint = ""
+        footer = (hint + " " if hint else "") + _(
+            "Restart Gramps after installing system packages."
+        )
+        area.pack_start(label("<i>%s</i>" % escape(footer)), False, False, 0)
+    dialog.show_all()
+    dialog.run()
+    dialog.destroy()
+
+
+_CORE_UPDATE_ADDONS = getattr(
+    PluginWindows, "_core_UpdateAddons", PluginWindows.UpdateAddons
+)
+PluginWindows._core_UpdateAddons = _CORE_UPDATE_ADDONS
+
+
+class _UpdateAddons(_CORE_UPDATE_ADDONS):
+    """
+    Gramps' "Available Gramps Updates for Addons" window, without the
+    offers that installing would not satisfy, and remembering what was
+    installed from it. Opens nothing when no offer is left.
+    """
+
+    # pylint: disable-next=super-init-not-called
+    def __init__(self, uistate, track, addon_update_list, show_inactive=False):
+        """
+        Like Gramps' own window, with a Requires column after Name. An
+        offer whose requirements are missing keeps its checkbox (Select
+        All checks it too); a warning icon and tooltip say what it lacks.
+
+        :param show_inactive: also list installed addons that Gramps does
+            not register (the explicit "Check for updated addons now").
+        """
+        self.rescan = False  # read by callers even when nothing opens
+        addon_update_list = _filter_update_offers(addon_update_list, show_inactive)
+        if not addon_update_list:
+            return
+        self._offer_dicts = {
+            plugin_dict["i"]: plugin_dict
+            for _status, _url, plugin_dict in addon_update_list
+        }
+        self._offer_versions = {
+            plugin_dict["i"]: plugin_dict["v"]
+            for _status, _url, plugin_dict in addon_update_list
+        }
+        preg = PluginRegister.get_instance()
+        folders = _addon_folder_index()
+
+        # Gramps' UpdateAddons.__init__ builds and runs the window in one
+        # go, so it is rebuilt here; model columns 0-6 are unchanged
+        # because the inherited install_addons() reads them by number.
+        self.title = _("Available Gramps Updates for Addons")
+        ManagedWindow.__init__(self, uistate, track, self, modal=True)
+        glade = Glade("updateaddons.glade")
+        self.set_window(glade.toplevel, None, None)
+        self.window.set_title(self.title)
+        self.setup_configs("interface.updateaddons", 750, 400)
+        glade.get_object("select_all").connect("clicked", self.select_all_clicked)
+        glade.get_object("select_none").connect("clicked", self.select_none_clicked)
+        glade.get_object("apply").connect("clicked", self.install_addons)
+        glade.get_object("cancel").connect("clicked", self.close)
+
+        tree = glade.get_object("list")
+        self.list = ListModel(
+            tree,
+            [
+                {
+                    "name": _("Select"),
+                    "width": 60,
+                    "type": TOGGLE,
+                    "visible_col": 6,
+                    "editable": True,
+                },  # 0 selected?
+                (_("Type"), 1, 180),  # 1 new gramplet
+                (_("Name"), 2, 200),  # 2 name (version)
+                (_("Description"), 3, 200),  # 3 description
+                ("", NOSORT, 0),  # 4 url
+                ("", NOSORT, 0),  # 5 id
+                {"name": "", "type": TOGGLE},  # 6 checkbox visible?
+                ("", NOSORT, 0),  # 7 Requires text
+                ("", NOSORT, 0),  # 8 tooltip (markup)
+                {"name": "", "type": TOGGLE},  # 9 requirements missing?
+                {"name": "", "type": TOGGLE},  # 10 installed (on disk)?
+            ],
+            list_mode="tree",
+        )
+        # ListModel numbers only the columns it shows, so a column it
+        # builds after the hidden ones would show the wrong model
+        # column; Requires and the warning icon are added here instead.
+        self._requires_column = _add_requires_column(tree, 7, 9)
+        tree.connect("button-press-event", self.__cb_tree_click)
+        _add_leading_icon(
+            tree.get_columns()[2], _file_pixbuf(_INSTALLED_ICON_FILE), 10
+        )  # Name
+        tree.set_tooltip_column(8)
+        # ListModel turns on fixed-height mode, which sizes each cell from
+        # the first row only: a category row, where the icons are hidden,
+        # so the icons got zero width on every row. This list is short.
+        tree.set_fixed_height_mode(False)
+
+        req = Requirements()
+        pos = None
+        addon_update_list.sort(key=lambda x: "%s %s" % (x[0], x[2]["t"]))
+        last_category = None
+        node = None
+        for status, plugin_url, plugin_dict in addon_update_list:
+            category = _("%(str1)s: %(str2)s") % {
+                "str1": status,
+                "str2": _catalog_label(PTYPE_STR, plugin_dict["t"]),
+            }
+            if last_category != category:
+                last_category = category
+                node = self.list.add(
+                    [False, category, "", "", "", "", False, "", "", False, False]
+                )
+            missing = _missing_requirements(req, plugin_dict)
+            feedback = _("Missing: %s") % ", ".join(missing) if missing else ""
+            addon_id = plugin_dict["i"]
+            installed = bool(folders.get(addon_id))
+            tips = []
+            if installed and preg.get_plugin(addon_id) is None:
+                # on disk, but Gramps does not register it
+                tips.append(_("Installed, not active."))
+            elif installed:
+                tips.append(_("Installed."))
+            if missing:
+                tips.append(feedback)
+                tips.append(
+                    _(
+                        "Gramps cannot use this addon until what it requires "
+                        "is installed. Click the warning icon for what to do."
+                    )
+                )
+            tooltip = escape("\n".join(tips))
+            child = self.list.add(
+                [
+                    False,
+                    "%s %s" % (status, _catalog_label(PTYPE_STR, plugin_dict["t"])),
+                    "%s (%s)" % (plugin_dict["n"], plugin_dict["v"]),
+                    plugin_dict["d"],
+                    plugin_url,
+                    addon_id,
+                    True,  # every addon row has a checkbox
+                    feedback,
+                    tooltip,
+                    bool(missing),
+                    installed,
+                ],
+                node=node,
+            )
+            if pos is None:
+                pos = child
+        if pos:
+            self.list.selection.select_iter(pos)
+
+        self.show()
+        self.window.run()
+
+    def __cb_tree_click(self, tree, event):
+        """
+        A click in the Requires cell of an addon with missing requirements
+        opens the checklist of what it needs.
+        """
+        if event.button != 1 or event.type != Gdk.EventType.BUTTON_PRESS:
+            return False
+        hit = tree.get_path_at_pos(int(event.x), int(event.y))
+        if not hit or hit[1] is not self._requires_column:
+            return False
+        model = tree.get_model()
+        row = model.get_iter(hit[0])
+        if not model.get_value(row, 9):  # no missing requirements
+            return False
+        plugin_dict = self._offer_dicts.get(model.get_value(row, 5))
+        if plugin_dict:
+            _show_requirements_checklist(self.window, plugin_dict)
+        return False
+
+    def install_addons(self, obj):
+        """
+        Record the checked offers, then let Gramps install them.
+        """
+        model = self.list.model
+        chosen = {}
+        category = model.get_iter_first()
+        while category:
+            for row in range(model.iter_n_children(category)):
+                child = model.iter_nth_child(category, row)
+                addon_id = model.get_value(child, 5)
+                if model.get_value(child, 0) and addon_id in self._offer_versions:
+                    chosen[addon_id] = self._offer_versions[addon_id]
+            category = model.iter_next(category)
+        _remember_installed_offers(chosen)
+        self.__install_modules_of(chosen)
+        super().install_addons(obj)
+
+    def __install_modules_of(self, addon_ids):
+        """
+        Before the checked addons download, install the Python modules
+        they require that are missing, when the Settings tab allows it.
+        Gramps' own window only downloads the addons, so an addon whose
+        modules are missing would install but never be active. Failures
+        are shown together afterwards; Cancel stops the module installs,
+        and the addons still download.
+        """
+        if not config.get("behavior.addons-allow-install"):
+            return
+        req = Requirements()
+        modules = []
+        for addon_id in addon_ids:
+            for module in req.install(self._offer_dicts.get(addon_id, {})):
+                if module not in modules:
+                    modules.append(module)
+        if not modules:
+            return
+        progress = _PipProgress(self.window)
+        failed = []
+        try:
+            for module in modules:
+                error = progress.install(module)
+                if progress.cancelled:
+                    break
+                if error is not None:
+                    failed.append((module, error))
+        finally:
+            progress.close()
+        importlib.invalidate_caches()  # so Gramps finds the new modules
+        if failed:
+            details = "\n\n".join(
+                "%s:\n%s" % (module, "\n".join(error.strip().splitlines()[-6:]))
+                for module, error in failed
+            )
+            InfoDialog(
+                _("Some Python modules could not be installed"),
+                _(
+                    "The addons are installed anyway, but stay inactive until "
+                    "these modules are installed. Click the warning icon of an "
+                    "addon in this list, or its Requires button in the Addon "
+                    "Marketplace, for what to do."
+                )
+                + "\n\n"
+                + details,
+                parent=self.window,
+            )
 
 
 # -------------------------------------------------------------------------
@@ -3948,6 +4760,8 @@ def load_on_reg(dbstate, uistate, plugin):
     if uistate is None:
         return []
     PluginWindows.AddonManager = AddonMarketplace
+    # also used by the startup check for addon updates (viewmanager)
+    PluginWindows.UpdateAddons = _UpdateAddons
     _load_css()
     _relabel_menu(uistate)
     return []
