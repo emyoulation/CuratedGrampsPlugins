@@ -1,0 +1,150 @@
+# Translation template for the 0.1.1 People in the immediate families of <anchor> filter rule addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the People in the immediate families of <anchor> package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: People in the immediate families of <anchor> 0.1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-06 01:01-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ImmediateFamilyRules.gpr.py:33 ImmediateFamilyRules.py:593
+msgid "People in the immediate families of <anchor>"
+msgstr ""
+
+#: ImmediateFamilyRules.gpr.py:35 ImmediateFamilyRules.py:595
+msgid ""
+"Matches the members of the immediate families of a person or family: "
+"parents, siblings, spouses, children, in-laws and associations"
+msgstr ""
+
+#: ImmediateFamilyRules.gpr.py:55 ImmediateFamilyRules.py:642
+msgid "Families in the immediate families of <anchor>"
+msgstr ""
+
+#: ImmediateFamilyRules.gpr.py:57 ImmediateFamilyRules.py:644
+msgid ""
+"Matches the families of a person or family, as child or as parent, and the "
+"families of the people in those families"
+msgstr ""
+
+#: ImmediateFamilyRules.py:77
+msgid "Person ID"
+msgstr ""
+
+#: ImmediateFamilyRules.py:78
+msgid "Person filter"
+msgstr ""
+
+#: ImmediateFamilyRules.py:79
+msgid "Family ID"
+msgstr ""
+
+#: ImmediateFamilyRules.py:80
+msgid "Family filter"
+msgstr ""
+
+#: ImmediateFamilyRules.py:81
+msgid "Home Person"
+msgstr ""
+
+#: ImmediateFamilyRules.py:92 ImmediateFamilyRules.py:327
+msgid "Parents"
+msgstr ""
+
+#: ImmediateFamilyRules.py:93 ImmediateFamilyRules.py:329
+msgid "Spouses"
+msgstr ""
+
+#: ImmediateFamilyRules.py:94 ImmediateFamilyRules.py:331
+msgid "Children"
+msgstr ""
+
+#: ImmediateFamilyRules.py:95
+msgid "Associations"
+msgstr ""
+
+#: ImmediateFamilyRules.py:98 ImmediateFamilyRules.py:328
+msgid "Siblings"
+msgstr ""
+
+#: ImmediateFamilyRules.py:99 ImmediateFamilyRules.py:330
+msgid "Parents-in-law"
+msgstr ""
+
+#: ImmediateFamilyRules.py:100 ImmediateFamilyRules.py:335
+msgid "Children-in-law"
+msgstr ""
+
+#: ImmediateFamilyRules.py:103 ImmediateFamilyRules.py:334
+msgid "Siblings-in-law"
+msgstr ""
+
+#: ImmediateFamilyRules.py:145
+msgid "Include selected Gramps ID"
+msgstr ""
+
+#: ImmediateFamilyRules.py:217
+msgid "Type the Gramps ID of a person"
+msgstr ""
+
+#: ImmediateFamilyRules.py:218
+msgid "Type the Gramps ID of a family"
+msgstr ""
+
+#: ImmediateFamilyRules.py:219
+msgid "Pick a custom Person filter"
+msgstr ""
+
+#: ImmediateFamilyRules.py:220
+msgid "Pick a custom Family filter"
+msgstr ""
+
+#: ImmediateFamilyRules.py:221
+msgid "Not needed for the Home Person"
+msgstr ""
+
+#: ImmediateFamilyRules.py:234
+msgid "No custom filter with this name"
+msgstr ""
+
+#: ImmediateFamilyRules.py:240
+msgid "No person with this ID"
+msgstr ""
+
+#: ImmediateFamilyRules.py:245
+msgid "No family with this ID"
+msgstr ""
+
+#: ImmediateFamilyRules.py:312 ImmediateFamilyRules.py:342
+msgid "Anchor type:"
+msgstr ""
+
+#: ImmediateFamilyRules.py:313 ImmediateFamilyRules.py:343
+msgid "ID or filter name:"
+msgstr ""
+
+#: ImmediateFamilyRules.py:314 ImmediateFamilyRules.py:344
+msgid "Inclusive:"
+msgstr ""
+
+#: ImmediateFamilyRules.py:323
+msgid "As child"
+msgstr ""
+
+#: ImmediateFamilyRules.py:324
+msgid "As parent"
+msgstr ""
+
+#: ImmediateFamilyRules.py:598 ImmediateFamilyRules.py:647
+msgid "Family filters"
+msgstr ""
