@@ -1,0 +1,287 @@
+#
+# Gramps - a GTK+/GNOME based genealogy program
+#
+# Copyright (C) 2026  Phonetic Matching Gramplet contributors
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+"""
+Custom French phonetic encoder for the Fuzzy Matching Gramplet.
+
+Implements a 16-step French phonetic transformation algorithm specifically
+designed to handle French surname variations and phonetic equivalences.
+This encoder addresses common French phonetic patterns such as silent letters,
+vowel combinations, and consonant substitutions that are characteristic of
+the French language. The algorithm processes names through a series of
+normalization and transformation steps to produce a phonetic code that
+groups together surnames that sound similar in French.
+
+Both the encoding function and the corresponding filter rule are provided
+in this single file to maintain consistency with Gramps' plugin discovery
+mechanism: the gramplet auto-discovers encoding systems by querying the
+plugin registry for RULE-type plugins with IDs prefixed by
+``phonetic_codes._ENCODER_ID_PREFIX`` (``"FuzzyMatchingEncoder:"``).
+
+Using this rule directly in a Custom Filter
+--------------------------------------------
+
+This rule can be used independently in Gramps' Person Filter Editor.
+Open Edit > Person Filter Editor, create or edit a filter, "Add Rule...",
+and it appears under *General filters* as "French Phonetic match of People
+with the <surname>". Provide a surname and it matches every person whose
+primary surname produces the same French phonetic code.
+
+About the French Phonetic Algorithm
+------------------------------------
+
+The 16-step transformation process includes:
+- Normalization of Unicode characters and case
+- Handling of accented vowels (É, È, Ê → Y)
+- Treatment of silent H (removed when not after C, S, or P)
+- Phonetic substitutions (PH → F, G before nasal vowels → K)
+- Vowel combinations (EAU → O, OUA → 2, AIN/AIM/EIN/EIM → 4)
+- Consonant transformations (C → S before E/I, C/Q/QU/GU → K)
+- Final cleanup of duplicate letters and trailing T/X
+
+This implementation is optimized for French-language genealogical research
+and complements other phonetic encoders like Soundex and NYSIIS by
+providing language-specific phonetic matching.
+"""
+
+# Deferred annotation evaluation (PEP 563), required for Python 3.8/3.9
+# compatibility: this module's type hints use `Set[str]` (PEP 585 syntax),
+# which those Python versions cannot evaluate at runtime even though they
+# parse it fine.
+from __future__ import annotations
+
+# ------------------------
+# Python modules
+# ------------------------
+import logging
+import re
+import unicodedata
+from typing import Set
+
+# ------------------------
+# Gramps modules
+# ------------------------
+from gramps.gen.const import GRAMPS_LOCALE as glocale
+from gramps.gen.filters.rules import Rule
+
+try:
+    _trans = glocale.get_addon_translator(__file__)
+except ValueError:
+    _trans = glocale.translation
+_ = _trans.gettext
+
+LOG = logging.getLogger(__name__)
+
+#: Registry key. See the contract in ``phonetic_codes.py`` for why
+#: this should be treated as stable once shipped.
+ALGORITHM_ID = "phonetic_french"
+
+#: Display label shown in the gramplet's "Encoding system" dropdown.
+ALGORITHM_LABEL = "French Phonetic"
+
+#: Shown as a tooltip on the Encoding system dropdown when this
+#: algorithm is selected. See the contract in ``phonetic_codes.py``.
+ALGORITHM_DESCRIPTION = (
+    "Applies a 16-step French phonetic transformation optimized for"
+    " French-language surnames. Handles silent letters, vowel combinations,"
+    " and consonant substitutions characteristic of French phonetics."
+)
+
+def encode(name: str) -> Set[str]:
+    """
+    Apply the 16-step French phonetic transformation.
+
+    :param name: The surname to encode.
+    :returns: A one-element set containing the phonetic code.
+    """
+    try:
+        # Step 0: Convert to string and normalize
+        strval = str(name)
+        r = (
+            unicodedata.normalize("NFKD", strval.upper().strip())
+            .encode("ASCII", "ignore")
+            .decode("ASCII")
+        )
+
+        # Step 1: Replace Y by I
+        r = r.replace("Y", "I")
+
+        # Step 2: Replace accented E by Y
+        r = r.replace("É", "Y")
+        r = r.replace("È", "Y")
+        r = r.replace("Ê", "Y")
+
+        # Step 3: Remove H not preceded by C, S, or P
+        r = re.sub(r"([^CSP])H", r"\1", r)
+
+        # Step 4: Replace PH by F
+        r = r.replace("PH", "F")
+
+        # Step 5: Replace G followed by A, AI, AM, AN by K
+        r = re.sub(r"G(AI?[NM])", r"K\1", r)
+
+        # Step 6: Replace vowel+I+N/M followed by vowel
+        r = re.sub(r"([AE]I[NM])([AEIOU])", r"YN\2", r)
+
+        # Step 7: Replace specific groups (water sounds)
+        r = r.replace("EAU", "O")
+        r = r.replace("OUA", "2")
+        r = r.replace("EIN", "4")
+        r = r.replace("AIN", "4")
+        r = r.replace("EIM", "4")
+        r = r.replace("AIM", "4")
+
+        # Step 8: Replace AI, EI, ER, ESS, ET, EZ
+        r = r.replace("AI", "Y")
+        r = r.replace("EI", "Y")
+        r = r.replace("ER", "YR")
+        r = r.replace("ESS", "YS")
+        r = r.replace("ET", "YT")
+        r = r.replace("EZ", "YZ")
+
+        # Step 9: Replace AN, ON, AM, EN, EM, IN (not followed by vowel or sound 1-4)
+        r = re.sub(r"AN([^AEIOU1234])", r"1\1", r)
+        r = re.sub(r"ON([^AEIOU1234])", r"1\1", r)
+        r = re.sub(r"AM([^AEIOU1234])", r"1\1", r)
+        r = re.sub(r"EN([^AEIOU1234])", r"1\1", r)
+        r = re.sub(r"EM([^AEIOU1234])", r"1\1", r)
+        r = re.sub(r"IN([^AEIOU1234])", r"4\1", r)
+
+        # Step 10: Replace S by Z (between vowels or sounds 1-4)
+        r = re.sub(
+            r"([AEIOUY1234])S([AEIOUY1234])", r"\1Z\2", r
+        )
+
+        # Step 11: Replace specific groups
+        r = r.replace("OE", "E")
+        r = r.replace("EU", "E")
+        r = r.replace("AU", "O")
+        r = r.replace("OI", "2")
+        r = r.replace("OY", "2")
+        r = r.replace("OU", "3")
+
+        # Step 12: Replace CH, SCH, SH, SS, SC
+        r = r.replace("CH", "5")
+        r = r.replace("SCH", "5")
+        r = r.replace("SH", "5")
+        r = r.replace("SS", "S")
+        r = r.replace("SC", "S")
+
+        # Step 13: Replace C by S (before E or I)
+        r = re.sub(r"C([EI])", r"S\1", r)
+
+        # Step 14: Replace letters
+        r = r.replace("C", "K")
+        r = r.replace("Q", "K")
+        r = r.replace("QU", "K")
+        r = r.replace("GU", "K")
+        r = r.replace("GA", "KA")
+        r = r.replace("GO", "KO")
+        r = r.replace("GY", "KY")
+
+        # Step 15: Replace remaining letters
+        r = r.replace("A", "O")
+        r = r.replace("D", "T")
+        r = r.replace("P", "T")
+        r = r.replace("J", "G")
+        r = r.replace("B", "F")
+        r = r.replace("V", "F")
+        r = r.replace("M", "N")
+
+        # Step 16: Remove duplicate letters
+        oldc = "#"
+        newr = ""
+        for c in r:
+            if oldc != c:
+                newr += c
+            oldc = c
+        r = newr
+
+        # Step 17: Remove ending T or X
+        r = re.sub(r"(.*)[TX]$", r"\1", r)
+
+        return {r}
+
+    except Exception:
+        LOG.debug("French phonetic encoding failed for %r", name)
+        return {"0"}
+
+# -------------------------------------------------------------------------
+#
+# HasFrenchPhoneticName
+#
+# -------------------------------------------------------------------------
+class HasFrenchPhoneticName(Rule):
+    """
+    Rule that checks for a French Phonetic match of a person's primary surname.
+
+    Deliberately checks the primary name's surname only, matching what
+    the Fuzzy Matching Gramplet's own "Surname" field and Matches columns
+    actually search.
+    """
+
+    labels = [_("Surname:")]
+    name = _("French Phonetic match of People with the <surname>")
+    description = _(
+        "Matches people whose primary surname has a specified French phonetic code"
+    )
+    category = _("General filters")
+    allow_regex = False
+
+    def __init__(self, arg, use_regex=False, use_case=False):
+        super().__init__(arg, use_regex, use_case)
+        self._target_codes = None
+
+    def prepare(self, _db, _user):
+        """
+        Prepare the rule.
+
+        :param _db: The active database. Unused: the target codes only
+            depend on the typed name, not on any database content.
+        :param _user: The active :class:`gramps.gen.user.User`. Unused.
+        """
+        self._target_codes = (
+            encode(self.list[0]) if self.list and self.list[0] else set()
+        )
+
+    def apply_to_one(self, _db, obj) -> bool:
+        """
+        Apply the rule. Return True on a match.
+
+        :param _db: The active database. Unused.
+        :param obj: The :class:`gramps.gen.lib.Person` being tested.
+        :returns: True if ``obj``'s primary surname's French phonetic code
+            intersects the target codes.
+        """
+        if not self._target_codes:
+            return False
+        surname = obj.get_primary_name().get_surname()
+        return bool(encode(surname) & self._target_codes)
+
+    def apply(self, db, obj) -> bool:
+        """
+        Alias for :meth:`apply_to_one`, needed for Gramps 5.2
+        compatibility.
+
+        :param db: The active database. Unused; forwarded as-is.
+        :param obj: The :class:`gramps.gen.lib.Person` being tested.
+        :returns: See :meth:`apply_to_one`.
+        """
+        return self.apply_to_one(db, obj)
