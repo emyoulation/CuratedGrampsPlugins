@@ -306,6 +306,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
   },
   {
+    "n": "Phonex (French) match of People with the <names>",
+    "i": "FuzzyMatchingEncoder:phonex_french",
+    "t": 13,
+    "d": "Matches people with a name field having the same Phonex (French) phonetic encoding as a test name.",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "FussyRules_romjerome.addon.tgz",
+    "h": "https://gramps.discourse.group/t/9951/49"
+  },
+  {
     "n": "Photo Tagging",
     "i": "Photo Tagging",
     "t": 10,
