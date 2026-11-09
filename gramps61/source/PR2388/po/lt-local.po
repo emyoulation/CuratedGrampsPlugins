@@ -1,0 +1,95 @@
+# Translation for the 0.1.0 PR2388 Example Tree Prompt general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the PR2388 Example Tree Prompt package.
+# Claude AI (wish coding by Brian McCullough), 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PR2388 Example Tree Prompt 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-09 11:25-0600\n"
+"PO-Revision-Date: 2026-11-09 19:51+0000\n"
+"Last-Translator: Claude AI (Anthropic), machine translation pending native review\n"
+"Language-Team: \n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PR2388_ExampleTreePrompt.gpr.py:32
+msgid "PR2388 Example Tree Prompt"
+msgstr "PR2388 Mokomojo medžio pasiūlymas"
+
+#: PR2388_ExampleTreePrompt.gpr.py:33
+msgid ""
+"On startup, offers to import a practice Family Tree from the sample data "
+"included with Gramps. Afterwards it shows the Dashboard with a To Do note to"
+" get started. Field-test port of Gramps PR 2388."
+msgstr ""
+"Paleidus pasiūlo importuoti mokomąjį giminės medį iš pavyzdinių duomenų, "
+"pateikiamų su Gramps. Tada parodo Skydelį su užduoties pastaba pradžiai. "
+"Gramps PR 2388 bandomoji versija kaip priedas."
+
+#: PR2388_ExampleTreePrompt.py:90
+msgid "sample tree data"
+msgstr "pavyzdinio medžio duomenys"
+
+#: PR2388_ExampleTreePrompt.py:105
+msgid "Gramps example data"
+msgstr "Gramps pavyzdiniai duomenys"
+
+#: PR2388_ExampleTreePrompt.py:299
+msgid ""
+"Gramps without any family tree data can feel like an unfurnished room.\n"
+"\n"
+"Would you like to import a <b>practice Family Tree</b>? This small sample family lets you try out Gramps features (people, events, places, media, and maps) before you enter your own family information.\n"
+"\n"
+"Changes you make to the practice tree will not affect your own trees."
+msgstr ""
+"Gramps be jokių giminės medžio duomenų gali atrodyti kaip neapstatytas kambarys.\n"
+"\n"
+"Ar norite importuoti <b>mokomąjį giminės medį</b>? Ši nedidelė pavyzdinė šeima leis išbandyti Gramps galimybes (asmenis, įvykius, vietas, mediją ir žemėlapius) prieš įvedant savo šeimos informaciją.\n"
+"\n"
+"Mokomajame medyje atlikti pakeitimai nepaveiks jūsų pačių medžių."
+
+#: PR2388_ExampleTreePrompt.py:312
+msgid "Do not ask again"
+msgstr "Daugiau nebeklausti"
+
+#: PR2388_ExampleTreePrompt.py:324
+msgid "Getting Started"
+msgstr "Darbo pradžia"
+
+#: PR2388_ExampleTreePrompt.py:326
+msgid "Skip"
+msgstr "Praleisti"
+
+#: PR2388_ExampleTreePrompt.py:327
+msgid "Import Practice Tree"
+msgstr "Importuoti mokomąjį medį"
+
+#: PR2388_ExampleTreePrompt.py:621
+msgid "Read more about this sample tree"
+msgstr "Daugiau apie šį pavyzdinį medį"
+
+#: PR2388_ExampleTreePrompt.py:625
+#, python-format
+msgid "Start exploring with the %(home_person)s, currently set to %(name)s."
+msgstr "Pradėkite tyrinėti nuo čia — %(home_person)s: šiuo metu %(name)s."
+
+#: PR2388_ExampleTreePrompt.py:635
+#, python-format
+msgid ""
+"This tree has no %(home_person)s set, so this note is attached to the first "
+"person listed in the tree, %(name)s."
+msgstr ""
+"Šiame medyje nenustatyta: %(home_person)s. Todėl ši pastaba priskirta "
+"pirmajam medžio asmeniui, %(name)s."
+
+#: PR2388_ExampleTreePrompt.py:643
+msgid "Home Person"
+msgstr "Pagrindinis asmuo"
+
+#: PR2388_ExampleTreePrompt.py:664
+msgid "Add sample tree To Do note"
+msgstr "Pridėti užduoties pastabą į pavyzdinį medį"

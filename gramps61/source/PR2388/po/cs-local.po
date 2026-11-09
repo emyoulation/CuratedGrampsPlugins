@@ -1,0 +1,95 @@
+# Translation for the 0.1.0 PR2388 Example Tree Prompt general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the PR2388 Example Tree Prompt package.
+# Claude AI (wish coding by Brian McCullough), 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PR2388 Example Tree Prompt 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-09 11:25-0600\n"
+"PO-Revision-Date: 2026-11-09 19:51+0000\n"
+"Last-Translator: Claude AI (Anthropic), machine translation pending native review\n"
+"Language-Team: \n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PR2388_ExampleTreePrompt.gpr.py:32
+msgid "PR2388 Example Tree Prompt"
+msgstr "PR2388 Nabídka cvičného rodokmenu"
+
+#: PR2388_ExampleTreePrompt.gpr.py:33
+msgid ""
+"On startup, offers to import a practice Family Tree from the sample data "
+"included with Gramps. Afterwards it shows the Dashboard with a To Do note to"
+" get started. Field-test port of Gramps PR 2388."
+msgstr ""
+"Při spuštění nabídne import cvičného rodokmenu z ukázkových dat dodávaných s"
+" Gramps. Poté zobrazí Ovládací panel s poznámkou Úkol pro začátek. Testovací"
+" verze Gramps PR 2388 jako doplněk."
+
+#: PR2388_ExampleTreePrompt.py:90
+msgid "sample tree data"
+msgstr "data ukázkového rodokmenu"
+
+#: PR2388_ExampleTreePrompt.py:105
+msgid "Gramps example data"
+msgstr "Ukázková data Gramps"
+
+#: PR2388_ExampleTreePrompt.py:299
+msgid ""
+"Gramps without any family tree data can feel like an unfurnished room.\n"
+"\n"
+"Would you like to import a <b>practice Family Tree</b>? This small sample family lets you try out Gramps features (people, events, places, media, and maps) before you enter your own family information.\n"
+"\n"
+"Changes you make to the practice tree will not affect your own trees."
+msgstr ""
+"Gramps bez jakýchkoli rodokmenových dat může působit jako nezařízený pokoj.\n"
+"\n"
+"Chcete importovat <b>cvičný rodokmen</b>? Tato malá ukázková rodina vám umožní vyzkoušet funkce Gramps (osoby, události, místa, média a mapy) dříve, než zadáte informace o své vlastní rodině.\n"
+"\n"
+"Změny provedené v cvičném rodokmenu neovlivní vaše vlastní rodokmeny."
+
+#: PR2388_ExampleTreePrompt.py:312
+msgid "Do not ask again"
+msgstr "Příště se již neptat"
+
+#: PR2388_ExampleTreePrompt.py:324
+msgid "Getting Started"
+msgstr "Začínáme"
+
+#: PR2388_ExampleTreePrompt.py:326
+msgid "Skip"
+msgstr "Přeskočit"
+
+#: PR2388_ExampleTreePrompt.py:327
+msgid "Import Practice Tree"
+msgstr "Importovat cvičný rodokmen"
+
+#: PR2388_ExampleTreePrompt.py:621
+msgid "Read more about this sample tree"
+msgstr "Více o tomto ukázkovém rodokmenu"
+
+#: PR2388_ExampleTreePrompt.py:625
+#, python-format
+msgid "Start exploring with the %(home_person)s, currently set to %(name)s."
+msgstr "Začněte zkoumat odsud — %(home_person)s: nyní %(name)s."
+
+#: PR2388_ExampleTreePrompt.py:635
+#, python-format
+msgid ""
+"This tree has no %(home_person)s set, so this note is attached to the first "
+"person listed in the tree, %(name)s."
+msgstr ""
+"V tomto rodokmenu není nastaveno: %(home_person)s. Tato poznámka je proto "
+"připojena k první osobě v rodokmenu, %(name)s."
+
+#: PR2388_ExampleTreePrompt.py:643
+msgid "Home Person"
+msgstr "Výchozí osoba"
+
+#: PR2388_ExampleTreePrompt.py:664
+msgid "Add sample tree To Do note"
+msgstr "Přidat poznámku Úkol do ukázkového rodokmenu"

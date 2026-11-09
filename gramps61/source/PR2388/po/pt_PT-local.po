@@ -1,0 +1,95 @@
+# Translation for the 0.1.0 PR2388 Example Tree Prompt general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the PR2388 Example Tree Prompt package.
+# Claude AI (wish coding by Brian McCullough), 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PR2388 Example Tree Prompt 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-09 11:25-0600\n"
+"PO-Revision-Date: 2026-11-09 19:51+0000\n"
+"Last-Translator: Claude AI (Anthropic), machine translation pending native review\n"
+"Language-Team: \n"
+"Language: pt_PT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PR2388_ExampleTreePrompt.gpr.py:32
+msgid "PR2388 Example Tree Prompt"
+msgstr "PR2388 Proposta de árvore de exemplo"
+
+#: PR2388_ExampleTreePrompt.gpr.py:33
+msgid ""
+"On startup, offers to import a practice Family Tree from the sample data "
+"included with Gramps. Afterwards it shows the Dashboard with a To Do note to"
+" get started. Field-test port of Gramps PR 2388."
+msgstr ""
+"No arranque, propõe importar uma árvore genealógica de treino a partir dos "
+"dados de exemplo incluídos no Gramps. Depois mostra o Painel com uma nota A "
+"fazer para começar. Versão de teste do PR 2388 do Gramps como extensão."
+
+#: PR2388_ExampleTreePrompt.py:90
+msgid "sample tree data"
+msgstr "dados de árvore de exemplo"
+
+#: PR2388_ExampleTreePrompt.py:105
+msgid "Gramps example data"
+msgstr "Dados de exemplo do Gramps"
+
+#: PR2388_ExampleTreePrompt.py:299
+msgid ""
+"Gramps without any family tree data can feel like an unfurnished room.\n"
+"\n"
+"Would you like to import a <b>practice Family Tree</b>? This small sample family lets you try out Gramps features (people, events, places, media, and maps) before you enter your own family information.\n"
+"\n"
+"Changes you make to the practice tree will not affect your own trees."
+msgstr ""
+"O Gramps sem dados de árvore genealógica pode parecer uma divisão sem mobília.\n"
+"\n"
+"Pretende importar uma <b>árvore genealógica de treino</b>? Esta pequena família de exemplo permite experimentar as funcionalidades do Gramps (indivíduos, eventos, locais, multimédia e mapas) antes de introduzir as informações da sua família.\n"
+"\n"
+"As alterações feitas à árvore de treino não afetam as suas próprias árvores."
+
+#: PR2388_ExampleTreePrompt.py:312
+msgid "Do not ask again"
+msgstr "Não perguntar novamente"
+
+#: PR2388_ExampleTreePrompt.py:324
+msgid "Getting Started"
+msgstr "Primeiros passos"
+
+#: PR2388_ExampleTreePrompt.py:326
+msgid "Skip"
+msgstr "Saltar"
+
+#: PR2388_ExampleTreePrompt.py:327
+msgid "Import Practice Tree"
+msgstr "Importar árvore de treino"
+
+#: PR2388_ExampleTreePrompt.py:621
+msgid "Read more about this sample tree"
+msgstr "Saiba mais sobre esta árvore de exemplo"
+
+#: PR2388_ExampleTreePrompt.py:625
+#, python-format
+msgid "Start exploring with the %(home_person)s, currently set to %(name)s."
+msgstr "Comece a explorar pelo %(home_person)s, atualmente %(name)s."
+
+#: PR2388_ExampleTreePrompt.py:635
+#, python-format
+msgid ""
+"This tree has no %(home_person)s set, so this note is attached to the first "
+"person listed in the tree, %(name)s."
+msgstr ""
+"Esta árvore não tem %(home_person)s, pelo que esta nota está associada ao "
+"primeiro indivíduo da árvore, %(name)s."
+
+#: PR2388_ExampleTreePrompt.py:643
+msgid "Home Person"
+msgstr "Indivíduo inicial"
+
+#: PR2388_ExampleTreePrompt.py:664
+msgid "Add sample tree To Do note"
+msgstr "Adicionar nota A fazer à árvore de exemplo"

@@ -340,6 +340,17 @@
     "h": "https://gramps.discourse.group/t/9951/49"
   },
   {
+    "n": "PR2388 Ponuka cvičného rodinného stromu",
+    "i": "PR2388_ExampleTreePrompt",
+    "t": 6,
+    "d": "Pri spustení ponúkne import cvičného rodinného stromu z ukážkových údajov dodávaných s Gramps. Potom zobrazí Informačný panel s poznámkou Úloha na začiatok. Testovacia verzia Gramps PR 2388 ako doplnok.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "PR2388.addon.tgz",
+    "h": "https://github.com/gramps-project/gramps/pull/2388"
+  },
+  {
     "n": "Soundex match of People with the <names>",
     "i": "FuzzyMatchingEncoder:soundex",
     "t": 13,

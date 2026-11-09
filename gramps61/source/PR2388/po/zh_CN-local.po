@@ -1,0 +1,92 @@
+# Translation for the 0.1.0 PR2388 Example Tree Prompt general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the PR2388 Example Tree Prompt package.
+# Claude AI (wish coding by Brian McCullough), 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PR2388 Example Tree Prompt 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-09 11:25-0600\n"
+"PO-Revision-Date: 2026-11-09 19:51+0000\n"
+"Last-Translator: Claude AI (Anthropic), machine translation pending native review\n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PR2388_ExampleTreePrompt.gpr.py:32
+msgid "PR2388 Example Tree Prompt"
+msgstr "PR2388 练习家谱提示"
+
+#: PR2388_ExampleTreePrompt.gpr.py:33
+msgid ""
+"On startup, offers to import a practice Family Tree from the sample data "
+"included with Gramps. Afterwards it shows the Dashboard with a To Do note to"
+" get started. Field-test port of Gramps PR 2388."
+msgstr ""
+"启动时，提示从 Gramps 附带的示例数据导入练习家谱。之后显示小组件页面，并附带一条帮助入门的待办事项注释。Gramps PR 2388 "
+"的插件测试版。"
+
+#: PR2388_ExampleTreePrompt.py:90
+msgid "sample tree data"
+msgstr "示例家谱数据"
+
+#: PR2388_ExampleTreePrompt.py:105
+msgid "Gramps example data"
+msgstr "Gramps 示例数据"
+
+#: PR2388_ExampleTreePrompt.py:299
+msgid ""
+"Gramps without any family tree data can feel like an unfurnished room.\n"
+"\n"
+"Would you like to import a <b>practice Family Tree</b>? This small sample family lets you try out Gramps features (people, events, places, media, and maps) before you enter your own family information.\n"
+"\n"
+"Changes you make to the practice tree will not affect your own trees."
+msgstr ""
+"没有任何家谱数据的 Gramps 就像一间没有家具的房间。\n"
+"\n"
+"要导入一个<b>练习家谱</b>吗？这个小型示例家族让您在输入自己的家族信息之前，先试用 Gramps 的功能（人物、事件、地点、媒体和地图）。\n"
+"\n"
+"对练习家谱所做的更改不会影响您自己的家谱。"
+
+#: PR2388_ExampleTreePrompt.py:312
+msgid "Do not ask again"
+msgstr "不要再次询问"
+
+#: PR2388_ExampleTreePrompt.py:324
+msgid "Getting Started"
+msgstr "使用入门"
+
+#: PR2388_ExampleTreePrompt.py:326
+msgid "Skip"
+msgstr "跳过"
+
+#: PR2388_ExampleTreePrompt.py:327
+msgid "Import Practice Tree"
+msgstr "导入练习家谱"
+
+#: PR2388_ExampleTreePrompt.py:621
+msgid "Read more about this sample tree"
+msgstr "了解此示例家谱的更多信息"
+
+#: PR2388_ExampleTreePrompt.py:625
+#, python-format
+msgid "Start exploring with the %(home_person)s, currently set to %(name)s."
+msgstr "从%(home_person)s（当前为 %(name)s）开始探索。"
+
+#: PR2388_ExampleTreePrompt.py:635
+#, python-format
+msgid ""
+"This tree has no %(home_person)s set, so this note is attached to the first "
+"person listed in the tree, %(name)s."
+msgstr "此家谱未设置%(home_person)s，因此此注释附加到家谱中的第一个人 %(name)s。"
+
+#: PR2388_ExampleTreePrompt.py:643
+msgid "Home Person"
+msgstr "主人翁"
+
+#: PR2388_ExampleTreePrompt.py:664
+msgid "Add sample tree To Do note"
+msgstr "向示例家谱添加待办事项注释"

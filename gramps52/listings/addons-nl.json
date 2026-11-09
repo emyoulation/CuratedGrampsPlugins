@@ -340,6 +340,17 @@
     "h": "https://gramps.discourse.group/t/9951/49"
   },
   {
+    "n": "PR2388 Aanbod voorbeeldstamboom",
+    "i": "PR2388_ExampleTreePrompt",
+    "t": 6,
+    "d": "Biedt bij het opstarten aan om een oefenstamboom te importeren uit de voorbeeldgegevens die bij Gramps horen. Daarna wordt het Dashboard getoond met een taaknotitie om te beginnen. Testversie van Gramps PR 2388 als uitbreiding.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "PR2388.addon.tgz",
+    "h": "https://github.com/gramps-project/gramps/pull/2388"
+  },
+  {
     "n": "Soundex match of People with the <names>",
     "i": "FuzzyMatchingEncoder:soundex",
     "t": 13,

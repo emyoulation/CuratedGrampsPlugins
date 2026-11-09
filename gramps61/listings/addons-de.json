@@ -340,6 +340,17 @@
     "h": "https://gramps.discourse.group/t/1889/14"
   },
   {
+    "n": "PR2388 Angebot für einen Beispiel-Stammbaum",
+    "i": "PR2388_ExampleTreePrompt",
+    "t": 6,
+    "d": "Bietet beim Start an, einen Übungs-Stammbaum aus den mit Gramps gelieferten Beispieldaten zu importieren. Danach wird die Übersicht mit einer Notiz „Zu erledigen“ für den Einstieg angezeigt. Testversion von Gramps PR 2388 als Erweiterung.",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "PR2388.addon.tgz",
+    "h": "https://github.com/gramps-project/gramps/pull/2388"
+  },
+  {
     "n": "Pruned Branch",
     "i": "PrunedBranch",
     "t": 2,

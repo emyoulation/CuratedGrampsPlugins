@@ -1,0 +1,95 @@
+# Translation for the 0.1.0 PR2388 Example Tree Prompt general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the PR2388 Example Tree Prompt package.
+# Claude AI (wish coding by Brian McCullough), 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PR2388 Example Tree Prompt 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-09 11:25-0600\n"
+"PO-Revision-Date: 2026-11-09 19:51+0000\n"
+"Last-Translator: Claude AI (Anthropic), machine translation pending native review\n"
+"Language-Team: \n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PR2388_ExampleTreePrompt.gpr.py:32
+msgid "PR2388 Example Tree Prompt"
+msgstr "PR2388 Понуда стабла за вежбу"
+
+#: PR2388_ExampleTreePrompt.gpr.py:33
+msgid ""
+"On startup, offers to import a practice Family Tree from the sample data "
+"included with Gramps. Afterwards it shows the Dashboard with a To Do note to"
+" get started. Field-test port of Gramps PR 2388."
+msgstr ""
+"При покретању нуди увоз породичног стабла за вежбу из примера података који "
+"долазе уз Gramps. Затим приказује контролну таблу са белешком За рад за "
+"почетак. Пробна верзија Gramps PR 2388 као додатак."
+
+#: PR2388_ExampleTreePrompt.py:90
+msgid "sample tree data"
+msgstr "подаци примера стабла"
+
+#: PR2388_ExampleTreePrompt.py:105
+msgid "Gramps example data"
+msgstr "Gramps примери података"
+
+#: PR2388_ExampleTreePrompt.py:299
+msgid ""
+"Gramps without any family tree data can feel like an unfurnished room.\n"
+"\n"
+"Would you like to import a <b>practice Family Tree</b>? This small sample family lets you try out Gramps features (people, events, places, media, and maps) before you enter your own family information.\n"
+"\n"
+"Changes you make to the practice tree will not affect your own trees."
+msgstr ""
+"Gramps без икаквих података о породичном стаблу може деловати као ненамештена соба.\n"
+"\n"
+"Да ли желите да увезете <b>породично стабло за вежбу</b>? Ова мала породица из примера омогућава вам да испробате могућности програма Gramps (особе, догађаје, места, медије и мапе) пре него што унесете податке о сопственој породици.\n"
+"\n"
+"Измене у стаблу за вежбу неће утицати на ваша сопствена стабла."
+
+#: PR2388_ExampleTreePrompt.py:312
+msgid "Do not ask again"
+msgstr "Не питај ме поново"
+
+#: PR2388_ExampleTreePrompt.py:324
+msgid "Getting Started"
+msgstr "Започните"
+
+#: PR2388_ExampleTreePrompt.py:326
+msgid "Skip"
+msgstr "Прескочи"
+
+#: PR2388_ExampleTreePrompt.py:327
+msgid "Import Practice Tree"
+msgstr "Увези стабло за вежбу"
+
+#: PR2388_ExampleTreePrompt.py:621
+msgid "Read more about this sample tree"
+msgstr "Више о овом примеру стабла"
+
+#: PR2388_ExampleTreePrompt.py:625
+#, python-format
+msgid "Start exploring with the %(home_person)s, currently set to %(name)s."
+msgstr "Почните истраживање одавде — %(home_person)s: тренутно %(name)s."
+
+#: PR2388_ExampleTreePrompt.py:635
+#, python-format
+msgid ""
+"This tree has no %(home_person)s set, so this note is attached to the first "
+"person listed in the tree, %(name)s."
+msgstr ""
+"У овом стаблу није постављено: %(home_person)s. Зато је ова белешка "
+"придружена првој особи у стаблу, %(name)s."
+
+#: PR2388_ExampleTreePrompt.py:643
+msgid "Home Person"
+msgstr "Основна особа"
+
+#: PR2388_ExampleTreePrompt.py:664
+msgid "Add sample tree To Do note"
+msgstr "Додај белешку За рад у пример стабла"

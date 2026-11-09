@@ -1,0 +1,13 @@
+[
+  {
+    "n": "PR2388 Proposta di albero di esempio",
+    "i": "PR2388_ExampleTreePrompt",
+    "t": 6,
+    "d": "All'avvio, propone di importare un albero genealogico di prova dai dati di esempio inclusi in Gramps. Poi mostra il Cruscotto con una nota Cosa da fare per iniziare. Versione di prova della PR 2388 di Gramps come componente aggiuntivo.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "PR2388.addon.tgz",
+    "h": "https://github.com/gramps-project/gramps/pull/2388"
+  }
+]

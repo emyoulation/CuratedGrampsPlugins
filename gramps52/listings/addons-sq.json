@@ -1,0 +1,13 @@
+[
+  {
+    "n": "PR2388 Ofertë për pemë ushtrimi",
+    "i": "PR2388_ExampleTreePrompt",
+    "t": 6,
+    "d": "Në nisje, ofron importimin e një peme familjare ushtrimi nga të dhënat shembull që vijnë me Gramps. Më pas shfaq panelin me një shënim detyre për t'ia nisur. Version testimi i Gramps PR 2388 si shtojcë.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "PR2388.addon.tgz",
+    "h": "https://github.com/gramps-project/gramps/pull/2388"
+  }
+]
