@@ -346,9 +346,9 @@
     "d": "Au démarrage, propose d'importer un arbre familial d'entraînement à partir des données d'exemple fournies avec Gramps. Affiche ensuite le Tableau de bord avec une note « À faire » pour bien démarrer. Version de test de la PR 2388 de Gramps sous forme d'extension.",
     "v": "0.1.0",
     "g": "5.2",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Soundex match of People with the <names>",

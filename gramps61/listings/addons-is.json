@@ -346,9 +346,9 @@
     "d": "Býður við ræsingu upp á að flytja inn æfingaættartölu úr sýnishornsgögnunum sem fylgja Gramps. Síðan er Stjórnborðið birt með verkefnalistaathugasemd til að byrja. Prófunarútgáfa af Gramps PR 2388 sem viðbót.",
     "v": "0.1.0",
     "g": "6.1",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Pruned Branch",

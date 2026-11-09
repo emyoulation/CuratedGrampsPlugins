@@ -346,9 +346,9 @@
     "d": "Başlangıçta, Gramps ile birlikte gelen örnek verilerden bir alıştırma soyağacını içe aktarmayı önerir. Ardından başlamanız için bir Yapılacaklar notuyla Gösterge'yi gösterir. Gramps PR 2388'in eklenti olarak test sürümü.",
     "v": "0.1.0",
     "g": "6.0",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Pruned Branch",

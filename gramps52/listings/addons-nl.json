@@ -346,9 +346,9 @@
     "d": "Biedt bij het opstarten aan om een oefenstamboom te importeren uit de voorbeeldgegevens die bij Gramps horen. Daarna wordt het Dashboard getoond met een taaknotitie om te beginnen. Testversie van Gramps PR 2388 als uitbreiding.",
     "v": "0.1.0",
     "g": "5.2",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Soundex match of People with the <names>",

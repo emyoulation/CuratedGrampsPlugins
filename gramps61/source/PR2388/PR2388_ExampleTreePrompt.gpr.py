@@ -21,6 +21,7 @@
 """
 Registration for the Example Tree Prompt monkey-patch addon
 (field-test port of Gramps PR 2388).
+https://github.com/gramps-project/gramps/pull/2388
 """
 
 from gramps.version import major_version, VERSION_TUPLE
@@ -38,10 +39,13 @@ if (5, 2) <= VERSION_TUPLE < (6, 2):
         ),
         version="0.1.0",  # build 20261109.1950
         gramps_target_version=major_version,
-        status=EXPERIMENTAL,
+        status=STABLE,
         fname="PR2388_ExampleTreePrompt.py",
         load_on_reg=True,
         authors=["Claude AI", "Doug Blank (PR 2388)"],
         maintainers=["Brian McCullough"],
-        help_url="https://github.com/gramps-project/gramps/pull/2388",
+        help_url=(
+            "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/"
+            "gramps61/source/PR2388/README.md"
+        ),
     )

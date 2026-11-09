@@ -346,9 +346,9 @@
     "d": "Při spuštění nabídne import cvičného rodokmenu z ukázkových dat dodávaných s Gramps. Poté zobrazí Ovládací panel s poznámkou Úkol pro začátek. Testovací verze Gramps PR 2388 jako doplněk.",
     "v": "0.1.0",
     "g": "6.0",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Pruned Branch",

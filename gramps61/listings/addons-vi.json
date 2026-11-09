@@ -346,9 +346,9 @@
     "d": "Khi khởi động, đề nghị nhập một Cây gia đình thực hành từ dữ liệu mẫu đi kèm Gramps. Sau đó hiển thị Bảng điều khiển với một ghi chú Việc Sẽ Làm để bắt đầu. Bản thử nghiệm của Gramps PR 2388 dưới dạng phần bổ trợ.",
     "v": "0.1.0",
     "g": "6.1",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Pruned Branch",

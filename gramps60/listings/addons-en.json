@@ -346,9 +346,9 @@
     "d": "On startup, offers to import a practice Family Tree from the sample data included with Gramps. Afterwards it shows the Dashboard with a To Do note to get started. Field-test port of Gramps PR 2388.",
     "v": "0.1.0",
     "g": "6.0",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Pruned Branch",

@@ -335,9 +335,9 @@
     "d": "Під час запуску пропонує імпортувати навчальне сімейне дерево з прикладів даних, що постачаються з Gramps. Потім показує Панель із нотаткою-завданням для початку роботи. Тестова версія Gramps PR 2388 у вигляді доповнення.",
     "v": "0.1.0",
     "g": "5.2",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Soundex match of People with the <names>",

@@ -6,8 +6,8 @@
     "d": "Indításkor felajánlja egy gyakorló családfa importálását a Grampshez mellékelt mintaadatokból. Ezután megjeleníti a Műszerfalat egy kezdést segítő Teendő jegyzettel. A Gramps PR 2388 tesztváltozata bővítményként.",
     "v": "0.1.0",
     "g": "5.2",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   }
 ]

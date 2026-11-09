@@ -346,9 +346,9 @@
     "d": "起動時に、Gramps に付属するサンプルデータから練習用の家系図をインポートすることを提案します。その後、始めるための To Do メモとともにダッシュボードを表示します。Gramps PR 2388 のアドオン版テスト用パッケージです。",
     "v": "0.1.0",
     "g": "6.1",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Pruned Branch",

@@ -6,8 +6,8 @@
     "d": "Erbjuder vid start att importera ett övningssläktträd från exempeldata som följer med Gramps. Därefter visas Anslagstavlan med en att göra-anteckning för att komma igång. Testversion av Gramps PR 2388 som tillägg.",
     "v": "0.1.0",
     "g": "5.2",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   }
 ]

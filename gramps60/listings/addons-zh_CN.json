@@ -346,9 +346,9 @@
     "d": "启动时，提示从 Gramps 附带的示例数据导入练习家谱。之后显示小组件页面，并附带一条帮助入门的待办事项注释。Gramps PR 2388 的插件测试版。",
     "v": "0.1.0",
     "g": "6.0",
-    "s": 1,
+    "s": 3,
     "z": "PR2388.addon.tgz",
-    "h": "https://github.com/gramps-project/gramps/pull/2388"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
     "n": "Pruned Branch",
