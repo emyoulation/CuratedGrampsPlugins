@@ -214,6 +214,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Fuzzy/README.md"
   },
   {
+    "n": "Import with No Tree Loaded",
+    "i": "ImportNoTree",
+    "t": 6,
+    "d": "Makes Family Trees > Import... work when no Family Tree is loaded. A new Family Tree is created, named after the imported file, and the file is imported into it.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "ImportWithoutTree.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
+  },
+  {
     "n": "Localized Gramps Glossary Terminology",
     "i": "LocalTerm Gramplet",
     "t": 10,
