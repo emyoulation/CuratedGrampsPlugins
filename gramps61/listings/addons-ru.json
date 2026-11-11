@@ -432,5 +432,17 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
+  },
+  {
+    "n": "Ввод данных",
+    "i": "Data Entry Gramplet",
+    "t": 10,
+    "d": "Add from quick data entry form",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "DataEntryGramplet.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
+    "a": 1
   }
 ]

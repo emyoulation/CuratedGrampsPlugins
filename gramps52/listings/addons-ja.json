@@ -20,5 +20,17 @@
     "s": 3,
     "z": "PR2388.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
+  },
+  {
+    "n": "データ入力Gramplet",
+    "i": "Data Entry Gramplet",
+    "t": 10,
+    "d": "Add from quick data entry form",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "DataEntryGramplet.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
+    "a": 1
   }
 ]

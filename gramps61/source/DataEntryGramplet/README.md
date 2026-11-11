@@ -64,7 +64,7 @@ Right-click the line with the three radio buttons, or the citation line below it
 Edit and Quick View need a chosen citation.
 
 ## Finding people who are already in the tree
-If the **Fuzzy Matching** addon is installed and enabled, a magnifying glass appears to the right of the **Surname, Given** field of the New person area. Click it before you add someone, to check whether that person is already in your tree.
+If the **[Fuzzy Matching](https://gramps.discourse.group/t/9951/14)** addon is installed and enabled, a magnifying glass appears to the right of the **Surname, Given** field of the New person area. Click it before you add someone, to check whether that person is already in your tree.
 
 The Fuzzy Match Lookup window opens with:
 

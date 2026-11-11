@@ -42,9 +42,10 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         detached_height=480,
         version="1.1.0",  # build 20261111.1456
         gramps_target_version=major_version,
-        status=STABLE,
+        status=EXPERIMENTAL,
         audience=EXPERT,
         fname="DataEntryGramplet.py",
         navtypes=["Person"],
-        help_url="Addon:DataEntryGramplet",
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
+        # help_url="Addon:DataEntryGramplet",
     )

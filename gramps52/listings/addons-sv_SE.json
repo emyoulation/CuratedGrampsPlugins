@@ -1,5 +1,17 @@
 [
   {
+    "n": "Gramplet för datainmatning",
+    "i": "Data Entry Gramplet",
+    "t": 10,
+    "d": "Add from quick data entry form",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "DataEntryGramplet.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
+    "a": 1
+  },
+  {
     "n": "Import with No Tree Loaded",
     "i": "ImportNoTree",
     "t": 6,

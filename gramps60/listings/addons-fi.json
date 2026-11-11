@@ -406,6 +406,18 @@
     "h": "Addon:ThemePreferences"
   },
   {
+    "n": "Tiedonsyöttö-gramplet",
+    "i": "Data Entry Gramplet",
+    "t": 10,
+    "d": "Add from quick data entry form",
+    "v": "1.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "DataEntryGramplet.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
+    "a": 1
+  },
+  {
     "n": "vCard (Enhanced — v1/2.1/3.0/4.0)",
     "i": "ex_vcard_enh",
     "t": 4,
