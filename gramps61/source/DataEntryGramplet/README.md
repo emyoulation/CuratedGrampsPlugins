@@ -30,6 +30,7 @@ The **New person** area is what you fill in to add a person to the tree:
 
 Buttons under each area always stay in view:
 
+* <kbd>Help</kbd>, at the far left of the bottom line, opens this guide. It is hidden while the gramplet is undocked, because the undocked gramplet window has its own Help button.
 * <kbd>Save</kbd> keeps your changes to the Active person area, and <kbd>Abandon</kbd> discards them.
 * <kbd>Add</kbd> adds the new person to the tree.
 * <kbd>Copy Active Data</kbd> copies the data of the active person into the New person area, so you can add a similar person (a sibling, or a child with the same surname) by changing a few fields.

@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2007-2009  Douglas S. Blank <doug.blank@gmail.com>
 # Copyright (C) 2011       Gary Burton
-# Copyright (C) 2026       Claude AI (prompted by Brian McCullough)
+# Copyright (C) 2026       Claude AI (wish coding by Brian McCullough)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,28 +24,40 @@ from gramps.version import major_version, VERSION_TUPLE
 
 # ------------------------------------------------------------------------
 #
-# Register Data Entry addon Gramplet for Person categories
+# Register the Data Entry gramplet for the People category views
 #
 # ------------------------------------------------------------------------
 
 if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
     register(
         GRAMPLET,
+        # Identity
         id="Data Entry Gramplet",
         name=_("Data Entry Gramplet"),
-        description=_("Add from quick data entry form"),
-        height=375,
-        expand=False,
-        gramplet="DataEntryGramplet",
-        gramplet_title=_("Data Entry"),
-        detached_width=510,
-        detached_height=480,
-        version="1.1.0",  # build 20261111.1456
+        description=_(
+            "Key in a relative of the active person, with their birth, death "
+            "and other events and sources, on one form instead of working "
+            "through a dozen editing dialogs"
+        ),
+        version="1.1.1",  # build 20261111.2017
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         audience=EXPERT,
+        authors=["Douglas S. Blank", "Gary Burton"],
+        maintainers=["Brian McCullough"],
+        # Code
         fname="DataEntryGramplet.py",
+        gramplet="DataEntryGramplet",
+        # Placement and size
         navtypes=["Person"],
-        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
-        # help_url="Addon:DataEntryGramplet",
+        gramplet_title=_("Data Entry"),
+        height=375,
+        expand=False,
+        detached_width=510,
+        detached_height=480,
+        # Documentation
+        help_url=(
+            "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/"
+            "gramps61/source/DataEntryGramplet/CHANGELOG.md"
+        ),
     )

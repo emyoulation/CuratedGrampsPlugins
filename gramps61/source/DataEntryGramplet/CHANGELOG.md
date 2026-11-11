@@ -21,6 +21,7 @@ Supports Gramps 5.2 through 6.2 from one package. Includes the rework submitted 
 * Changed: **unsaved edits are visible**. Abandon turns red while the Active person area has unsaved changes, and its tooltip lists them; the area stops following the active person until you Save or Abandon.
 * Changed: a linked person keeps a birth or death they already have; a new Birth or Death row is added as an ordinary event.
 * Changed: the form is one aligned grid that scrolls, with the buttons pinned to the bottom; it fits down to about 315 pixels wide.
+* New: **Help button** at the far left of the bottom line, opening this README in Markdown Dash (or the wiki page when Markdown Dash or MarkdownUtils is not available). It is hidden while the gramplet is undocked, since the undocked window has its own Help button.
 * Changed: the Save, Abandon, Add, Copy Active Data and Clear buttons have icons to the left of their labels, and the name field has a clear (eraser) icon.
 * Fixed: dropping a person no longer causes GTK critical warnings in the terminal; drops are handled after the drag has finished.
 
@@ -57,6 +58,7 @@ Baseline for this change log is **v1.0.49**, the Gramps 5.2 release of the addon
 ## Outstanding issues
 ### Planned / NYI
 * Custom (user-defined) event types are not offered in the event row menus.
+* Move the "hide the Help button while undocked" behavior into MarkdownUtils `add_help_button()`, so every gramplet gets it (it lives in this addon for now).
 
 ### Needs discussion
 * Version numbering: the queued addons-source pull request labels itself 1.0.53, the same number as the released Gramps 6.0 and 6.1 builds. This release uses 1.1.0 to supersede both.
