@@ -1,5 +1,28 @@
 [
   {
+    "n": "Addon Marketplace",
+    "i": "AddonMarketplace",
+    "t": 6,
+    "d": "Replaces the Addon Manager with the Addon Marketplace: clickable filter lozenges, Update and Downgrade buttons, and a project dialog that tests web and local addon repositories. To switch it off, hide this plugin and restart Gramps.",
+    "v": "0.1.2",
+    "g": "5.2",
+    "s": 1,
+    "z": "AddonMarketplace.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AddonMarketplace"
+  },
+  {
+    "n": "Beta What's Next",
+    "i": "Beta What's Next",
+    "t": 10,
+    "d": "Beta Gramplet suggesting items to research",
+    "v": "0.2.0",
+    "g": "5.2",
+    "s": 2,
+    "z": "Betawhatsnext.addon.tgz",
+    "h": "https://github.com/emyoulation/_BetaDashboards",
+    "a": 0
+  },
+  {
     "n": "Data Entry Gramplet",
     "i": "Data Entry Gramplet",
     "t": 10,
