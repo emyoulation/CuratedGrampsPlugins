@@ -1,0 +1,39 @@
+# Translation template for the 0.1.0 PR2485 Edit Person Tweaks general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the PR2485 Edit Person Tweaks package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PR2485 Edit Person Tweaks 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-13 16:24-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PR2485.gpr.py:26
+msgid "PR2485 Edit Person Tweaks"
+msgstr ""
+
+#: PR2485.gpr.py:28
+msgid ""
+"Improves the New/Edit Person dialogs: Multiple Surnames column widths are "
+"remembered (Gramps PR 2485), switching to Multiple Surnames adds a row ready "
+"for typing, a Fuzzy Match Lookup button appears beside the Surname field "
+"when Fuzzy Matching is installed, and the Surname field shows a 'surname' "
+"tip."
+msgstr ""
+
+#: PR2485.py:408
+msgid "Fuzzy Match Lookup: find people whose surname sounds like this one"
+msgstr ""
+
+#: PR2485.py:437
+msgid "surname"
+msgstr ""
