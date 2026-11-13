@@ -374,6 +374,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
   },
   {
+    "n": "PR2485 Edit Person Tweaks",
+    "i": "PR2485",
+    "t": 6,
+    "d": "Improves the New/Edit Person dialogs: Multiple Surnames column widths are remembered (Gramps PR 2485), switching to Multiple Surnames adds a row ready for typing, a Fuzzy Match Lookup button appears beside the Surname field when Fuzzy Matching is installed, and the Surname field shows a 'surname' tip.",
+    "v": "0.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "PR2485.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2485/README.md"
+  },
+  {
     "n": "Pruned Branch",
     "i": "PrunedBranch",
     "t": 2,
