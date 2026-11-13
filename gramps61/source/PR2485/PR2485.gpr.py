@@ -19,7 +19,7 @@
 
 from gramps.version import major_version, VERSION_TUPLE
 
-if (5, 2, 0) <= VERSION_TUPLE < (6, 3, 0):
+if (5, 2, 0) <= VERSION_TUPLE < (6, 2, 0):
     register(
         GENERAL,
         id="PR2485",
@@ -35,10 +35,10 @@ if (5, 2, 0) <= VERSION_TUPLE < (6, 3, 0):
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="PR2485.py",
-        authors=["Claude AI"],
-        authors_email=[""],
+        authors=["Douglas S. Blank", "Claude AI"],
+        authors_email=["",""],
         maintainers=["Brian McCullough"],
         maintainers_email=[""],
         load_on_reg=True,
-        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2485/README.md",
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PR2485/CHANGELOG.md",
     )
