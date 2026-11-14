@@ -116,6 +116,17 @@
     "a": 2
   },
   {
+    "n": "Edit Attributes Plus",
+    "i": "EditAttributesPlus",
+    "t": 6,
+    "d": "Resizable Attribute Editor with a multi-line Value field, plus multi-column type popups and 'Add a gramplet' menus (sidebar, bottombar and Dashboard monkey patch).",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "AttributesEditor_plus.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/EditAttributesPlus/README.md"
+  },
+  {
     "n": "Edit Date Calculator",
     "i": "editdatecalculator",
     "t": 6,

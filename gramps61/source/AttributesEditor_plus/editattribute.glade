@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.40.0 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <requires lib="grampswidgets" version="0.0"/>
+  <object class="GtkDialog" id="editattribute">
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="dialog-vbox28">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="dialog-action_area28">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes">_Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="ok">
+                <property name="label" translatable="yes">_OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="help">
+                <property name="label" translatable="yes">_Help</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack-type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="vbox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <!-- Vertical paned: the top pane (Attribute/Value) is
+                   user-resizable against the bottom pane (Citations/
+                   Notes notebook, added at runtime via pack2()).
+                   shrink=False on the top pane's packing keeps it from
+                   being dragged below its requested minimum height
+                   (1 row for Attribute + 2 rows for the Value text
+                   view), per height-request on "top_box" below. -->
+              <object class="GtkPaned" id="main_paned">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="orientation">vertical</property>
+                <property name="vexpand">True</property>
+                <property name="wide-handle">True</property>
+                <child>
+                  <object class="GtkBox" id="top_box">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <property name="height-request">130</property>
+                    <child>
+                      <!-- n-columns=3 n-rows=2 -->
+                      <object class="GtkGrid" id="table22">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="vexpand">True</property>
+                        <property name="border-width">12</property>
+                        <property name="row-spacing">6</property>
+                        <property name="column-spacing">12</property>
+                        <child>
+                          <object class="GtkLabel" id="label171">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="tooltip-text" translatable="yes">The name of an attribute you want to use. For example: Height (for a person), Weather on this Day (for an event), ... 
+Use this to store snippets of information you collect and want to correctly link to sources. Attributes can be used for people, families, events and media.
+ 
+Note: several predefined attributes refer to values present in the GEDCOM standard.</property>
+                            <property name="label" translatable="yes">_Attribute:</property>
+                            <property name="use-underline">True</property>
+                            <property name="justify">center</property>
+                            <property name="mnemonic-widget">attr_menu</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label172">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
+                            <property name="label" translatable="yes">_Value:</property>
+                            <property name="use-underline">True</property>
+                            <property name="justify">center</property>
+                            <property name="mnemonic-widget">attr_value</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <!-- Value field: a word-wrapping, scrollable
+                               text view (GtkScrolledWindow shows a
+                               vertical scrollbar only once the wrapped
+                               content needs it). It is the only
+                               vexpand="True" widget in this grid, so
+                               it is the row that grows when the top
+                               pane is resized; the Attribute row stays
+                               a fixed single line tall. -->
+                          <object class="GtkScrolledWindow" id="attr_value_scrolledwindow">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="shadow-type">in</property>
+                            <property name="hscrollbar-policy">never</property>
+                            <property name="vscrollbar-policy">automatic</property>
+                            <child>
+                              <!-- Glade leaves this widget with its
+                                   default plain GtkTextBuffer (a real,
+                                   builder-resolvable GType).
+                                   EditAttributeRoot._setup_fields()
+                                   swaps in a real UndoableBuffer
+                                   instance at runtime via set_buffer(),
+                                   since UndoableBuffer itself has no
+                                   __gtype_name__ and so cannot be
+                                   referenced by class name from Glade
+                                   XML. -->
+                              <object class="GtkTextView" id="attr_value">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">The value of the attribute. Eg. 1.8, Sunny, or Blue eyes.</property>
+                                <property name="wrap-mode">word-char</property>
+                                <property name="accepts-tab">False</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleButton" id="private">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="relief">none</property>
+                            <property name="valign">start</property>
+                            <child>
+                              <object class="GtkImage" id="image2684">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="icon-name">dialog-password</property>
+                                <property name="icon_size">1</property>
+                                <child internal-child="accessible">
+                                  <object class="AtkObject" id="image2684-atkobject">
+                                    <property name="AtkObject::accessible-description" translatable="yes">Privacy</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="private-atkobject">
+                                <property name="AtkObject::accessible-name" translatable="yes">Private</property>
+                              </object>
+                            </child>
+                            <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <!-- attr_menu's popup list is sorted
+                               alphabetically (built-in and custom
+                               types together) and switches to a
+                               3-column grid once it holds more than 12
+                               entries; both behaviors are implemented
+                               in StandardCustomSelector, which backs
+                               MonitoredDataType.
+
+                               Note: this combo deliberately carries no
+                               tooltip-text of its own. Wrap-width forces
+                               GTK to use a genuine GtkMenu-style popup
+                               (gtk_menu_popup_at_widget), and a combo
+                               box with both a visible tooltip and that
+                               popup style is a documented GTK3 trigger
+                               for a spurious
+                               "Tried to map a popup with a non-top
+                               most parent" GDK warning (and, on some
+                               GTK versions/window managers, a popup
+                               that fails to show) - see GNOME GTK
+                               issue #1785, fixed upstream by commit
+                               ce7e99ca ("tooltips: hide tooltips
+                               before showing popups"). The equivalent
+                               help text lives on label171 instead. -->
+                          <object class="GtkComboBox" id="attr_menu">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="has-entry">True</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry" id="attr_menu-entry">
+                                <property name="can-focus">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="overwrite-mode">True</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="resize">True</property>
+                    <property name="shrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <!-- Bottom pane (Citations / Notes notebook) is
+                       added at runtime by
+                       EditAttributeRoot._create_tabbed_pages() via
+                       main_paned.pack2(). -->
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-6">cancel</action-widget>
+      <action-widget response="-5">ok</action-widget>
+      <action-widget response="-11">help</action-widget>
+    </action-widgets>
+  </object>
+</interface>
