@@ -1,0 +1,45 @@
+# Translation template for the 0.2.1 Markdown Utils general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Markdown Utils package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Markdown Utils 0.2.1\n"
+"Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
+"POT-Creation-Date: 2026-10-21 11:06-0500\n"
+"PO-Revision-Date: 2026-10-21 11:06-0500\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: MarkdownUtils.gpr.py:66
+msgid "Markdown Utils"
+msgstr ""
+
+#: MarkdownUtils.gpr.py:68
+msgid ""
+"Shared Markdown rendering and icon-resolution library used by Markdown Dash, "
+"Plugin Manager plus, and other addons. Not a tool or gramplet itself -- "
+"installed so those addons can import it."
+msgstr ""
+
+#: help_doc_button.py:154
+msgid "No documentation available"
+msgstr ""
+
+#: help_doc_button.py:155
+msgid "This plugin has neither a README.md nor a registered help_url."
+msgstr ""
+
+#: help_doc_button.py:224
+msgid "Help"
+msgstr ""
+
+#: help_doc_button.py:226
+msgid "Show documentation for this plugin"
+msgstr ""

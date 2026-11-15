@@ -4,7 +4,7 @@
     "i": "AddonMarketplace",
     "t": 6,
     "d": "Replaces the Addon Manager with the Addon Marketplace: clickable filter lozenges, Update and Downgrade buttons, and a project dialog that tests web and local addon repositories. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.1.2",
+    "v": "0.1.3",
     "g": "5.2",
     "s": 1,
     "z": "AddonMarketplace.addon.tgz",
@@ -23,6 +23,17 @@
     "a": 0
   },
   {
+    "n": "Clipboard Ref Menu",
+    "i": "ClipboardRefMenu",
+    "t": 6,
+    "d": "Adds Clip items to the clipboard right-click menu: the object a reference row points to, and all the places enclosing a place.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "ClipboardRefMenu.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
+  },
+  {
     "n": "Edit Attributes Plus",
     "i": "EditAttributesPlus",
     "t": 6,
@@ -32,6 +43,18 @@
     "s": 1,
     "z": "AttributesEditor_plus.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/EditAttributesPlus/README.md"
+  },
+  {
+    "n": "Environment Inspector",
+    "i": "EnvironmentInspector",
+    "t": 10,
+    "d": "Developer reference gramplet showing the current locale, the related locale settings and where each is set, a searchable, sortable table of all Gramps string constants, and a preview of other Gramps translations.",
+    "v": "2.1.1",
+    "g": "5.2",
+    "s": 3,
+    "z": "EnvironmentInspector.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
+    "a": 0
   },
   {
     "n": "Fuzzy Match API",
@@ -66,6 +89,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
   },
   {
+    "n": "Markdown Utils",
+    "i": "MarkdownUtils",
+    "t": 6,
+    "d": "Shared Markdown rendering and icon-resolution library used by Markdown Dash, Plugin Manager plus, and other addons. Not a tool or gramplet itself -- installed so those addons can import it.",
+    "v": "0.2.3",
+    "g": "5.2",
+    "s": 3,
+    "z": "MarkdownBased.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/MarkdownBased"
+  },
+  {
     "n": "PR2388 練習用家系図の案内",
     "i": "PR2388_ExampleTreePrompt",
     "t": 6,
@@ -86,6 +120,17 @@
     "s": 1,
     "z": "PR2485.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PR2485/CHANGELOG.md"
+  },
+  {
+    "n": "Undocked Gramplets",
+    "i": "UndockedGramplets",
+    "t": 6,
+    "d": "Replaces the Close button of gramplets undocked from a sidebar or bottombar with a Dock button, and uses the smart Help button of Markdown Utils when that addon is active.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "Undocked.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Undocked/README.md"
   },
   {
     "n": "データ入力Gramplet",

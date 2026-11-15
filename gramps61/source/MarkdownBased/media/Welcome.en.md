@@ -1,17 +1,15 @@
-# Welcome Media 
+# Welcome to Gramps 
 <!-- edit=True status=False browse=True -->
 
 ![ ](GrampsPackage.png) 
 # ![](gramps:icon:gramps-pedigree:48) Introduction  
-
 **Gramps** is a powerful, free, and open-source software application for genealogical research. Created by and for family historians in 2001, it combines professional-grade tools with a flexible design that lets you record, analyze, and explore your family tree your own way. Unlike many genealogy programs, Gramps does not lock you into a single “best practice” or trap your data in a proprietary format. Your research remains fully portable and accessible, ensuring that your family history can be preserved and shared across generations.
 
 Because **Gramps** is *Free and Open Source Software*, you’re encouraged to adapt it to suit your own needs. If you make improvements, we invite you to share them so the entire community can benefit. You’re also free to copy and distribute Gramps without restrictions, and with licensing that never expires, you can trust your research will remain your own — today and in the future.
 
-![](gramps:icon:dialog-information:64) Learn more about **Gramps** by visiting the [Gramps-Project.org website.](https://gramps-project.org/). Explore the [Reference resources available for Gramps](https://gramps.discourse.group/t/about-the-user-manual-category/2585).
+![](gramps:icon:dialog-information:48) Learn more about **Gramps** by visiting the [Gramps-Project.org website.](https://gramps-project.org/). Explore the [Reference resources available for Gramps](https://gramps.discourse.group/t/about-the-user-manual-category/2585).
 
 ### Who makes Gramps?
-
 Gramps is created by genealogists for genealogists, organized in the Gramps Project by the ***Gramps Genealogy Foundation***, a non-profit organization.
 
 It is developed and maintained by a worldwide team of volunteers whose goal is to make Gramps powerful, yet easy to use. (You have a standing invitation to join as one of those volunteers!)
@@ -23,7 +21,6 @@ There is an active community of user volunteers available on the mailing lists a
 * [Share knowledge on the Gramps Discourse Forum](https://discourse.gramps-project.org)
 
 ### Getting Started
-
 The first time Gramps is started, most of the Views will be blank. There will be very few menu or toolbar options. Gramps needs a Tree with People before more menu and toolbar options appear.
 
 This is because options are offered on a contextual basis. (If an option does not apply to what is displayed or selected, that option is not actively displayed.) The basic context of a Family Tree is needed for any activity to happen. Family Trees are your "blank document" or "new project" workspaces.
@@ -43,7 +40,7 @@ This establishes a starting point for your tree. With the context of this first 
 You can now expand families by adding parents, a spouse and children. Under the tabs of the lower section of the Edit windows, the ![](gramps:icon:list-add:48)"plus" icon  under the Events tab allows adding landmark life occasions (with dates and places) to People and Families. Under the other tabs, you can add Sources, Citations, Notes and other types of information to provide documentation for your entries.
 
 As you start using Gramps, you will find that information can be entered from all the various Views. There are multiple ways of doing most activities in Gramps. The flexibility allows you to choose which fits your work style.
-* [Entering and editing data (a brief overview)](https://gramps-project.org/wiki/index.php?title=Gramps_5.1_Wiki_Manual_-_Entering_and_editing_data:_brief)
+* [Entering and editing data (a brief overview)](https://gramps-project.org/wiki/index.php?title=Gramps_6.0_Wiki_Manual_-_Entering_and_editing_data:_brief)
 
 ### Importing a Family Tree
 To import a Family Tree from another program, first export a GEDCOM (or other data exchange format) file from your previous program.
@@ -77,7 +74,7 @@ While the Dashboard view is about using Gramps more efficiently, the other view 
 
 ### Addons and "Gramplets"
 ![Gramps Addon Plugins Guide](GrampsAddons.png) 
-There hundreds of Addons (plugins) that are available to assist you in data entry and visualizing your family tree. These addons provide reports, filter rules, View modes, "Gramplets", and more.
+There are hundreds of Addons (plugins) that are available to assist you in data entry and visualizing your family tree. These addons provide reports, filter rules, View modes, "Gramplets", and more.
 
 Many tools are already distributed with the basic installation of Gramps. Many more are freely available to download and install.
 * [List of Addons and "Gramplets"](https://gramps-project.org/wiki/index.php?title=6.0_Addons)

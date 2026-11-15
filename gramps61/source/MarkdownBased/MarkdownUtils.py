@@ -131,6 +131,7 @@ Wishlist:
 import os
 import re
 from typing import Callable
+from urllib.parse import quote
 
 # ------------------------
 # Gramps modules
@@ -141,7 +142,7 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 gi.require_version("GdkPixbuf", "2.0")
 gi.require_version("Pango", "1.0")
-from gi.repository import Gdk, GdkPixbuf, GLib, Gtk, Pango
+from gi.repository import Gdk, GdkPixbuf, Gio, GLib, Gtk, Pango
 
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gen.const import IMAGE_DIR, THUMB_DIR
@@ -152,6 +153,15 @@ from gramps.gen.const import IMAGE_DIR, THUMB_DIR
 import logging
 
 LOG = logging.getLogger(__name__)
+
+# Translator for the few user-visible strings of this library (the Help
+# button). An addon translator falls back to the Gramps catalog, which
+# already translates "Help".
+try:
+    _trans = glocale.get_addon_translator(__file__)
+except ValueError:
+    _trans = glocale.translation
+_ = _trans.sgettext
 
 
 # ---------------------------------------------------------------------------
@@ -1399,6 +1409,10 @@ THUMB_MARKDOWN = os.path.join(THUMB_DIR, "markdown")
 #: ``max_width`` of :func:`insert_image_into_buffer`.
 _THUMB_WIDTH_STEPS = (128, 260, 400, 560)
 
+# Vector (object drawing) formats: drawn at the wanted size rather than
+# decoded at their default size and scaled, which would blur them.
+_VECTOR_EXTENSIONS = (".svg", ".svgz")
+
 
 def _scale_to_width(pixbuf: GdkPixbuf.Pixbuf, width: int) -> GdkPixbuf.Pixbuf:
     """
@@ -1509,7 +1523,8 @@ def _load_scaled_image(
     saved in :data:`THUMB_MARKDOWN`. Later calls load that small cached
     PNG and shrink it to the exact width in memory. The cached copy is
     rebuilt when the source file is newer, the same rule Gramps uses for
-    its own thumbnails. Images are never enlarged.
+    its own thumbnails. Raster images are never enlarged; a vector (SVG)
+    image is drawn at the step size, so a small one can come out larger.
 
     Files GdkPixbuf cannot read are passed to Gramps' thumbnail framework
     (180 px, see :func:`_load_with_gramps_thumbnailer`); those results are
@@ -1545,7 +1560,14 @@ def _load_scaled_image(
 
     if pixbuf is None:
         try:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(img_path)
+            if img_path.lower().endswith(_VECTOR_EXTENSIONS):
+                # Draw a vector image straight at the wanted size, so it
+                # stays sharp, instead of scaling its default-size pixels.
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    img_path, step, max_height or -1, True
+                )
+            else:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(img_path)
         except GLib.Error:
             pixbuf = _load_with_gramps_thumbnailer(img_path)
             if pixbuf is None:
@@ -3105,3 +3127,219 @@ VIEW_NAMES: dict[str, str] = {
     "ancestry": "Charts",
     "dashboard": "Dashboard",
 }
+
+
+# ---------------------------------------------------------------------------
+#
+# Help button -- color "Help" button that opens an addon's README.md in
+# Markdown Dash, or else its registered help_url. Recipe: HelpDocButton.md.
+#
+# An addon imports add_help_button() inside try/except and falls back to
+# a plain text Help button when MarkdownUtils is missing, so it never
+# depends on this library to load.
+#
+# ---------------------------------------------------------------------------
+MARKDOWNDASH_ID = "markdowndash"
+HELP_ICON_NAME = "help-browser"
+#: Full-color help icon bundled with this library, for icon themes that
+#: have only the symbolic variant (current Adwaita, for one).
+HELP_ICON_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "media", "Gnome-help-browser.svg"
+)
+
+
+def resolve_help_icon(size: int = 16) -> Gtk.Image:
+    """
+    Return a Gtk.Image of the full-color help-browser icon.
+
+    The icon theme comes first, so the button follows the theme; then the
+    bundled :data:`HELP_ICON_FILE`. Never the symbolic (monochrome)
+    variant, which is why :func:`resolve_icon_pixbuf` is not used here:
+    its ``'color'`` style falls back to symbolic.
+
+    :param size: icon size in pixels (square).
+    :returns: the image; empty (with a logged warning) only if neither the
+        theme nor the bundled file gives an icon.
+    """
+    image = Gtk.Image()
+    info = Gtk.IconTheme.get_default().lookup_icon(
+        HELP_ICON_NAME,
+        size,
+        Gtk.IconLookupFlags.FORCE_REGULAR  # color, not the symbolic variant
+        | Gtk.IconLookupFlags.USE_BUILTIN
+        | Gtk.IconLookupFlags.FORCE_SIZE,  # exactly `size`, not nearest
+    )
+    if info is not None:
+        try:
+            image.set_from_pixbuf(info.load_icon())
+            return image
+        except GLib.Error:
+            pass  # a broken theme file: use the bundled icon instead
+    try:
+        image.set_from_pixbuf(
+            GdkPixbuf.Pixbuf.new_from_file_at_size(HELP_ICON_FILE, size, size)
+        )
+    except GLib.Error:
+        LOG.warning(
+            "resolve_help_icon: no color '%s' icon at size %d in the theme, "
+            "and %s could not be loaded",
+            HELP_ICON_NAME,
+            size,
+            HELP_ICON_FILE,
+        )
+    return image
+
+
+def find_local_readme(pdata) -> str | None:
+    """
+    Return the canonical README.md path of a plugin, or None if it has no
+    README of any kind (see :func:`resolve_localized_path`: ``README.md``,
+    a source-language ``README_<lang>.md``, or a ``locale/<lang>/README.md``
+    translation). The returned path need not exist on disk; Markdown Dash
+    resolves it to the best variant for the language of the user.
+
+    :param pdata: the PluginData of the plugin; None is tolerated.
+    """
+    if pdata is None or not getattr(pdata, "fpath", None):
+        return None
+    readme_path = os.path.join(pdata.fpath, "README.md")
+    return readme_path if resolve_localized_path(readme_path).exists() else None
+
+
+def resolve_markdown_dash_opener() -> Callable[..., Gtk.Dialog] | None:
+    """
+    Return the open_markdown_file() function of Markdown Dash, or None.
+
+    None means Markdown Dash is deactivated, not registered, fails to
+    load, or lacks that function; callers treat all four the same way
+    (fall back to help_url). Each case logs a warning naming itself, so a
+    Help button that unexpectedly opens the browser can be diagnosed from
+    the terminal; they only appear when Help is clicked.
+    """
+    # pylint: disable-next=import-outside-toplevel
+    from gramps.gen.plug import PluginRegister
+
+    # pylint: disable-next=import-outside-toplevel
+    from gramps.gui.pluginmanager import GuiPluginManager
+
+    gpm = GuiPluginManager.get_instance()
+    if MARKDOWNDASH_ID in gpm.get_hidden_plugin_ids():
+        LOG.warning("help button: Markdown Dash is deactivated")
+        return None
+    pdata = PluginRegister.get_instance().get_plugin(MARKDOWNDASH_ID)
+    if pdata is None or not pdata.fpath:
+        LOG.warning("help button: no plugin registered as '%s'", MARKDOWNDASH_ID)
+        return None
+    mod = gpm.load_plugin(pdata)
+    if not mod:
+        LOG.warning(
+            "help button: Markdown Dash at %s failed to load (see the "
+            "'Plugin error' above)",
+            pdata.fpath,
+        )
+        return None
+    opener = getattr(mod, "open_markdown_file", None)
+    if opener is None:
+        LOG.warning(
+            "help button: Markdown Dash at %s has no open_markdown_file()",
+            pdata.fpath,
+        )
+    return opener
+
+
+def open_help_url(pdata, parent: Gtk.Window | None) -> None:
+    """
+    Open the registered help_url of a plugin in the default browser. A
+    bare wiki page title is resolved against gramps-project.org; a full
+    http(s) URL is used as-is.
+
+    :param pdata: the PluginData of the plugin.
+    :param parent: transient parent for the "no documentation" notice.
+    """
+    help_url = getattr(pdata, "help_url", None)
+    if not help_url:
+        # pylint: disable-next=import-outside-toplevel
+        from gramps.gui.dialog import OkDialog
+
+        OkDialog(
+            _("No documentation available"),
+            _("This plugin has neither a README.md nor a registered help_url."),
+            parent=parent,
+        )
+        return
+    full_url = (
+        help_url
+        if help_url.startswith(("http://", "https://"))
+        else "https://gramps-project.org/wiki/index.php?title="
+        + quote(help_url, safe=":")
+    )
+    try:
+        Gio.AppInfo.launch_default_for_uri(full_url, None)
+    except GLib.Error:
+        LOG.exception("help button: could not open help_url: %s", full_url)
+
+
+def cb_show_help(_button: Gtk.Button, uistate, pdata) -> None:
+    """
+    Show the best documentation available: the README.md of the plugin in
+    a Markdown Dash window if possible, else its help_url in a browser.
+
+    :param uistate: the Gramps UiState (its main window parents the reader).
+    :param pdata: the PluginData of the calling plugin.
+    """
+    open_markdown_file = resolve_markdown_dash_opener()
+    if open_markdown_file is not None:
+        readme_path = find_local_readme(pdata)
+        if readme_path is not None:
+            open_markdown_file(
+                readme_path,
+                uistate,
+                parent=uistate.window,
+                addon_name=pdata.name,
+            )
+            return
+    open_help_url(pdata, uistate.window)
+
+
+def add_help_button(
+    container: Gtk.Box,
+    uistate,
+    plugin,
+    *,
+    size: int = 16,
+) -> Gtk.Button:
+    """
+    Pack a color "Help" button (icon plus visible label) into container.
+
+    :param container: the Gtk.Box to pack into -- a button row of a
+        gramplet, or the action area of a dialog.
+    :param uistate: the Gramps UiState.
+    :param plugin: the registered id of the calling plugin (the id= in its
+        .gpr.py), or its PluginData.
+    :param size: icon size in pixels; the default suits a row of ordinary
+        text buttons.
+    :returns: the created, already-packed button.
+    """
+    if isinstance(plugin, str):
+        # pylint: disable-next=import-outside-toplevel
+        from gramps.gen.plug import PluginRegister
+
+        plugin_id = plugin
+        plugin = PluginRegister.get_instance().get_plugin(plugin_id)
+        if plugin is None:
+            LOG.warning("add_help_button: no registered plugin '%s'", plugin_id)
+    button = Gtk.Button()
+    button.set_image(resolve_help_icon(size))
+    button.set_always_show_image(True)  # else some themes hide the icon
+    button.set_label(_("Help"))
+    # Tooltip on the button: a Gtk.Image inside a button never shows its
+    # own. One pattern string for every addon, with its name filled in.
+    name = getattr(plugin, "name", None)
+    if name:
+        button.set_tooltip_text(_("Show the documentation of %s") % name)
+    else:
+        button.set_tooltip_text(_("Show the documentation of this plugin"))
+    button.connect("clicked", cb_show_help, uistate, plugin)
+    container.pack_start(button, False, False, 0)
+    button.show_all()
+    return button

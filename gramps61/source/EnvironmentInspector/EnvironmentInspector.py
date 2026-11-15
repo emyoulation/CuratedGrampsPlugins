@@ -51,6 +51,7 @@ windows and visible gramplets, looked up in that language's catalog.
 See envinsp_preview.py and envinsp_catalog.py.
 """
 
+import json
 import logging
 import os
 import re
@@ -84,6 +85,15 @@ CONFIG.register("meta.plugin_id", "")
 CONFIG.register("meta.schema_version", "")
 CONFIG.register("language.restart-override", "")
 CONFIG.register("language.restart-override-pid", 0)
+# Full locale (LANG) chosen with the override, or "" for the interface
+# language only.
+CONFIG.register("language.restart-locale", "")
+# JSON: LANG, LANGUAGE, LC_ALL and LC_MESSAGES of the normal start, saved
+# when an override is chosen, so the override session can return to them.
+CONFIG.register("language.baseline-env", "")
+# JSON: the macOS per-application language settings of Gramps before
+# Environment Inspector changed them, or "" when it did not change them.
+CONFIG.register("language.mac-defaults-saved", "")
 # Status values hidden on the Windows sub-tab of the Translation Preview.
 # Hidden ones are stored (not shown ones) so a new status starts visible.
 CONFIG.register("preview.hidden-statuses", [])
@@ -96,15 +106,36 @@ def _consume_restart_override() -> None:
     """
     A language chosen for a restart is a one-off: once a new Gramps process
     loads this module, the choice was used (or abandoned), so clear it and
-    remove the one-shot desktop menu entry.
+    remove the one-shot desktop menu entry or macOS setting.
     """
+    global _SESSION_BASELINE
     code = CONFIG.get("language.restart-override")
     if code and CONFIG.get("language.restart-override-pid") != os.getpid():
+        try:
+            _SESSION_BASELINE = json.loads(CONFIG.get("language.baseline-env") or "null")
+        except ValueError:
+            _SESSION_BASELINE = None
         CONFIG.set("language.restart-override", "")
         CONFIG.set("language.restart-override-pid", 0)
+        CONFIG.set("language.restart-locale", "")
         if envinsp_restart.is_linux():
             envinsp_restart.apply_desktop_override("")
+        saved = CONFIG.get("language.mac-defaults-saved")
+        if saved:
+            envinsp_restart.apply_mac_defaults("", "", saved)
+            CONFIG.set("language.mac-defaults-saved", "")
         CONFIG.save()
+
+
+# Locale variables of the normal start, when this session was started by
+# a language override (else they are read from the environment).
+_SESSION_BASELINE: dict | None = None
+
+
+def _baseline() -> dict:
+    if isinstance(_SESSION_BASELINE, dict):
+        return _SESSION_BASELINE
+    return envinsp_restart.baseline_locale_env()
 
 
 _consume_restart_override()
@@ -250,6 +281,8 @@ _RESTART_LOG = os.path.join(_gramps_const.USER_CACHE, "environment-inspector-res
 (_LC_ICON, _LC_CURRENT, _LC_REGION, _LC_CODE, _LC_NAME, _LC_ENDONYM,
  _LC_STRINGS, _LC_STRINGS_N, _LC_RANK) = range(9)
 _LANG_TYPES = (str, str, str, str, str, str, str, int, int)
+# Combo id in the restart dialog: keep the regional settings (no LANG).
+_INTERFACE_ONLY = "-"
 
 
 def _restart_icon_name() -> str:
@@ -573,20 +606,42 @@ class EnvironmentInspector(Gramplet):
             new = ""
         else:
             new = code
-        CONFIG.set("language.restart-override", new)
-        CONFIG.set("language.restart-override-pid", os.getpid() if new else 0)
-        CONFIG.save()
-        note = ""
-        if envinsp_restart.is_linux():
-            ok, message = envinsp_restart.apply_desktop_override(new)
-            LOG.info("EnvironmentInspector: desktop entry: %s", message)
-            if not ok:
-                note = message
-        self._refresh_language_marks()
         # A restart is needed to use a new language, or to leave the
         # override language this session was started in.
         if (new and new != session) or (not new and old == session):
-            self._ask_restart(new, note)
+            self._ask_restart(new)
+        else:
+            self._set_override("", "")
+
+    def _set_override(self, code: str, locale_name: str) -> str:
+        """
+        Save the language for the next start and prepare the next desktop
+        start (Linux desktop entry, macOS per-application language).
+        :returns: a note for the user when that could not be done, or "".
+        """
+        if code and not CONFIG.get("language.restart-override"):
+            # The first override from a normal start: remember how it began.
+            CONFIG.set("language.baseline-env", json.dumps(_baseline()))
+        CONFIG.set("language.restart-override", code)
+        CONFIG.set("language.restart-override-pid", os.getpid() if code else 0)
+        CONFIG.set("language.restart-locale", locale_name if code else "")
+        note = ""
+        if envinsp_restart.is_linux():
+            ok, message = envinsp_restart.apply_desktop_override(code, locale_name)
+            LOG.info("EnvironmentInspector: desktop entry: %s", message)
+            if not ok and code:
+                note = message
+        elif envinsp_restart.mac_bundle():
+            ok, message, saved = envinsp_restart.apply_mac_defaults(
+                code, locale_name, CONFIG.get("language.mac-defaults-saved")
+            )
+            CONFIG.set("language.mac-defaults-saved", saved)
+            LOG.info("EnvironmentInspector: macOS defaults: %s", message)
+            if not ok and code:
+                note = message
+        CONFIG.save()
+        self._refresh_language_marks()
+        return note
 
     def _language_label(self, code: str) -> str:
         for row in self._lang_rows:
@@ -594,7 +649,62 @@ class EnvironmentInspector(Gramplet):
                 return f"{row['name']} ({row['endonym']})" if row["endonym"] != row["name"] else row["name"]
         return code
 
-    def _ask_restart(self, code: str, note: str) -> None:
+    def _region_hint(self, code: str) -> str:
+        """The region Gramps pairs with a language (Language tab Region column)."""
+        for row in self._lang_rows:
+            if row["code"] == code:
+                return row.get("region", "")
+        return ""
+
+    def _locale_label(self, locale_name: str) -> str:
+        """nl_BE.UTF-8 -> "🇧🇪 nl_BE.UTF-8 (Belgium)", the country in the session language."""
+        base = locale_name.split(".")[0].split("@")[0]
+        parts = base.split("_")
+        if envinsp_restart.is_windows():
+            entry = envinsp_catalog._locale_names().get(base) or envinsp_catalog._locale_names().get(parts[0])
+            win = entry[0] if entry and entry[0] else base
+            return _("%(locale)s (Windows locale %(windows)s)") % {"locale": base, "windows": win}
+        region = parts[1] if len(parts) > 1 else ""
+        country = ""
+        try:
+            from icu import Locale
+
+            country = str(Locale(base).getDisplayCountry(Locale((glocale.lang or "en").split(".")[0])))
+        except Exception:
+            country = ""
+        flag = envinsp_catalog.flag_emoji(region)
+        text = f"{flag} {locale_name}".strip()
+        return f"{text} ({country})" if country else text
+
+    def _region_chooser(self, code: str) -> tuple[Gtk.Widget, Gtk.ComboBoxText, str]:
+        """
+        A combo box for the full locale (LANG) to use with the language.
+        :returns: (widget, combo, note); the combo ids are locale names, and
+            "" means the interface language only.
+        """
+        candidates = envinsp_restart.region_locales(code)
+        baseline_lang = _baseline().get("LANG", "")
+        chosen = envinsp_restart.default_locale(code, candidates, self._region_hint(code), baseline_lang)
+        combo = Gtk.ComboBoxText()
+        for name in candidates:
+            combo.append(name, self._locale_label(name))
+        combo.append(_INTERFACE_ONLY, _("Interface language only (keep the current regional settings)"))
+        combo.set_active_id(chosen or _INTERFACE_ONLY)
+        note = ""
+        if not candidates:
+            note = _("No %(language)s locale is installed on this system, so dates, sorting "
+                     "and spell checking keep the current regional settings. Install the "
+                     "system language support for %(language)s to use them.") % {
+                "language": self._language_label(code)}
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        label = Gtk.Label(label=_("Regional settings (dates, numbers, sorting, spell checking):"))
+        label.set_xalign(0.0)
+        box.pack_start(label, False, False, 0)
+        box.pack_start(combo, False, False, 0)
+        box.show_all()
+        return box, combo, note
+
+    def _ask_restart(self, code: str) -> None:
         target = self._language_label(code) if code else _("the system language")
         dialog = Gtk.MessageDialog(
             transient_for=self.gui.textview.get_toplevel(),
@@ -603,39 +713,83 @@ class EnvironmentInspector(Gramplet):
             buttons=Gtk.ButtonsType.NONE,
             text=_("Restart Gramps in %s?") % target,
         )
-        details = [
-            _("Gramps closes normally, including the backup on exit, and then starts again. "
-              "Its terminal messages are written to %s.") % _RESTART_LOG
-        ]
-        if envinsp_restart.is_linux() and not note and code:
-            details.append(_("This is for one start only. If you choose Later, the next start "
-                             "from the desktop menu uses this language once; starting Gramps "
-                             "from a terminal does not."))
-        if note:
-            details.append(_("Desktop menu entry not changed: %s") % note)
-        if not envinsp_restart.can_restart():
+        can_restart = envinsp_restart.can_restart()
+        next_start = envinsp_restart.supports_next_start()
+        combo = None
+        details = []
+        if can_restart:
+            text = _("Gramps closes normally, including the backup on exit, and then starts again.")
+            if envinsp_restart.restart_writes_log():
+                text += " " + _("Its terminal messages are written to %s.") % _RESTART_LOG
+            details.append(text)
+        if code:
+            chooser, combo, region_note = self._region_chooser(code)
+            dialog.get_message_area().pack_start(chooser, False, False, 6)
+            details.append(_("The language sets the interface text. The regional settings "
+                             "set dates, numbers, sorting, the spelling dictionary and the "
+                             "locale of GTK itself."))
+            if region_note:
+                details.append(region_note)
+        if code and next_start:
+            if envinsp_restart.is_linux():
+                details.append(_("This is for one start only. If you choose Later, the next start "
+                                 "from the desktop menu uses this language once; starting Gramps "
+                                 "from a terminal does not."))
+            else:
+                details.append(_("This is for one start only. If you choose Later, the next start "
+                                 "from the Finder or the Dock uses this language once."))
+        elif code:
+            details.append(_("This is for one start only. Gramps started again in the usual "
+                             "way uses the system language."))
+        if not can_restart:
             details.append(_("Restarting automatically is not available on this system; restart Gramps yourself."))
         else:
             details.append(_("Open editors with unsaved changes ask whether to save them "
                              "first. The family tree that is open now is opened again."))
-        if code:
-            details.append(_("Spell checking keeps using the dictionary of the system "
-                             "language; see the Locale Settings tab."))
         dialog.format_secondary_text("\n\n".join(details))
-        dialog.add_button(_("Later"), Gtk.ResponseType.CANCEL)
-        if envinsp_restart.can_restart():
+        if next_start or not can_restart:
+            dialog.add_button(_("Later"), Gtk.ResponseType.CANCEL)
+        else:
+            dialog.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
+        if can_restart:
             dialog.add_button(_("Restart now"), Gtk.ResponseType.OK)
+            dialog.set_default_response(Gtk.ResponseType.OK)
         response = dialog.run()
+        locale_name = combo.get_active_id() if combo is not None else ""
+        if locale_name in (None, _INTERFACE_ONLY):
+            locale_name = ""
         dialog.destroy()
+        if response != Gtk.ResponseType.OK and can_restart and not next_start:
+            return  # Cancel: no way to keep the choice for a later start
+        note = self._set_override(code, locale_name)
+        if note:
+            self._show_info(_("Desktop start not changed"), note)
         if response != Gtk.ResponseType.OK:
             return
         # Gramps quits without asking about open editors: settle them first.
         if not self._resolve_unsaved_editors():
             self._restart_cancelled()
             return
-        if envinsp_restart.spawn_restart(code, _RESTART_LOG, self._open_tree_args()):
-            LOG.warning("EnvironmentInspector: restarting Gramps; its output goes to %s", _RESTART_LOG)
+        log = _RESTART_LOG if envinsp_restart.restart_writes_log() else None
+        if envinsp_restart.spawn_restart(code, locale_name, _baseline(), log, self._open_tree_args()):
+            LOG.warning("EnvironmentInspector: restarting Gramps in %s (%s)", code or "the system language",
+                        locale_name or "regional settings unchanged")
             self.uistate.viewmanager.quit()
+        else:
+            self._show_info(_("Restart failed"),
+                            _("Gramps could not start a new Gramps. Restart Gramps yourself."))
+
+    def _show_info(self, title: str, text: str) -> None:
+        dialog = Gtk.MessageDialog(
+            transient_for=self.gui.textview.get_toplevel(),
+            modal=True,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text=title,
+        )
+        dialog.format_secondary_text(text)
+        dialog.run()
+        dialog.destroy()
 
     def _dirty_editors(self) -> list:
         """Open primary-object editors (Edit Person, ...) with unsaved changes."""

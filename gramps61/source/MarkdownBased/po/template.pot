@@ -1,63 +1,50 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the MarkdownDash package.
+# Translation template for the 0.2.3 Markdown Utils general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Markdown Utils package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: MarkdownDash\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-23 13:37-0600\n"
+"Project-Id-Version: Markdown Utils 0.2.3\n"
+"Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
+"POT-Creation-Date: 2026-11-15 09:06-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:758
-msgid "Open Markdown file\\u2026"
+#: MarkdownUtils.gpr.py:66
+msgid "Markdown Utils"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:810
-msgid "Could not open: {}"
+#: MarkdownUtils.gpr.py:68
+msgid ""
+"Shared Markdown rendering and icon-resolution library used by Markdown Dash, "
+"Plugin Manager plus, and other addons. Not a tool or gramplet itself -- "
+"installed so those addons can import it."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:842
-msgid "Open Markdown File"
+#: MarkdownUtils.py:3265
+msgid "No documentation available"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:854
-msgid "Markdown files (*.md, *.markdown)"
+#: MarkdownUtils.py:3266
+msgid "This plugin has neither a README.md nor a registered help_url."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:860
-msgid "All files"
+#: MarkdownUtils.py:3334 help_doc_button.py:46
+msgid "Help"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:1061
-msgid "File not found: '{}'"
+#: MarkdownUtils.py:3339
+#, python-format
+msgid "Show the documentation of %s"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:1063
-msgid "File Not Found"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:1064
-msgid "'{}' does not exist or is not a regular file."
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:1076
-msgid "Error: {}"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.py:1077
-msgid "Error Loading File"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.gpr.py:31
-#: /home/districtsupport/.gramps/gramps52/plugins/MarkdownDash/MarkdownDash.gpr.py:39
-msgid "Markdown Dash"
+#: MarkdownUtils.py:3341
+msgid "Show the documentation of this plugin"
 msgstr ""

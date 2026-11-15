@@ -4,7 +4,7 @@
     "i": "AddonMarketplace",
     "t": 6,
     "d": "Replaces the Addon Manager with the Addon Marketplace: clickable filter lozenges, Update and Downgrade buttons, and a project dialog that tests web and local addon repositories. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.1.2",
+    "v": "0.1.3",
     "g": "5.2",
     "s": 1,
     "z": "AddonMarketplace.addon.tgz",
@@ -66,6 +66,17 @@
     "s": 1,
     "z": "DateModifiersRule.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DateModifiersRule"
+  },
+  {
+    "n": "Clipboard Ref Menu",
+    "i": "ClipboardRefMenu",
+    "t": 6,
+    "d": "Adds Clip items to the clipboard right-click menu: the object a reference row points to, and all the places enclosing a place.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "ClipboardRefMenu.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
   },
   {
     "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
@@ -130,7 +141,7 @@
     "i": "EnvironmentInspector",
     "t": 10,
     "d": "Developer reference gramplet showing the current locale, the related locale settings and where each is set, a searchable, sortable table of all Gramps string constants, and a preview of other Gramps translations.",
-    "v": "2.1.0",
+    "v": "2.1.1",
     "g": "5.2",
     "s": 3,
     "z": "EnvironmentInspector.addon.tgz",
@@ -264,7 +275,7 @@
     "i": "MarkdownUtils",
     "t": 6,
     "d": "Shared Markdown rendering and icon-resolution library used by Markdown Dash, Plugin Manager plus, and other addons. Not a tool or gramplet itself -- installed so those addons can import it.",
-    "v": "0.2.2",
+    "v": "0.2.3",
     "g": "5.2",
     "s": 3,
     "z": "MarkdownBased.addon.tgz",
@@ -427,6 +438,17 @@
     "s": 2,
     "z": "Themes2.addon.tgz",
     "h": "Addon:ThemePreferences"
+  },
+  {
+    "n": "Undocked Gramplets",
+    "i": "UndockedGramplets",
+    "t": 6,
+    "d": "Replaces the Close button of gramplets undocked from a sidebar or bottombar with a Dock button, and uses the smart Help button of Markdown Utils when that addon is active.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "Undocked.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Undocked/README.md"
   },
   {
     "n": "vCard (Enhanced — v1/2.1/3.0/4.0)",

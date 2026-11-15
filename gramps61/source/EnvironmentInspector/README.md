@@ -11,7 +11,12 @@ The **Current Locale** panel lists the locale code, the language, the region, th
 
 The **Gramps Translations** table lists every installed Gramps translation, with a region flag, the language code, the English name, the endonym and the number of translated strings. Double-click anywhere on the heading row to open or close the table. Click its icon to copy the summary line, or the whole table when it is open. Click a column heading to sort the table.
 
-Double-click a language in the table to use it the next time Gramps starts. Gramps offers to restart right away. Before it closes, every open editor with unsaved changes asks whether to save them, and after the restart Gramps opens the same family tree again. If you choose **Later**, the row shows **Restart** until Gramps starts again; double-click it again to cancel. The choice is used for one start only. Selecting a language in this table also selects it on the Translation Preview tab.
+Double-click a language in the table to use it the next time Gramps starts. A dialog asks how to go on:
+* **Regional settings** chooses the full locale that goes with the language, for example Dutch (Netherlands) or Dutch (Belgium). It sets the dates, numbers, sorting, the spell checking dictionary and the locale of GTK itself. The list shows the regions installed on your computer, and the best match is already selected. Choose **Interface language only** to change only the interface text and keep your current regional settings. On Windows, Gramps uses one region for each language, so the list has only that region.
+* **Restart now** closes Gramps normally, including the backup on exit, and starts it again in the chosen language. Before it closes, every open editor with unsaved changes asks whether to save them, and after the restart Gramps opens the same family tree again.
+* **Later** keeps the choice for the next start from the desktop: the desktop menu on Linux, or the Finder or the Dock on macOS. Until then, the row shows **Restart**; double-click it again to cancel. On Windows, the next start cannot be prepared, so the dialog shows **Cancel** instead of **Later**.
+
+The choice is used for one start only. After that, Gramps uses the system language again. To go back sooner, double-click the language marked with a check mark (✓) in a session that was started in another language. Selecting a language in this table also selects it on the Translation Preview tab.
 
 ![Language tab](media/screenshot.png)
 
@@ -78,7 +83,7 @@ To deactivate or uninstall Environment Inspector, open the **Help** menu and cho
 ## More information
 * [CHANGELOG.md](CHANGELOG.md) lists the changes in each version and ends with the outstanding issues: planned features, ideas that need discussion, and limits of Gramps itself.
 * [Constants](media/EfficientConstants.md) is a short developer reference for using the Gramps constants in an addon.
-* Environment Inspector saves its few settings (a language chosen for the next start, and the **Show catalog text** choices) in `EnvironmentInspector.ini`, in its own folder.
+* Environment Inspector saves its few settings (a language chosen for the next start, how Gramps was started before that choice, and the **Show catalog text** choices) in `EnvironmentInspector.ini`, in its own folder.
 
 ---
 

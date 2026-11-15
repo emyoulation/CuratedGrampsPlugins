@@ -302,6 +302,19 @@ _PREVIEW_MIN_WIDTH = 150
 # Preview pane shows a complaint instead (see _render_preview).
 _MAX_PREVIEW_IMAGE_BYTES = 5 * 1024 * 1024
 
+# Screenshots looked for inside a plugin's own folder, most preferred
+# first: Nick Hall's convention (``screenshots/1.png``, see
+# https://gramps.discourse.group/t/10093), then the other formats in that
+# folder, then this addon's older ``media/screenshot.*`` convention. SVG
+# stays SVG (MarkdownUtils draws it at the thumbnail size); WebP needs a
+# WebP pixbuf loader or the WebP Thumbnailer addon.
+_CAPTURE_FORMATS = ("png", "webp", "svg", "svgz", "jpg", "jpeg", "gif")
+_CAPTURE_FILENAMES = tuple(
+    os.path.join(folder, stem + "." + ext)
+    for folder, stem in (("screenshots", "1"), ("media", "screenshot"))
+    for ext in _CAPTURE_FORMATS
+)
+
 # True brings back the old centering-on-open workaround (re-sort the list
 # by Name descending, then ascending); see the end of PluginStatus.__init__.
 _CENTER_ON_OPEN_VIA_SORT_TOGGLE = False
@@ -1702,29 +1715,18 @@ class PluginStatus(tool.Tool, ManagedWindow):
             return None
         return pdata.fpath
 
-    # Relative paths inside a plugin's own folder, in priority order: the
-    # Gramps wiki's ``screenshots/1.png`` convention wins over this
-    # addon's own ``media/screenshot.*`` convention.
-    _CAPTURE_FILENAMES = (
-        os.path.join("screenshots", "1.png"),
-        os.path.join("screenshots", "1.webp"),
-        os.path.join("media", "screenshot.png"),
-        os.path.join("media", "screenshot.webp"),
-    )
-
     def _find_capture_image(self, plugin_dir: str) -> str | None:
         """
         Look for a bundled screenshot inside a plugin's own folder.
 
         :param plugin_dir: a plugin's own registered directory
-        :returns: full path of the first existing file among
-                  ``screenshots/1.png``, ``screenshots/1.webp``,
-                  ``media/screenshot.png`` and ``media/screenshot.webp``
-                  (checked in that order), or ``None`` if none exists
+        :returns: full path of the first existing file in
+                  :data:`_CAPTURE_FILENAMES` (``screenshots/1.png`` first),
+                  or ``None`` if none exists
         """
         if not plugin_dir:
             return None
-        for rel_path in self._CAPTURE_FILENAMES:
+        for rel_path in _CAPTURE_FILENAMES:
             candidate = os.path.join(plugin_dir, rel_path)
             if os.path.isfile(candidate):
                 return candidate
