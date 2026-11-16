@@ -1,0 +1,30 @@
+# ar translation for the Addon Locale Fix addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Addon Locale Fix package.
+# Machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: Addon Locale Fix 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 12:16-0600\n"
+"PO-Revision-Date: 2026-11-16 12:40-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Arabic <https://hosted.weblate.org/projects/gramps-project/addons/ar/>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: AddonLocaleFix.gpr.py:37
+msgid "Addon Locale Fix"
+msgstr "إصلاح لغة الإضافات"
+
+#: AddonLocaleFix.gpr.py:39
+msgid ""
+"Monkey patch that helps addons work in more languages. Addons load even "
+"without a translation for your language, and their own translations come "
+"first."
+msgstr ""
+"ترقيع أثناء التشغيل يساعد الإضافات على العمل بمزيد من اللغات. تُحمَّل "
+"الإضافات حتى من دون ترجمة للغتك، وتكون الأولوية لترجماتها الخاصة."

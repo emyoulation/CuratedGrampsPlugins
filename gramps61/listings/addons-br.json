@@ -1,16 +1,5 @@
 [
   {
-    "n": "Addon Locale Fix",
-    "i": "AddonLocaleFix",
-    "t": 6,
-    "d": "Monkey patch that helps addons work in more languages. Addons load even without a translation for your language, and their own translations come first.",
-    "v": "0.1.0",
-    "g": "6.1",
-    "s": 3,
-    "z": "AddonLocaleFix.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
-  },
-  {
     "n": "Addon Marketplace",
     "i": "AddonMarketplace",
     "t": 6,
@@ -427,6 +416,17 @@
     "s": 1,
     "z": "PrunedBranch.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PrunedBranch"
+  },
+  {
+    "n": "Reizhadenn yezh an askouezhioù",
+    "i": "AddonLocaleFix",
+    "t": 6,
+    "d": "Pech e-pad an erounit a sikour an askouezhioù da labourat e muioc'h a yezhoù. Kargañ a ra an askouezhioù zoken hep troidigezh evit ho yezh, hag o zroidigezhioù dezho o-unan a ya da gentañ.",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "AddonLocaleFix.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   },
   {
     "n": "Soundex match of People with the <names>",

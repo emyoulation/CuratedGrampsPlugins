@@ -1,16 +1,5 @@
 [
   {
-    "n": "Addon Locale Fix",
-    "i": "AddonLocaleFix",
-    "t": 6,
-    "d": "Monkey patch that helps addons work in more languages. Addons load even without a translation for your language, and their own translations come first.",
-    "v": "0.1.0",
-    "g": "6.0",
-    "s": 3,
-    "z": "AddonLocaleFix.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
-  },
-  {
     "n": "Addon Marketplace",
     "i": "AddonMarketplace",
     "t": 6,
@@ -336,6 +325,17 @@
     "z": "NoteStyler.addon.tgz",
     "h": "https://gramps.discourse.group/t/5396",
     "a": 0
+  },
+  {
+    "n": "Papildinių kalbos pataisa",
+    "i": "AddonLocaleFix",
+    "t": 6,
+    "d": "Vykdymo metu taikoma pataisa, padedanti papildiniams veikti daugiau kalbų. Papildiniai įkeliami net ir be vertimo į jūsų kalbą, o jų pačių vertimams teikiama pirmenybė.",
+    "v": "0.1.0",
+    "g": "6.0",
+    "s": 3,
+    "z": "AddonLocaleFix.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   },
   {
     "n": "PDF Field Mapper",

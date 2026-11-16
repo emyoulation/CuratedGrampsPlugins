@@ -1,0 +1,29 @@
+# Translation template for the 0.1.0 Addon Locale Fix general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Addon Locale Fix package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Addon Locale Fix 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 12:16-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: AddonLocaleFix.gpr.py:37
+msgid "Addon Locale Fix"
+msgstr ""
+
+#: AddonLocaleFix.gpr.py:39
+msgid ""
+"Monkey patch that helps addons work in more languages. Addons load even "
+"without a translation for your language, and their own translations come "
+"first."
+msgstr ""

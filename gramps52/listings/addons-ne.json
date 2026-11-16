@@ -1,0 +1,158 @@
+[
+  {
+    "n": "Addon Marketplace",
+    "i": "AddonMarketplace",
+    "t": 6,
+    "d": "Replaces the Addon Manager with the Addon Marketplace: clickable filter lozenges, Update and Downgrade buttons, and a project dialog that tests web and local addon repositories. To switch it off, hide this plugin and restart Gramps.",
+    "v": "0.1.3",
+    "g": "5.2",
+    "s": 1,
+    "z": "AddonMarketplace.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AddonMarketplace"
+  },
+  {
+    "n": "Beta What's Next",
+    "i": "Beta What's Next",
+    "t": 10,
+    "d": "Beta Gramplet suggesting items to research",
+    "v": "0.2.0",
+    "g": "5.2",
+    "s": 2,
+    "z": "Betawhatsnext.addon.tgz",
+    "h": "https://github.com/emyoulation/_BetaDashboards",
+    "a": 0
+  },
+  {
+    "n": "Clipboard Ref Menu",
+    "i": "ClipboardRefMenu",
+    "t": 6,
+    "d": "Adds Clip items to the clipboard right-click menu: the object a reference row points to, and all the places enclosing a place.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "ClipboardRefMenu.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
+  },
+  {
+    "n": "Data Entry Gramplet",
+    "i": "Data Entry Gramplet",
+    "t": 10,
+    "d": "Key in a relative of the active person, with their birth, death and other events and sources, on one form instead of working through a dozen editing dialogs",
+    "v": "1.2.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "DataEntryGramplet.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
+    "a": 1
+  },
+  {
+    "n": "Edit Attributes Plus",
+    "i": "EditAttributesPlus",
+    "t": 6,
+    "d": "Resizable Attribute Editor with a multi-line Value field, plus multi-column type popups and 'Add a gramplet' menus (sidebar, bottombar and Dashboard monkey patch).",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "AttributesEditor_plus.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/EditAttributesPlus/README.md"
+  },
+  {
+    "n": "Environment Inspector",
+    "i": "EnvironmentInspector",
+    "t": 10,
+    "d": "Developer reference gramplet showing the current locale, the related locale settings and where each is set, a searchable, sortable table of all Gramps string constants, and a preview of other Gramps translations.",
+    "v": "2.2.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "EnvironmentInspector.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
+    "a": 0
+  },
+  {
+    "n": "Fuzzy Match API",
+    "i": "Fuzzy Match API",
+    "t": 6,
+    "d": "Library for other addons: phonetic surname matching (fuzzy_match_index.py), person-display formatting (fuzzy_match_display.py), and a standalone lookup window (FuzzyMatchLookupWindow.py) for a quick 'does someone like this already exist' check from another plugin. See FuzzyMatchAPI.md in this addon's own folder for the calling convention.",
+    "v": "0.6.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "Fuzzy.addon.tgz"
+  },
+  {
+    "n": "Fuzzy Matching",
+    "i": "Fuzzy Matching",
+    "t": 10,
+    "d": "Gramplet for finding people in the Family Tree whose surname phonetically matches a given surname, using a cached per-tree index so it stays fast on large Family Trees",
+    "v": "0.6.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "Fuzzy.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Fuzzy/README.md"
+  },
+  {
+    "n": "Import with No Tree Loaded",
+    "i": "ImportNoTree",
+    "t": 6,
+    "d": "Makes Family Trees > Import... work when no Family Tree is loaded. A new Family Tree is created, named after the imported file, and the file is imported into it.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "ImportWithoutTree.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
+  },
+  {
+    "n": "Markdown Utils",
+    "i": "MarkdownUtils",
+    "t": 6,
+    "d": "Shared Markdown rendering and icon-resolution library used by Markdown Dash, Plugin Manager plus, and other addons. Not a tool or gramplet itself -- installed so those addons can import it.",
+    "v": "0.2.3",
+    "g": "5.2",
+    "s": 3,
+    "z": "MarkdownBased.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/MarkdownBased"
+  },
+  {
+    "n": "PR2388 Example Tree Prompt",
+    "i": "PR2388_ExampleTreePrompt",
+    "t": 6,
+    "d": "On startup, offers to import a practice Family Tree from the sample data included with Gramps. Afterwards it shows the Dashboard with a To Do note to get started. Field-test port of Gramps PR 2388.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "PR2388.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/PR2388/README.md"
+  },
+  {
+    "n": "PR2485 Edit Person Tweaks",
+    "i": "PR2485",
+    "t": 6,
+    "d": "Improves the New/Edit Person dialogs: Multiple Surnames column widths are remembered (Gramps PR 2485), switching to Multiple Surnames adds a row ready for typing, a Fuzzy Match Lookup button appears beside the Surname field when Fuzzy Matching is installed, and the Surname field shows a 'surname' tip.",
+    "v": "0.1.3",
+    "g": "5.2",
+    "s": 1,
+    "z": "PR2485.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PR2485/CHANGELOG.md"
+  },
+  {
+    "n": "Undocked Gramplets",
+    "i": "UndockedGramplets",
+    "t": 6,
+    "d": "Replaces the Close button of gramplets undocked from a sidebar or bottombar with a Dock button, and uses the smart Help button of Markdown Utils when that addon is active.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "Undocked.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Undocked/README.md"
+  },
+  {
+    "n": "एडअन भाषा सुधार",
+    "i": "AddonLocaleFix",
+    "t": 6,
+    "d": "एडअनहरूलाई धेरै भाषामा काम गर्न मद्दत गर्ने रनटाइम प्याच। तपाईंको भाषाको अनुवाद नभए पनि एडअनहरू लोड हुन्छन्, र तिनीहरूकै अनुवादलाई प्राथमिकता दिइन्छ।",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "AddonLocaleFix.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
+  }
+]

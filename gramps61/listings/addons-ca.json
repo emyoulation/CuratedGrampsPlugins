@@ -1,16 +1,5 @@
 [
   {
-    "n": "Addon Locale Fix",
-    "i": "AddonLocaleFix",
-    "t": 6,
-    "d": "Monkey patch that helps addons work in more languages. Addons load even without a translation for your language, and their own translations come first.",
-    "v": "0.1.0",
-    "g": "6.1",
-    "s": 3,
-    "z": "AddonLocaleFix.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
-  },
-  {
     "n": "Addon Marketplace",
     "i": "AddonMarketplace",
     "t": 6,
@@ -124,6 +113,17 @@
     "z": "ConfigInspector.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ConfigInspector",
     "a": 2
+  },
+  {
+    "n": "Correcció de l'idioma dels complements",
+    "i": "AddonLocaleFix",
+    "t": 6,
+    "d": "Pedaç en temps d'execució que ajuda els complements a funcionar en més idiomes. Els complements es carreguen fins i tot sense traducció per al vostre idioma, i les seves pròpies traduccions tenen prioritat.",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "AddonLocaleFix.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   },
   {
     "n": "Edit Attributes Plus",

@@ -1,16 +1,5 @@
 [
   {
-    "n": "Addon Locale Fix",
-    "i": "AddonLocaleFix",
-    "t": 6,
-    "d": "Monkey patch that helps addons work in more languages. Addons load even without a translation for your language, and their own translations come first.",
-    "v": "0.1.0",
-    "g": "6.1",
-    "s": 3,
-    "z": "AddonLocaleFix.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
-  },
-  {
     "n": "Addon Marketplace",
     "i": "AddonMarketplace",
     "t": 6,
@@ -499,5 +488,16 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
+  },
+  {
+    "n": "Исправка језика додатака",
+    "i": "AddonLocaleFix",
+    "t": 6,
+    "d": "Закрпа током извршавања која помаже додацима да раде на више језика. Додаци се учитавају чак и без превода за ваш језик, а њихови сопствени преводи имају предност.",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "AddonLocaleFix.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   }
 ]

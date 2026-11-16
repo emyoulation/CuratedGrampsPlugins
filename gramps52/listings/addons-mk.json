@@ -1,16 +1,5 @@
 [
   {
-    "n": "Addon Locale Fix",
-    "i": "AddonLocaleFix",
-    "t": 6,
-    "d": "Monkey patch that helps addons work in more languages. Addons load even without a translation for your language, and their own translations come first.",
-    "v": "0.1.0",
-    "g": "5.2",
-    "s": 3,
-    "z": "AddonLocaleFix.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
-  },
-  {
     "n": "Addon Marketplace",
     "i": "AddonMarketplace",
     "t": 6,
@@ -154,5 +143,16 @@
     "s": 1,
     "z": "Undocked.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Undocked/README.md"
+  },
+  {
+    "n": "Поправка на јазикот на додатоците",
+    "i": "AddonLocaleFix",
+    "t": 6,
+    "d": "Закрпа при извршување што им помага на додатоците да работат на повеќе јазици. Додатоците се вчитуваат дури и без превод за вашиот јазик, а нивните сопствени преводи имаат предност.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "AddonLocaleFix.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   }
 ]

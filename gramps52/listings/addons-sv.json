@@ -1,16 +1,5 @@
 [
   {
-    "n": "Addon Locale Fix",
-    "i": "AddonLocaleFix",
-    "t": 6,
-    "d": "Monkey patch that helps addons work in more languages. Addons load even without a translation for your language, and their own translations come first.",
-    "v": "0.1.0",
-    "g": "5.2",
-    "s": 3,
-    "z": "AddonLocaleFix.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
-  },
-  {
     "n": "Addon Marketplace",
     "i": "AddonMarketplace",
     "t": 6,
@@ -427,6 +416,17 @@
     "s": 3,
     "z": "FuzzyRules.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
+  },
+  {
+    "n": "Språkrättning för tillägg",
+    "i": "AddonLocaleFix",
+    "t": 6,
+    "d": "Körtidskorrigering som hjälper tillägg att fungera på fler språk. Tillägg läses in även utan översättning för ditt språk, och deras egna översättningar har företräde.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "AddonLocaleFix.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   },
   {
     "n": "Strict PyGObject Compatibility",
