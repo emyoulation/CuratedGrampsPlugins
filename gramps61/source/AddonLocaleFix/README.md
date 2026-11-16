@@ -1,5 +1,4 @@
 # Addon Locale Fix
-## Screen captures to take (remove this list before release)
 
 Gramps can show its menus and windows in many languages. But some addons do not start when Gramps uses a language other than English. Other addons start, but show some words that are not the words their translators chose. Addon Locale Fix is a small **monkey patch** that fixes both problems. After you install it, more addons work in more languages.
 
