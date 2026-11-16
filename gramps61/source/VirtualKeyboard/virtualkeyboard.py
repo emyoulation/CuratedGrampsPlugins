@@ -23,7 +23,14 @@ from gramps.gen.config import config
 
 
 LOG = logging.getLogger(__name__)
-_ = glocale.get_addon_translator(__file__).gettext
+# get_addon_translator() raises ValueError when this addon has no
+# translation for the session language; without the fallback the
+# module would not load at all in that language.
+try:
+    _trans = glocale.get_addon_translator(__file__)
+except ValueError:
+    _trans = glocale.translation
+_ = _trans.gettext
 
 # Virtual Keyboard mappings
 

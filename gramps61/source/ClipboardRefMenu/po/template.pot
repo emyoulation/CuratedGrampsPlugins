@@ -1,0 +1,37 @@
+# Translation template for the 0.1.0 Clipboard Ref Menu general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Clipboard Ref Menu package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Clipboard Ref Menu 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-15 11:50-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ClipboardRefMenu.gpr.py:32
+msgid "Clipboard Ref Menu"
+msgstr ""
+
+#: ClipboardRefMenu.gpr.py:34
+msgid ""
+"Adds Clip items to the clipboard right-click menu: the object a reference "
+"row points to, and all the places enclosing a place."
+msgstr ""
+
+#: ClipboardRefMenu.py:202
+msgid "Clip Enclosing Places"
+msgstr ""
+
+#: ClipboardRefMenu.py:234
+#, python-format
+msgid "Clip %s"
+msgstr ""

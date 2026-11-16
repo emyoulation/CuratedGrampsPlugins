@@ -460,7 +460,7 @@ def supports_next_start():
 
 def restart_writes_log():
     """True when the terminal output of the restarted Gramps goes to a log."""
-    return os.name == "posix" and not mac_bundle()
+    return os.name == "posix"
 
 
 def _command_argv(extra_args):
@@ -477,16 +477,34 @@ def _command_argv(extra_args):
     return argv
 
 
-def _open_log(log_path):
+def _log_header(code, locale_name, argv=None):
+    """First line of the restart log: what Environment Inspector asked for."""
+    import time
+
+    text = "Environment Inspector restart, %s UTC: LANGUAGE=%s, LANG=%s" % (
+        time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),
+        code or "(system)",
+        locale_name or "(unchanged)",
+    )
+    if argv:
+        text += ", command: " + shlex.join(argv)
+    return text
+
+
+def _open_log(log_path, header=""):
     if not log_path:
         return None
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
-    return open(log_path, "w", encoding="utf-8")
+    handle = open(log_path, "w", encoding="utf-8")
+    if header:
+        handle.write(header + "\n")
+        handle.flush()  # before the new process writes to the same file
+    return handle
 
 
-def _spawn_posix(script, env, log_path, argv=()):
+def _spawn_posix(script, env, log_path, argv=(), header=""):
     """Run script with $0 = this process id and $@ = argv, detached."""
-    output = _open_log(log_path)
+    output = _open_log(log_path, header)
     try:
         subprocess.Popen(
             ["/bin/sh", "-c", script, str(os.getpid())] + list(argv),
@@ -510,8 +528,10 @@ def _spawn_mac_bundle(bundle, env, code, locale_name, extra_args, log_path):
     """
     Start the bundle again with open, the way the Finder does. open does
     not always pass its own environment on to the application, so the
-    variables are also given with --env; older versions of open do not
-    know --env, so the plain command is the fallback.
+    variables are also given with --env, and the messages of the new
+    Gramps go to the log with --stdout and --stderr. Older versions of
+    open do not know these options, so the plain command is the fallback;
+    the log then holds only messages from open itself.
     """
     plain = ["/usr/bin/open", "-n", "-a", bundle]
     with_env = list(plain)
@@ -519,11 +539,14 @@ def _spawn_mac_bundle(bundle, env, code, locale_name, extra_args, log_path):
         with_env += ["--env", "LANGUAGE=%s" % code]
         if locale_name:
             with_env += ["--env", "LANG=%s" % locale_name]
+    if log_path:
+        # Messages of the new Gramps (open in macOS 10.15 and later).
+        with_env += ["--stdout", log_path, "--stderr", log_path]
     tail = ["--args"] + list(extra_args) if extra_args else []
     script = _WAIT + shlex.join(with_env + tail)
     if with_env != plain:
         script += " || " + shlex.join(plain + tail)
-    return _spawn_posix(script, env, log_path)
+    return _spawn_posix(script, env, log_path, header=_log_header(code, locale_name))
 
 
 def _spawn_windows(env, argv):
@@ -593,4 +616,7 @@ def spawn_restart(code, locale_name, baseline, log_path=None, extra_args=None):
     bundle = mac_bundle()
     if bundle:
         return _spawn_mac_bundle(bundle, env, code, locale_name, extra_args, log_path)
-    return _spawn_posix(_WAIT + 'exec "$@"', env, log_path, _command_argv(extra_args))
+    argv = _command_argv(extra_args)
+    return _spawn_posix(
+        _WAIT + 'exec "$@"', env, log_path, argv, _log_header(code, locale_name, argv)
+    )

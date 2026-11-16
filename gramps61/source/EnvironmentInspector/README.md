@@ -83,6 +83,7 @@ To deactivate or uninstall Environment Inspector, open the **Help** menu and cho
 ## More information
 * [CHANGELOG.md](CHANGELOG.md) lists the changes in each version and ends with the outstanding issues: planned features, ideas that need discussion, and limits of Gramps itself.
 * [Constants](media/EfficientConstants.md) is a short developer reference for using the Gramps constants in an addon.
+* After a restart, Environment Inspector writes two log files in the Gramps cache folder: `environment-inspector-restart.log`, with the messages of the restarted Gramps, and, after a restart in another language, `environment-inspector-translations.log`, which lists the installed addons that do not load in that language. To find the folder, search for `USER_CACHE` on the Gramps Constants tab and double-click the row; on Linux it is usually `~/.cache/gramps/`.
 * Environment Inspector saves its few settings (a language chosen for the next start, how Gramps was started before that choice, and the **Show catalog text** choices) in `EnvironmentInspector.ini`, in its own folder.
 
 ---

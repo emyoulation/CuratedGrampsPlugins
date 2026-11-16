@@ -34,8 +34,8 @@ if VERSION_TUPLE < (5, 2, 0):
     }
 else:
     additional_args = {
-        "audience": EVERYONE,
-        "status": BETA,
+        "audience": EXPERT,
+        "status": EXPERIMENTAL,
         "maintainers": "Brian McCullough",
         "maintainers_email": "Emyoulation@yahoo.com",
     }
@@ -45,14 +45,13 @@ register(
     id="VirtualKeyboard",
     name=_("Virtual Keyboard"),
     description=_("Touch-friendly on-screen keyboard for clipboarding characters"),
-    authors = ["Brian McCullough", "Perplexity AI Assistant"],
-    authors_email = ["emyoulation@yahoo.com",""],
+    authors = ["Perplexity AI Assistant"],
     fname="virtualkeyboard.py",
     height=280,
     expand=False,
     gramplet="VirtualKeyboard",
     gramplet_title=_("Virtual Keyboard"),
-    version = '1.3.0',
+    version = '1.3.2',
     gramps_target_version=major_version,
     navtypes=["Dashboard", "Person", "Family", "Event", "Place", "Source", "Citation", "Repository", "Media", "Note"],
 #    help_url="Addon:Virtual_Keyboard",
