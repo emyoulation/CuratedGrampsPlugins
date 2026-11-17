@@ -1,7 +1,7 @@
 location,source,target,id,fuzzy,context,translator_comments,developer_comments
-,EnglishExonym,English,,no,language,"language name in english",Gramps_Glossary/en
+,EnglishExonym,British,,no,language,"language name in english",Gramps_Glossary/en
 ,endonym,English,,no,language,"language name in native tongue",Gramps_Glossary/en
-,language code,en,,no,language,"language code in ISO 639 standard",https://hosted.weblate.org/projects/gramps-project/-/en_GB/
+,language code,en-GB,,no,language,"language code in ISO 639 standard",https://hosted.weblate.org/projects/gramps-project/-/en_GB/
 ,translators,translators,,yes,language,"lead translator for GUI",Portal:Translators#en_GB
 ,translations,translations,,yes,language,"status of wiki translation",User_manual_translations#en_GB
 ,documentation,documentation,,yes,language,"translated wiki page index",Category:Documentation
@@ -164,6 +164,6 @@ location,source,target,id,fuzzy,context,translator_comments,developer_comments
 ,View mode,View mode,,yes,terminology,"display layouts presenting a View category's structured information in a predictable manner",Gramps_Glossary#viewmode
 ,View,View,,yes,terminology,"the currently active display mode in a Category with filtered data. Including supplemental controls and gramplet displays",Gramps_Glossary#view
 ,Wiki,Wiki,,yes,terminology,"a collaboratively maintained website",Gramps_Glossary#wiki
-,Witness,Witness,,yes,,"a term to identify the Event Role as being an observer",Gramps_Glossary#witness
+,Witness,Witness,,yes,,"a role indicating they participated as an observer (or testifier) in the event",Gramps_Glossarywitness
 ,XML,XML,,yes,terminology,"an acronym for Extensible Markup Language: a structured file format that allows custom tags",Gramps_Glossary#xml
 

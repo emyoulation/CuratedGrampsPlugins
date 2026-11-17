@@ -1,0 +1,142 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-02 12:49-0700\n"
+"PO-Revision-Date: 2026-08-05 18:01+0000\n"
+"Last-Translator: Kaj Arne Mikkelsen <kmi@vgdata.dk>\n"
+"Language-Team: Danish <https://hosted.weblate.org/projects/gramps-project/"
+"addons/da/>\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2026.8.1.dev0\n"
+
+msgid "Data Entry Gramplet"
+msgstr "Dataindtastnings Gramplet"
+
+msgid "Gramplet for quick data entry"
+msgstr "Gramplet for hurtig indtastning af data"
+
+msgid "Active person"
+msgstr "Fokuspersin"
+
+msgid "Family:"
+msgstr "Familie:"
+
+msgid "Sources?"
+msgstr "Kilder?"
+
+msgid "Surname, Given"
+msgstr "Efternavn, Fornavn"
+
+msgid "Save"
+msgstr "Gem"
+
+msgid "Abandon"
+msgstr "Forlad"
+
+msgid "New person"
+msgstr "Ny person"
+
+msgid "Add relation"
+msgstr "Tilføj slægtskab"
+
+msgid "No relation to active person"
+msgstr "Ingen slægtskab med aktiv person"
+
+msgid "Add as a Parent"
+msgstr "Tilføj som en forælder"
+
+msgid "Add as a Mother"
+msgstr "Tilføj som en mor"
+
+msgid "Add as a Father"
+msgstr "Tilføj som en far"
+
+msgid "Add as a Spouse"
+msgstr "Tilføj som en ægtefælle"
+
+msgid "Add as a Wife"
+msgstr "Tilføj som en hustru"
+
+msgid "Add as a Husband"
+msgstr "Tilføj som en ægtemand"
+
+msgid "Add as a Sibling"
+msgstr "Tilføj som en søskende"
+
+msgid "Add as a Child"
+msgstr "Tilføj som et barn"
+
+msgid "Copy Active Data"
+msgstr "Kopier Aktive Data"
+
+msgid "in"
+msgstr "i"
+
+msgid "No Family Tree is open."
+msgstr "Ingen slægtsbog er åben."
+
+msgid "Please open a Family Tree to edit data."
+msgstr "Åben venligst en slægtsbog for at redigere data."
+
+#, python-format
+msgid "Gramplet Data Edit: %s"
+msgstr "Gramplet Data rettelse: %s"
+
+msgid "Please open a Family Tree before adding a person."
+msgstr "Åben venligst en slægtsbog før du tilføjer en person."
+
+msgid "Please provide a name."
+msgstr "Angiv venligst et navn."
+
+msgid "Can't add new person."
+msgstr "Kan ikke tilføje en ny person."
+
+msgid "Please set an active person."
+msgstr "Vælg venligst en aktiv person."
+
+msgid "Can't add new person as a parent."
+msgstr "Kan ikke tilføje en ny person som forælder."
+
+msgid "Please set the new person's gender."
+msgstr "Angive venligst den nye persons køn."
+
+msgid "Can't add new person as a mother."
+msgstr "Kan ikke tilføje en ny person som mor."
+
+msgid "Can't add new person as a father."
+msgstr "Kan ikke tilføje en ny person som far."
+
+msgid "Can't add new person as a spouse."
+msgstr "Kan ikke tilføje en ny person som ægtefælle."
+
+msgid "Can't add new person as a wife."
+msgstr "Kan ikke tilføje en ny person som hustru."
+
+msgid "Can't add new person as a husband."
+msgstr "Kan ikke tilføje en ny person som ægtemand."
+
+msgid "Can't add new person as a sibling."
+msgstr "Kan ikke tilføje en ny person som søskende."
+
+msgid "Can't add new person as a child."
+msgstr "Kan ikke tilføje en ny person som barn."
+
+msgid "Please set Active person."
+msgstr "Vælg venligst en aktiv person."
+
+msgid "Can't add new person as a spouse to no one."
+msgstr "Kan ikke tilføje en ny person som ægtefælle til ingen."
+
+msgid "Please set gender on Active or new person."
+msgstr "Angive venligst køn for den aktive eller nye person."
+
+msgid "Same genders on Active and new person."
+msgstr "Samme køn på den aktive og den nye person."
+
+msgid "Please set gender on Active person."
+msgstr "Angive venligst køn for den aktive persons ."

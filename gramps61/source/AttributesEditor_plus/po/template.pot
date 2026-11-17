@@ -1,0 +1,101 @@
+# Translation template for the 0.1.0 Edit Attributes Plus general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Edit Attributes Plus package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Edit Attributes Plus 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-13 18:10-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: EditAttributesPlus.gpr.py:30
+msgid "Edit Attributes Plus"
+msgstr ""
+
+#: EditAttributesPlus.gpr.py:32
+msgid ""
+"Resizable Attribute Editor with a multi-line Value field, plus multi-column "
+"type popups and 'Add a gramplet' menus (sidebar, bottombar and Dashboard "
+"monkey patch)."
+msgstr ""
+
+#: EditAttributesPlus.py:162
+msgid "Attribute Editor"
+msgstr ""
+
+#: EditAttributesPlus.py:338 EditAttributesPlus.py:433
+msgid "Add a gramplet"
+msgstr ""
+
+#: EditAttributesPlus.py:349
+msgid "Remove a gramplet"
+msgstr ""
+
+#: EditAttributesPlus.py:355
+msgid "Restore default gramplets"
+msgstr ""
+
+#: EditAttributesPlus.py:363
+msgid "Gramplet Bar Help"
+msgstr ""
+
+#: EditAttributesPlus.py:370
+msgid "About Gramplets"
+msgstr ""
+
+#: EditAttributesPlus.py:436
+msgid "Restore a gramplet"
+msgstr ""
+
+#: editattribute.glade:21
+msgid "_Cancel"
+msgstr ""
+
+#: editattribute.glade:36
+msgid "_OK"
+msgstr ""
+
+#: editattribute.glade:52
+msgid "_Help"
+msgstr ""
+
+#: editattribute.glade:112
+msgid ""
+"The name of an attribute you want to use. For example: Height (for a "
+"person), Weather on this Day (for an event), ... \n"
+"Use this to store snippets of information you collect and want to correctly "
+"link to sources. Attributes can be used for people, families, events and "
+"media.\n"
+" \n"
+"Note: several predefined attributes refer to values present in the GEDCOM "
+"standard."
+msgstr ""
+
+#: editattribute.glade:116
+msgid "_Attribute:"
+msgstr ""
+
+#: editattribute.glade:132
+msgid "_Value:"
+msgstr ""
+
+#: editattribute.glade:173
+msgid "The value of the attribute. Eg. 1.8, Sunny, or Blue eyes."
+msgstr ""
+
+#: editattribute.glade:199
+msgid "Privacy"
+msgstr ""
+
+#: editattribute.glade:206
+msgid "Private"
+msgstr ""

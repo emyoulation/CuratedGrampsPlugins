@@ -1,9 +1,8 @@
 # Fuzzy Grouping
-
+<!-- undocked=false -->
 [README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md)
 
-![Fuzzy Grouping icon](media/fuzzy-grouping.svg)
-
+![The Fuzzy Grouping person view mode icon](media/fuzzy-grouping.svg)
 Fuzzy Grouping is a view for the People category of Gramps. It works like the built-in Grouped People view, but it puts people into groups by how their surnames sound, not by exact spelling. Smith, Smyth and Schmidt can be in one group, so the spelling variants of a family are easy to see side by side, and easy to compare when you look for people to merge.
 
 ![The Fuzzy Grouping person view mode](media/screenshot.png)
@@ -14,7 +13,8 @@ Fuzzy Grouping is a view for the People category of Gramps. It works like the bu
 - [Opening the view](#opening-the-view)
 - [Reading the groups](#reading-the-groups)
 - [Phonetic systems](#phonetic-systems)
-- [The toolbar](#the-toolbar)
+- [The right-click menu](#the-right-click-menu)
+- [The Help icon](#the-help-icon)
 - [Configure: Columns tab](#configure-columns-tab)
 - [Configure: Subsorting tab](#configure-subsorting-tab)
 - [When changes take effect](#when-changes-take-effect)
@@ -22,6 +22,7 @@ Fuzzy Grouping is a view for the People category of Gramps. It works like the bu
 - [Adding and editing people](#adding-and-editing-people)
 - [Settings](#settings)
 - [Limits](#limits)
+- [Reporting a slow view](#reporting-a-slow-view)
 - [Turn the view off](#turn-the-view-off)
 - [Credits](#credits)
 - [AI disclosure](#ai-disclosure)
@@ -34,12 +35,7 @@ Fuzzy Grouping is a view for the People category of Gramps. It works like the bu
 - Recommended: PyICU, for correct subsorting. Most Gramps installations include it.
 
 ## Install
-Install the addon with the Gramps Addon Manager, from the [https://github.com/emyoulation/CuratedGrampsPlugins/](Emyoulation addons project). If the Emyoulation addons project is not in your Addon Manager yet, add it as the project page describes. Restart Gramps after you install the addon.
-![Emyoulation addons project for Gramps 6.0.x](media/EmyoulationAddons.png)
-
-# Important! Change the **Status** filter in the **Addons** tab of the Addon Manager from **Stable** to **All statuses**.
-![Filtering Addons listings for Experimental Fuzzy addons](media/FuzzyAddons.png)
-
+Install the addon with the Gramps Addon Manager, from the Emyoulation addons project: https://github.com/emyoulation/CuratedGrampsPlugins/ . If the Emyoulation addons project is not in your Addon Manager yet, add it as the project page describes. Restart Gramps after you install the addon.
 
 ## Opening the view
 Choose the **People** category, then click the **Fuzzy Grouping** button on the toolbar, or choose **Fuzzy Grouping** from the **View** menu.
@@ -49,7 +45,7 @@ Choose the **People** category, then click the **Fuzzy Grouping** button on the 
 The first time the view opens, the Configure dialog also opens, so that you can choose how the groups and the people in them are sorted. You can close it and keep the defaults. To open it again at any time, click the **Configure...** button on the toolbar.
 
 ## Reading the groups
-The view shows one row for each group. Click the triangle beside a group row to see the people in the group. To open or close every group at once, right-click in the view and choose **Expand all Nodes** or **Collapse all Nodes**.
+The view shows one row for each group. Click the triangle beside a group row to see the people in the group. To open or close every group at once, right-click in the view and choose **Expand all Nodes** or **Collapse all Nodes** (see [The right-click menu](#the-right-click-menu)).
 
 Each group row lists the surname spellings in the group, the most used spelling first, followed by the phonetic code in brackets. For example: `Smith, Smyth, Schmidt +2 [S530]`. When a group has more than four spellings, "+N" tells how many more spellings the group has.
 
@@ -61,9 +57,12 @@ The view starts from the same group name as the Grouped People view. A "Group as
 
 Each person is in exactly one group, made from the primary name of the person. Alternate names do not make extra groups.
 
+When the view has (or filters to) fewer than 50 people, every group node is automatically expanded.
+
 ## Phonetic systems
 A phonetic system turns a name into a short code from how the name sounds. Names with the same code go into one group. Different systems make different choices, so a pair of names can share a group with one system and not with another.
 
+- **None** turns phonetic matching off. People are grouped on an exact match of the preferred surname (or its "Group as" value), the same as in the Grouped People view, and each group row shows only the group name.
 - **Soundex** is the classic system for English names, and the one that Gramps uses itself. It keeps the first letter and makes a letter and three digits. It is always available, and it is the default.
 - **NYSIIS** (New York State Identification and Intelligence System) handles common English spelling patterns better than Soundex.
 - **Match Rating Approach** keeps the outline of the name: its first letter, and the consonants that are not doubled.
@@ -72,25 +71,29 @@ A phonetic system turns a name into a short code from how the name sounds. Names
 - **Double Metaphone** also knows many spellings from other languages, and can give a second code for a name that can be said two ways.
 - **Daitch-Mokotoff** was made for Eastern European and Jewish names, and can give several codes for one name. Its codes are numbers.
 
-To see a short description of the system in use, hold the pointer over the phonetic system menu button.
+To choose the system, right-click in the view and use the **Grouping (Phonetic encoding)** submenu (see [The right-click menu](#the-right-click-menu)), or use the **Fuzzy (Phonetic encoding) system** list in the Configure dialog (see [Configure: Columns tab](#configure-columns-tab)).
 
-The systems other than Soundex come from the Phonetic Filter Rules addon. If you hide one of its rules in the Plugin Manager, that system leaves the menu the next time you open the view. If the view was using it, the view goes back to Soundex, but it remembers your choice: when you show the rule again, the view uses it again.
+The systems other than Soundex come from the Phonetic Filter Rules addon. If you hide one of its rules in the Plugin Manager, that system leaves the lists the next time you open the view or the right-click menu. If the view was using it, the view goes back to Soundex, but it remembers your choice: when you show the rule again, the view uses it again.
 
-## The toolbar
-The view adds two items at the right end of the toolbar.
+## The right-click menu
+Right-click in the view to see the commands of the People views, plus these:
+- **Expand all Nodes** opens every group. The groups on the screen open first, then the groups below them, then the groups above them. When this takes more than 2 seconds, a progress window opens; click **Cancel** to stop, and the groups that are open stay open. Afterward, the group that was at the top of the view is at the top again.
+- **Collapse all Nodes** closes every group.
+- **Grouping (Phonetic encoding)** is a submenu with **None** and every available phonetic system. The current system has a mark. Choose another system to build the groups again at once. This is the same choice as the system list in the Configure dialog.
 
-The **phonetic system menu button** shows the view icon and the name of the current system. Click it and choose another system. The view builds its groups again at once.
+## The Help icon
+The view adds a **Help icon** at the right end of the toolbar. It shows this document. If Markdown Dash is installed and active, the document opens inside Gramps. Otherwise, the Help web page opens in your browser. Hold the pointer over the icon to see which one a click will open.
 
-![The phonetic system menu](media/system-menu.png)
-
-The **Help icon** shows this document. If Markdown Dash is installed and active, the document opens inside Gramps. Otherwise, the Help web page opens in your browser. Hold the pointer over the icon to see which one a click will open.
+![The Help icon](media/Gnome-help-browser.svg)
 
 ## Configure: Columns tab
 Click the **Configure...** button on the toolbar to open the Configure dialog.
 
 At the top of the Columns tab, **Grouping:** sets the order of the groups:
-- **Fuzzy grouping ID** (the default) sorts the groups by their phonetic code. With Soundex, the groups come out nearly in alphabetical order, because a Soundex code starts with the first letter of the name.
-- **Sample Surname** sorts the groups alphabetically by the most used spelling in each group. Choose this with Daitch-Mokotoff, whose number codes have no alphabetical order.
+- **Sample Surname** (the default) sorts the groups alphabetically by the most used spelling in each group, using the sorting rules of your language.
+- **Fuzzy grouping ID** sorts the groups by their phonetic code. With None, this is the group name, so the order is the same as in the Grouped People view. With Soundex, the groups come out nearly in alphabetical order, because a Soundex code starts with the first letter of the name. With Daitch-Mokotoff, whose codes are numbers, the order looks random.
+
+Below the Grouping choice, **Fuzzy (Phonetic encoding) system** chooses the phonetic system that makes the groups (see [Phonetic systems](#phonetic-systems)). Choose **None** to group on exact surnames.
 
 ![The Columns tab, with the Grouping choice](media/configure-columns.png)
 
@@ -115,23 +118,25 @@ Below Name format is a numbered list of everything that can be used for sorting.
 5. Last Changed
 6. The other columns, in the order of the Columns tab
 
+Below the explanation line is the check box **Use the whole list (when off, only number 1 is used)**. When it is on, the view uses the next numbers only for people who are still tied, so most people need only number 1 or 2. When it is off, only number 1 is used, which is the fastest. The check box turns off by itself when you cancel a build, or when a build did not finish (for example, when Gramps stopped during the build). The status bar then says that subsorting is off. Turn the check box on again to use the whole list.
+
 The subsort is used when the view is sorted by the Grouping column. When you click another column header, the view sorts by that column only, the same as the Grouped People view. Click the Grouping column header to go back to the subsort.
 
 ## When changes take effect
-Changes in the Configure dialog take effect 5 seconds after your last change, so that several quick changes need only one rebuild. When you close the Configure dialog, a waiting change takes effect at once. The **Apply** button of the Columns tab and the phonetic system menu on the toolbar take effect at once.
+Changes in the Configure dialog take effect 2 seconds after your last change, so that several quick changes need only one rebuild. When you close the Configure dialog, a waiting change takes effect at once. The **Apply** button of the Columns tab takes effect at once.
 
-When building the groups takes more than 1 second, a progress window shows how far the work has gone. In a large family tree, the subsort can take more time than the grouping, because Spouse and the number columns must look up other records for each person.
+When building the groups takes more than 1 second, a progress window shows how far the work has gone. The work has two steps: grouping the people, then subsorting the people who are still tied. **Cancel** stops the subsorting step (the grouping step always finishes) and turns off **Use the whole list** on the Subsorting tab. In a large family tree, the subsort can take more time than the grouping, because Spouse and the number columns must look up other records for each person.
 
 ## Working with Flat Filter and Fuzzy Matching
 The Flat Filter gramplet (in the sidebar) and the Fuzzy Matching gramplet (in the sidebar or the bottom bar) have their own phonetic system menus. When one of them is in this view, it uses the same system as the view, both ways:
-- When you choose a system on the toolbar of the view, the gramplets in this view change to it.
-- When you choose a system in one of these gramplets, the view and the other gramplet change to it. The view builds its groups again 5 seconds later. If you click **Find** in the Flat Filter before then, that one rebuild does both.
+- When you choose a system in the Configure dialog of the view, the gramplets in this view change to it.
+- When you choose a system in one of these gramplets, the view and the other gramplet change to it. The view builds its groups again 2 seconds later. If you click **Find** in the Flat Filter before then, that one rebuild does both.
 
-![Flat Filter undocked (detached) from this view](media/flat-filter-detached.png)
+![The undocked (detached) Flat Filter](media/flat-filter-detached.png)
 
-![Fuzzy Matching undocked (detached) from this view](media/fuzzy-matching-detached.png)
+![The undocked (detached) Fuzzy Matching](media/fuzzy-matching-detached.png)
 
-If a gramplet does not offer the system that the view uses, it shows Soundex. In other views, the gramplets keep their own choice. The Fuzzy Match Lookup window is a separate window, so it also keeps its own choice.
+If a gramplet does not offer the system that the view uses, it shows Soundex. This is always so for None, because the gramplets always match phonetically. In other views, the gramplets keep their own choice. The Fuzzy Match Lookup window is a separate window, so it also keeps its own choice.
 
 A filter in the sidebar changes which people the view shows. The groups are then made only from those people.
 
@@ -141,30 +146,32 @@ Double-click a person to open the Edit Person dialog, as in the other People vie
 When you change a name, the person moves to the group of the new name. Group rows stay in their places until the view is built again (for example, the next time you open the view).
 
 ## Settings
-The settings are saved in the file `FuzzyGrouping.ini` in the addon folder: the phonetic system, the Grouping choice, the sort Name format and the subsort order. The column choices of the Columns tab are saved by Gramps, as for every view.
+The settings are saved in the file `FuzzyGrouping.ini` in the addon folder: the phonetic system, the Grouping choice, the sort Name format, the subsort order and the **Use the whole list** check box. The column choices of the Columns tab are saved by Gramps, as for every view.
 
 To start again from the defaults, close Gramps and delete `FuzzyGrouping.ini`. The next time you open the view, the Configure dialog opens again, as on first use.
 
 ## Limits
 - Systems that can give more than one code for a name (Double Metaphone and Daitch-Mokotoff) use the lowest code, so that each person is in exactly one group. Two spellings that share only a second code can end up in different groups.
 - With Sample Surname, the group order is set when the groups are built. A person added later does not move a group, even if that person changes which spelling is used most.
+- When you add or edit a person, the person gets the whole subsort at once. Until the view is built again, that person can be beside a tied person in the wrong order.
 - Subsorting needs PyICU. Without it, the sort fields can run together, and the order of the people in a group can be wrong.
 - While the Display Name Editor is open from this view, the **Edit...** button for Name format in the Gramps Preferences shows an error. Close the editor first. This is a problem in Gramps itself.
 
+## Reporting a slow view
+If the view is slow in your family tree, start Gramps from a terminal with `gramps -d fuzzygroupingview`. The terminal then shows how long each step of each build takes, what started the build, and how long Expand all Nodes takes. Copy those lines into your report, together with what you did just before.
+
 ## Turn the view off
-To switch the view off without removing it, open the Help -> Plugin Manager, hide (or Deactivate) the "Fuzzy Grouping", and restart Gramps. To remove it, use the "Uninstall".
+To switch the view off without removing it, open the Help -> Plugin Manager, hide/deactivate "Fuzzy Grouping", and restart Gramps. Or use the Remove (Uninstall) in the Plugin Manager.
 
 ## Credits
-- The view starts from the Grouped People view of Gramps, by the Gramps project.
+- The view starts as a fork of the [Grouped People view](https://github.com/gramps-project/gramps/blob/maintenance/gramps60/gramps/plugins/view/persontreeview.py) of Gramps, by the Gramps project.
 - The other phonetic systems come from the Phonetic Filter Rules addon.
-- Addon by Brian McCullough.
+- Addon wish-coding by Brian McCullough.
 
 ## AI disclosure
 This addon was substantially written with an AI tool, as the Gramps [AI generated code policy](https://www.gramps-project.org/wiki/index.php/Howto:_Contribute_to_Gramps#AI_generated_code) asks contributors to disclose.
-```
-Generated-by: Claude Opus 5.5 (claude-opus-5-5), Anthropic, via the claude.ai chat interface, 2026
-Prompted by: Brian McCullough
-```
-- **Prompts (summary):** fork the Grouped People view into a view that groups by phonetic code, with Soundex as the default, a toolbar menu for the other systems and a custom icon; a Configure dialog with a Grouping choice and a Subsorting tab (a sort-only name format and a numbered subsort order with drag and drop); a delayed refresh, a progress window and a Help icon; respect for hidden plugins; and a shared phonetic system with the Flat Filter and Fuzzy Matching gramplets.
-- **Guidelines:** written in "draft mode", so the Gramps [AGENTS.md](https://github.com/gramps-project/gramps/blob/master/AGENTS.md) style rules (type hints, Black, pylint and others) were not applied.
-- **Testing:** the AI checked the code by compiling it and by reading the Gramps 5.2, 6.0 and 6.1 sources. The user interface was tested by Brian McCullough.
+`Generated-by: Claude Opus 5.5 (claude-opus-5-5), Anthropic, via the claude.ai chat interface, 2026`
+`Prompted by: Brian McCullough`
+- **Prompts (summary):** fork the Grouped People view into a view that groups by phonetic code, with Soundex as the default, a choice of other systems and a custom icon; a Configure dialog with a Grouping choice and a Subsorting tab (a sort-only name format and a numbered subsort order with drag and drop); a delayed refresh, a progress window and a Help icon; respect for hidden plugins; and a shared phonetic system with the Flat Filter and Fuzzy Matching gramplets; a right-click Grouping submenu, a faster Expand all with Cancel, and a lazy subsort with a "Use the whole list" switch.
+- **Guidelines:** written in "draft mode", then brought to "distribution-ready" state for version 0.2.0 under the Gramps [AGENTS.md](https://github.com/gramps-project/gramps/blob/master/AGENTS.md) rules: type hints, Sphinx docstrings, Black, pylint, mypy, license headers and unit tests.
+- **Testing:** the AI checked the code with Black, pylint and mypy, ran the unit tests in the `test` folder against the Gramps 6.1 sources, and read the Gramps 5.2, 6.0 and 6.1 sources. The user interface was tested by Brian McCullough.

@@ -76,8 +76,9 @@ Click the narrow tab at the right edge of the dialog. The tab shows the backgrou
 | `-2y, 3m, 10d` | a leading minus subtracts the whole offset | 6 Dec 1920 |
 | `Aged 45y 3m 10d` | "Age" or "Aged" also subtracts the whole offset | 6 Dec 1877 |
 | `13 Jan 1854` | a second date: the time between the two dates | 69 years, 2 months, 3 days |
+| `1854` | a plain number over 130 is a year, so this is also a second date | 69 years, 2 months, 15 days |
 
-Units may be written as `y`, `yr`, `yrs`, `year` or `years`; `m`, `mo`, `mos`, `month` or `months`; and `d`, `day` or `days`. Each unit may appear once, in any order, with or without commas. The hint in the empty box shows an example in your own date format. At least one of the two boxes must hold a date; you may also put the offset in Reference date and the date in Date or offset. An offset keeps the kind of date: "about 1900" plus 5 gives "about 1905", and "between 1854 and 1923" plus 10 gives "between 1864 and 1933".
+Units may be written as `y`, `yr`, `yrs`, `year` or `years`; `m`, `mo`, `mos`, `month` or `months`; and `d`, `day` or `days`. Each unit may appear once, in any order, with or without commas. The hint in the empty box shows an example in your own date format. Reference date always holds a date; a plain number there is a year. An offset keeps the kind of date: "about 1900" plus 5 gives "about 1905", and "between 1854 and 1923" plus 10 gives "between 1864 and 1933".
 
 ### The buttons
 - **Calculate** shows the result. Pressing Enter in any of the boxes does the same. A date result has the quality Calculated.
@@ -93,7 +94,6 @@ The two "Result to" buttons work only when the result is a date. A time span, su
 |---|---|
 | Error: invalid Reference date | Type a date that Gramps understands in Reference date. |
 | Error: invalid Date or offset | Check the box against the table above. "Aged" must be followed by an offset, not a date. |
-| Error: Reference date must be a date | At least one of the two boxes must hold a date. |
 | Error: could not calculate a result | The calculation is outside what Gramps can do, for example with a date that has no year. |
 
 ## The month calendars

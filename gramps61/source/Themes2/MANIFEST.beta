@@ -5,6 +5,8 @@
 css/*
 locale/*
 media/*
+sampleCSS/*
+test/*
 po/*
 MANIFEST
 MANIFEST.beta

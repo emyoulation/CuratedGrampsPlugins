@@ -1,4 +1,4 @@
-# Translation template for the 0.5.6 Fuzzy Matching gramplet addon for Gramps.
+# Translation template for the 0.6.0 Fuzzy Matching gramplet addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Fuzzy Matching package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Fuzzy Matching 0.5.6\n"
+"Project-Id-Version: Fuzzy Matching 0.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 01:29-0500\n"
+"POT-Creation-Date: 2026-11-15 23:20-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,44 +17,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: FuzzyMatchLookupWindow.py:125
+#: FuzzyMatchLookupWindow.py:121
 msgid "Fuzzy Match Lookup"
 msgstr ""
 
-#: FuzzyMatchLookupWindow.py:223 FuzzyMatchingGramplet.py:446
-msgid "Surname:"
+#: FuzzyMatchLookupWindow.py:194
+msgid "_Close"
 msgstr ""
 
-#: FuzzyMatchLookupWindow.py:229 FuzzyMatchingGramplet.py:450
-msgid "Encoding system:"
+#: FuzzyMatchLookupWindow.py:306
+msgid "opens the Edit Person dialog"
 msgstr ""
 
-#: FuzzyMatchLookupWindow.py:243
-msgid "Given name contains:"
-msgstr ""
-
-#: FuzzyMatchLookupWindow.py:248
-msgid ""
-"Optional. Narrows the right-hand list to people whose given name contains "
-"this text - not a phonetic match, just a plain filter on top of the surname "
-"match."
-msgstr ""
-
-#: FuzzyMatchLookupWindow.py:283 FuzzyMatchingGramplet.py:573
-msgid "Surname"
-msgstr ""
-
-#: FuzzyMatchLookupWindow.py:296 FuzzyMatchingGramplet.py:608
-msgid "Person"
-msgstr ""
-
-#: FuzzyMatchLookupWindow.py:527
-msgid "Indexing…"
-msgstr ""
-
-#: FuzzyMatchLookupWindow.py:736 FuzzyMatchingGramplet.py:1464
+#: FuzzyMatchLookupWindow.py:308
 #, python-brace-format
-msgid "{surname} ({count})"
+msgid "updates {caller}"
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:314
+#, python-brace-format
+msgid "Double-clicking a person in the list on the right {action}."
+msgstr ""
+
+#: FuzzyMatchLookupWindow.py:398
+msgid "the calling addon"
 msgstr ""
 
 #: FuzzyMatchingGramplet.gpr.py:33 FuzzyMatchingGramplet.gpr.py:46
@@ -81,70 +67,105 @@ msgid ""
 "addon's own folder for the calling convention."
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:464
-msgid "Code(s):"
-msgstr ""
-
-#: FuzzyMatchingGramplet.py:482
-msgid "Matches:"
-msgstr ""
-
-#: FuzzyMatchingGramplet.py:516
-msgid "Code"
-msgstr ""
-
-#: FuzzyMatchingGramplet.py:708
+#: FuzzyMatchingGramplet.py:239
 msgid "Select a person from the whole Family Tree"
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1034
+#: FuzzyMatchingGramplet.py:410
 msgid "Select a person"
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1309
-#, python-brace-format
-msgid "Indexing {phase}… {done} / {total}"
+#: fuzzy_match_panel.py:237
+msgid "Surname, Given:"
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1314
-#, python-brace-format
-msgid "Indexing {phase}…"
+#: fuzzy_match_panel.py:242
+msgid "Encoding system:"
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1371
+#: fuzzy_match_panel.py:254
+msgid "Code(s):"
+msgstr ""
+
+#: fuzzy_match_panel.py:259
+msgid "Code"
+msgstr ""
+
+#: fuzzy_match_panel.py:276
+msgid "Matches:"
+msgstr ""
+
+#: fuzzy_match_panel.py:300
+msgid ""
+"Type a surname, or \"Surname, Given\" to also narrow the people list to that "
+"given name. Without a comma, all of the text is the surname."
+msgstr ""
+
+#: fuzzy_match_panel.py:308
+msgid "Clear"
+msgstr ""
+
+#: fuzzy_match_panel.py:331
+msgid "Surname"
+msgstr ""
+
+#: fuzzy_match_panel.py:344
+msgid "Person"
+msgstr ""
+
+#: fuzzy_match_panel.py:470
 #, python-format
 msgid ""
 "The view uses a phonetic system that this list does not offer (for example "
 "None). Matches here use %s. Choose a system to use it here and in the view."
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1455
+#: fuzzy_match_panel.py:598
 #, python-brace-format
-msgid "All {code} ({count})"
+msgid "Indexing {phase}… {done} / {total}"
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1471
+#: fuzzy_match_panel.py:602
+#, python-brace-format
+msgid "Indexing {phase}…"
+msgstr ""
+
+#: fuzzy_match_panel.py:604
+msgid "Indexing…"
+msgstr ""
+
+#: fuzzy_match_panel.py:728 fuzzy_match_panel.py:762
 #, python-brace-format
 msgid "({count})"
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1673
+#: fuzzy_match_panel.py:744
+#, python-brace-format
+msgid "All {code} ({count})"
+msgstr ""
+
+#: fuzzy_match_panel.py:752 fuzzy_match_panel.py:777
+#, python-brace-format
+msgid "{surname} ({count})"
+msgstr ""
+
+#: fuzzy_match_panel.py:957
 #, python-brace-format
 msgid "No filter available for {algorithm}"
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1677
+#: fuzzy_match_panel.py:959
 msgid ""
 "This Encoding system does not have a matching People filter rule yet, so a "
 "filter cannot be created from it."
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1684
+#: fuzzy_match_panel.py:967
 #, python-brace-format
 msgid "Fuzzy match: {surname} ({algorithm})"
 msgstr ""
 
-#: FuzzyMatchingGramplet.py:1702
+#: fuzzy_match_panel.py:977
 #, python-format
 msgid "Created on %(year)4d/%(month)02d/%(day)02d by Fuzzy Matching gramplet"
 msgstr ""

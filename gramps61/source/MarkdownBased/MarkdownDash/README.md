@@ -1,6 +1,6 @@
-# Markdown Dash (v1.4.0)
+# Markdown Dash
 <!-- undocked=false -->
-[Markdown Based tools](../README.md)
+[Markdown Based tools](../README.md) ● [README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md)
 ![](gramps:icon:io.github.shiftey.Desktop:256) ![](gramps:icon:org.gramps_project.Gramps:256) 
 ![](gramps:icon:gramps-addon:128) ![](gramps:icon:gramps-gramplet:128) ![](gramps:icon:gramps-notes:128) ![](gramps:icon:gramps-pedigree:128)
 
@@ -28,7 +28,7 @@ This where the **MarkdownDash** gramplet exists. It is flexible, local documenta
 Markdown Dash checks the first two lines of any loaded document for file-level instructions and frontis-matter configuration blocks.
 
 ### 1. Document Title Override
-If a document begins with a standard markdown Header 1 (`#`), the gramplet dynamically rewrites its workspace frame label to match the text.
+If a document begins with a standard markdown Header 1 (`#`), the gramplet dynamically rewrites its workspace frame label to match the text. On the Dashboard every gramplet title must be unique, so when another gramplet already uses that title, a number is added (for example `What's Next?-1`). Titles that contain `&`, `<` or `>` are not used; the gramplet keeps its current title.
 ```markdown
 # Custom Dashboard Title
 ```

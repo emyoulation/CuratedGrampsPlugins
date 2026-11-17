@@ -12,10 +12,11 @@
  * The aim is a light tint over the normal window, so the session is
  * obvious but text stays easy to read. Icons are never recolored.
  *
- * To customize: use "Customize colors" in the Pruned Branch tool, which
- * opens this file in your text editor. Changes apply the next time a
- * session starts. Updating the addon replaces this file, so keep a copy
- * of your changes.
+ * To customize: use "Customize colors" in the Pruned Branch tool. Its
+ * swatches and your own edits go in pruned_branch_user.css in this
+ * folder, which is loaded after this file and never replaced by addon
+ * updates. Edit this file only to change the defaults; updating the
+ * addon replaces it.
  *
  * The version line at the top is reserved for later: once user copies
  * are supported again, it will tell Pruned Branch which default a copy
@@ -24,117 +25,125 @@
  * Loaded at GTK priority APPLICATION + 10: above gramps.css and Themes2
  * CSS themes and patches, below Themes2 gramps_user.css (USER priority).
  *
- * Palette
- *   #ecdede  window background
- *   #e6d0d0  menu bar, toolbar, status bar
- *   #f3e7e7  lists and text entries
- *   #e3c4c4  column headers
- *   #f6eded  framed buttons and combo boxes (lighter than the window)
- *   #f3e6e6  hovered flat and toolbar buttons
- *   #d9a6a3  notebook tab strips
- *   #c99a9a  borders and pane separators
- *   #4a1414  text
- *   #3f2a8f  selected row
+ * Colors: change the five colors under "Change these" below. Every
+ * other color is mixed from them, so a new color set needs only those
+ * five lines. mix(A, B, 0.3) means 30% of the way from A to B.
  */
+
+/* --- Change these ----------------------------------------------------- */
+@define-color pruned_surface  #ecdede; /* window background               */
+@define-color pruned_border   #c99a9a; /* borders and pane separators     */
+@define-color pruned_text     #4a1414; /* text                            */
+@define-color pruned_selected #3f2a8f; /* selected row, hovered menu item */
+@define-color pruned_alert    #d32f2f; /* status bar button               */
+
+/* --- Mixed from the colors above ------------------------------------ */
+/* lists, text entries, text on selected rows */
+@define-color pruned_light       mix(@pruned_surface, white, 0.3);
+/* gramplet text, pop-up menus, button tint */
+@define-color pruned_lightest    mix(@pruned_surface, white, 0.5);
+/* menu bar, toolbar, title bars, scroll bars */
+@define-color pruned_bar         mix(@pruned_surface, @pruned_border, 0.2);
+/* column headers, checked tab, menu separators */
+@define-color pruned_header      mix(@pruned_surface, @pruned_border, 0.35);
+/* button borders, menu bar hover */
+@define-color pruned_soft_border mix(@pruned_surface, @pruned_border, 0.65);
+/* notebook tab strips */
+@define-color pruned_tabs        mix(@pruned_surface, @pruned_border, 0.85);
+@define-color pruned_slider      mix(@pruned_border, @pruned_text, 0.1);
+@define-color pruned_disabled    mix(@pruned_surface, @pruned_text, 0.4);
+/* checked tab underline, status bar button border */
+@define-color pruned_accent      mix(@pruned_alert, @pruned_text, 0.5);
+@define-color pruned_alert_hover mix(@pruned_alert, white, 0.1);
 
 /* --- window and chrome --------------------------------------------- */
 .pruned-branch,
 .pruned-branch scrolledwindow,
 .pruned-branch viewport {
-    background-color: #ecdede;
-    color: #4a1414;
+    background-color: @pruned_surface;
+    color: @pruned_text;
 }
 .pruned-branch menubar,
 .pruned-branch toolbar,
 .pruned-branch .toolbar {
-    background-image: none;
-    background-color: #e6d0d0;
-    color: #4a1414;
+    background-color: @pruned_bar;
+    color: @pruned_text;
 }
 .pruned-branch menubar > menuitem,
 .pruned-branch menubar > menuitem label,
-.pruned-branch toolbar button label { color: #4a1414; }
+.pruned-branch toolbar button label { color: @pruned_text; }
 .pruned-branch menubar > menuitem:hover {
-    background-color: #d9b4b4;
+    background-color: @pruned_soft_border;
 }
 
 /* --- lists ----------------------------------------------------------- */
 .pruned-branch treeview.view {
-    background-color: #f3e7e7;
-    color: #4a1414;
+    background-color: @pruned_light;
+    color: @pruned_text;
 }
 .pruned-branch treeview.view:selected,
 .pruned-branch treeview.view:selected:focus {
-    background-color: #3f2a8f;
-    color: #f3e6e6;
+    background-color: @pruned_selected;
+    color: @pruned_light;
 }
 .pruned-branch treeview.view header button {
-    background-image: none;
-    background-color: #e3c4c4;
-    color: #4a1414;
-    border-color: #c99a9a;
+    background-color: @pruned_header;
+    color: @pruned_text;
+    border-color: @pruned_border;
 }
 
 /* --- notebooks (sidebar/bottombar tabs) ------------------------------ */
 .pruned-branch notebook header {
-    background-image: none;
-    background-color: #d9a6a3;
-    border-color: #c99a9a;
+    background-color: @pruned_tabs;
+    border-color: @pruned_border;
 }
-.pruned-branch notebook tab label { color: #4a1414; }
+.pruned-branch notebook tab label { color: @pruned_text; }
 .pruned-branch notebook tab:checked {
-    background-color: #e6c6c4;
-    box-shadow: inset 0 -3px #8e2b2b;
+    background-color: @pruned_header;
+    box-shadow: inset 0 -3px @pruned_accent;
 }
 .pruned-branch notebook > stack {
-    background-color: #ecdede;
+    background-color: @pruned_surface;
 }
 
 /* --- inputs ------------------------------------------------------------ */
 .pruned-branch entry {
-    background-image: none;
-    background-color: #f3e7e7;
-    color: #4a1414;
-    border-color: #c99a9a;
+    background-color: @pruned_light;
+    color: @pruned_text;
+    border-color: @pruned_border;
 }
-/* Buttons are drawn a little LIGHTER than the window, as GTK themes
- * normally do; a darker fill makes them look pressed or disabled.
+/* Buttons, combo boxes, title bars and the status bar button keep the
+ * theme's own gradients. Stock GTK 3 themes (Adwaita included) paint
+ * them with a gradient, which GTK draws as a background image on top of
+ * the background color, so a plain background color would be hidden.
+ * Instead, "background-blend-mode: multiply" multiplies the gradient by
+ * the background color: a near-white tint colors the theme's shading,
+ * hover and pressed looks without replacing them. With a theme that
+ * draws these widgets in a flat color, the tint itself is the fill.
  *
- * Framed buttons (Find, Reset, the gramplet title bar buttons, combo
- * boxes) get a light rose fill and a soft border. Flat buttons (sidebar
- * categories, toolbar buttons, tab close buttons) keep their borderless
- * look and only lighten on hover; the checked one is a little deeper.
+ * Flat buttons (sidebar categories, toolbar buttons, tab close buttons)
+ * keep their borderless look; the theme only paints them on hover or
+ * when checked, and then they get the same tint.
  *
  * The toolbar selectors repeat the :not() parts so they outrank the
- * framed-button rule (CSS counts each :not(.class) as a class). */
+ * button rule (CSS counts each :not(.class) as a class). */
 .pruned-branch button:not(.flat):not(.pruned-branch-alert),
-.pruned-branch combobox button {
-    background-image: none;
-    background-color: #f6eded;
-    border-color: #d2aeae;
-}
-.pruned-branch button:not(.flat):not(.pruned-branch-alert):hover,
-.pruned-branch combobox button:hover {
-    background-color: #fbf6f6;
-}
-.pruned-branch button.flat:hover {
-    background-image: none;
-    background-color: #f3e6e6;
-}
+.pruned-branch combobox button,
+.pruned-branch button.flat:hover,
 .pruned-branch button.flat:checked {
-    background-image: none;
-    background-color: #e2caca;
+    background-color: @pruned_lightest;
+    background-blend-mode: multiply;
+    border-color: @pruned_soft_border;
 }
 .pruned-branch toolbar button,
 .pruned-branch toolbar button:not(.flat):not(.pruned-branch-alert) {
-    background-image: none;
     background-color: transparent;
     border-color: transparent;
 }
 .pruned-branch toolbar button:hover,
 .pruned-branch toolbar button:not(.flat):not(.pruned-branch-alert):hover {
-    background-color: #f3e6e6;
-    border-color: #d2aeae;
+    background-color: @pruned_light;
+    border-color: @pruned_soft_border;
 }
 
 /* --- gramplets and title bars --------------------------------------- */
@@ -142,42 +151,42 @@
  * .pruned-branch class on their own window during a session. */
 .pruned-branch textview,
 .pruned-branch textview text {
-    background-color: #f8f0f0;
-    color: #4a1414;
+    background-color: @pruned_lightest;
+    color: @pruned_text;
 }
 .pruned-branch .titlebar,
 .pruned-branch headerbar,
 .pruned-branch .titlebar:backdrop,
 .pruned-branch headerbar:backdrop {
-    background-image: none;
-    background-color: #e6d0d0;
-    color: #4a1414;
+    background-color: @pruned_lightest;
+    background-blend-mode: multiply;
+    color: @pruned_text;
 }
 
 /* --- separators, scrollbars, status bar --------------------------- */
 .pruned-branch paned > separator,
 .pruned-branch separator {
-    background-color: #c99a9a;
+    background-color: @pruned_border;
 }
-.pruned-branch scrollbar { background-color: #e6d0d0; }
-.pruned-branch scrollbar slider { background-color: #c08a8a; }
+.pruned-branch scrollbar { background-color: @pruned_bar; }
+.pruned-branch scrollbar slider { background-color: @pruned_slider; }
 .pruned-branch statusbar {
     background-color: transparent;
-    color: #4a1414;
+    color: @pruned_text;
 }
 
 /* --- the status bar button --------------------------------------- */
 .pruned-branch-alert {
-    background-image: none;
-    background-color: #d32f2f;
-    color: #ffffff;
+    background-color: @pruned_alert;
+    background-blend-mode: multiply;
+    color: white;
     font-weight: bold;
     font-size: larger;
-    border-color: #8e1b1b;
+    border-color: @pruned_accent;
     padding: 2px 14px;
 }
-.pruned-branch-alert:hover { background-color: #e53935; }
-.pruned-branch-alert label { color: #ffffff; }
+.pruned-branch-alert:hover { background-color: @pruned_alert_hover; }
+.pruned-branch-alert label { color: white; }
 
 /* --- pop-up menus (cannot be scoped; see the note at the top) -------- */
 /* Colors are set on the menu and its menu items, never on their labels:
@@ -187,18 +196,16 @@
 menu,
 .menu,
 .context-menu {
-    background-image: none;
-    background-color: #f6eded;
-    color: #4a1414;
-    border: 1px solid #c99a9a;
+    background-color: @pruned_lightest;
+    color: @pruned_text;
+    border: 1px solid @pruned_border;
 }
 menu > menuitem {
-    color: #4a1414;
+    color: @pruned_text;
 }
 menu > menuitem:hover {
-    background-image: none;
-    background-color: #3f2a8f;
-    color: #f3e6e6;
+    background-color: @pruned_selected;
+    color: @pruned_light;
 }
 /* Something in the theme gives labels their own color, so they do not
  * inherit the hover color. Set it on the hovered item's own label,
@@ -211,9 +218,9 @@ menu > menuitem:hover > label > accelerator,
 menu > menuitem:hover > box > label > accelerator,
 menu > menuitem:hover > accelerator,
 menu > menuitem:hover > arrow {
-    color: #f3e6e6;
+    color: @pruned_light;
 }
 menu > menuitem:disabled {
-    color: #b08e8e;
+    color: @pruned_disabled;
 }
-menu > separator { background-color: #dcc0c0; }
+menu > separator { background-color: @pruned_header; }

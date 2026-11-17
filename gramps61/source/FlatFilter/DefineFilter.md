@@ -48,9 +48,9 @@ The rules that `FlatFilter.get_filter()` builds fail all three tests:
 With the unchanged core `define_filter()`, the Define Filter dialog would open and save, but the saved filter would lose its Flat Filter rules the next time Gramps read `custom_filters.xml`.
 
 ## What Flat Filter 2.0.1 does
-Kari Kujansuu solved tests 1 and 2 with one registered "carrier" rule that can stand in for any Flat Filter name rule.
+Kari Kujansuu solved tests 1 and 2 with one registered "adapter" rule that can stand in for any Flat Filter name rule.
 
-### 1. A registered carrier rule
+### 1. A registered adapter rule
 `FlatFilter.gpr.py` registers a second plugin besides the gramplet:
 
 ```python
@@ -77,7 +77,7 @@ Kari first named it `GenericRule`, registered for `gramps_target_version = "6.0"
 
 At startup, for each `RULE` plugin, Gramps imports its module (here the whole of `FlatFilter.py`), takes the class named by `ruleclass`, adds it to `gramps.gen.filters.rules.person` with `setattr()`, and appends it to `editor_rule_list` (`BasePluginManager.reg_plugins()` in `_manager.py`). That makes `FlatFilterRule` findable by the filter parser, and also makes it appear in the Filter Editor.
 
-### 2. The carrier rule class
+### 2. The adapter rule class
 In `FlatFilter.py`:
 
 ```python
@@ -136,11 +136,11 @@ So a Flat Filter search for a father named John is saved like this:
 
 ## Known gaps in 2.0.1
 These are the starting points for the next version. Item 1 changes what a person sees.
-1. **Some settings are silently lost** (test 3). The carrier stores only the text, the two class names and `use_regex`. So a saved filter matches differently from **Find** whenever:
-   - **Use fuzzy matching** was on. The saved filter would do a plain substring match instead, so `Smith` would no longer find `Smyth`. Until the carrier can store the phonetic system, `_update_define_filter_button()` dims **Define filter** whenever **Use fuzzy matching** is checked, with a tooltip saying why. It runs from `cb_fuzzy_toggled()`, so it also follows **Reset**, saved settings, and the regular expression checkbox turning fuzzy matching off.
+1. **Some settings are silently lost** (test 3). The adapter stores only the text, the two class names and `use_regex`. So a saved filter matches differently from **Find** whenever:
+   - **Use fuzzy matching** was on. The saved filter would do a plain substring match instead, so `Smith` would no longer find `Smyth`. Until the adapter can store the phonetic system, `_update_define_filter_button()` dims **Define filter** whenever **Use fuzzy matching** is checked, with a tooltip saying why. It runs from `cb_fuzzy_toggled()`, so it also follows **Reset**, saved settings, and the regular expression checkbox turning fuzzy matching off.
    - The **Include:** checkboxes of the Person row were changed from searching every name part, or **Alternatives** was turned off.
 2. **Class names become a saved contract.** The second and third arguments are names of classes in `FlatFilter.py`. Renaming `HasNamedFather`, `RegExpPersonal` or any other rule or matcher class breaks filters saved with the old name. `globals()[name]` also raises `KeyError` for any name that is not there.
-3. **The carrier shows in the Filter Editor.** Because it is in `editor_rule_list`, a person can add "Flat Filter rule" by hand and must then type internal class names into "Rule class:" and "Name matcher class:". A typing mistake fails only when the filter runs.
+3. **The adapter shows in the Filter Editor.** Because it is in `editor_rule_list`, a person can add "Flat Filter rule" by hand and must then type internal class names into "Rule class:" and "Name matcher class:". A typing mistake fails only when the filter runs.
 4. **Saved filters need Flat Filter installed.** If the addon is removed or deactivated, the rule is not registered, and those filters lose their rules at the next start.
 5. **Small details:**
    - The error message uses red Pango markup, while core uses the `error` style class on `msg_label`.
@@ -148,28 +148,28 @@ These are the starting points for the next version. Item 1 changes what a person
    - `FlatFilterRule` has no `apply()` alias for Gramps 5.2. This is harmless only while the rule is registered for 6.0 and later.
 
 ## Naming and version rules
-Two more problems in the first draft of 2.0.1 were fixed before it was shared. Both apply to every carrier rule.
+Two more problems in the first draft of 2.0.1 were fixed before it was shared. Both apply to every adapter rule.
 
 **A unique name.** Gramps resolves names in three shared places, and a duplicate replaces the other one silently, with no warning (checked in the Gramps 6.0.8 source):
 1. **Plugin ids.** When two `.gpr.py` files register the same id, the one scanned later replaces the earlier one in the plugin registry (`scan_dir()` in `_pluginreg.py`).
 2. **Rule classes.** Each `RULE` plugin class is placed in `gramps.gen.filters.rules.<namespace>` with `setattr()`, so a second Person rule with the same class name overwrites the first.
 3. **Saved filters.** `custom_filters.xml` stores only the bare class name, with no module or addon. A saved filter gets whichever class won step 2.
 
-The first draft used `GenericRule`, a name any addon could choose. SuperTool, also by Kari, already saves filters with a similar pattern, `GenericFilterRule_<Namespace>`. The carrier is now `FlatFilterRule`. Because saved filters record the class name, it must never change again.
+The first draft used `GenericRule`, a name any addon could choose. SuperTool, also by Kari, already saves filters with a similar pattern, `GenericFilterRule_<Namespace>`. The adapter is now `FlatFilterRule`. Because saved filters record the class name, it must never change again.
 
-**The registered Gramps version.** Gramps registers a plugin only when its `gramps_target_version` matches the running major version (`valid_plugin_version()` in `_pluginreg.py`). The first draft hard-coded `"6.0"`, so on Gramps 6.1 the carrier was not registered, and every saved Flat Filter rule failed to load with "Filter rule '...' not found!". The registration now uses `major_version`, inside a 6.0-to-6.2 range, because Define filter does not exist on Gramps 5.2.
+**The registered Gramps version.** Gramps registers a plugin only when its `gramps_target_version` matches the running major version (`valid_plugin_version()` in `_pluginreg.py`). The first draft hard-coded `"6.0"`, so on Gramps 6.1 the adapter was not registered, and every saved Flat Filter rule failed to load with "Filter rule '...' not found!". The registration now uses `major_version`, inside a 6.0-to-6.2 range, because Define filter does not exist on Gramps 5.2.
 
 ## Recipe: giving another filter gramplet Define filter support
 ### Step 1: decide whether anything is needed
 List every rule class that your `get_filter()` can add. For each one, apply the three tests above (findable, constructible, complete).
 - **All core rules, or registered `RULE` plugins, with only string arguments:** do nothing. The core `define_filter()` already works.
-- **Any private rule, any extra constructor argument, or any setting that lives outside the string arguments:** you need a carrier rule (step 2) and a conversion step (step 3).
+- **Any private rule, any extra constructor argument, or any setting that lives outside the string arguments:** you need a adapter rule (step 2) and a conversion step (step 3).
 
-### Step 2: write one carrier rule per gramplet
+### Step 2: write one adapter rule per gramplet
 - **Give it a specific, permanent class name**, such as `<AddonName>Rule`. Use the same name as the `RULE` plugin id. Never rename it after release.
 - **Use the standard constructor:** `(arg, use_regex=False, use_case=False)`. Do not add required parameters.
 - **Put everything in string arguments.** Make the first argument a format version, such as `"1"`, so a later version can read filters saved by an earlier one. Then store the search text, the real rule name, the matcher name, and every setting that changes the result: phonetic system id, name-part flags, alternates flag, and so on. Store booleans as `"0"`/`"1"` and lists as comma-separated text.
-- **Rebuild in `prepare()`, not `__init__()`.** The parser builds the carrier while reading XML at startup, when other plugins (such as a phonetic system provider) may not be loaded yet.
+- **Rebuild in `prepare()`, not `__init__()`.** The parser builds the adapter while reading XML at startup, when other plugins (such as a phonetic system provider) may not be loaded yet.
 - **Look classes up in an explicit table**, for example `_SAVEABLE_RULES = {"HasNamedFather": HasNamedFather, ...}`, rather than `globals()`. An unknown name should make the rule match nobody and log a warning, rather than raise.
 - **Implement `prepare()`, `reset()` and `apply_to_one()`**, plus `apply = apply_to_one` if the addon also supports Gramps 5.2.
 - **Give it readable `labels`, a translated `name`, and a `description` and `category`**, since it appears in the Filter Editor. Say there that it is made by your gramplet and is not meant to be added by hand.
@@ -200,17 +200,17 @@ def define_filter(self, _obj):
     )
 
 def _to_saveable(self, rule):
-    """Wrap a private rule in the carrier rule; pass core rules through."""
+    """Wrap a private rule in the adapter rule; pass core rules through."""
     if type(rule).__name__ not in _SAVEABLE_RULES:
         return rule  # a core rule, such as ProbablyAlive
     return AddonNameRule(encode_rule(rule), use_regex=rule.use_regex)
 ```
 
-`encode_rule()` is the single place that turns a private rule and its settings into the string list of the carrier. The carrier `prepare()` is its exact inverse. Keep the two next to each other in the source, and test them together.
+`encode_rule()` is the single place that turns a private rule and its settings into the string list of the adapter. The adapter `prepare()` is its exact inverse. Keep the two next to each other in the source, and test them together.
 
 Copy any later fixes from the core `define_filter()` (such as the `WithinArea` conversion and `filter_is_ok()`) if your gramplet can produce those rules.
 
-### Step 4: register the carrier
+### Step 4: register the adapter
 In the `.gpr.py`, next to the gramplet registration:
 
 ```python
@@ -237,7 +237,7 @@ if (6, 0, 0) <= VERSION_TUPLE <= (6, 2, 0):
 2. Click **Define filter**, name the filter, and save it.
 3. Restart Gramps. Watch the terminal for "not found" or "Too many/few arguments" messages.
 4. Choose the saved filter in the **Custom filter** list of the core Filter sidebar and click **Find**. The count must equal step 1.
-5. Repeat for every row, every matching mode, and every setting that the carrier stores. Include the core rules, such as Probably Alive.
-6. Open the filter in the Filter Editor and check that the carrier arguments are readable.
+5. Repeat for every row, every matching mode, and every setting that the adapter stores. Include the core rules, such as Probably Alive.
+6. Open the filter in the Filter Editor and check that the adapter arguments are readable.
 7. Deactivate the addon, restart, and confirm that the failure is understandable.
 8. Test on every Gramps version the `.gpr.py` allows.

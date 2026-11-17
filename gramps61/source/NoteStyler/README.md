@@ -4,7 +4,7 @@ An Experimental Gramps gramplet that shows the `StyledText` markup (bold, italic
 ![Undocked Note Styling Editor gramplet](media/screenshot.png)
 
 This gramplet began as [Kari Kujansuu's SuperTool script `note-markup.py`](https://gramps.discourse.group/t/5396), originally written to be run inside the SuperTool gramplet against one note at a time. Claude AI re-packaged that same logic into a standalone gramplet that reacts automatically to active item in the views. (With some missteps along the way. Claude did not recognize that because the script was manually triggered and Gramplets react dynamically, the INIT of the script did not translate directly.) 
-For Notes category views, it focuses on the directly selected Active Note. For the other categories focus is more indirect, it has to focus on the topmost Note that is secondary to the Active object.     
+For Notes category views, it focuses on the directly selected Active Note. For the other categories focus is more indirect, it has to focuses on the topmost Note that is secondary to the Active object.     
 
 ## Features
 - Lists every styling applied to the active note, one row per style, in the order it appears in the text -- showing the style's name, its value (e.g. a font color), and the bit of text it applies to.

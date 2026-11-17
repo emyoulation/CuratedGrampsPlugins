@@ -1,0 +1,506 @@
+# Translation template for the 1.2.0 Data Entry Gramplet gramplet addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Data Entry Gramplet package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Data Entry Gramplet 1.2.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-15 23:11-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: DataEntryGramplet.gpr.py:36
+msgid "Data Entry Gramplet"
+msgstr ""
+
+#: DataEntryGramplet.gpr.py:38
+msgid ""
+"Key in a relative of the active person, with their birth, death and other "
+"events and sources, on one form instead of working through a dozen editing "
+"dialogs"
+msgstr ""
+
+#: DataEntryGramplet.gpr.py:53
+msgid "Data Entry"
+msgstr ""
+
+#: DataEntryGramplet.py:117
+msgid "Help"
+msgstr ""
+
+#: DataEntryGramplet.py:482
+msgid "Active person"
+msgstr ""
+
+#: DataEntryGramplet.py:487
+msgid "Family:"
+msgstr ""
+
+#: DataEntryGramplet.py:495
+msgid "female"
+msgstr ""
+
+#: DataEntryGramplet.py:495
+msgid "male"
+msgstr ""
+
+#: DataEntryGramplet.py:495
+msgid "unknown"
+msgstr ""
+
+#: DataEntryGramplet.py:495
+msgid "other"
+msgstr ""
+
+#: DataEntryGramplet.py:497 DataEntryGramplet.py:569
+msgid "Surname, Given"
+msgstr ""
+
+#: DataEntryGramplet.py:500 DataEntryGramplet.py:579 DataEntryGramplet.py:1199
+msgid "Gender"
+msgstr ""
+
+#: DataEntryGramplet.py:504 DataEntryGramplet.py:510 DataEntryGramplet.py:516
+#: DataEntryGramplet.py:582 DataEntryGramplet.py:1042
+msgid "Source"
+msgstr ""
+
+#: DataEntryGramplet.py:508 DataEntryGramplet.py:1200
+msgid "Birth"
+msgstr ""
+
+#: DataEntryGramplet.py:514 DataEntryGramplet.py:1201
+msgid "Death"
+msgstr ""
+
+#: DataEntryGramplet.py:522 DataEntryGramplet.py:3299
+msgid "Save"
+msgstr ""
+
+#: DataEntryGramplet.py:523 DataEntryGramplet.py:3207 DataEntryGramplet.py:3302
+msgid "Abandon"
+msgstr ""
+
+#: DataEntryGramplet.py:530 DataEntryGramplet.py:3024
+msgid "New person"
+msgstr ""
+
+#: DataEntryGramplet.py:533
+msgid "Add relation"
+msgstr ""
+
+#: DataEntryGramplet.py:535
+msgid "No relation to active person"
+msgstr ""
+
+#: DataEntryGramplet.py:536
+msgid "Add as a Parent"
+msgstr ""
+
+#: DataEntryGramplet.py:537
+msgid "Add as a Mother"
+msgstr ""
+
+#: DataEntryGramplet.py:538
+msgid "Add as a Father"
+msgstr ""
+
+#: DataEntryGramplet.py:539
+msgid "Add as a Spouse"
+msgstr ""
+
+#: DataEntryGramplet.py:540
+msgid "Add as a Wife"
+msgstr ""
+
+#: DataEntryGramplet.py:541
+msgid "Add as a Husband"
+msgstr ""
+
+#: DataEntryGramplet.py:542
+msgid "Add as a Sibling"
+msgstr ""
+
+#: DataEntryGramplet.py:543
+msgid "Add as a Child"
+msgstr ""
+
+#: DataEntryGramplet.py:544
+msgid "Update self"
+msgstr ""
+
+#: DataEntryGramplet.py:545
+msgid "Add an Association"
+msgstr ""
+
+#: DataEntryGramplet.py:561
+msgid ""
+"Fuzzy Match Lookup: look for people already in the tree whose surname sounds "
+"like this one (or like the Active person's surname, if the field is empty). "
+"Double-click a person there to add that existing person instead of a new one."
+msgstr ""
+
+#: DataEntryGramplet.py:575 DataEntryGramplet.py:605 DataEntryGramplet.py:3315
+msgid "Clear"
+msgstr ""
+
+#: DataEntryGramplet.py:603 DataEntryGramplet.py:3313
+msgid "Add"
+msgstr ""
+
+#: DataEntryGramplet.py:604 DataEntryGramplet.py:3314
+msgid "Copy Active Data"
+msgstr ""
+
+#: DataEntryGramplet.py:701 DataEntryGramplet.py:712 DataEntryGramplet.py:1311
+msgid "in"
+msgstr ""
+
+#: DataEntryGramplet.py:970
+msgid "Use citation"
+msgstr ""
+
+#: DataEntryGramplet.py:996
+msgid "Enter Sources"
+msgstr ""
+
+#: DataEntryGramplet.py:1001
+msgid "Select Citation"
+msgstr ""
+
+#: DataEntryGramplet.py:1005
+msgid "None"
+msgstr ""
+
+#: DataEntryGramplet.py:1188 DataEntryGramplet.py:1234
+msgid "Nothing to abandon."
+msgstr ""
+
+#: DataEntryGramplet.py:1198
+msgid "Name"
+msgstr ""
+
+#: DataEntryGramplet.py:1202
+msgid "Person source"
+msgstr ""
+
+#: DataEntryGramplet.py:1203
+msgid "Birth source"
+msgstr ""
+
+#: DataEntryGramplet.py:1204
+msgid "Death source"
+msgstr ""
+
+#: DataEntryGramplet.py:1215
+#, python-format
+msgid "Unsaved changes: %s"
+msgstr ""
+
+#: DataEntryGramplet.py:1215
+msgid "(unknown)"
+msgstr ""
+
+#: DataEntryGramplet.py:1218
+#, python-format
+msgid "Person being edited: %s"
+msgstr ""
+
+#: DataEntryGramplet.py:1219
+msgid "Click to discard them and reload."
+msgstr ""
+
+#: DataEntryGramplet.py:1478 DataEntryGramplet.py:1608
+msgid "No Family Tree is open."
+msgstr ""
+
+#: DataEntryGramplet.py:1479
+msgid "Please open a Family Tree to edit data."
+msgstr ""
+
+#: DataEntryGramplet.py:1498 DataEntryGramplet.py:1779
+#, python-format
+msgid "Gramplet Data Edit: %s"
+msgstr ""
+
+#: DataEntryGramplet.py:1609
+msgid "Please open a Family Tree before adding a person."
+msgstr ""
+
+#: DataEntryGramplet.py:1631
+msgid "The linked person is no longer in the tree."
+msgstr ""
+
+#: DataEntryGramplet.py:1632
+msgid "Can't add the linked person."
+msgstr ""
+
+#: DataEntryGramplet.py:1643
+msgid "The linked person is the active person."
+msgstr ""
+
+#: DataEntryGramplet.py:1644
+msgid "Choose \"Update self\" (or an Association) to update them."
+msgstr ""
+
+#: DataEntryGramplet.py:1649
+msgid "The New person is not linked to the active person."
+msgstr ""
+
+#: DataEntryGramplet.py:1650
+msgid "\"Update self\" needs both areas to show the same person."
+msgstr ""
+
+#: DataEntryGramplet.py:1658
+msgid "Please choose the associated person."
+msgstr ""
+
+#: DataEntryGramplet.py:1659 DataEntryGramplet.py:1665
+msgid "Can't add the Association."
+msgstr ""
+
+#: DataEntryGramplet.py:1664
+msgid "A person can't be associated with themselves."
+msgstr ""
+
+#: DataEntryGramplet.py:1683
+msgid "Please provide a name."
+msgstr ""
+
+#: DataEntryGramplet.py:1683
+msgid "Can't add new person."
+msgstr ""
+
+#: DataEntryGramplet.py:1693 DataEntryGramplet.py:1707
+#: DataEntryGramplet.py:1715 DataEntryGramplet.py:1723
+#: DataEntryGramplet.py:1740 DataEntryGramplet.py:1748
+#: DataEntryGramplet.py:1756 DataEntryGramplet.py:1764
+msgid "Please set an active person."
+msgstr ""
+
+#: DataEntryGramplet.py:1694 DataEntryGramplet.py:1700
+msgid "Can't add new person as a parent."
+msgstr ""
+
+#: DataEntryGramplet.py:1699 DataEntryGramplet.py:1732
+msgid "Please set the new person's gender."
+msgstr ""
+
+#: DataEntryGramplet.py:1708
+msgid "Can't add new person as a mother."
+msgstr ""
+
+#: DataEntryGramplet.py:1716
+msgid "Can't add new person as a father."
+msgstr ""
+
+#: DataEntryGramplet.py:1724 DataEntryGramplet.py:1733
+#: DataEntryGramplet.py:2000 DataEntryGramplet.py:2038
+#: DataEntryGramplet.py:2072
+msgid "Can't add new person as a spouse."
+msgstr ""
+
+#: DataEntryGramplet.py:1741
+msgid "Can't add new person as a wife."
+msgstr ""
+
+#: DataEntryGramplet.py:1749
+msgid "Can't add new person as a husband."
+msgstr ""
+
+#: DataEntryGramplet.py:1757
+msgid "Can't add new person as a sibling."
+msgstr ""
+
+#: DataEntryGramplet.py:1765 DataEntryGramplet.py:2179
+msgid "Can't add new person as a child."
+msgstr ""
+
+#: DataEntryGramplet.py:1994
+msgid "Please set Active person."
+msgstr ""
+
+#: DataEntryGramplet.py:1995
+msgid "Can't add new person as a spouse to no one."
+msgstr ""
+
+#: DataEntryGramplet.py:1999
+msgid "Please set gender on Active or new person."
+msgstr ""
+
+#: DataEntryGramplet.py:2037 DataEntryGramplet.py:2071
+msgid "Same genders on Active and new person."
+msgstr ""
+
+#: DataEntryGramplet.py:2178
+msgid "Please set gender on Active person."
+msgstr ""
+
+#: DataEntryGramplet.py:2223
+msgid "That Association is already recorded; it was not added again."
+msgstr ""
+
+#: DataEntryGramplet.py:2230
+#, python-format
+msgid ""
+"%s is already in that family of the active person; no family link was added."
+msgstr ""
+
+#: DataEntryGramplet.py:2388
+msgid "updates Data Entry New Person"
+msgstr ""
+
+#: DataEntryGramplet.py:2441
+#, python-format
+msgid ""
+"Linked to the existing person %s [%s]. Add uses this person instead of "
+"creating a new one. Edit the name to unlink."
+msgstr ""
+
+#: DataEntryGramplet.py:2532 DataEntryGramplet.py:3356
+msgid "Add..."
+msgstr ""
+
+#: DataEntryGramplet.py:2534 DataEntryGramplet.py:3357
+msgid "Edit..."
+msgstr ""
+
+#: DataEntryGramplet.py:2756
+#, python-format
+msgid "Association: %(relation)s, with %(person)s"
+msgstr ""
+
+#: DataEntryGramplet.py:2757
+msgid "(no description)"
+msgstr ""
+
+#: DataEntryGramplet.py:2997
+msgid "Father"
+msgstr ""
+
+#: DataEntryGramplet.py:2998
+msgid "Mother"
+msgstr ""
+
+#: DataEntryGramplet.py:2999
+msgid "Parent"
+msgstr ""
+
+#: DataEntryGramplet.py:3000
+msgid "Husband"
+msgstr ""
+
+#: DataEntryGramplet.py:3001
+msgid "Wife"
+msgstr ""
+
+#: DataEntryGramplet.py:3002
+msgid "Spouse"
+msgstr ""
+
+#: DataEntryGramplet.py:3003
+msgid "Sibling"
+msgstr ""
+
+#: DataEntryGramplet.py:3004
+msgid "Child"
+msgstr ""
+
+#: DataEntryGramplet.py:3005
+msgid "Self"
+msgstr ""
+
+#: DataEntryGramplet.py:3006
+msgid "Not related"
+msgstr ""
+
+#: DataEntryGramplet.py:3029
+msgid "Update person:"
+msgstr ""
+
+#: DataEntryGramplet.py:3051 DataEntryGramplet.py:3056
+#, python-format
+msgid "Recorded as: %s"
+msgstr ""
+
+#: DataEntryGramplet.py:3205
+msgid "Abandon the unsaved edits?"
+msgstr ""
+
+#: DataEntryGramplet.py:3206
+msgid "The Active person area has edits that are not saved yet."
+msgstr ""
+
+#: DataEntryGramplet.py:3208
+msgid "Keep editing"
+msgstr ""
+
+#: DataEntryGramplet.py:3307
+msgid "Fuzzy Match Lookup..."
+msgstr ""
+
+#: DataEntryGramplet.py:3311
+msgid "Unlink the existing person"
+msgstr ""
+
+#: DataEntryGramplet.py:3343
+msgid "Back"
+msgstr ""
+
+#: DataEntryGramplet.py:3346
+msgid "Forward"
+msgstr ""
+
+#: DataEntryGramplet.py:3350
+msgid "Home"
+msgstr ""
+
+#: DataEntryGramplet.py:3354
+msgid "Set Home Person"
+msgstr ""
+
+#: DataEntryGramplet.py:3358 DataEntryGramplet.py:3461
+msgid "Delete"
+msgstr ""
+
+#: DataEntryGramplet.py:3363
+msgid "Merge..."
+msgstr ""
+
+#: DataEntryGramplet.py:3459
+#, python-format
+msgid "Delete %s?"
+msgstr ""
+
+#: DataEntryGramplet.py:3460
+msgid "Deleting the person will remove the person from the database."
+msgstr ""
+
+#: DataEntryGramplet.py:3462
+msgid "Cancel"
+msgstr ""
+
+#: DataEntryGramplet.py:3466
+#, python-format
+msgid "Delete Person (%s)"
+msgstr ""
+
+#: DataEntryGramplet.py:3513
+msgid "Quick View"
+msgstr ""
+
+#: DataEntryGramplet.py:3554
+msgid "Web Connection"
+msgstr ""
+
+#: DataEntryGramplet.py:3719
+msgid "Choose a citation to attach to the new records (instead of Sources)."
+msgstr ""

@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: PR2388_ExampleTreePrompt.gpr.py:32
+#: PR2388_ExampleTreePrompt.gpr.py:33
 msgid "PR2388 Example Tree Prompt"
 msgstr ""
 
-#: PR2388_ExampleTreePrompt.gpr.py:34
+#: PR2388_ExampleTreePrompt.gpr.py:35
 msgid ""
 "On startup, offers to import a practice Family Tree from the sample data "
 "included with Gramps. Afterwards it shows the Dashboard with a To Do note to "

@@ -47,7 +47,8 @@ register(
     fname="importcsv.py",
     import_function="importData",
     extension="csv",
-    help_url="Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#Gramps_CSV_import",
+    help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
+    # help_url="Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#Gramps_CSV_import",
 )
 
 # ── CSV Enhanced export ─────────────────────────────────────────────
@@ -63,7 +64,7 @@ register(
         "\nYou can change this behavior in the 'Configure active"
         " view' of any list-based view"
     ),
-    version="1.1.0",
+    version="1.1.1",
     gramps_target_version=major_version,
     status=EXPERIMENTAL,
     audience=EXPERT,
@@ -72,5 +73,6 @@ register(
     export_options="CSVWriterOptionBox",
     export_options_title=_("CSV spreadsheet options"),
     extension="csv",
-    help_url="Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#csv_export",
+    help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
+    # help_url="Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#csv_export",
 )

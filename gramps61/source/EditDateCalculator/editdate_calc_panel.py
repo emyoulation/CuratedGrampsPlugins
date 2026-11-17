@@ -57,6 +57,10 @@ _UNIT_ITEM = re.compile(
 # "Age" / "Aged" ahead of an offset ("Aged 45y 3m") subtracts it, as a minus would
 _AGE_PREFIX = re.compile(r"\s*aged?\b[\s:.]*", re.IGNORECASE)
 
+# a bare, unsigned number greater than this is read as a year ("2014"), not a
+# years offset; nobody's age offset gets anywhere near this high
+MAX_PLAUSIBLE_AGE = 130
+
 
 def _parse_units(text):
     """
@@ -128,7 +132,8 @@ class DateCalculatorPanel(Gtk.Box):
                 "3. years, months and days: 2, 3, 10\n"
                 "    or with units, in any order and each optional: 2y, 3m, 10d\n"
                 "A leading minus, or Age / Aged (Aged 45y 3m), subtracts the "
-                "whole offset."
+                "whole offset. A bare number over 130 is read as a year, "
+                "not an offset."
             ),
         )
         example_date = displayer.display(Date(1900, 6, 15))
@@ -197,15 +202,34 @@ class DateCalculatorPanel(Gtk.Box):
         return entry
 
     @staticmethod
-    def _parse_operand(text, message):
+    def _parse_reference(text, message):
         """
-        Turn the text of one entry into (negated, value).
+        Turn the Reference date entry into (negated, Date).
 
-        The value is an int (years), a tuple of ints (years, months, days) or
-        a valid Date.  Raises ValueError(message) if none of these fit.
+        The Reference date is always a date (a bare number is its year); it
+        is never an offset.  Raises ValueError(message) if it is not a valid
+        Gramps date.
+        """
+        text = text.strip()
+        negated = text.startswith("-")
+        if negated:
+            text = text[1:].strip()
+        date = parser.parse(text)
+        if date.is_empty() or not date.is_valid():
+            raise ValueError(message)
+        return negated, date
 
-        An offset is negated by a leading minus, or by "Age" / "Aged" ahead
-        of it, which must then be followed by an offset, never a date.
+    @staticmethod
+    def _parse_offset(text, message):
+        """
+        Turn the "Date or offset" entry into (negated, value).
+
+        The value is a valid Date, an int (years), or a tuple of ints
+        (years, months, days).  Raises ValueError(message) if none of these
+        fit.
+
+        It is negated by a leading minus, or by "Age" / "Aged" ahead of it,
+        which must then be followed by an offset, never a date.
         """
         text = text.strip()
         aged = _AGE_PREFIX.match(text)
@@ -220,6 +244,10 @@ class DateCalculatorPanel(Gtk.Box):
         except (ValueError, SyntaxError, MemoryError, RecursionError):
             value = None
         if isinstance(value, int) and not isinstance(value, bool):
+            if not negated and not aged and value > MAX_PLAUSIBLE_AGE:
+                date = parser.parse(text)
+                if not date.is_empty() and date.is_valid():
+                    return negated, date
             return negated, value
         if (
             isinstance(value, tuple)
@@ -239,19 +267,14 @@ class DateCalculatorPanel(Gtk.Box):
             raise ValueError(message)
         return negated, date
 
-    def _compute(self, neg1, val1, neg2, val2):
+    @staticmethod
+    def _compute(neg1, val1, neg2, val2):
         """
-        Combine the two operands; at least one of them must be a Date.
+        Combine the Reference date (always a Date) with the second operand.
         """
-        if isinstance(val1, Date) and isinstance(val2, Date):
-            return val2 - val1 if neg1 else val1 - val2
-        if isinstance(val1, Date):
-            return val1 - val2 if neg2 else val1 + val2
         if isinstance(val2, Date):
-            return val2 - val1 if neg1 else val2 + val1
-        raise ValueError(
-            _("Error: %(field)s must be a date") % {"field": self._reference_label}
-        )
+            return val2 - val1 if neg1 else val1 - val2
+        return val1 - val2 if neg2 else val1 + val2
 
     def cb_calculate(self, _widget):
         """
@@ -261,11 +284,11 @@ class DateCalculatorPanel(Gtk.Box):
         if not self.reference.get_text().strip():
             return
         try:
-            neg1, val1 = self._parse_operand(
+            neg1, val1 = self._parse_reference(
                 self.reference.get_text(),
                 _("Error: invalid %(field)s") % {"field": self._reference_label},
             )
-            neg2, val2 = self._parse_operand(
+            neg2, val2 = self._parse_offset(
                 self.offset.get_text(),
                 _("Error: invalid %(field)s") % {"field": self._offset_label},
             )

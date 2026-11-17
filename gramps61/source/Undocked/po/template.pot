@@ -1,0 +1,52 @@
+# Translation template for the 0.1.0 Undocked Gramplets general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Undocked Gramplets package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Undocked Gramplets 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-15 12:15-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: UndockedGramplets.gpr.py:32
+msgid "Undocked Gramplets"
+msgstr ""
+
+#: UndockedGramplets.gpr.py:34
+msgid ""
+"Replaces the Close button of gramplets undocked from a sidebar or bottombar "
+"with a Dock button, and uses the smart Help button of Markdown Utils when "
+"that addon is active."
+msgstr ""
+
+#: UndockedGramplets.py:175
+msgid "View"
+msgstr ""
+
+#: UndockedGramplets.py:201
+#, python-format
+msgid "%(category)s category %(view)s view"
+msgstr ""
+
+#: UndockedGramplets.py:216
+#, python-format
+msgid "Dock this gramplet in the %s sidebar"
+msgstr ""
+
+#: UndockedGramplets.py:220
+#, python-format
+msgid "Dock this gramplet in the %s bottombar"
+msgstr ""
+
+#: UndockedGramplets.py:227
+msgid "Dock"
+msgstr ""

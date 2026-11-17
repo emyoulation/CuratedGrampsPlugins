@@ -38,7 +38,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
             "Gramplet providing a person filter on relationships, with "
             "a choice of phonetic matching systems"
         ),
-        version="2.0.2",  # build 20261023.2148
+        version="2.0.3",  # build 20261023.2148
         gramps_target_version=major_version,
         authors=["Paul Womack", "Doug Blank"],
         authors_email=["", "doug.blank@gmail.com"],

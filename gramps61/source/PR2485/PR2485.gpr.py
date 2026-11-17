@@ -31,7 +31,7 @@ if (5, 2, 0) <= VERSION_TUPLE < (6, 2, 0):
             "button appears beside the Surname field when Fuzzy Matching is "
             "installed, and the Surname field shows a 'surname' tip."
         ),
-        version="0.1.0",  # build 20261113.2223
+        version="0.1.3",  # build 20261116.0620
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="PR2485.py",

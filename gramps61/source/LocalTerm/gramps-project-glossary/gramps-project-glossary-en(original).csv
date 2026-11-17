@@ -132,5 +132,5 @@ location,source,target,id,fuzzy,context,translator_comments,developer_comments
 ,View category,View category,,yes,terminology,"collection of View modes presenting differing aspects of similar structured information",Gramps_Glossary/en#view_category
 ,View mode,View mode,,yes,terminology,"display layouts presenting a View category's structured information in a predictable manner",Gramps_Glossary/en#viewmode
 ,Wiki,Wiki,,yes,terminology,"a collaboratively maintained website",Gramps_Glossary/en#wiki
-,Witness,Witness,,yes,,"a term to identify the Event Role as being an observer",Gramps_Glossary/en#witness
+,Witness,Witness,,yes,,"a role indicating they participated as an observer (or testifier) in the event",Gramps_Glossary/en#witness
 ,XML,XML,,yes,terminology,"an acronym for Extensible Markup Language: a structured file format that allows custom tags",Gramps_Glossary/en#xml

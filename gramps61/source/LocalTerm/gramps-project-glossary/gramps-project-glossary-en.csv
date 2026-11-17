@@ -1,27 +1,142 @@
 location,source,target,id,fuzzy,context,translator_comments,developer_comments
-,EnglishExonym,English Term,,no,language,"language name in english",Gramps_Glossary/en
-,endonym,English Term,,no,language,"название языка на родном языке",Gramps_Glossary/ru
-,language code,ru,,no,language,"language code in ISO 639 standard",https://hosted.weblate.org/projects/gramps-project/-/ru/
-,translators,translators,,yes,language,"lead translator for GUI",Portal:Translators#ru
-,translations,переводы,,yes,language,"status of wiki translation",User_manual_translations#ru
-,documentation,документация,,yes,language,"translated wiki page index",Category:Ru:Documentation
-,citation,цитирование,,False,,,
-,Gramps,Gramps,,False,,
-,Given,Given,,No,terminology,"name was bestowed on the individual (includes ‘John Doe’ names)",
-,Unknown,Unknown,,no,terminology,"indeterminate origin",
-,Location,Location,,no,terminology,"",
-,Inherited,Inherited,,no,terminology,"name was based on the parent name(s)",
-,Taken,Taken,,no,terminology,"name was chosen by the individual, including when adopting a spouse’s surname",
-,People,Люди,,False,,,
-,relation,отношение,,False,,,
-,Gramps Web,Gramps Web,,False,,,
-,REFN,REFN,,True,,Suggested in Weblate: Номер референса,A GEDCOM tag used to store a user-defined identifier.
-,Default,Default,,False,1,,
-,Default,Default,,False,1,,
-,base relative media path,относительный путь к медиафайлу,,False,,,
-,Delimiter,Разделитель,,False,,,
-,funeral,похороны,,True,,,
-,burial,захоронение,,True,,,
-,addon,расширение,,True,,,
-,plugin,плагин,,True,,,
+,EnglishExonym,English,,no,language,"language name in english",Gramps_Glossary/en
+,endonym,English,,no,language,"language name in native tongue",Gramps_Glossary/en
+,language code,en,,no,language,"locale - language code in ISO 639 standard (IETF/BCP 47) with optional regional subtags",https://hosted.weblate.org/projects/gramps-project/-/en/
+,translators,translators,,,language,"lead translator for GUI",Portal:Translators#en
+,translations,translations,,,language,"status of wiki translation",User_manual_translations#en
+,documentation,documentation,,,language,"translated wiki page index",Category:En:Documentation
+,Tishri,Tishri,,no,calendar,"Hebrew Calendar: first month of the civil year; seventh month of the ecclesiastical year",Hebrew_dates
+,Tishrei,Tishrei,,no,calendar,"Hebrew Calendar: first month of the civil year; seventh month of the ecclesiastical year",Hebrew_dates
+,Cheshvan,Cheshvan,,no,calendar,"Hebrew Calendar: second month of the civil year; eighth month of the ecclesiastical year",Hebrew_dates
+,Kislev,Kislev,,no,calendar,"Hebrew Calendar: third month of the civil year; ninth month of the ecclesiastical year",Hebrew_dates
+,Tevet,Tevet,,no,calendar,"Hebrew Calendar: fourth month of the civil year; tenth month of the ecclesiastical year",Hebrew_dates
+,Shevat,Shevat,,no,calendar,"Hebrew Calendar: fifth month of the civil year; eleventh month of the ecclesiastical year",Hebrew_dates
+,Adar,Adar,,no,calendar,"Hebrew Calendar: sixth month of the civil year; twelfth month of the ecclesiastical year",Hebrew_dates
+,Nisan,Nisan,,no,calendar,"Hebrew Calendar: seventh month of the civil year; first month of the ecclesiastical year",Hebrew_dates
+,Iyar,Iyar,,no,calendar,"Hebrew Calendar: eighth month of the civil year; second month of the ecclesiastical year",Hebrew_dates
+,Sivan,Sivan,,no,calendar,"Hebrew Calendar: ninth month of the civil year; third month of the ecclesiastical year",Hebrew_dates
+,Tammuz,Tammuz,,no,calendar,"Hebrew Calendar: tenth month of the civil year; fourth month of the ecclesiastical year",Hebrew_dates
+,Av,Av,,no,calendar,"Hebrew Calendar: eleventh month of the civil year; fifth month of the ecclesiastical year",Hebrew_dates
+,Elul,Elul,,no,calendar,"Hebrew Calendar: twelfth month of the civil year; sixth month of the ecclesiastical year",Hebrew_dates
+,Active Person,Active Person,,,terminology,"person designated as the momentary center of focus",Gramps_Glossary/en#active_person
+,Add-on,Add-on,,,terminology,"optional third-party expansion plugin installed via the Addon Manager",Gramps_Glossary/en#addon
+,Addon,Addon,,,terminology,"optional third-party expansion plugin installed via the Addon Manager",Gramps_Glossary/en#addon
+,Address,Address,,,terminology,"a particular location with an associated time frame",Gramps_Glossary/en#address
+,administrative division,administrative division,,,terminology,"unit subdividing a geopolitical region into conventional layers",Gramps_Glossary/en#administrative_division
+,Aide,Aide,,,terminology,"a term to identify the Event Role as being an assistant",Gramps_Glossary/en#aide
+,anglicization,anglicization,,,terminology,"process of making a foreign name into its English variant",Gramps_Glossary/en#anglicisation
+,Association,Association,,,terminology,"a role explicitly defining how one person relates to another",Gramps_Glossary/en#association
+,Associations,Associations,,,terminology,"roles defining non-biological relationships and shared characteristics among persons",Gramps_Glossary/en#association
+,Attribute,Attribute,,,terminology,"a custom record of a permanent characteristic",Gramps_Glossary/en#attribute
+,Attributes,Attributes,,,terminology,"Customizable categories for permanent characteristics beyond the predefined set",Gramps_Glossary/en#attribute
+,Books Report,Books Report,,,terminology,"an ordered collation of Gramps textual and graphical reports in a single document",Gramps_Glossary/en#books_report
+,Bride,Bride,,,terminology,"a term to identify the Marriage Role as being a wife",Gramps_Glossary/en#bride
+,BSDDB,BSDDB,,,terminology,"the Berkeley Software Distribution database: an alternative database engine",Gramps_Glossary/en#bsddb
+,built-in,builtin,,,terminology,"expansion plugin installed bundled with a basic installation",Gramps_Glossary/en#builtin
+,builtin,builtin,,,terminology,"expansion plugin installed bundled with a basic installation",Gramps_Glossary/en#builtin
+,Categories,Categories,,,terminology,"Gramps organizes each Primary Object into a set of distinctly different descriptive schemas",Gramps_Glossary/en#category
+,Category,Category,,,terminology,"a descriptive schema of a database Primary Object",Gramps_Glossary/en#category
+,Celebrant,Celebrant,,,terminology,"a term to identify a Role as the person who performs a rite",Gramps_Glossary/en#celebrant
+,Citation,Citation,,,terminology,"information that enables locating specific content in source material",Gramps_Glossary/en#citation
+,Citations,Citations,,,terminology,"a set of references crediting and locating sources supporting research records",Gramps_Glossary/en#citation
+,Clergy,Clergy,,,terminology,"a term to identify a Religious Event Role as being an officiator",Gramps_Glossary/en#clergy
+,Clipboard,Clipboard,,,terminology,"shortcut system for sharing secondary objects, navigation, and for custom filter creation",Gramps_Glossary/en#clipboard
+,Color Swatch,Color Swatch,,,terminology,"A small colored rectangle in the color picker that represents a specific color choice",Gramps_Glossary/en#color_swatch
+,Configure,Configure,,,terminology,"user-configurable settings that customize local view mode behavior",Gramps_Glossary/en#configure
+,Context menu,Context menu,,,terminology,"GUI term: pop-up menu of options appropriate for the right-clicked item",Gramps_Glossary/en#context_menu
+,CSV,CSV,,,terminology,"an acronym for the Comma Separated Value data interchange format in plain-text with delimiters",Gramps_Glossary/en#json
+,Custom Filter,Custom Filter,,,terminology,"a rule system for displaying only those records that match certain criteria",Gramps_Glossary/en#filter
+,custom Types,custom Types,,,terminology,"user-defined classification; as opposed to classifications that came pre-defined",Gramps_Glossary/en#custom
+,Date,Date,,,terminology,"time period with specific quality, precision, and calendar endpoints",Gramps_Glossary/en#date
+,DNA,DNA,,,terminology,"an acronym for DeoxyriboNucleic Acid; the building blocks of genetic information",Gramps_Glossary/en#dna
+,Dock,Dock,,,terminology,"GUI term: add a Gramplet to the Dashboard view or splitbar containers",Gramps_Glossary/en#dock
+,DTD,DTD,,,terminology,"an acronym for Document Type Definition: a standardized document format defining of the structure of a file",Gramps_Glossary/en#dtd
+,Edit Family,Edit Family,,,terminology,"revise the structured data describing the basic relationship grouping of tightly knit persons",Gramps_Glossary/en#edit_family
+,Edit Person,Edit Person,,,terminology,"revise the structured data describing an individual",Gramps_Glossary/en#edit_person
+,Event,Event,,,terminology,"structured data about a happening",Gramps_Glossary/en#event
+,Event Role,Event Role,,,terminology,"the part a person plays in a happening",Gramps_Glossary/en#event_role
+,event type,event type,,,terminology,"generic grouping of happenings",Gramps_Glossary/en#event_type
+,Fallback events,Fallback events,,,terminology,"various happenings that are considered comparable to a missing vital statistic happening",Gramps_Glossary/en#fallback
+,Family,Family,,,terminology,"the basic relationship grouping of tightly knit persons",Gramps_Glossary/en#family
+,Family role,Family role,,,terminology,"the role indicating both partners in a Family are equally the main participants",Gramps_Glossary/en#family
+,File Chooser,File Chooser,,,terminology,"a graphical user interface (GUI) component that allows users to locate, select, or save files",Gramps_Glossary/en#file_chooser
+,File formats,File formats,,,terminology,"standard structures for storing data in a computer file identified by its file extension",Gramps_Glossary/en#file_format
+,Filter,Filter,,,terminology,"a set of rules (criteria) used to limit which records are shown",Gramps_Glossary/en#filter
+,GEDCOM,GEDCOM,,,terminology,"an acronym for the Genealogical Data Communication standardized data interchange format",Gramps_Glossary/en#gedcom
+,Godparent,Godparent,,,terminology,"a term to identify the Christening/Baptism Event Role as being a surrogate parent",Gramps_Glossary/en#godparent
+,Gramplet,Gramplet,,,terminology,"a type of small embeddable Gramps plugin which extends the interface to dynamically interact with genealogy data",Gramps_Glossary/en#gramplet
+,Gramps for Desktops,Gramps for Desktops,,,terminology,"Online Gtk frontend interface for the Gramps database engine",Gramps_Glossary/en#gramps
+,Gramps,Gramps,,,terminology,"a genealogical research tool consisting of a GUI frontend for the Gramps database engine backend",Gramps_Glossary/en#gramps
+,Gramps Web for Servers,Gramps Web for Servers,,,terminology,"Online JavaScript frontend interface for the Gramps database engine",Gramps_Glossary/en#grampsweb
+,Gramps Web,Gramps Web for Servers,,,terminology,"Online JavaScript frontend interface for the Gramps database engine",Gramps_Glossary/en#grampsweb
+,Graphical User Interface,Graphical User Interface,,,terminology,"Visual system of icons, buttons, and menus enabling point-and-click software interaction",Gramps_Glossary/en#graphical_user_interface
+,Groom,Groom,,,terminology,"a term to identify the Marriage Role as being a husband",Gramps_Glossary/en#groom
+,GUI,GUI,,,terminology,"an acronym for the Graphical User Interface of an app",Gramps_Glossary/en#graphical_user_interface
+,Home Person,Home Person,,,terminology,"person designated as the persistent center of research",Gramps_Glossary/en#home_person
+,Informant,Informant,,,terminology,"a term to identify the Event Role as being the reporting source",Gramps_Glossary/en#informant
+,JSON,JSON,,,terminology,"an acronym for the JavaScript Object Notation data interchange format",Gramps_Glossary/en#json
+,keybinding,keybinding,,,terminology,"Keyboard shortcut used to invoke a command or action",Gramps_Glossary/en#keybinding
+,matronym,matronym,,,terminology,"surname derived from the maternal given name",Gramps_Glossary/en#matronymic
+,Media,Media,,,terminology,"files or objects attached to a Gramps record",Gramps_Glossary/en#media
+,Merge,Merge,,,terminology,"Combine duplicate or related genealogy records into a single record",Gramps_Glossary/en#merge
+,Mode,Mode,,,terminology,"one of the dissplay vairants within a View category",Gramps_Glossary/en#viewmode
+,Name Origin,Name Origin,,,terminology,"source or derivation of a surname",Gramps_Glossary/en#name_origin
+,Navigator,Navigator,,,terminology,"button sidebar used to move between view Categoriess and modes",Gramps_Glossary/en#navigator
+,Note,Note,,,terminology,"free-form text item used to detail, clarify or document a record",Gramps_Glossary/en#note
+,Object Editor,Object Editor,,,terminology,"editig dialog to view and modify the primary characteristics of an object record",Gramps_Glossary/en#object_editor
+,Object,Object,,,terminology,"structured database container for one full genealogical record (not a programming object)",Gramps_Glossary/en#object
+,Object Reference Editors,Object Reference Editors,,,terminology,"an object editor with an extra layer for editing differences in sharing",object_reference_editors
+,object selector,object selector,,,terminology,"A list dialog that lets the user pick an object (e.g., media, source) to attach or reference",Gramps_Glossary/en#selector
+,Officiator,Officiator,,,terminology,"person who performs or leads a ceremony or service",Gramps_Glossary/en#officiator
+,patronym,patronym,,,terminology,"surname derived from the paternal given name",Gramps_Glossary/en#patronymic
+,Person,Person,,,terminology,"a specific individual",Gramps_Glossary/en#person
+,Place,Place,,,terminology,"a specific geographic location",Gramps_Glossary/en#place
+,Plug-in,Plug-in,,,terminology,"a (built-in or add-on) software extension that adds features or functions to the core program",Gramps_Glossary/en#plugin
+,Plugin,Plugin,,,terminology,"a (built-in or add-on) software extension that adds features or functions to the core program",Gramps_Glossary/en#plugin
+,POSIX,POSIX,,,terminology,"Portable Operating System Interface; a family of standards defining how OSes (Linux, macOS, BSD) should behave so code can be portable",Gramps_Glossary/en#posix
+,Preferences,Preferences,,,terminology,"global user-configurable settings that persistently customize Gramps behavior including appearance and functionality",Gramps_Glossary/en#preferences
+,Prerequisites,Prerequisites,,,terminology,"foundation software or system conditions meed tp install or run Gramps addons",Gramps_Glossary/en#prerequisites
+,Primary Object,Primary Object,,,terminology,"top-level database record for the various categories",Gramps_Glossary/en#primary_object
+,Primary role,Primary role,,,terminology,"the role indicating a person is the central participant of an event",Gramps_Glossary/en#primary
+,Private flag,Private flag,,,terminology,"padlock marker indicating a record that should be kept private. Tracked by a filter that limits exporting or printing",Gramps_Glossary/en#private
+,Private tag,Private tag,,,terminology,"padlock marker indicating a record that should be kept private. Tracked by a filter that limits exporting or printing",Gramps_Glossary/en#private_tag
+,Project,Project,,,terminology,"Curated online catalog of third-party plug-ins for the Addon Manager",
+,Public flag,Public flag,,,terminology,"unlocked padlock marker indicating a record is not considered priveate when exporting or printing",Gramps_Glossary/en#public
+,Public tag,Public tag,,,terminology,"unlocked padlock marker indicating a record is not considered priveate when exporting or printing",Gramps_Glossary/en#public_tag
+,Quick View,Quick View,,,terminology,"pre-built contextual report typically selected from a reight-click popup menu",Gramps_Glossary/en#quickview
+,Reference information,Reference information,,,terminology,"Metadata about how a record is linked to or used by other records",Gramps_Glossary/en#reference_information
+,Reference,Reference,,,terminology,"metadata of a linked record, source pointer, or citation-style connection to another item",Gramps_Glossary/en#reference
+,References tab,References tab,,,terminology,"lists records or items linked to the current record",Gramps_Glossary/en#references_tab
+,Regular Expressions,Regular Expressions,,,terminology,"RegEx: Sequence of characters defining text search and match patterns",Gramps_Glossary/en#regex
+,Re-order,Re-order,,,terminology,"change the sequence of items or records. The natural order is the order of creation",Gramps_Glossary/en#reorder
+,Repositories,Repositories,,,terminology,"Collections or storage locations that hold sources or source materials",Gramps_Glossary/en#repository
+,Repository,Repository,,,terminology,"a collection or storage location that hold sources or source materials",Gramps_Glossary/en#repository
+,Role,Role,,,terminology,"a distinct function or position a person can hold in an event or relationship",Gramps_Glossary/en#role
+,Roles,Roles,,,terminology,"distinct functions or positions people can hold in an event or relationship",Gramps_Glossary/en#role
+,romanization,romanization,,,terminology,"Converting text from a non-Latin script into Latin letters using a standard system",Gramps_Glossary/en#romanization
+,Rule,Rule,,,terminology,"A condition or logic that determines which records match a filter or search",Gramps_Glossary/en#rule
+,Rules,Rules,,,terminology,"A combination of conditions or logic that determines which records match a filter or search",Gramps_Glossary/en#rule
+,Secondary Object,Secondary Object,,,terminology,"supporting database record attached to various primary objects",Gramps_Glossary/en#secondary_object
+,Selector combo box,Selector combo box,,,terminology,"a text entry box that includes drop-down list allowing choice from known option or creation of a new option",Gramps_Glossary/en#selector_combo_box
+,selector,selector,,,terminology,"A list dialog that lets the user pick an object (e.g., media, source) to attach or reference",Gramps_Glossary/en#selector
+,Shared information,Shared information,,,terminology,"data",Gramps_Glossary/en#shared_information
+,Shared object,Shared object,,,terminology,"one secondary object shared across multiple primary objects with customizable attachment details",Gramps_Glossary/en#sharing
+,SharedPostgreSQL,SharedPostgreSQL,,,terminology,"The preferred database engine for Gramps Web, supporting multiple trees served simultaneously",
+,Source,Source,,,terminology,"a record documenting where genealogical information can be found (e.g., book, archive, document",Gramps_Glossary/en#source
+,Sources,Sources,,,terminology,"records documenting where genealogical information can be found (e.g., book, archive, document",Gramps_Glossary/en#source
+,SQLite,SQLite,,,terminology,"One of the database engines available for Gramps for desktops, used as the default since version 5.2",Gramps_Glossary/en#sqlite
+,Swatch,Swatch,,,terminology,"A small colored rectangle in the color picker that represents a specific color choice",Gramps_Glossary/en#swatch
+,Tags,Tags,,,terminology,"custom titles and color-coding applied to objects",Gramps_Glossary/en#tag
+,Tag,Tag,,,terminology,"a custom title and color-coding applied to an object",Gramps_Glossary/en#tag
+,Toolbar,Toolbar,,,terminology,"GUI term: ribbon of button shortcuts to trigger a View task or mode of operation",Gramps_Glossary/en#toolbar
+,Typographical conventions,Typographical conventions,,,terminology,"customary formatting implying special (and possibly peculiar) meaning",Gramps_Glossary/en#typographical_conventions
+,Undock,Undock,,,terminology,"GUI term: float a Gramplet free from the Dashboard view or splitbar containers",Gramps_Glossary/en#dock
+,Unknown,Unknown,,,terminology,"term indicating the role played in an Event has not been identified",Gramps_Glossary/en#unknown
+,User Directory,User Directory,,,terminology,"alias for the path to a file folder location storing customizations and data for apps",Gramps_Glossary/en#user_directory
+,View category,View category,,,terminology,"collection of View modes presenting differing aspects of similar structured information",Gramps_Glossary/en#view_category
+,View mode,View mode,,,terminology,"display layouts presenting a View category's structured information in a predictable manner",Gramps_Glossary/en#viewmode
+,View,View,,,terminology,"the currently active display mode in a Category with filtered data. Including supplemental controls and gramplet displays",Gramps_Glossary/en#view
+,Wiki,Wiki,,,terminology,"a collaboratively maintained website",Gramps_Glossary/en#wiki
+,Witness,Witness,,,terminology,"a role indicating they participated as an observer (or testifier) in the event",Gramps_Glossary/en#witness
+,XML,XML,,,terminology,"an acronym for Extensible Markup Language: a structured file format that allows custom tags",Gramps_Glossary/en#xml
 

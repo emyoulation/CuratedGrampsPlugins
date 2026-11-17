@@ -51,6 +51,6 @@ if (5, 2, 0) <= VERSION_TUPLE < (6, 2, 0):
             maintainers_email=[""],
             help_url=(
                 "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/"
-                "gramps61/source/RoleReversalRule"
+                "gramps61/source/RoleReversal"
             ),
         )

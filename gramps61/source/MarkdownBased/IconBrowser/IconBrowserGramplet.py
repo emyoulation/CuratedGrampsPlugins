@@ -92,18 +92,19 @@ if _parent_dir not in sys.path:
     sys.path.insert(0, _parent_dir)
 
 try:
-    from MarkdownUtils import (
-        NAMESPACE_MAP,
-        VIEW_NAMES,
-        build_table_widget,
-        define_tags,
-        parse_markdown,
-        resolve_icon_pixbuf,
-    )
-
-    _MARKDOWN_AVAILABLE = True
+    from MarkdownUtils import list_icons_by_context
 except ImportError:
-    _MARKDOWN_AVAILABLE = False
+    # MarkdownUtils is the single source of this helper; this stand-in
+    # only keeps the Icon Browser usable on a system without MarkdownUtils
+    # installed. (requires_mod=["MarkdownUtils"] in the .gpr.py is not an
+    # option while MarkdownUtils lives in plugins/MarkdownBased/ rather
+    # than plugins/lib/: Gramps checks requires_mod at its startup scan,
+    # before this folder is on Python's import path, and would drop this
+    # gramplet entirely.)
+    def list_icons_by_context(context=None, icon_theme=None):
+        """Fallback for :func:`MarkdownUtils.list_icons_by_context`."""
+        icon_theme = icon_theme or Gtk.IconTheme.get_default()
+        return sorted(icon_theme.list_icons(context) or [], key=str.casefold)
 
 try:
     _ = glocale.get_addon_translator(__file__).gettext
@@ -1022,7 +1023,7 @@ class IconBrowserGramplet(Gramplet):
     def _refresh_full(self):
         """Populate the store from the entire live icon-theme cascade.
 
-        This is the expensive path -- ``icon_theme.list_icons(None)`` can
+        This is the expensive path -- ``list_icons_by_context(None)`` can
         return several thousand names, each needing its own pixbuf load
         and a ``Gtk.ListStore`` row -- so it's only run on an explicit
         Reload click or the first time a context other than "Gramps" is
@@ -1057,10 +1058,10 @@ class IconBrowserGramplet(Gramplet):
                 )
             )
 
-        all_names = sorted(icon_theme.list_icons(None) or [], key=str.casefold)
+        all_names = list_icons_by_context(None, icon_theme)
         name_to_ctx = {}
         for ctx in KNOWN_CONTEXTS:
-            for name in icon_theme.list_icons(ctx) or []:
+            for name in list_icons_by_context(ctx, icon_theme):
                 if name not in name_to_ctx:
                     name_to_ctx[name] = ctx
 

@@ -1,0 +1,143 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gramps 5.2.0 – mediamerge\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-02 12:49-0700\n"
+"PO-Revision-Date: 2026-06-10 19:07+0000\n"
+"Last-Translator: Avi Markovitz <avi.markovitz@gmail.com>\n"
+"Language-Team: Hebrew <https://hosted.weblate.org/projects/gramps-project/"
+"addons/he/>\n"
+"Language: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
+"X-Generator: Weblate 2026.6\n"
+
+msgid "Data Entry Gramplet"
+msgstr "גראמפלט הזנת נתונים"
+
+msgid "Gramplet for quick data entry"
+msgstr "גראמפלט להזנת נתונים מהירה"
+
+msgid "Active person"
+msgstr "אדם פעיל"
+
+msgid "Family:"
+msgstr "משפחה:"
+
+msgid "Sources?"
+msgstr "מקורות?"
+
+msgid "Surname, Given"
+msgstr "שם משפחה, שם פרטי"
+
+msgid "Save"
+msgstr "שמירה"
+
+msgid "Abandon"
+msgstr "נטישה"
+
+msgid "New person"
+msgstr "אדם חדש"
+
+msgid "Add relation"
+msgstr "הוספת יוחסה"
+
+msgid "No relation to active person"
+msgstr "אין קשר לאדם הפעיל"
+
+msgid "Add as a Parent"
+msgstr "הוספה כהורה"
+
+msgid "Add as a Mother"
+msgstr "הוספה כאם"
+
+msgid "Add as a Father"
+msgstr "הוספה כאב"
+
+msgid "Add as a Spouse"
+msgstr "הוספהכזוגאי"
+
+msgid "Add as a Wife"
+msgstr "הוספה כרעיה"
+
+msgid "Add as a Husband"
+msgstr "הוספה כבעל"
+
+msgid "Add as a Sibling"
+msgstr "הוספה כאחאי"
+
+msgid "Add as a Child"
+msgstr "הוספת כצאצא"
+
+msgid "Copy Active Data"
+msgstr "העתקת נתונים פעילים"
+
+msgid "in"
+msgstr "ב"
+
+msgid "No Family Tree is open."
+msgstr "לא פתוח אילן־יוחסין."
+
+msgid "Please open a Family Tree to edit data."
+msgstr "יש לפתוח אילן־יוחסין כדי לערוך נתונים."
+
+#, python-format
+msgid "Gramplet Data Edit: %s"
+msgstr "גראמפלט עריכת נתונים: %s"
+
+msgid "Please open a Family Tree before adding a person."
+msgstr "יש לפתוח אילן־יוחסין לפני הוספת אדם."
+
+msgid "Please provide a name."
+msgstr "נא להזין שם."
+
+msgid "Can't add new person."
+msgstr "לא ניתן להוסיף אדם חדש."
+
+msgid "Please set an active person."
+msgstr "נא להגדיר אדם פעיל."
+
+msgid "Can't add new person as a parent."
+msgstr "לא ניתן להוסיף אדם חדש כהורה."
+
+msgid "Please set the new person's gender."
+msgstr "נא להגדיר מגדר לאדם החדש."
+
+msgid "Can't add new person as a mother."
+msgstr "לא ניתן להוסיף אדם חדש כאם."
+
+msgid "Can't add new person as a father."
+msgstr "לא ניתן להוסיף אדם חדש כאב."
+
+msgid "Can't add new person as a spouse."
+msgstr "לא ניתן להוסיף אדם חדש כזוגאי."
+
+msgid "Can't add new person as a wife."
+msgstr "לא ניתן להוסיף אדם חדש כרעיה."
+
+msgid "Can't add new person as a husband."
+msgstr "לא ניתן להוסיף אדם חדש כבעל."
+
+msgid "Can't add new person as a sibling."
+msgstr "לא ניתן להוסיף אדם חדש כאחאי."
+
+msgid "Can't add new person as a child."
+msgstr "לא ניתן להוסיף אדם חדש כצאצא."
+
+msgid "Please set Active person."
+msgstr "נא להגדיר אדם פעיל."
+
+msgid "Can't add new person as a spouse to no one."
+msgstr "לא ניתן להוסיף אדם חדש כזוגאי לאף אחד."
+
+msgid "Please set gender on Active or new person."
+msgstr "נא להגדיר מגדר לאדם פעיל או אדם חדש."
+
+msgid "Same genders on Active and new person."
+msgstr "מגדר זהה לאדם הפעיל והאדם החדש."
+
+msgid "Please set gender on Active person."
+msgstr "נא להגדיר מגדר לאדם פעיל."

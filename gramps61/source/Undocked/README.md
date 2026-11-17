@@ -8,8 +8,8 @@ Welcome. Any gramplet in the sidebar or bottombar of a Gramps view can be pulled
 ## What you get
 
 **A Dock button instead of Close.** The button shows the icon of the view the gramplet came from, the word **Dock**, and an icon showing the destination, either the sidebar or the bottombar. Hover over the button for a longer description. Clicking it returns the gramplet to its place, exactly as Close did before.
-![the Sidebar Dock indicator](media/sidebar-show-bottom.svg)
-![the Bottombar Dock indicator](media/sidebar-show-bottom.svg)
+![the Bottombar Dock indicator](media/sidebar-show-bottom.png)
+![the Sidebar Dock indicator](media/sidebar-show-right.png)
 
 **A smarter Help button, when available.** If the Markdown Utils addon is installed and active, the standard Help button is replaced by the small unlabeled Help button from that addon. It stays in the lower left corner of the window. If Markdown Utils is not installed, is hidden in the Plugin Manager, or is too old to offer this button, the standard Help button is left exactly as it is.
 

@@ -35,10 +35,13 @@ if (5, 2, 0) <= VERSION_TUPLE < (6, 2, 0):
         ),
         version="0.1.0",  # build 20261110.0013
         gramps_target_version=major_version,
-        status=EXPERIMENTAL,
+        status=STABLE,
         fname="ImportNoTree.py",
         load_on_reg=True,
         authors=["Claude AI"],
         maintainers=["Brian McCullough"],
-        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md",
+        help_url=(
+            "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/"
+            "source/ImportWithoutTree/README.md"
+        ),
     )

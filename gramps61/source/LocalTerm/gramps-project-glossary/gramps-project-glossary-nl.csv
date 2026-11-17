@@ -1,0 +1,47 @@
+location,source,target,id,fuzzy,context,translator_comments,developer_comments
+,EnglishExonym,Dutch,,no,language,"Exoniem - taalnaam in het Engels",Gramps_Glossary/en
+,endonym,Nederlands,,no,language,"Endoniem - naam van de taal in de moedertaal",Gramps_Glossary/nl
+,language code,nl,,no,language,"taalcode in de ISO 639-standaard",https://hosted.weblate.org/projects/gramps-project/-/nl/
+,translators,vertalers,,yes,language,"hoofdvertaler voor GUI",Portal:Translators#nl
+,translations,vertalingen,,yes,language,"status van wiki-vertaling",User_manual_translations#nl
+,documentation,documentatie,,yes,language,"vertaalde wiki-pagina-index",Category:Nl:Documentation
+,addon,Uitbreiding,,False,,,
+,Ancestry,Afstamming,,False,,,
+,base relative media path,basis relatief mediapad,,False,,,
+,Bookmark,Bladwijzer,,False,,,
+,border,rand,,False,,,
+,bug,fout,,False,,,
+,bugs,fouten,,False,,,
+,burial,begrafenis,,False,,,
+,citation,citaat,,False,,,
+,Custom,Aangepast,,False,,,
+,debug,foutopsporing,,False,,,
+,Default,Standaard,,False,,,
+,Delimiter,Scheidingsteken,,False,,,
+,Elul,Elul,,False,,,
+,Events,Gebeurtenissen,,False,,,
+,Family view,Gezinsweergave,,False,,,
+,find,vinden,,False,,,
+,funeral,uitvaart,,False,,,
+,Gramplet,Gramplet,,False,,,
+,Gramps,Gramps,,False,,,
+,Gramps Web,Gramps Web,,False,,,
+,Help,Hulp,,False,,,
+,Nisan,Nisan,,False,,,
+,Person,Persoon,,False,"A ""person"" record within Gramps",,
+,place,plaats,,False,,,
+,places,plaatsen,,False,,,
+,plugin,plug-in,,False,,,
+,project,project,,False,,"Een zorgvuldig samengestelde verzameling Addon-plug-ins die bekend zijn bij de Addon Manager",
+,REFN,REFN,,False,,,A GEDCOM tag used to store a user-defined identifier.
+,relation,verwantschap,,False,,,
+,Repository,Opslagplaats,,False,,,
+,search,zoeken,,False,,,
+,Stamen,Stamen,,False,,,
+,substring,deeltekenreeks,,False,,,
+,surname,achternaam,,False,,,
+,Tishri,Tisjri,,False,,,
+,tool,hulpmiddel,,False,,,
+,Try to find,Zoeken,,False,,,
+,Witness,getuige,,yes,,"een rol die aangeeft dat ze als waarnemer (of getuige) aan het evenement hebben deelgenomen",Gramps_Glossary/nl#witness
+

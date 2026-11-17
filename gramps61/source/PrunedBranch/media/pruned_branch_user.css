@@ -1,0 +1,18 @@
+/* Pruned Branch - your session color changes.
+ *
+ * This file is yours: addon updates never include it, so it is kept.
+ * It is loaded after pruned_branch.css, so anything here wins. Redefine
+ * any @define-color name from that file, or add your own rules.
+ *
+ * The color swatches in the Pruned Branch tool rewrite the block between
+ * the two markers below. Put your own changes after the block; a color
+ * defined after it wins over the swatch.
+ */
+
+/* --- Colors chosen in the Pruned Branch tool --- */
+@define-color pruned_alert #42d32f;
+@define-color pruned_border #9ac99d;
+@define-color pruned_surface #deecde;
+@define-color pruned_text #194a14;
+@define-color pruned_selected #348f2a;
+/* --- End of chosen colors --- */

@@ -1,0 +1,142 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GRAMPS 3.1.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-02 12:49-0700\n"
+"PO-Revision-Date: 2026-09-27 07:51+0000\n"
+"Last-Translator: Milan <mobrcian@hotmail.com>\n"
+"Language-Team: Slovak <https://hosted.weblate.org/projects/gramps-project/"
+"addons/sk/>\n"
+"Language: sk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
+"X-Generator: Weblate 2026.10.dev0\n"
+
+msgid "Data Entry Gramplet"
+msgstr "Gramplet Zadávanie údajov"
+
+msgid "Gramplet for quick data entry"
+msgstr "Gramplet pre rýchle zadávanie údajov"
+
+msgid "Active person"
+msgstr "Aktívna osoba"
+
+msgid "Family:"
+msgstr "Rodina:"
+
+msgid "Sources?"
+msgstr "Zdroje?"
+
+msgid "Surname, Given"
+msgstr "Priezvisko, Meno"
+
+msgid "Save"
+msgstr "Uložiť"
+
+msgid "Abandon"
+msgstr "Opustiť"
+
+msgid "New person"
+msgstr "Nová osoba"
+
+msgid "Add relation"
+msgstr "Pridať vzťah"
+
+msgid "No relation to active person"
+msgstr "Žiaden vzťah k aktívnej osobe"
+
+msgid "Add as a Parent"
+msgstr "Pridať ako rodiča"
+
+msgid "Add as a Mother"
+msgstr "Pridať ako matku"
+
+msgid "Add as a Father"
+msgstr "Pridať ako otca"
+
+msgid "Add as a Spouse"
+msgstr "Pridať ako manžela/manželku"
+
+msgid "Add as a Wife"
+msgstr "Pridať ako manželku"
+
+msgid "Add as a Husband"
+msgstr "Pridať ako manžela"
+
+msgid "Add as a Sibling"
+msgstr "Pridať ako súrodenca"
+
+msgid "Add as a Child"
+msgstr "Pridať ako dieťa"
+
+msgid "Copy Active Data"
+msgstr "Kopírovať aktívne údaje"
+
+msgid "in"
+msgstr "na"
+
+msgid "No Family Tree is open."
+msgstr "Nie je otvorený žiadny rodostrom."
+
+msgid "Please open a Family Tree to edit data."
+msgstr "Prosím, na úpravu údajov otvorte rodostrom."
+
+#, python-format
+msgid "Gramplet Data Edit: %s"
+msgstr "Gramplet Editovanie údajov: %s"
+
+msgid "Please open a Family Tree before adding a person."
+msgstr "Prosím, pred pridávaním osoby otvorte rodostrom."
+
+msgid "Please provide a name."
+msgstr "Prosím, zadajte meno."
+
+msgid "Can't add new person."
+msgstr "Nemožno pridať novú osobu."
+
+msgid "Please set an active person."
+msgstr "Prosím, zadajte aktívnu osobu."
+
+msgid "Can't add new person as a parent."
+msgstr "Nemožno pridať novú osobu ako rodiča."
+
+msgid "Please set the new person's gender."
+msgstr "Prosím, zadajte pohlavie novej osoby."
+
+msgid "Can't add new person as a mother."
+msgstr "Nemožno pridať novú osobu ako matku."
+
+msgid "Can't add new person as a father."
+msgstr "Nemožno pridať novú osobu ako otca."
+
+msgid "Can't add new person as a spouse."
+msgstr "Nemožno pridať novú osobu ako manžela/manželku."
+
+msgid "Can't add new person as a wife."
+msgstr "Nemožno pridať novú osobu ako manželku."
+
+msgid "Can't add new person as a husband."
+msgstr "Nemožno pridať novú osobu ako manžela."
+
+msgid "Can't add new person as a sibling."
+msgstr "Nemožno pridať novú osobu ako súrodenca."
+
+msgid "Can't add new person as a child."
+msgstr "Nemožno pridať novú osobu ako dieťa."
+
+msgid "Please set Active person."
+msgstr "Prosím, nastavte aktívnu osobu."
+
+msgid "Can't add new person as a spouse to no one."
+msgstr "Nemožno pridať novú osobu ako manžela/mamželku k žiadnej osobe."
+
+msgid "Please set gender on Active or new person."
+msgstr "Prosím, nastavte pohlavie na aktívnej alebo novej osobe."
+
+msgid "Same genders on Active and new person."
+msgstr "Aktívna a nová osoba majú rovnaké pohlavie."
+
+msgid "Please set gender on Active person."
+msgstr "Prosím, zadajte pohlavie aktívnej osoby."

@@ -9,6 +9,7 @@ per-handle reads.
 import functools
 import logging
 import os
+import re
 from time import perf_counter
 
 from gi.repository import Gdk, GLib, Gtk
@@ -119,27 +120,107 @@ def remember_tag(db, tag_handle):
     CONFIG.set("tags.recent", recent)
     CONFIG.save()
 
-# Session colors come from media/pruned_branch.css in the addon folder.
-# (During beta there is no separate user copy; edits to this file are
-# replaced when the addon is updated.)
-CSS_FILE = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "media", "pruned_branch.css"
-)
+# ------------------------------------------------------------
+# Session stylesheets
+# ------------------------------------------------------------
+# media/pruned_branch.css is the default and is replaced by addon updates.
+# media/pruned_branch_user.css holds the user's changes. It is created on
+# first use and is never part of the addon package, so updates leave it
+# alone. It is loaded one priority step higher, so anything in it wins,
+# including @define-color names that the default's mix() colors use.
+MEDIA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "media")
+CSS_FILE = os.path.join(MEDIA_DIR, "pruned_branch.css")
+USER_CSS_FILE = os.path.join(MEDIA_DIR, "pruned_branch_user.css")
 CSS_PRIORITY = Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 10
+USER_CSS_PRIORITY = CSS_PRIORITY + 1
+
+# The five colors the tool offers as swatches, in display order.
+BASE_COLORS = [
+    ("pruned_alert", _("Status bar button")),
+    ("pruned_border", _("Borders and pane separators")),
+    ("pruned_surface", _("Window background")),
+    ("pruned_text", _("Text")),
+    ("pruned_selected", _("Selected row, hovered menu item")),
+]
+# The tool rewrites only the lines between these two markers.
+BLOCK_START = "/* --- Colors chosen in the Pruned Branch tool --- */"
+BLOCK_END = "/* --- End of chosen colors --- */"
+USER_CSS_TEMPLATE = """/* Pruned Branch - your session color changes.
+ *
+ * This file is yours: addon updates never include it, so it is kept.
+ * It is loaded after pruned_branch.css, so anything here wins. Redefine
+ * any @define-color name from that file, or add your own rules.
+ *
+ * The color swatches in the Pruned Branch tool rewrite the block between
+ * the two markers below. Put your own changes after the block; a color
+ * defined after it wins over the swatch.
+ */
+
+%s
+%s
+""" % (BLOCK_START, BLOCK_END)
+
+_DEFINE_RE = re.compile(r"@define-color\s+([\w-]+)\s+([^;]+);")
+_COMMENT_RE = re.compile(r"/\*.*?\*/", re.S)
 
 
-def load_session_css():
-    """Return (CssProvider, path) for the session stylesheet, or (None, None)."""
-    if not os.path.isfile(CSS_FILE):
-        LOG.warning("Pruned Branch: stylesheet not found: %s", CSS_FILE)
-        return None, None
+def defined_colors(path):
+    """Return {name: value} for every @define-color in a stylesheet.
+
+    Commented-out lines are skipped; a later definition wins, as in GTK.
+    """
+    try:
+        with open(path, encoding="utf-8") as css:
+            text = _COMMENT_RE.sub("", css.read())
+    except OSError:
+        return {}
+    return {name: value.strip() for name, value in _DEFINE_RE.findall(text)}
+
+
+def ensure_user_css():
+    """Create the user stylesheet from the template if it does not exist."""
+    if not os.path.isfile(USER_CSS_FILE):
+        with open(USER_CSS_FILE, "w", encoding="utf-8") as css:
+            css.write(USER_CSS_TEMPLATE)
+
+
+def save_user_colors(colors):
+    """Rewrite the tool block of the user stylesheet.
+
+    colors is {name: "#rrggbb"}; only colors that differ from the default
+    belong in it. Everything outside the block is left as it is.
+    """
+    ensure_user_css()
+    with open(USER_CSS_FILE, encoding="utf-8") as css:
+        text = css.read()
+    lines = [BLOCK_START]
+    for name, _label in BASE_COLORS:
+        if name in colors:
+            lines.append("@define-color %s %s;" % (name, colors[name]))
+    lines.append(BLOCK_END)
+    block = "\n".join(lines)
+    start, end = text.find(BLOCK_START), text.find(BLOCK_END)
+    if start != -1 and end > start:
+        text = text[:start] + block + text[end + len(BLOCK_END):]
+    else:  # markers removed by hand: put the block back at the top
+        text = block + "\n\n" + text
+    with open(USER_CSS_FILE, "w", encoding="utf-8") as css:
+        css.write(text)
+
+
+def load_css(path, quiet=False):
+    """Return a CssProvider for path, or None if it is missing or broken."""
+    if not os.path.isfile(path):
+        if not quiet:
+            LOG.warning("Pruned Branch: stylesheet not found: %s", path)
+        return None
     provider = Gtk.CssProvider()
     try:
-        provider.load_from_path(CSS_FILE)
+        provider.load_from_path(path)
     except Exception as exc:  # GLib.Error on a CSS syntax error
-        LOG.warning("Pruned Branch: cannot load CSS %s: %s", CSS_FILE, exc)
-        return None, None
-    return provider, CSS_FILE
+        LOG.warning("Pruned Branch: cannot load CSS %s: %s", path, exc)
+        return None
+    return provider
 
 
 def _notify():
@@ -375,6 +456,7 @@ class BranchSession:
         self.dbstate_key = None
         self.stats = {"build": {}, "switch": {}, "callbacks": CALLBACK_HISTORY}
         self._css = None
+        self._user_css = None
         self._button = None
         self._orig_title = None
 
@@ -602,12 +684,7 @@ class BranchSession:
     def _ui_on(self):
         win = self.uistate.window
         self._orig_title = win.get_title()
-        self._css, css_path = load_session_css()
-        if self._css is not None:
-            Gtk.StyleContext.add_provider_for_screen(
-                win.get_screen(), self._css, CSS_PRIORITY
-            )
-            LOG.info("Pruned Branch: colors from %s", css_path)
+        self.reload_css()
         win.get_style_context().add_class("pruned-branch")
         tint_gramplet_windows(self.uistate, True)
         self._button = Gtk.Button()
@@ -624,6 +701,32 @@ class BranchSession:
             status.reorder_child(self._button, 0)
         self._button.show()
         self._update_ui()
+
+    def reload_css(self):
+        """(Re)load both session stylesheets; changes show at once."""
+        screen = self.uistate.window.get_screen()
+        self._remove_css()
+        self._css = load_css(CSS_FILE)
+        self._user_css = load_css(USER_CSS_FILE, quiet=True)
+        for provider, priority in (
+            (self._css, CSS_PRIORITY),
+            (self._user_css, USER_CSS_PRIORITY),
+        ):
+            if provider is not None:
+                Gtk.StyleContext.add_provider_for_screen(screen, provider, priority)
+        LOG.info(
+            "Pruned Branch: colors from %s%s",
+            CSS_FILE,
+            " + " + USER_CSS_FILE if self._user_css else "",
+        )
+
+    def _remove_css(self):
+        screen = self.uistate.window.get_screen()
+        for attr in ("_css", "_user_css"):
+            provider = getattr(self, attr)
+            if provider is not None:
+                Gtk.StyleContext.remove_provider_for_screen(screen, provider)
+                setattr(self, attr, None)
 
     def _update_ui(self):
         if self._button is None:
@@ -642,11 +745,7 @@ class BranchSession:
         win = self.uistate.window
         win.get_style_context().remove_class("pruned-branch")
         tint_gramplet_windows(self.uistate, False)
-        if self._css is not None:
-            Gtk.StyleContext.remove_provider_for_screen(
-                win.get_screen(), self._css
-            )
-            self._css = None
+        self._remove_css()
         if self._button is not None:
             status = self.uistate.status
             if (
@@ -763,11 +862,11 @@ class PrunedBranchTool(tool.Tool, ManagedWindow):
               "as a filter.")
         )
         self.bench_btn.connect("clicked", self.cb_benchmark)
-        colors_btn = Gtk.Button(label=_("Customize colors"))
-        colors_btn.set_tooltip_text(
-            _("Open the session stylesheet in your text editor: %s") % CSS_FILE
+        self.colors_btn = Gtk.ToggleButton(label=_("Customize colors"))
+        self.colors_btn.set_tooltip_text(
+            _("Show the session colors in the bottom panel instead of the report")
         )
-        colors_btn.connect("clicked", self.cb_customize_colors)
+        self.colors_btn.connect("toggled", self.cb_customize_colors)
         copy_btn = Gtk.Button(label=_("Copy report"))
         copy_btn.connect("clicked", self.cb_copy)
         close_btn = Gtk.Button(label=_("Close"))
@@ -777,7 +876,7 @@ class PrunedBranchTool(tool.Tool, ManagedWindow):
             self.end_btn,
             self.bench_btn,
             copy_btn,
-            colors_btn,
+            self.colors_btn,
         ):
             buttons.pack_start(btn, False, False, 0)
         buttons.pack_end(close_btn, False, False, 0)
@@ -786,10 +885,79 @@ class PrunedBranchTool(tool.Tool, ManagedWindow):
         self.report = Gtk.TextView(editable=False, monospace=True)
         scroll = Gtk.ScrolledWindow(vexpand=True)
         scroll.add(self.report)
-        area.pack_start(scroll, True, True, 0)
+        self.bottom = Gtk.Stack()
+        self.bottom.add_named(scroll, "report")
+        self.bottom.add_named(self._build_colors(), "colors")
+        area.pack_start(self.bottom, True, True, 0)
 
         self.set_window(window, None, _("Pruned Branch"))
         self._load_sources()
+
+    def _build_colors(self):
+        """The color panel: one swatch per base color, plus file links."""
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        box.set_border_width(6)
+        intro = Gtk.Label(xalign=0)
+        intro.set_line_wrap(True)
+        intro.set_text(
+            _("Every other session color is mixed from these five. Changes "
+              "are saved at once and show right away during a session.")
+        )
+        box.pack_start(intro, False, False, 0)
+
+        grid = Gtk.Grid(column_spacing=10, row_spacing=6)
+        self.swatches = {}
+        for row, (name, label) in enumerate(BASE_COLORS):
+            swatch = Gtk.ColorButton()
+            swatch.set_use_alpha(False)
+            swatch.set_title(label)
+            swatch.connect("color-set", self.cb_color_set)
+            self.swatches[name] = swatch
+            grid.attach(swatch, 0, row, 1, 1)
+            grid.attach(Gtk.Label(label=label, xalign=0), 1, row, 1, 1)
+            css_name = Gtk.Label(label=name, xalign=0)
+            css_name.get_style_context().add_class("dim-label")
+            grid.attach(css_name, 2, row, 1, 1)
+        box.pack_start(grid, False, False, 0)
+
+        reset = Gtk.Button(label=_("Restore default colors"))
+        reset.set_halign(Gtk.Align.START)
+        reset.set_tooltip_text(
+            _("Remove the swatch colors from %s. Your own lines in it are kept.")
+            % os.path.basename(USER_CSS_FILE)
+        )
+        reset.connect("clicked", self.cb_restore_colors)
+        box.pack_start(reset, False, False, 0)
+
+        links = Gtk.Label(xalign=0)
+        links.set_line_wrap(True)
+        links.set_markup(
+            _("Edit a stylesheet in your text editor: "
+              "<a href=\"%(user_uri)s\">%(user)s</a> (your changes, kept by "
+              "addon updates) or <a href=\"%(main_uri)s\">%(main)s</a> (the "
+              "default, replaced by addon updates).\n"
+              "Text edits apply the next time a session starts.")
+            % {
+                "user_uri": "pb-user",
+                "user": os.path.basename(USER_CSS_FILE),
+                "main_uri": "pb-main",
+                "main": os.path.basename(CSS_FILE),
+            }
+        )
+        links.connect("activate-link", self.cb_open_stylesheet)
+        box.pack_start(links, False, False, 0)
+        self._load_swatches()
+        return box
+
+    def _load_swatches(self):
+        """Show the effective color of each swatch: user file, else default."""
+        colors = defined_colors(CSS_FILE)
+        colors.update(defined_colors(USER_CSS_FILE))
+        for name, swatch in self.swatches.items():
+            rgba = Gdk.RGBA()
+            if not rgba.parse(colors.get(name, "")):
+                rgba.parse("#808080")  # not a plain color (e.g. a mix())
+            swatch.set_rgba(rgba)
 
     def _load_sources(self):
         """
@@ -877,6 +1045,8 @@ class PrunedBranchTool(tool.Tool, ManagedWindow):
 
     # --- callbacks -------------------------------------------------------
     def _write(self, line):
+        if self.colors_btn.get_active():
+            self.colors_btn.set_active(False)  # show the report again
         buf = self.report.get_buffer()
         buf.insert(buf.get_end_iter(), line + "\n")
         LOG.info("PrunedBranch bench: %s", line)
@@ -980,10 +1150,52 @@ class PrunedBranchTool(tool.Tool, ManagedWindow):
         Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).set_text(text, -1)
 
     def cb_customize_colors(self, *obj):
-        self._write(_("Editing %s") % CSS_FILE)
-        self._write(
-            _("Color changes apply the next time a session starts. "
-              "Keep a copy of your changes: updating the addon replaces "
-              "this file.")
-        )
-        open_file_with_default_application(CSS_FILE, self.uistate)
+        if self.colors_btn.get_active():
+            self._load_swatches()  # the user file may have been edited
+            self.bottom.set_visible_child_name("colors")
+        else:
+            self.bottom.set_visible_child_name("report")
+
+    def _save_colors(self):
+        defaults = defined_colors(CSS_FILE)
+        chosen = {}
+        for name, swatch in self.swatches.items():
+            rgba = swatch.get_rgba()
+            value = "#%02x%02x%02x" % tuple(
+                round(c * 255) for c in (rgba.red, rgba.green, rgba.blue)
+            )
+            if value.lower() != defaults.get(name, "").lower():
+                chosen[name] = value
+        try:
+            save_user_colors(chosen)
+        except OSError as err:
+            ErrorDialog(_("Pruned Branch"), str(err), parent=self.window)
+            return
+        if SESSION is not None:
+            SESSION.reload_css()
+
+    def cb_color_set(self, *obj):
+        self._save_colors()
+
+    def cb_restore_colors(self, *obj):
+        try:
+            save_user_colors({})
+        except OSError as err:
+            ErrorDialog(_("Pruned Branch"), str(err), parent=self.window)
+            return
+        self._load_swatches()
+        if SESSION is not None:
+            SESSION.reload_css()
+
+    def cb_open_stylesheet(self, _label, uri):
+        if uri == "pb-user":
+            try:
+                ensure_user_css()
+            except OSError as err:
+                ErrorDialog(_("Pruned Branch"), str(err), parent=self.window)
+                return True
+            path = USER_CSS_FILE
+        else:
+            path = CSS_FILE
+        open_file_with_default_application(path, self.uistate)
+        return True  # handled; do not let GTK open the link itself

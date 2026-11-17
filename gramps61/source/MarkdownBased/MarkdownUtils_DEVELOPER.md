@@ -1,5 +1,4 @@
 # Markdown Utils — developer reference
-
 [README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md) ● [MarkdownUtils_PLAN.md](MarkdownUtils_PLAN.md) ● [MarkdownUtils_DEVELOPER.md](MarkdownUtils_DEVELOPER.md) ● [HelpDocButton.md](HelpDocButton.md)
 
 **Source of this document:** checked against `MarkdownUtils.py` 0.2.0, `MarkdownDash.py` and `PluginManagerPlus.py` on 8 October 2026. Signatures below are copied from the code. Open work is tracked in [MarkdownUtils_PLAN.md](MarkdownUtils_PLAN.md).
@@ -162,5 +161,5 @@ Markdown Dash, its reader, `help_doc_button.py` and Note Styling Editor use thes
 Lessons from the consumers, each found in real use:
 - **Run menu actions after the menu closes.** Opening a window or dialog, or loading a document, inside a menu "activate" handler makes the GTK Wayland backend report "Tried to map a popup with a non-top most parent". Plugin Manager plus uses a `_run_after_menu_closes` helper (`GLib.idle_add`).
 - **No tooltips on menu items.** A tooltip still open on the chosen item makes Wayland report "Tried to unmap the parent of a popup".
-- **Reader windows need `Gdk.WindowTypeHint.NORMAL`.** A plain `Gtk.Dialog` defaults to the `DIALOG` hint, which breaks Windows-menu behavior on many window managers. The reader window of Markdown Dash does not set it yet (checked 8 October 2026).
+- **Long-lived windows should use `Gdk.WindowTypeHint.NORMAL`.** A plain `Gtk.Dialog` reports the `DIALOG` hint, so window managers typically give it only a Close button, keep it above its parent and often leave it out of the taskbar. The hint does not affect the Gramps Windows menu, which comes from `ManagedWindow` registration. Plugin Manager plus and the reader window of Markdown Dash both set `NORMAL`.
 - **Restart Gramps after replacing addon files.** Python loads a module once per session, and Load in the Plugin Manager does not reload a module that is already loaded.

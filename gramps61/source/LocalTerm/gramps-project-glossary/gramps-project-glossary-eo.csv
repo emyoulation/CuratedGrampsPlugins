@@ -1,7 +1,7 @@
 location,source,target,id,fuzzy,context,translator_comments,developer_comments
 ,EnglishExonym,Esperanto,,no,language,"lingvonomo en la angla",https://gramps-project.org/wiki/index.php/Gramps_Glossary/eo
 ,endonym,Esperanto,,no,language,"lingvonomo en la gepatra lingvo",https://gramps-project.org/wiki/index.php/Gramps_Glossary/eo
-,language code,en,,no,language,"lingvokodo laŭ la normo ISO 639",https://hosted.weblate.org/projects/gramps-project/-/eo/
+,language code,eo,,no,language,"lingvokodo laŭ la normo ISO 639",https://hosted.weblate.org/projects/gramps-project/-/eo/
 ,translators,tradukistoj,,yes,language,"ĉefa tradukisto por la grafika uzulinterfaco",https://gramps-project.org/wiki/index.php/Portal:Translators#eo
 ,translations,tradukoj,,yes,language,"stato de la viki-traduko",https://gramps-project.org/wiki/index.php/User_manual_translations#eo
 ,documentation,dokumentaro,,yes,language,"tradukita viki-paĝa indekso",https://gramps-project.org/wiki/index.php/Category:Eo:Documentation

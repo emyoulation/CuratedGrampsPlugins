@@ -1,0 +1,381 @@
+# Translation template for the 0.0.1 Metadata Inspector gramplet addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Metadata Inspector package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Metadata Inspector 0.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-03 22:13-0500\n"
+"PO-Revision-Date: 2026-10-03 22:13-0500\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: metadatainspector.gpr.py:35 metadatainspector.gpr.py:44
+msgid "Metadata Inspector"
+msgstr ""
+
+#: metadatainspector.gpr.py:37
+msgid ""
+"Gramplet to view the metadata of a media object: embedded in the file (Exif, "
+"IPTC, XMP, PDF, audio/video tags), in its XMP sidecar, and recorded in the "
+"current tree"
+msgstr ""
+
+#: metadatainspector.py:187 metadatainspector.py:235
+msgid "Gramps media record"
+msgstr ""
+
+#: metadatainspector.py:188
+msgid "Gramps references"
+msgstr ""
+
+#: metadatainspector.py:193
+msgid "File information"
+msgstr ""
+
+#: metadatainspector.py:194
+msgid "Technical & Capture"
+msgstr ""
+
+#: metadatainspector.py:198
+msgid "PDF document"
+msgstr ""
+
+#: metadatainspector.py:199
+msgid "Audio/Video tags"
+msgstr ""
+
+#: metadatainspector.py:200
+msgid "Sidecar file"
+msgstr ""
+
+#: metadatainspector.py:201
+msgid "XMP - sidecar"
+msgstr ""
+
+#: metadatainspector.py:212 metadatainspector.py:237
+msgid "File"
+msgstr ""
+
+#: metadatainspector.py:216
+msgid "Sidecar"
+msgstr ""
+
+#: metadatainspector.py:219
+msgid "Current Tree"
+msgstr ""
+
+#: metadatainspector.py:236
+msgid "XMP sidecar"
+msgstr ""
+
+#: metadatainspector.py:241
+msgid "Dimensions"
+msgstr ""
+
+#: metadatainspector.py:243 metadatainspector.py:287 metadatainspector.py:957
+#: metadatainspector.py:1505
+msgid "Title"
+msgstr ""
+
+#: metadatainspector.py:244 metadatainspector.py:313
+msgid "Date/Time Original"
+msgstr ""
+
+#: metadatainspector.py:245 metadatainspector.py:301
+msgid "Date/Time Digitized"
+msgstr ""
+
+#: metadatainspector.py:288
+msgid "Headline"
+msgstr ""
+
+#: metadatainspector.py:290
+msgid "Description"
+msgstr ""
+
+#: metadatainspector.py:297
+msgid "Keywords"
+msgstr ""
+
+#: metadatainspector.py:298
+msgid "Alt Text"
+msgstr ""
+
+#: metadatainspector.py:299
+msgid "People in Image"
+msgstr ""
+
+#: metadatainspector.py:325
+msgid "Software"
+msgstr ""
+
+#: metadatainspector.py:327
+msgid "Creator"
+msgstr ""
+
+#: metadatainspector.py:331
+msgid "Copyright Notice"
+msgstr ""
+
+#: metadatainspector.py:334
+msgid "Rights Usage Terms"
+msgstr ""
+
+#: metadatainspector.py:336
+msgid "Credit Line"
+msgstr ""
+
+#: metadatainspector.py:339
+msgid "Digital Source Type"
+msgstr ""
+
+#: metadatainspector.py:661
+msgid "GPS"
+msgstr ""
+
+#: metadatainspector.py:675
+msgid "Altitude"
+msgstr ""
+
+#: metadatainspector.py:700
+msgid "Make & Model"
+msgstr ""
+
+#: metadatainspector.py:707
+msgid "Exposure Settings"
+msgstr ""
+
+#: metadatainspector.py:708
+msgid "Lens Specifications"
+msgstr ""
+
+#: metadatainspector.py:966 metadatainspector.py:1490 metadatainspector.py:1509
+msgid "Date"
+msgstr ""
+
+#: metadatainspector.py:989 metadatainspector.py:1004
+#, python-format
+msgid "%(w)d x %(h)d pixels"
+msgstr ""
+
+#: metadatainspector.py:1039
+msgid "Preferred value. Other sources differ:"
+msgstr ""
+
+#: metadatainspector.py:1044
+#, python-format
+msgid "Overridden by %(source)s: %(value)s"
+msgstr ""
+
+#: metadatainspector.py:1141
+msgid "Install the 'pypdf' Python module to view PDF metadata."
+msgstr ""
+
+#: metadatainspector.py:1151
+msgid "This PDF could not be read (damaged or encrypted?)."
+msgstr ""
+
+#: metadatainspector.py:1153
+msgid "Pages"
+msgstr ""
+
+#: metadatainspector.py:1174
+msgid "Install the 'mutagen' Python module to view audio tags."
+msgstr ""
+
+#: metadatainspector.py:1186
+msgid "Duration"
+msgstr ""
+
+#: metadatainspector.py:1187
+msgid "Bit rate"
+msgstr ""
+
+#: metadatainspector.py:1188
+msgid "Sample rate"
+msgstr ""
+
+#: metadatainspector.py:1189
+msgid "Channels"
+msgstr ""
+
+#: metadatainspector.py:1194
+msgid "Stream"
+msgstr ""
+
+#: metadatainspector.py:1201
+msgid "Tags"
+msgstr ""
+
+#: metadatainspector.py:1256
+msgid "Whole image (no region selected)"
+msgstr ""
+
+#: metadatainspector.py:1261
+#, python-format
+msgid ""
+"Region (percent of the image, from its top-left corner):\n"
+"Left %(l)d%%, Top %(t)d%%, Right %(r)d%%, Bottom %(b)d%%"
+msgstr ""
+
+#: metadatainspector.py:1267
+#, python-format
+msgid ""
+"About %(x1)d,%(y1)d to %(x2)d,%(y2)d pixels in a %(w)d x %(h)d pixel image"
+msgstr ""
+
+#: metadatainspector.py:1310
+msgid "(no name)"
+msgstr ""
+
+#: metadatainspector.py:1327
+msgid "The part of the image selected on this media reference."
+msgstr ""
+
+#: metadatainspector.py:1396
+msgid "(no title)"
+msgstr ""
+
+#: metadatainspector.py:1447 metadatainspector.py:1971
+msgid "Name"
+msgstr ""
+
+#: metadatainspector.py:1448
+msgid "Folder"
+msgstr ""
+
+#: metadatainspector.py:1449
+msgid "Size"
+msgstr ""
+
+#: metadatainspector.py:1453
+msgid "Created"
+msgstr ""
+
+#: metadatainspector.py:1454
+msgid "Not available"
+msgstr ""
+
+#: metadatainspector.py:1459
+msgid "Modified"
+msgstr ""
+
+#: metadatainspector.py:1464
+msgid "Type"
+msgstr ""
+
+#: metadatainspector.py:1504
+msgid "Gramps ID"
+msgstr ""
+
+#: metadatainspector.py:1510
+msgid "Stored path"
+msgstr ""
+
+#: metadatainspector.py:1541
+msgid ""
+"Install the GExiv2 library (gir1.2-gexiv2-*) to view image metadata and XMP "
+"sidecars."
+msgstr ""
+
+#: metadatainspector.py:1546
+msgid "No readable Exif/IPTC/XMP metadata in this image."
+msgstr ""
+
+#: metadatainspector.py:1553
+#, python-format
+msgid ""
+"The file itself carries no Exif/IPTC/XMP metadata; the details come from its "
+"XMP sidecar (%s)."
+msgstr ""
+
+#: metadatainspector.py:1569
+msgid "No embedded metadata found in this file."
+msgstr ""
+
+#: metadatainspector.py:1587
+#, python-format
+msgid "File not found: %s"
+msgstr ""
+
+#: metadatainspector.py:1589
+#, python-format
+msgid "File is not readable: %s"
+msgstr ""
+
+#: metadatainspector.py:1646 metadatainspector.py:1668
+msgid "Metadata"
+msgstr ""
+
+#: metadatainspector.py:1782
+msgid "Section:"
+msgstr ""
+
+#: metadatainspector.py:1783
+msgid "Tag:"
+msgstr ""
+
+#: metadatainspector.py:1784
+msgid "Description:"
+msgstr ""
+
+#: metadatainspector.py:1785
+msgid "Sources:"
+msgstr ""
+
+#: metadatainspector.py:1801
+msgid "Details"
+msgstr ""
+
+#: metadatainspector.py:1972
+msgid "Value"
+msgstr ""
+
+#: metadatainspector.py:1973
+msgid "Tag"
+msgstr ""
+
+#: metadatainspector.py:2138
+msgid "Copy value"
+msgstr ""
+
+#: metadatainspector.py:2139
+msgid "Copy tag name"
+msgstr ""
+
+#: metadatainspector.py:2237
+msgid "The XMP sidecar has no readable metadata."
+msgstr ""
+
+#: metadatainspector.py:2238
+#, python-format
+msgid "No XMP sidecar found. Looked for: %s"
+msgstr ""
+
+#: metadatainspector.py:2244
+msgid "The file is not available."
+msgstr ""
+
+#: metadatainspector.py:2246
+msgid "Nothing is recorded in the current tree for this media object."
+msgstr ""
+
+#: metadatainspector.py:2265
+msgid "value in use where sources differ"
+msgstr ""
+
+#: metadatainspector.py:2266
+msgid "overridden by another source"
+msgstr ""
+
+#: metadatainspector.py:2296
+msgid "Select a media object to view its metadata."
+msgstr ""

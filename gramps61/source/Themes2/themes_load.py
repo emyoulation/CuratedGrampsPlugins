@@ -3,6 +3,7 @@
 #
 # Copyright (C) 2019       Paul Culley <paulr2787_at_gmail.com>
 # Copyright (C) 2025       Paul Culley <paulr2787_at_gmail.com>
+# Copyright (C) 2026       Brian McCullough (Gemini AI coding) <emyoulation_at_yahoo.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,6 +44,9 @@ add versioning to saved prefs, provide complete replacement source files.
 Constraints: https://www.gramps-project.org/wiki/index.php/Howto:_Contribute_to_Gramps#AI_generated_code
              https://github.com/gramps-project/gramps/blob/master/AGENTS.md
 Co-authored-by: Claude Sonnet 4.6 <claude-sonnet-4-6@anthropic.com>
+Modified-by: Gemini 2.5 (Google), 2026-08-14.
+Prompts: Update load_on_reg to read initialization settings from themes.ini.
+Co-authored-by: Gemini 2.5 <gemini@google.com>
 """
 
 # ------------------------
@@ -76,11 +80,6 @@ PREFS_VERSION: str = "1.0"
 # Keys managed exclusively by this addon (used for version-mismatch purge).
 _ADDON_CONFIG_KEYS: list[str] = [
     "preferences.themes-version",
-    "preferences.theme",
-    "preferences.theme-dark-variant",
-    "preferences.font",
-    "preferences.css-theme",
-    "preferences.css-patches",
     "interface.toolbar-text",
     "interface.fixed-scrollbar",
 ]
@@ -118,11 +117,6 @@ def _register_config_keys(config) -> None:  # type: ignore[type-arg]
     :param config: The Gramps :class:`gramps.gen.config.Configuration` object.
     """
     config.register("preferences.themes-version", "")
-    config.register("preferences.theme", "")
-    config.register("preferences.theme-dark-variant", "")
-    config.register("preferences.font", "")
-    config.register("preferences.css-theme", "")
-    config.register("preferences.css-patches", "")
     config.register("interface.toolbar-text", False)
     config.register("interface.fixed-scrollbar", "")
 
@@ -181,7 +175,7 @@ def load_on_reg(dbstate, uistate, plugin) -> None:
     from gramps.gui.configure import GrampsPreferences  # pylint: disable=import-outside-toplevel
 
     sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-    from themes import MyPrefs  # pylint: disable=import-outside-toplevel,import-error
+    from themes import MyPrefs, theme_config  # pylint: disable=import-outside-toplevel,import-error
 
     # -------------------------------------------------------- version sentinel
     _register_config_keys(config)
@@ -212,17 +206,15 @@ def load_on_reg(dbstate, uistate, plugin) -> None:
         GrampsPreferences.def_font = gtksettings.get_property("gtk-font-name")
 
     # --------------------------------------------- restore GTK theme prefs
-    value = config.get("preferences.theme-dark-variant")
-    if value:
-        gtksettings.set_property(
-            "gtk-application-prefer-dark-theme", value == "True"
-        )
+    value = theme_config.get("dark-variant", "False")
+    if value == "True":
+        gtksettings.set_property("gtk-application-prefer-dark-theme", True)
 
-    value = config.get("preferences.theme")
+    value = theme_config.get("theme", "")
     if value:
         gtksettings.set_property("gtk-theme-name", value)
 
-    value = config.get("preferences.font")
+    value = theme_config.get("font", "")
     if value:
         gtksettings.set_property("gtk-font-name", value)
 
@@ -255,14 +247,14 @@ def load_on_reg(dbstate, uistate, plugin) -> None:
     # ----------------------------------------------- load CSS cascade layer 1
     # CSS Theme (single selection, APPLICATION priority)
     screen = Screen.get_default()
-    active_css_theme = config.get("preferences.css-theme")
+    active_css_theme = theme_config.get("css-theme", "")
     if active_css_theme:
         theme_path = os.path.join(USER_CSS, "themes", active_css_theme + ".css")
         _load_css_provider(theme_path, screen, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     # ----------------------------------------------- load CSS cascade layer 2
     # CSS Patches (multiple, sorted, APPLICATION priority)
-    patches_str = config.get("preferences.css-patches")
+    patches_str = theme_config.get("css-patches", "")
     if patches_str:
         for patch_name in [p.strip() for p in patches_str.split(",") if p.strip()]:
             patch_path = os.path.join(USER_CSS, "patches", patch_name + ".css")

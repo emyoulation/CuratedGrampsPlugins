@@ -1,5 +1,5 @@
 # PR2388 Example Tree Prompt Changelog
-<!-- undocked=false -->
+
 [README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md)
 
 This addon is a field-test package of [Gramps pull request #2388](https://github.com/gramps-project/gramps/pull/2388) by Doug Blank ([@dsblank](https://github.com/dsblank)). Version 0.0.0 below records what the pull request itself provides, as the baseline. Later versions list what the addon changes or adds.

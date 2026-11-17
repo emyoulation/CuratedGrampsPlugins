@@ -1,7 +1,7 @@
-# Themes — Gramps Addon [README.md](README.md) ** ⚠ * EXPERIMENTAL * ⚠ **
-![AI Warning](media/ai_jigsaw.jpg)
+# Themes — Gramps Addon  ** ⚠ * EXPERIMENTAL * ⚠ **
+[README.md](README.md)
 
-**Version:** 1.0.0 alpha test 
+**Version:** 1.0.1 Beta test 
 **Target:** Gramps 5.2 or newer 
 **Category:** General (Help -> Preferences -> Theme tab)  
 **Status:** Stable  
@@ -360,6 +360,12 @@ Use MSYS2 to install GTK (e.g., `pacman -S mingw-w64-ucrt-x86_64-gtk4`), set `GT
 
 ## Invoking on macOS
 Set `GTK_DEBUG=interactive` and run the GTK app from Terminal.app. Use **Ctrl+Shift+I** or **Ctrl+Shift+D** once enabled (similar to Linux, assuming GTK built via Homebrew or jhbuild). macOS-specific Terminal inspector is unrelated. 
+
+
+## See also
+
+* MantisBT
+   * [0014307](https://gramps-project.org/bugs/view.php?id=14307): Themes addon permanently mutates global system GTK theme outside Gramps sandbox
 
 
 

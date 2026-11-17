@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-16 15:10-0800\n"
+"POT-Creation-Date: 2026-10-20 16:19-0500\n"
 "PO-Revision-Date: 2025-02-25 16:12+0000\n"
 "Last-Translator: Kaj Arne Mikkelsen <kmi@vgdata.dk>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/gramps-project/"
@@ -14,95 +14,333 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.10.2-dev\n"
 
-msgid "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
-msgstr "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
+#: PhotoTaggingGramplet.gpr.py:32 PhotoTaggingGramplet.gpr.py:42
+msgid "Photo Tagging"
+msgstr "FotoMærkning"
 
-msgid "Replace existing references to the person being assigned without asking"
+#: PhotoTaggingGramplet.gpr.py:33
+msgid "Gramplet for tagging people in photos"
+msgstr "Gramplet til at mærke personer i fotos"
+
+#: PhotoTaggingGramplet.py:497
+msgid "Link"
 msgstr ""
-"Udskift eksisterende henvisninger til personen som er tildelt uden at spørge"
 
-msgid "Face detection"
-msgstr "Ansigtsgenkendelse"
-
-msgid "Minimum face width (px)"
-msgstr "Mindste ansigtsbredde (px)"
-
-msgid "Minimum face height (px)"
-msgstr "Mindste ansigtshøjde (px)"
-
-msgid "Detect faces inside existing boxes"
-msgstr "Genkend ansigter indenfor eksisterende bokse"
-
-msgid "Sensitivity (1 min .. 20 max)"
-msgstr "Følsomhed (1 min .. 20 max)"
-
-msgid "Add Person"
+#: PhotoTaggingGramplet.py:498
+#, fuzzy
+msgid "Add a new person"
 msgstr "Tilføj person"
 
+#: PhotoTaggingGramplet.py:499
 msgid "Clear Reference"
 msgstr "Ryd henvisning"
 
+#: PhotoTaggingGramplet.py:907
+msgid "No documentation available"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:908
+msgid "This plugin has neither a README.md nor a registered help_url."
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1205
+msgid "XMP - embedded"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1206
+msgid "XMP - sidecar"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1207
+msgid "XMP keywords - embedded"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1208
+msgid "XMP keywords - sidecar"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1209
+msgid "Picasa - sidecar"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1768
+msgid "Caption Font..."
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1786
+msgid "Select Caption Font"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1959
+msgid "Options"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1967
+msgid "Suppress warning when re-assigning Person reference"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1993
+msgid "Display as"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:1999
+msgid ""
+"Overrides Preferences > Data > Name format for this gramplet's own Name "
+"column and Caption generator only -- everywhere else in Gramps keeps using "
+"the regular preference. Leave as \"Default format (defined by Gramps "
+"preferences)\" for no override."
+msgstr ""
+
+#: PhotoTaggingGramplet.py:2010
+msgid "Face detection"
+msgstr "Ansigtsgenkendelse"
+
+#: PhotoTaggingGramplet.py:2014
+msgid "Minimum face width (px)"
+msgstr "Mindste ansigtsbredde (px)"
+
+#: PhotoTaggingGramplet.py:2017
+msgid "Minimum face height (px)"
+msgstr "Mindste ansigtshøjde (px)"
+
+#: PhotoTaggingGramplet.py:2020
+#, fuzzy
+msgid "Detect faces inside existing marquees"
+msgstr "Genkend ansigter indenfor eksisterende bokse"
+
+#: PhotoTaggingGramplet.py:2023
+msgid "Sensitivity (1 min .. 20 max)"
+msgstr "Følsomhed (1 min .. 20 max)"
+
+#: PhotoTaggingGramplet.py:2084
+msgid "OK"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:2572
 msgid "Remove Selection"
 msgstr "Fjern valg"
 
+#: PhotoTaggingGramplet.py:2573
 msgid "Edit referenced Person"
 msgstr "Rediger den henviste person"
 
+#: PhotoTaggingGramplet.py:2574 PhotoTaggingGramplet.py:3470
+msgid "Move Up"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:2575 PhotoTaggingGramplet.py:3473
+msgid "Move Down"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:2576
 msgid "Zoom In"
 msgstr "Zoom ind"
 
+#: PhotoTaggingGramplet.py:2577
 msgid "Zoom Out"
 msgstr "Zoom ud"
 
+#: PhotoTaggingGramplet.py:2585
 msgid "Detect faces"
 msgstr "Genkend ansigter"
 
-msgid "Detect faces (OpenCV module required)"
-msgstr "Genkend ansigter (OpenCV modul påkrævet)"
+#: PhotoTaggingGramplet.py:2608
+msgid "Settings"
+msgstr ""
 
-msgid "XMP Region Name"
-msgstr "XMP Region Navn"
+#: PhotoTaggingGramplet.py:2609
+msgid "Help"
+msgstr ""
 
-msgid "Set as active person"
-msgstr "Vælg som aktive person"
+#: PhotoTaggingGramplet.py:2748
+msgid "Preview"
+msgstr ""
 
-msgid "_Select"
-msgstr "_Vælg"
+#: PhotoTaggingGramplet.py:2767
+msgid "Metadata clues"
+msgstr ""
 
+#: PhotoTaggingGramplet.py:3422
+msgid "See the person details"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:3427
+msgid "See ancestor family details"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:3434
+msgid "See descendant family details"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:3441
+msgid "Make the person active"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:3461
+msgid "Fuzzy Match Lookup…"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:3467
+msgid "Remove"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:3477
+msgid "Transcribe list to a Note"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:4340
+msgid "Move to row:"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:4883
+#, fuzzy, python-format
+msgid "Edit Person (%s)"
+msgstr "Tilføj person"
+
+#: PhotoTaggingGramplet.py:4892
+msgid "Edit Media Object"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5004
+msgid "Hide the Metadata clues column"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5006
+msgid "Show the Metadata clues column"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5279
+msgid ""
+"No Caption note for this media (double-click to create one from the region "
+"list)"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5283
+msgid "Hide the Caption panel"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5285
+msgid "Show the Caption panel"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5484
+msgid "Hide face marquees"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5487
+msgid "Show face marquees"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5609
+msgid ""
+"Quick draw mode: on -- draw several marquees in a row with no popup in "
+"between (click to turn off)"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5614
+msgid ""
+"Quick draw mode: off -- draw several marquees in a row with no popup in "
+"between (click to turn on)"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5633
+msgid "Face marquee ID: hidden (click for Row ID)"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5639
+msgid "Face marquee ID: Row ID (click for Person ID)"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5641
+msgid "Face marquee ID: Person ID (click to hide)"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:5882
 #, python-brace-format
-msgid "Replace to {0}"
-msgstr "Udskift til {0}"
+msgid "Swap with {0}"
+msgstr ""
 
+#: PhotoTaggingGramplet.py:6371
 msgid "Detecting faces..."
 msgstr "Genkender ansigter..."
 
+#: PhotoTaggingGramplet.py:6396
 msgid "Detection finished"
 msgstr "Genkendelse aflsluttet"
 
+#: PhotoTaggingGramplet.py:6403
+#, fuzzy
+msgid "Photo Tagging Settings"
+msgstr "FotoMærkning"
+
+#: PhotoTaggingGramplet.py:6452
 #, python-brace-format
 msgid "Another region of this image is associated with {name}. Remove it?"
 msgstr "En anden del af dette billede er forbundet med {name}. Fjern det?"
 
+#: PhotoTaggingGramplet.py:6457
 #, python-brace-format
 msgid ""
 "{count} other regions of this image are associated with {name}. Remove them?"
 msgstr ""
 "{count} andre regioner af dette billede er forbundet med {name}. Fjern dem?"
 
+#: PhotoTaggingGramplet.py:6632 PhotoTaggingGramplet.py:7676
+msgid "undefined date"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:6727
+msgid "Add Note"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:7616
 #, python-format
-msgid "Male person|Dead at %s"
-msgstr "Mandsperson|Død %s"
+msgid "%s (whole photo, no region)"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:7677
+msgid "Name"
+msgstr ""
+
+#: PhotoTaggingGramplet.py:7677
+#, python-format
+msgid "Age on %s"
+msgstr ""
+
+#~ msgid "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
+#~ msgstr ""
+#~ "https://www.gramps-project.org/wiki/index.php/Photo_Tagging_Gramplet"
+
+#~ msgid ""
+#~ "Replace existing references to the person being assigned without asking"
+#~ msgstr ""
+#~ "Udskift eksisterende henvisninger til personen som er tildelt uden at "
+#~ "spørge"
+
+#~ msgid "Detect faces (OpenCV module required)"
+#~ msgstr "Genkend ansigter (OpenCV modul påkrævet)"
+
+#~ msgid "XMP Region Name"
+#~ msgstr "XMP Region Navn"
+
+#~ msgid "Set as active person"
+#~ msgstr "Vælg som aktive person"
+
+#~ msgid "_Select"
+#~ msgstr "_Vælg"
+
+#, python-brace-format
+#~ msgid "Replace to {0}"
+#~ msgstr "Udskift til {0}"
 
 #, python-format
-msgid "Female person|Dead at %s"
-msgstr "Kvindelig person|Død %s"
+#~ msgid "Male person|Dead at %s"
+#~ msgstr "Mandsperson|Død %s"
 
 #, python-format
-msgid "Unknown gender person|Dead at %s"
-msgstr "Person af ukendt køn|Død %s"
+#~ msgid "Female person|Dead at %s"
+#~ msgstr "Kvindelig person|Død %s"
 
-msgid "Photo Tagging"
-msgstr "FotoMærkning"
-
-msgid "Gramplet for tagging people in photos"
-msgstr "Gramplet til at mærke personer i fotos"
+#, python-format
+#~ msgid "Unknown gender person|Dead at %s"
+#~ msgstr "Person af ukendt køn|Død %s"

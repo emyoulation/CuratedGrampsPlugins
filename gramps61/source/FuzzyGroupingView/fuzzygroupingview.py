@@ -571,11 +571,13 @@ def help_tooltip() -> str:
 
     :returns: A tooltip saying which documentation a click will show.
     """
+    # One pattern for every view: the translated addon name from the
+    # .gpr.py is substituted, so translators see no per-addon strings.
+    pdata = own_pdata()
+    names = {"addon": pdata.name if pdata is not None else PLUGIN_ID}
     if help_uses_readme():
-        return _(
-            "View the ReadMe markdown docs for the Fuzzy Grouping person view mode"
-        )
-    return _("Browse to the Help URL for the Fuzzy Grouping person view mode")
+        return _("View the ReadMe markdown docs for the %(addon)s view mode") % names
+    return _("Browse to the Help URL for the %(addon)s view mode") % names
 
 
 def show_help(uistate: DisplayState) -> None:

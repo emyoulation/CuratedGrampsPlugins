@@ -39,13 +39,18 @@ Monkey patches for the New/Edit Person dialogs, Gramps 5.2 to 6.2.
    (in single surname mode it stays on "Use Multiple Surnames").
 3. A Fuzzy Match Lookup button right of the single Surname field, shown
    only while the Fuzzy Matching addon's "Fuzzy Match API" plugin is
-   registered and not hidden.
+   registered and not hidden. It seeds the lookup window's "Name:"
+   field with "Surname, Given" from the dialog; while that window stays
+   open, editing the dialog's Surname or Given name updates it live.
 4. A "surname" field tip (placeholder text) in the Surname field, like
-   the existing "prefix" and "suffix" tips.
+   the existing "prefix" and "suffix" tips, and an "Auto" tip in the ID
+   field (Gramps' own translated string): a blank ID is filled with the next free ID when the person
+   is saved.
 """
 
 import inspect
 import logging
+import sys
 
 from gi.repository import Gdk, GLib, Gtk
 
@@ -53,7 +58,14 @@ from gramps.gen.config import config as global_config
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gen.plug import BasePluginManager
 
-_ = glocale.get_addon_translator(__file__).gettext
+# get_addon_translator() raises ValueError when this addon has no
+# translation for the session language; without the fallback the whole
+# addon would not load in that language.
+try:
+    _trans = glocale.get_addon_translator(__file__)
+except ValueError:
+    _trans = glocale.translation
+_ = _trans.gettext
 
 LOG = logging.getLogger(".PR2485")
 
@@ -92,6 +104,25 @@ def get_fuzzy_match_lookup():
     if module is None:
         return None
     return getattr(module, "show_fuzzy_lookup", None)
+
+
+def get_fuzzy_live_update():
+    """
+    Return update_fuzzy_lookup from the Fuzzy Match API if it is already
+    loaded (a lookup window was opened this session), else None. Never
+    imports, so it is cheap on every keystroke.
+    """
+    module = sys.modules.get("FuzzyMatchLookupWindow")
+    return getattr(module, "update_fuzzy_lookup", None)
+
+
+def join_surname_given(surname, given):
+    """
+    "Surname, Given" text (just the surname for a blank given name), the
+    form the lookup window's "Name:" field reads.
+    """
+    surname, given = surname.strip(), given.strip()
+    return "%s, %s" % (surname, given) if given else surname
 
 
 # ----------------------------------------------------------------------
@@ -379,20 +410,47 @@ def _cb_fuzzy_lookup_clicked(editor, button):
         params = inspect.signature(show_fuzzy_lookup).parameters
     except (TypeError, ValueError):
         params = {}
-    if "given_filter" in params:
+    if "query" in params:
+        # one "Surname, Given" field; owner lets live updates find it
+        kwargs["query"] = join_surname_given(surname, given)
+        if "owner" in params:
+            kwargs["owner"] = editor
+    elif "given_filter" in params:
         kwargs["given_filter"] = given
     # No on_select: double-click opens that person's editor, which is
     # what a "does this person already exist?" check needs here.
-    # Track is [] (a top-level window), not editor.track: nested under
-    # the editor, closing the editor makes Gramps close the lookup
-    # window too, and FuzzyMatchLookupWindow (up to at least 0.5.x)
-    # never calls ManagedWindow.show(), so it has no "opened" attribute
-    # and that cascade raises AttributeError. Top-level also means the
-    # lookup window and any editor opened from it outlive this dialog.
+    # Track is [] (a top-level window), not editor.track, so the lookup
+    # window and any editor opened from it outlive this dialog. (Older
+    # FuzzyMatchLookupWindow versions also never called
+    # ManagedWindow.show(), so closing the editor over a nested lookup
+    # window raised AttributeError.)
     try:
         show_fuzzy_lookup(editor.dbstate, editor.uistate, [], **kwargs)
     except Exception:  # pylint: disable=broad-except
         LOG.exception("Fuzzy Match Lookup failed")
+
+
+def _cb_name_field_changed(_entry, editor):
+    """
+    Surname or Given name edited: update a lookup window this dialog
+    opened, live (the window waits for a pause in typing). Leaves alone a
+    window seeded since by another dialog or addon.
+    """
+    update_fuzzy_lookup = get_fuzzy_live_update()
+    if update_fuzzy_lookup is None:
+        return
+    try:
+        params = inspect.signature(update_fuzzy_lookup).parameters
+    except (TypeError, ValueError):
+        return
+    if "owner" not in params:
+        return  # older API: cannot tell whose window it is
+    surname = editor.top.get_object("surname").get_text()
+    given = editor.top.get_object("given_name").get_text()
+    try:
+        update_fuzzy_lookup(join_surname_given(surname, given), owner=editor)
+    except Exception:  # pylint: disable=broad-except
+        LOG.exception("Fuzzy Match Lookup live update failed")
 
 
 def add_fuzzy_button(editor, entry):
@@ -420,6 +478,8 @@ def add_fuzzy_button(editor, entry):
 
     entry.connect("notify::visible", cb_sync_visible)
     cb_sync_visible()
+    for name in ("surname", "given_name"):
+        editor.top.get_object(name).connect("changed", _cb_name_field_changed, editor)
     return button
 
 
@@ -435,6 +495,14 @@ def patch_setup_fields(edit_person_class):
         entry = self.top.get_object("surname")
         # Same style as the core's "prefix" and "suffix" field tips.
         entry.set_placeholder_text(_("surname"))
+        # Shown only while the ID field is blank (a new person): Gramps
+        # fills in the next free ID on save. Gramps' own translated "Auto"
+        # (a report option), so translators have nothing new to do. Not
+        # the actual next ID: find_next_person_gramps_id() advances the
+        # counter, so asking for a preview would skip a number.
+        self.top.get_object("gid").set_placeholder_text(
+            glocale.translation.gettext("Auto")
+        )
         self._ept_fuzzy_button = add_fuzzy_button(self, entry)
         self._ept_accel_group = install_add_surname_accel(self)
 

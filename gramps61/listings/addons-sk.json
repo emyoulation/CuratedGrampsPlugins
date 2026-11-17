@@ -123,14 +123,14 @@
     "g": "6.1",
     "s": 1,
     "z": "AttributesEditor_plus.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/EditAttributesPlus/README.md"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AttributesEditor_plus/README.md"
   },
   {
     "n": "Edit Date Calculator",
     "i": "editdatecalculator",
     "t": 6,
     "d": "Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with the triangle tab on the right edge of the dialog. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.1.0",
+    "v": "0.1.2",
     "g": "6.1",
     "s": 1,
     "z": "EditDateCalculator.addon.tgz",
@@ -190,7 +190,7 @@
     "g": "6.1",
     "s": 3,
     "z": "RoleReversal.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
     "n": "Flat Filter",
@@ -265,9 +265,9 @@
     "d": "Makes Family Trees > Import... work when no Family Tree is loaded. A new Family Tree is created, named after the imported file, and the file is imported into it.",
     "v": "0.1.0",
     "g": "6.1",
-    "s": 1,
+    "s": 3,
     "z": "ImportWithoutTree.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/ImportWithoutTree/README.md"
   },
   {
     "n": "Kompletná správa o jedincovi (zoradená)",
@@ -349,6 +349,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   },
   {
+    "n": "Označovanie osôb na fotografiách",
+    "i": "Photo Tagging",
+    "t": 10,
+    "d": "Gramplet na označovanie osôb na fotografiách",
+    "v": "1.3.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "PhotoTaggingGramplet.addon.tgz",
+    "h": "https://gramps.discourse.group/t/1889/14"
+  },
+  {
     "n": "PDF Field Mapper",
     "i": "PDFFieldMapper",
     "t": 10,
@@ -382,7 +393,7 @@
     "g": "6.1",
     "s": 3,
     "z": "RoleReversal.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
     "n": "Phonex (French) match of People with the <names>",
@@ -394,17 +405,6 @@
     "s": 1,
     "z": "FuzzyRules_romjerome.addon.tgz",
     "h": "https://gramps.discourse.group/t/9951/49"
-  },
-  {
-    "n": "Photo Tagging",
-    "i": "Photo Tagging",
-    "t": 10,
-    "d": "Gramplet for tagging people in photos",
-    "v": "1.2.4",
-    "g": "6.1",
-    "s": 1,
-    "z": "PhotoTaggingGramplet.addon.tgz",
-    "h": "https://gramps.discourse.group/t/1889/14"
   },
   {
     "n": "PR2388 Ponuka cvičného rodinného stromu",

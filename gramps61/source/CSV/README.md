@@ -1,16 +1,17 @@
 # CSV Import and Export v1.1.1
 <!-- undocked=false edit=True status=True browse=True -->
-_Experimental_ version for Gramps 6.0 testing 
+![](gramps:icon:gnome-mime-application-x-csv:48) _Experimental_ version for Gramps 6.0 testing 
 Use only on Backup Tree data.
 
 DSBlank spent some time refining the CSV import/export in [PR2372](https://github.com/gramps-project/gramps/pull/2372). It has been expanded to handle: Place, Person, Marriage, Family, **Event**, **Citation**, and allows full (and custom) type entries.
 
 ## The two new row types are:
-
 **Event table columns**: 
   `event`, `eventtype`, `date`, `place`, `description`, `source`, `note`, `note_type`, `role`, `tag`, `person`, `family`, `media`, `media_description`, `media_date`
 **Citation table columns**: 
   `citation`, `source`, `page`, `date`, `confidence`, `note`, `note_type`, `tag`, `person`, `family`, `event`, `place`, `media`, `media_description`, `media_date`
+
+Sample comma separate values file: [exp_sample_csv.csv](https://raw.githubusercontent.com/dsblank/gramps/7b10b85be9b05f99b67be5bcfb0470bf94a8aa69/data/tests/exp_sample_csv.csv)
 
 The Gramps primary object types that are not handled after the update:
 * Source — citations reference sources by title string, but sources themselves aren't exported/imported as a table
@@ -23,9 +24,14 @@ The importer stores the media path as-is without checking if the file exists —
 
 Does this upgrade handle most of the issues with CSV import?
 
-As this is a new feature, it is slated to appear in the Gramps 6.2 released around Oct. 2026.
+As this is a new feature, it is slated to appear in the Gramps 6.2 [releasing around Oct. 2026](https://www.gramps-project.org/wiki/index.php/6.2_Roadmap#Schedule).
 
 ## References:
 * [Gramps 6.0 CSV Import](https://www.gramps-project.org/wiki/index.php/Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#Gramps_CSV_import)
 * [Gramps 6.0 CSV Export](https://www.gramps-project.org/wiki/index.php/Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#csv_export)
+* [Export a view](https://gramps-project.org/wiki/index.php/Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees:_CSV_Import_and_Export#Exporting_a_single_category)
+* The [Import Text](https://gramps-project.org/wiki/index.php/Addon:Import_Text_Gramplet) addon gramplet
+* Setting the [Delimiter dialect](https://www.gramps-project.org/wiki/index.php/Gramps_6.0_Wiki_Manual_-_Settings#CSV_Dialect): Excel, Excel-tab, Unix, or custom (comma, semicolon, colon, bar, tab)
+
+
 

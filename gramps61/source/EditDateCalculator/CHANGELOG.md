@@ -3,6 +3,12 @@
 [README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md)
 
 All notable changes to the Edit Date Calculator addon are listed here, newest first.
+
+## 0.1.1 - 2026-11-17
+### Changed
+- A plain number over 130 in Date or offset is read as a year, not as a number of years to add. For example, Reference date 16 Mar 1923 and Date or offset `1854` give the time between the two dates (69 years, 2 months, 15 days), not the year 3777. A number with a minus, or after "Age" / "Aged", is still an offset.
+- Reference date always holds a date, and a plain number there is a year. Other offsets typed in Reference date, such as `2, 3, 10` or `Aged 45`, now give "Error: invalid Reference date". Before, the offset could go in Reference date when Date or offset held the date.
+
 ## 0.1.0 - 2026-10-28
 Second field-test release.
 ### Added

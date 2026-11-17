@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pruned Branch 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 15:07-0600\n"
+"POT-Creation-Date: 2026-11-05 14:09-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: PrunedBranch.gpr.py:18 PrunedBranch.py:721 PrunedBranch.py:791
-#: PrunedBranch.py:915
+#: PrunedBranch.gpr.py:18 PrunedBranch.py:820 PrunedBranch.py:893
+#: PrunedBranch.py:1085 PrunedBranch.py:1172 PrunedBranch.py:1184
+#: PrunedBranch.py:1195
 msgid "Pruned Branch"
 msgstr ""
 
@@ -28,190 +29,222 @@ msgid ""
 "an editing session (prototype)."
 msgstr ""
 
-#: PrunedBranch.py:239
+#: PrunedBranch.py:139
+msgid "Status bar button"
+msgstr ""
+
+#: PrunedBranch.py:140
+msgid "Borders and pane separators"
+msgstr ""
+
+#: PrunedBranch.py:141
+msgid "Window background"
+msgstr ""
+
+#: PrunedBranch.py:142
+msgid "Text"
+msgstr ""
+
+#: PrunedBranch.py:143
+msgid "Selected row, hovered menu item"
+msgstr ""
+
+#: PrunedBranch.py:320
 msgid "Editor"
 msgstr ""
 
-#: PrunedBranch.py:257
+#: PrunedBranch.py:338
 msgid "Close the open editors first"
 msgstr ""
 
-#: PrunedBranch.py:261
+#: PrunedBranch.py:342
 #, python-format
 msgid "and %d more"
 msgstr ""
 
-#: PrunedBranch.py:264
+#: PrunedBranch.py:345
 #, python-format
 msgid ""
 "%(action)s reloads every view, and Gramps closes open editors without saving "
 "when that happens. Save or cancel these editors, then try again:"
 msgstr ""
 
-#: PrunedBranch.py:432
+#: PrunedBranch.py:514
 msgid ""
 "Gramps did not switch the views to the branch. The session was not started."
 msgstr ""
 
-#: PrunedBranch.py:489
+#: PrunedBranch.py:571
 msgid "Ending the Pruned Branch session"
 msgstr ""
 
-#: PrunedBranch.py:615
+#: PrunedBranch.py:692
 msgid "Click to return to the full tree"
 msgstr ""
 
-#: PrunedBranch.py:631
+#: PrunedBranch.py:734
 #, python-format
 msgid "PRUNED BRANCH: %(label)s (%(count)s of %(total)s people)"
 msgstr ""
 
-#: PrunedBranch.py:638
+#: PrunedBranch.py:741
 msgid "Click for full tree"
 msgstr ""
 
-#: PrunedBranch.py:670
+#: PrunedBranch.py:769
 msgid "A Pruned Branch session is active"
 msgstr ""
 
-#: PrunedBranch.py:675
+#: PrunedBranch.py:774
 #, python-format
 msgid ""
 "'%s' repairs the whole Family Tree and cannot run on a branch. End the "
 "Pruned Branch session first?"
 msgstr ""
 
-#: PrunedBranch.py:683
+#: PrunedBranch.py:782
 #, python-format
 msgid ""
 "'%(tool)s' would only see the branch (%(count)s people). Run it on the "
 "branch, or end the session and run it on the full tree?"
 msgstr ""
 
-#: PrunedBranch.py:689
+#: PrunedBranch.py:788
 msgid "Cancel"
 msgstr ""
 
-#: PrunedBranch.py:690
+#: PrunedBranch.py:789
 msgid "End branch, then run"
 msgstr ""
 
-#: PrunedBranch.py:692
+#: PrunedBranch.py:791
 msgid "Run on branch"
 msgstr ""
 
-#: PrunedBranch.py:740
+#: PrunedBranch.py:839
 msgid "People:"
 msgstr ""
 
-#: PrunedBranch.py:744
+#: PrunedBranch.py:843
 msgid "Listing method:"
 msgstr ""
 
-#: PrunedBranch.py:746 PrunedBranch.py:856
+#: PrunedBranch.py:845 PrunedBranch.py:1024
 msgid "SQL keep-table join"
 msgstr ""
 
-#: PrunedBranch.py:747
+#: PrunedBranch.py:846
 msgid "Python, one read per record"
 msgstr ""
 
-#: PrunedBranch.py:754
+#: PrunedBranch.py:853
 msgid "Start branch"
 msgstr ""
 
-#: PrunedBranch.py:756
+#: PrunedBranch.py:855
 msgid "End branch"
 msgstr ""
 
-#: PrunedBranch.py:758
+#: PrunedBranch.py:857
 msgid "Run benchmark"
 msgstr ""
 
-#: PrunedBranch.py:760
+#: PrunedBranch.py:859
 msgid ""
 "Times the full tree against the branch. With no session active, a trial "
 "branch is built from the People choice without switching to it. The People "
 "choice is also timed as a filter."
 msgstr ""
 
-#: PrunedBranch.py:766
+#: PrunedBranch.py:865
 msgid "Customize colors"
 msgstr ""
 
-#: PrunedBranch.py:768
-#, python-format
-msgid "Open the session stylesheet in your text editor: %s"
+#: PrunedBranch.py:867
+msgid "Show the session colors in the bottom panel instead of the report"
 msgstr ""
 
-#: PrunedBranch.py:771
+#: PrunedBranch.py:870
 msgid "Copy report"
 msgstr ""
 
-#: PrunedBranch.py:773
+#: PrunedBranch.py:872
 msgid "Close"
 msgstr ""
 
-#: PrunedBranch.py:807 PrunedBranch.py:815
+#: PrunedBranch.py:903
+msgid ""
+"Every other session color is mixed from these five. Changes are saved at "
+"once and show right away during a session."
+msgstr ""
+
+#: PrunedBranch.py:923
+msgid "Restore default colors"
+msgstr ""
+
+#: PrunedBranch.py:926
+#, python-format
+msgid "Remove the swatch colors from %s. Your own lines in it are kept."
+msgstr ""
+
+#: PrunedBranch.py:935
+#, python-format
+msgid ""
+"Edit a stylesheet in your text editor: <a href=\"%(user_uri)s\">%(user)s</a> "
+"(your changes, kept by addon updates) or <a href=\"%(main_uri)s\">%(main)s</"
+"a> (the default, replaced by addon updates).\n"
+"Text edits apply the next time a session starts."
+msgstr ""
+
+#: PrunedBranch.py:975 PrunedBranch.py:983
 #, python-format
 msgid "Tag: %s"
 msgstr ""
 
-#: PrunedBranch.py:823
+#: PrunedBranch.py:991
 #, python-format
 msgid "Filter: %s"
 msgstr ""
 
-#: PrunedBranch.py:858
+#: PrunedBranch.py:1026
 msgid "Python only (not SQLite)"
 msgstr ""
 
-#: PrunedBranch.py:863
+#: PrunedBranch.py:1031
 msgid "Pruned Branch ACTIVE:"
 msgstr ""
 
-#: PrunedBranch.py:866
+#: PrunedBranch.py:1034
 #, python-format
 msgid "Available listing method: %s"
 msgstr ""
 
-#: PrunedBranch.py:872
+#: PrunedBranch.py:1040
 msgid "Full tree."
 msgstr ""
 
-#: PrunedBranch.py:872
+#: PrunedBranch.py:1040
 msgid "Choose people, then Start branch."
 msgstr ""
 
-#: PrunedBranch.py:892
+#: PrunedBranch.py:1062
 msgid "Starting a Pruned Branch session"
 msgstr ""
 
-#: PrunedBranch.py:901
+#: PrunedBranch.py:1071
 #, python-format
 msgid "No people match %s; nothing started."
 msgstr ""
 
-#: PrunedBranch.py:944
+#: PrunedBranch.py:1114
 msgid "Choose a tag or filter in People first."
 msgstr ""
 
-#: PrunedBranch.py:957
+#: PrunedBranch.py:1127
 #, python-format
 msgid "No people match %s; nothing to measure."
 msgstr ""
 
-#: PrunedBranch.py:971
+#: PrunedBranch.py:1141
 msgid "Benchmark failed; see the terminal for the traceback."
-msgstr ""
-
-#: PrunedBranch.py:983
-#, python-format
-msgid "Editing %s"
-msgstr ""
-
-#: PrunedBranch.py:985
-msgid ""
-"Color changes apply the next time a session starts. Keep a copy of your "
-"changes: updating the addon replaces this file."
 msgstr ""

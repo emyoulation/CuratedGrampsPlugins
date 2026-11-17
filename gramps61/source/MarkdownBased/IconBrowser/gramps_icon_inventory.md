@@ -1,11 +1,7 @@
 # Gramps Icon Theme Inventory
-
-Source: [`gramps-project/gramps`](https://github.com/gramps-project/gramps), `master` branch
-(cloned locally at commit time; icons live under `gramps/images/hicolor/`, following the
-freedesktop.org icon-theme spec).
+Source: [`gramps-project/gramps`](https://github.com/gramps-project/gramps), `master` branch (cloned locally at commit time; icons live under `gramps/images/hicolor/`, following the freedesktop.org icon-theme spec).
 
 ## How these icons get loaded
-
 `gramps/gui/grampsgui.py` registers the search path once, at application start:
 
 ```python
@@ -13,69 +9,26 @@ theme = Gtk.IconTheme.get_default()
 theme.append_search_path(IMAGE_DIR)
 ```
 
-`IMAGE_DIR` (from `gramps.gen.const`) points at `gramps/images/`, which contains a
-`hicolor/` theme directory laid out as `hicolor/<size>/<context>/<icon-name>.<ext>`
-(`scalable` SVGs plus `16x16`, `22x22`, `24x24`, `48x48`, `128x128`, `256x256` PNG
-fallbacks, under `actions/`, `apps/`, `mimetypes/`, and `source/`). Once registered,
-any Gramps code can request an icon purely **by name** — e.g.
-`Gtk.Image.new_from_icon_name("gramps-person", Gtk.IconSize.BUTTON)` — and GTK resolves
-it to the right file/size automatically. This is distinct from `gui/dialog.py`'s
-`ICON`, which is a single hard-coded `Pixbuf` loaded directly from `images/gramps.png`
-for use as the app/window icon, not looked up through the icon theme.
+`IMAGE_DIR` (from `gramps.gen.const`) points at `gramps/images/`, which contains a `hicolor/` theme directory laid out as `hicolor/<size>/<context>/<icon-name>.<ext>` (`scalable` SVGs plus `16x16`, `22x22`, `24x24`, `48x48`, `128x128`, `256x256` PNG fallbacks, under `actions/`, `apps/`, `mimetypes/`, and `source/`). Once registered, any Gramps code can request an icon purely **by name** — e.g. `Gtk.Image.new_from_icon_name("gramps-person", Gtk.IconSize.BUTTON)` — and GTK resolves it to the right file/size automatically. This is distinct from `gui/dialog.py`'s `ICON`, which is a single hard-coded `Pixbuf` loaded directly from `images/gramps.png` for use as the app/window icon, not looked up through the icon theme.
 
-Two additional call sites feed icon names into the theme from plugin/view registration
-rather than a hardcoded Python string:
-- `stock_icon = "..."` fields in `.gpr.py` plugin registration files (views, gramplets,
-  reports) — 13 distinct names found across 17 `.gpr.py` files.
-- Direct `Gtk.Image.new_from_icon_name("gramps-<name>", ...)` / dialog-icon calls
-  scattered through `gramps/gui/*.py`.
+Two additional call sites feed icon names into the theme from plugin/view registration rather than a hardcoded Python string:
+- `stock_icon = "..."` fields in `.gpr.py` plugin registration files (views, gramplets, reports) — 13 distinct names found across 17 `.gpr.py` files.
+- Direct `Gtk.Image.new_from_icon_name("gramps-<name>", ...)` / dialog-icon calls scattered through `gramps/gui/*.py`.
 
 ## Forcing the color variant over the symbolic fallback
+Many icons in the theme cascade above — and any add-on icon shipped the same way — actually exist as **two** related assets: a full-color one (`gramps-person`) and a flat, monochrome "symbolic" one (`gramps-person-symbolic`), the latter intended for chrome like header bars that GTK wants to auto-recolor for light/dark mode. This is a real gotcha:
+- `Gtk.Image.new_from_icon_name("gramps-person", size)` with default lookup flags does **not** guarantee the color version. Depending on the active icon theme and requested pixel size, GTK's `GENERIC_FALLBACK` behavior is allowed to substitute across style variants when the exact one it wants isn't available at that size — so the same call can silently return the symbolic asset instead, or vice-versa.
+- There is no single `Gtk.IconLookupFlags` value that means "color only, never symbolic." The lookup order has to be controlled explicitly by which name string is tried first, and — critically — the result has to be **verified**, via `Gtk.IconInfo.is_symbolic()`, rather than trusting the name that was requested.
 
-Many icons in the theme cascade above — and any add-on icon shipped the same
-way — actually exist as **two** related assets: a full-color one
-(`gramps-person`) and a flat, monochrome "symbolic" one
-(`gramps-person-symbolic`), the latter intended for chrome like header bars
-that GTK wants to auto-recolor for light/dark mode. This is a real gotcha:
+This surfaced in practice while building two Gramps add-ons that render inline icons inside Markdown text (`MarkdownUtils.py` / `MarkdownDash.py`): inline documentation and dashboard icons needed to render predictably in full color regardless of size, while still degrading gracefully if a given icon genuinely only ships a symbolic asset. Their shared resolver, `resolve_icon_pixbuf()`, takes an `icon_style` parameter (`"auto"` / `"color"` / `"symbolic"`) and builds a per-call name-preference list:
 
-- `Gtk.Image.new_from_icon_name("gramps-person", size)` with default lookup
-  flags does **not** guarantee the color version. Depending on the active
-  icon theme and requested pixel size, GTK's `GENERIC_FALLBACK` behavior is
-  allowed to substitute across style variants when the exact one it wants
-  isn't available at that size — so the same call can silently return the
-  symbolic asset instead, or vice-versa.
-- There is no single `Gtk.IconLookupFlags` value that means "color only,
-  never symbolic." The lookup order has to be controlled explicitly by which
-  name string is tried first, and — critically — the result has to be
-  **verified**, via `Gtk.IconInfo.is_symbolic()`, rather than trusting the
-  name that was requested.
-
-This surfaced in practice while building two Gramps add-ons that render
-inline icons inside Markdown text (`MarkdownUtils.py` / `MarkdownDash.py`):
-inline documentation and dashboard icons needed to render predictably in
-full color regardless of size, while still degrading gracefully if a given
-icon genuinely only ships a symbolic asset. Their shared resolver,
-`resolve_icon_pixbuf()`, takes an `icon_style` parameter (`"auto"` / `"color"`
-/ `"symbolic"`) and builds a per-call name-preference list:
-
-- `icon_style="color"` → try `[name, name + "-symbolic"]` — color first,
-  symbolic only as a last resort if no color asset exists anywhere in the
-  cascade for that icon.
+- `icon_style="color"` → try `[name, name + "-symbolic"]` — color first, symbolic only as a last resort if no color asset exists anywhere in the cascade for that icon.
 - `icon_style="symbolic"` → the reverse order.
-- `icon_style="auto"` → picks one style by icon size (symbolic ≤32px, color
-  above that) and does **not** cross-fall-back, matching older fixed
-  behavior.
+- `icon_style="auto"` → picks one style by icon size (symbolic ≤32px, color above that) and does **not** cross-fall-back, matching older fixed behavior.
 
-Each candidate name is looked up via `Gtk.IconTheme.lookup_icon()` with
-`GENERIC_FALLBACK | USE_BUILTIN | FORCE_SIZE`, and — only when a
-`Gtk.StyleContext` has been supplied and `info.is_symbolic()` confirms GTK
-actually resolved a *symbolic* asset — the pixbuf is recolored via
-`load_symbolic_for_context()` to match the active foreground/background so it
-isn't invisible in dark mode. A genuine color hit is returned as-is, never
-recolored or second-guessed.
+Each candidate name is looked up via `Gtk.IconTheme.lookup_icon()` with `GENERIC_FALLBACK | USE_BUILTIN | FORCE_SIZE`, and — only when a `Gtk.StyleContext` has been supplied and `info.is_symbolic()` confirms GTK actually resolved a *symbolic* asset — the pixbuf is recolored via `load_symbolic_for_context()` to match the active foreground/background so it isn't invisible in dark mode. A genuine color hit is returned as-is, never recolored or second-guessed.
 
 ### Minimal GTK Python example: force color, add a tooltip
-
 ```python
 def make_color_icon_image(
     icon_name: str,
@@ -128,19 +81,10 @@ person_icon = make_color_icon_image("gramps-person", _("Person"), size=32)
 ```
 
 Two things worth noting for anyone adapting this in real Gramps code:
-
-- `Gtk.Image.set_tooltip_text()` only shows a tooltip if the image itself can
-  receive pointer/focus events, which it usually can't inside a
-  `Gtk.Button`. There, call `button.set_tooltip_text(...)` on the button
-  after `button.set_image(image)`, the same pattern `MarkdownDash.py`'s
-  footer buttons use (`self._edit_btn.set_tooltip_text(...)`, etc.).
-- To react correctly to a live dark/light theme switch (e.g. via the Gramps
-  Themes add-on), pass a `Gtk.StyleContext` through and only recolor when
-  `info.is_symbolic()` is `True` — never recolor a genuine color hit. That's
-  the one behavior `resolve_icon_pixbuf()` adds beyond this minimal example.
+- `Gtk.Image.set_tooltip_text()` only shows a tooltip if the image itself can receive pointer/focus events, which it usually can't inside a `Gtk.Button`. There, call `button.set_tooltip_text(...)` on the button after `button.set_image(image)`, the same pattern `MarkdownDash.py`'s footer buttons use (`self._edit_btn.set_tooltip_text(...)`, etc.).
+- To react correctly to a live dark/light theme switch (e.g. via the Gramps Themes add-on), pass a `Gtk.StyleContext` through and only recolor when `info.is_symbolic()` is `True` — never recolor a genuine color hit. That's the one behavior `resolve_icon_pixbuf()` adds beyond this minimal example.
 
 ## Full inventory (76 icons)
-
 |Icon|icon name|icon path|
 |---|---|---|
 |![](gramps:icon:FS-BLA-16:48)| FS-BLA-16 |`gramps/images/hicolor/16x16/actions/FS-BLA-16.png`|
@@ -232,22 +176,9 @@ and `org.gramps_project.Gramps`, which also has `128x128` and `256x256` variants
 
 ### Navigator sidebar — Category and View-mode organization
 
-This follows the structure `gramps/plugins/sidebar/dropdownsidebar.py` actually
-consumes (it's the clearer reference, as you suggested): the sidebar is built
-from a `categories` list of `(cat_num, cat_name, cat_icon)`, plus a parallel
-`views` dict of `{cat_num: [(view_num, view_name, view_icon), ...]}`. Each
-category shows **one** button with its `cat_icon`; if a category has more than
-one registered view, a drop-down arrow next to it lists those views by name
-with their own `view_icon` — that per-view icon is the "view mode" piece that
-was missing before (e.g. switching People between its grouped and flat-list
-views, or Ancestry between Pedigree/Fan Chart/Descendant Fan/2-Way Fan).
+This follows the structure `gramps/plugins/sidebar/dropdownsidebar.py` actually consumes (it's the clearer reference, as you suggested): the sidebar is built from a `categories` list of `(cat_num, cat_name, cat_icon)`, plus a parallel `views` dict of `{cat_num: [(view_num, view_name, view_icon), ...]}`. Each category shows **one** button with its `cat_icon`; if a category has more than one registered view, a drop-down arrow next to it lists those views by name with their own `view_icon` — that per-view icon is the "view mode" piece that was missing before (e.g. switching People between its grouped and flat-list views, or Ancestry between Pedigree/Fan Chart/Descendant Fan/2-Way Fan).
 
-Both `categories` and `views` are assembled in `gramps/gui/navigator.py`: the
-category icon comes from a hardcoded `CATEGORY_ICON` dict (falling back to a
-view's `stock_category_icon`/`stock_icon` if a category isn't listed there);
-each view's icon comes from that view's own `stock_icon=` in its `.gpr.py`
-registration (`gramps/plugins/view/view.gpr.py` and `geography.gpr.py`), or the
-category icon if the view didn't set one.
+Both `categories` and `views` are assembled in `gramps/gui/navigator.py`: the category icon comes from a hardcoded `CATEGORY_ICON` dict (falling back to a view's `stock_category_icon`/`stock_icon` if a category isn't listed there); each view's icon comes from that view's own `stock_icon=` in its `.gpr.py` registration (`gramps/plugins/view/view.gpr.py` and `geography.gpr.py`), or the category icon if the view didn't set one.
 
 |Icon|Category|cat_icon|View (mode)|view_icon|
 |---|---|---|---|---|
@@ -277,40 +208,16 @@ category icon if the view didn't set one.
 |![](gramps:icon:gramps-notes:48)|Notes|gramps-notes|Notes|*(none set → falls back to gramps-notes)*|
 |![](gramps:icon:gramps-citation:48)|Citations|gramps-citation|Citations|*(none set → falls back to gramps-citation)*|
 
-Every icon in this table — category and view-mode alike — is one of the 76
-already listed in the main inventory above; the paths are identical, this
-table just shows the actual Category/View organization they're used in
-(note `Citation Tree` is registered under the **Sources** category, not
-Citations — that's a Gramps registration quirk, not a mistake here).
+Every icon in this table — category and view-mode alike — is one of the 76 already listed in the main inventory above; the paths are identical, this table just shows the actual Category/View organization they're used in (note `Citation Tree` is registered under the **Sources** category, not Citations — that's a Gramps registration quirk, not a mistake here).
 
 ### `.gpr.py` `stock_icon=` registrations (13 names, all view-mode icons above)
-`geo-show-event`, `geo-show-family`, `geo-show-family-down`, `geo-show-person`,
-`geo-show-place`, `gramps-fanchart`, `gramps-fanchart2way`, `gramps-fanchartdesc`,
-`gramps-pedigree`, `gramps-relation`, `gramps-tree-group`, `gramps-tree-list`,
-`gramps-tree-select`.
+`geo-show-event`, `geo-show-family`, `geo-show-family-down`, `geo-show-person`, `geo-show-place`, `gramps-fanchart`, `gramps-fanchart2way`, `gramps-fanchartdesc`, `gramps-pedigree`, `gramps-relation`, `gramps-tree-group`, `gramps-tree-list`, `gramps-tree-select`.
 
 ## Editor-tab and other toolbar icons (system/GTK theme — not bundled by Gramps)
-
-These are the icons you flagged as missing. They're real, heavily-used icons in
-the GUI, but they are **not** Gramps assets — no matching file exists anywhere
-under `gramps/images/`. They're plain freedesktop/GTK icon-theme names, resolved
-at runtime from whatever icon theme is installed on the user's system (GTK's
-default "Adwaita" theme on most Linux desktops). Note that most of these
-(`edit-undo`, `edit-redo`, `format-text-bold`, etc.) are exactly the kind of
-name that ships as a **color/symbolic pair** in Adwaita — see
-["Forcing the color variant over the symbolic fallback"](#forcing-the-color-variant-over-the-symbolic-fallback)
-above if you need one of these to render predictably rather than whatever
-GTK's fallback logic happens to pick. The **Icon** column below uses
-the same `gramps:icon:` macro as the main table for consistency, but since there
-is no file in the Gramps repo, the **path** column instead points at the
-equivalent icon in the Adwaita theme repo (the icon set GTK ships by default) —
-that's the closest thing to a "source" that exists for these.
+These are the icons you flagged as missing. They're real, heavily-used icons in the GUI, but they are **not** Gramps assets — no matching file exists anywhere under `gramps/images/`. They're plain freedesktop/GTK icon-theme names, resolved at runtime from whatever icon theme is installed on the user's system (GTK's default "Adwaita" theme on most Linux desktops). Note that most of these (`edit-undo`, `edit-redo`, `format-text-bold`, etc.) are exactly the kind of name that ships as a **color/symbolic pair** in Adwaita — see ["Forcing the color variant over the symbolic fallback"](#forcing-the-color-variant-over-the-symbolic-fallback) above if you need one of these to render predictably rather than whatever GTK's fallback logic happens to pick. The **Icon** column below uses the same `gramps:icon:` macro as the main table for consistency, but since there is no file in the Gramps repo, the **path** column instead points at the equivalent icon in the Adwaita theme repo (the icon set GTK ships by default) — that's the closest thing to a "source" that exists for these.
 
 ### Person/Family/Event/etc. editor tab toolbars (Add / Edit / Remove / Move / Jump)
-Defined once in the shared base class `ButtonTab`
-(`gramps/gui/editors/displaytabs/buttontab.py`) and reused by every embedded-list
-tab across the editors (Addresses, Attributes, Names, Media References, Notes,
-Sources, Citations, Web/Internet, Associations, LDS ordinances, etc.):
+Defined once in the shared base class `ButtonTab` (`gramps/gui/editors/displaytabs/buttontab.py`) and reused by every embedded-list tab across the editors (Addresses, Attributes, Names, Media References, Notes, Sources, Citations, Web/Internet, Associations, LDS ordinances, etc.):
 
 |Icon|icon name|path (system theme, not in Gramps repo)|button / action|
 |---|---|---|---|
@@ -322,13 +229,10 @@ Sources, Citations, Web/Internet, Associations, LDS ordinances, etc.):
 |![](gramps:icon:go-down:48)|go-down / go-next|`Adwaita/*/actions/go-down-symbolic.svg` / `go-next-symbolic.svg`|Move Down / Move Right|
 |![](gramps:icon:go-jump:48)|go-jump|`Adwaita/*/actions/go-jump-symbolic.svg`|Jump To|
 
-The same `list-add` / `list-remove` / `go-up` / `go-down` / `gtk-index` /
-`document-revert` set also appears directly in a handful of plugin option
-dialogs (`gramps/gui/plug/_guioptions.py`, `gramps/gui/plug/_windows.py`).
+The same `list-add` / `list-remove` / `go-up` / `go-down` / `gtk-index` / `document-revert` set also appears directly in a handful of plugin option dialogs (`gramps/gui/plug/_guioptions.py`, `gramps/gui/plug/_windows.py`).
 
 ### Note/rich-text tab toolbar (`gui/widgets/styledtexteditor.py`)
-This is the formatting toolbar shown on every Note tab (Person, Family, Event,
-Place, Source, Repository, Media, Citation editors all embed it):
+This is the formatting toolbar shown on every Note tab (Person, Family, Event, Place, Source, Repository, Media, Citation editors all embed it):
 
 |Icon|icon name|path|button|
 |---|---|---|---|
@@ -345,17 +249,10 @@ Place, Source, Repository, Media, Citation editors all embed it):
 |![](gramps:icon:go-jump:48)|go-jump|`Adwaita/*/actions/go-jump-symbolic.svg`|Insert link|
 |![](gramps:icon:edit-clear:48)|edit-clear|`Adwaita/*/actions/edit-clear-symbolic.svg`|Clear formatting|
 
-Gramps ships two of its own `format-text-*` icons in the main inventory
-(`format-text-subscript-symbolic`, `format-text-superscript-symbolic`) that
-look like duplicates of the system ones above — they aren't actually used by
-`styledtexteditor.py` (which requests the plain, non-`-symbolic` names and lets
-GTK resolve those from the system theme); those two bundled SVGs currently have
-no confirmed call site in the codebase.
+Gramps ships two of its own `format-text-*` icons in the main inventory (`format-text-subscript-symbolic`, `format-text-superscript-symbolic`) that look like duplicates of the system ones above — they aren't actually used by `styledtexteditor.py` (which requests the plain, non-`-symbolic` names and lets GTK resolve those from the system theme); those two bundled SVGs currently have no confirmed call site in the codebase.
 
 ### Other Glade-defined dialog/toolbar icons found across `gramps/gui/glade/*.glade`
-Scattered one-offs used in specific dialogs (Rule editor, Book tool, Gramplet
-pane, Tip of the Day, child-reference editor, event-reference editor, address
-editor, generic message dialogs). All are standard system-theme names:
+Scattered one-offs used in specific dialogs (Rule editor, Book tool, Gramplet pane, Tip of the Day, child-reference editor, event-reference editor, address editor, generic message dialogs). All are standard system-theme names:
 
 |Icon|icon name|used in|
 |---|---|---|
@@ -375,11 +272,5 @@ editor, generic message dialogs). All are standard system-theme names:
 |![](gramps:icon:window-close:48)|window-close|`grampletpane.glade`|
 
 ## Orphaned/legacy image files (not part of the icon theme, not referenced anywhere)
-
-A handful of loose `gramps-*.png` files sit directly under `gramps/images/`
-(outside the `hicolor/` theme tree) with no remaining Python or Glade references
-found in the current codebase — they appear to be leftovers from an earlier
-icon layout: `gramps-export.png`, `gramps-import.png`, `gramps-undo-history.png`.
-A few other root-level files (`gramps-parents.png`, `gramps-parents-add.png`,
-`gramps-parents-open.png`, `add-parent-existing-family.png`) are superseded
-duplicates of icons that now live properly in `hicolor/scalable/actions/`.
+A handful of loose `gramps-*.png` files sit directly under `gramps/images/` (outside the `hicolor/` theme tree) with no remaining Python or Glade references found in the current codebase — they appear to be leftovers from an earlier icon layout: `gramps-export.png`, `gramps-import.png`, `gramps-undo-history.png`. 
+A few other root-level files (`gramps-parents.png`, `gramps-parents-add.png`, `gramps-parents-open.png`, `add-parent-existing-family.png`) are superseded duplicates of icons that now live properly in `hicolor/scalable/actions/`.

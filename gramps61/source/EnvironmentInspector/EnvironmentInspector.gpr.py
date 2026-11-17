@@ -36,7 +36,7 @@ if VERSION_TUPLE >= (5, 2, 0):
                       "the related locale settings and where each is set, "
                       "a searchable, sortable table of all Gramps string constants, "
                       "and a preview of other Gramps translations."),
-        version="2.2.0",  # build 20261115.2223
+        version="2.2.0",  # build 20261116.1734
         gramps_target_version=major_version,
         status=STABLE,
         audience=EVERYONE,

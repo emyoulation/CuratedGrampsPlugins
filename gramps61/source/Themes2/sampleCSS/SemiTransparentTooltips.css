@@ -1,0 +1,11 @@
+/*
+Gramps genealogy software
+Semi Transparent tooltips
+https://gramps.discourse.group/t/9990/3
+suggested by Frens on gratissoftwaresite.nl
+  https://www.gratissoftwaresite.nl/downloads/gramps-genealogie-stamboom-hobby
+*/
+
+ tooltip {
+  opacity: 0.75; /* percentile: 0.00 fully transparent to 1.00 Fully opaque */
+}

@@ -42,5 +42,5 @@ if (5, 2) <= VERSION_TUPLE[:2] < (6, 2):
         maintainers=["Brian McCullough"],
         maintainers_email=[""],
         load_on_reg=True,
-        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/EditAttributesPlus/README.md",
+        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AttributesEditor_plus/README.md",
     )

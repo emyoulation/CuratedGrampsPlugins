@@ -40,6 +40,7 @@ import contextlib
 import inspect
 import logging
 import pickle
+import sys
 from collections.abc import Callable, Iterator
 from typing import TYPE_CHECKING, Any
 
@@ -73,12 +74,13 @@ from gramps.gen.lib import (
     Source,
     Surname,
 )
-from gramps.gen.plug import BasePluginManager, Gramplet
+from gramps.gen.plug import BasePluginManager, Gramplet, PluginRegister
 from gramps.gen.utils.configmanager import ConfigManager
 from gramps.gen.utils.db import get_birth_or_fallback, get_death_or_fallback
 from gramps.gui import dialog as gramps_dialog
 from gramps.gui import editors as gramps_editors
 from gramps.gui import selectors as gramps_selectors
+from gramps.gui.display import display_url
 from gramps.gui.ddtargets import DdTargets
 
 if TYPE_CHECKING:
@@ -91,6 +93,39 @@ try:
 except ValueError:
     _trans = glocale.translation
 _ = _trans.gettext
+
+# ======================================================================
+# BEGIN HELP BUTTON BLOCK -- paste from here to the END marker.
+# Uses the host's own `_`; needs Gtk, PluginRegister and display_url.
+# ======================================================================
+# Help button: the color Help button of MarkdownUtils (README.md in
+# Markdown Dash, else help_url), or a plain text Help button that opens
+# help_url when MarkdownUtils is missing, too old, or fails to load.
+try:
+    # pylint: disable-next=import-error
+    from MarkdownUtils import add_help_button
+except Exception:  # pylint: disable=broad-except
+
+    def add_help_button(container, uistate, plugin, *, size=16):
+        """
+        Pack a plain text "Help" button that opens the help_url of the
+        plugin. Stand-in for MarkdownUtils.add_help_button(); *size* is
+        accepted for the same call signature and not used.
+        """
+        if isinstance(plugin, str):
+            plugin = PluginRegister.get_instance().get_plugin(plugin)
+        button = Gtk.Button(label=_("Help"))
+        help_url = getattr(plugin, "help_url", None)
+        if help_url:
+            button.connect("clicked", lambda _btn: display_url(help_url))
+        else:
+            button.set_sensitive(False)
+        container.pack_start(button, False, False, 0)
+        button.show()
+        return button
+
+
+# END HELP BUTTON BLOCK
 
 # Must match id= in DataEntryGramplet.gpr.py. Written to the [meta] section
 # of the .ini so the file identifies the addon it belongs to.
@@ -165,6 +200,19 @@ def get_fuzzy_match_lookup() -> Callable[..., Any] | None:
     return getattr(module, "show_fuzzy_lookup", None)
 
 
+def get_fuzzy_live_update() -> Callable[..., Any] | None:
+    """
+    Return the Fuzzy Matching addon's ``update_fuzzy_lookup`` if its API
+    module is already loaded (a lookup window has been opened this
+    session), else ``None``. Never imports anything, so it is cheap
+    enough to call on every keystroke.
+
+    :returns: ``update_fuzzy_lookup(query, on_select)``, or ``None``.
+    """
+    module = sys.modules.get("FuzzyMatchLookupWindow")
+    return getattr(module, "update_fuzzy_lookup", None)
+
+
 # Style class (and screen-wide CSS) that shows a menu in the theme's error
 # color; see set_mismatch_style.
 MISMATCH_CLASS = "dataentry-mismatch"
@@ -200,6 +248,9 @@ def split_name(text: str) -> tuple[str, str]:
     """
     Split a "Surname, Given" field into its two parts.
 
+    Same rules as the Fuzzy Matching addon's ``name_query`` module (its
+    gramplet and lookup window use one "Surname, Given" field too).
+
     :param text: The field text; without a comma it is all surname.
     :returns: ``(surname, given)``, both stripped.
     """
@@ -208,6 +259,20 @@ def split_name(text: str) -> tuple[str, str]:
     else:
         surname, given = text, ""
     return surname.strip(), given.strip()
+
+
+def join_name(surname: str, given: str) -> str:
+    """
+    Join a surname and a given name as "Surname, Given" (the inverse of
+    :func:`split_name`).
+
+    :param surname: The surname.
+    :param given: The given name, possibly blank.
+    :returns: ``"Surname, Given"``, or just the surname when ``given`` is
+        blank.
+    """
+    surname, given = surname.strip(), given.strip()
+    return f"{surname}, {given}" if given else surname
 
 
 def event_type_token(value: int) -> str:
@@ -565,10 +630,24 @@ class DataEntryGramplet(Gramplet):
                 self.accept_person_drops(widget, "new" if key[:2] == "NP" else "active")
         self._area_menu: Gtk.Menu | None = None
         scroller.add(self._form_box)
+        # Bottom line: Help pinned at the far left, then Add / Copy / Clear.
+        bottom_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        bottom_row.set_margin_start(FORM_MARGIN)
+        button_bar.set_margin_start(0)
+        self._help_button = add_help_button(bottom_row, self.uistate, PLUGIN_ID)
+        if self._help_button.get_image() is not None:
+            # The color icon (and its tooltip) is enough; drop the "Help" text.
+            # The plain fallback button has no icon, so it keeps its text.
+            self._help_button.set_property("label", None)
+        self.refresh_help_url()
+        # Hidden while undocked: the detached gramplet window has its own Help.
+        self._help_button.set_no_show_all(True)
+        self._help_button.connect("hierarchy-changed", self.cb_help_parent_changed)
+        bottom_row.pack_start(button_bar, True, True, 0)
         outer = Gtk.VBox()
         outer.pack_start(scroller, True, True, 0)
         outer.pack_start(Gtk.Separator(), False, False, 2)
-        outer.pack_start(button_bar, False, False, 0)
+        outer.pack_start(bottom_row, False, False, 0)
 
         self.gui.get_container_widget().remove(self.gui.textview)
         self.gui.get_container_widget().add_with_viewport(outer)
@@ -2222,6 +2301,37 @@ class DataEntryGramplet(Gramplet):
             self.de_widgets[prefix + "Source"].set_text("")
             self.de_widgets[prefix + "Source:Citation"].set_active(False)
 
+    def refresh_help_url(self) -> None:
+        """
+        Make the Help button of the undocked gramplet window use the
+        current ``help_url`` of this addon.
+
+        Gramps saves ``help_url`` in the gramplet bar layout (.ini) when a
+        gramplet is placed, and on the next start that saved value wins
+        over the registered one, so an older value (such as a former wiki
+        page) can live on after the .gpr.py changes.
+        """
+        pdata = PluginRegister.get_instance().get_plugin(PLUGIN_ID)
+        help_url = getattr(pdata, "help_url", None)
+        if help_url and getattr(self.gui, "help_url", help_url) != help_url:
+            self.gui.help_url = help_url
+
+    def cb_help_parent_changed(
+        self, button: Gtk.Button, _previous: Gtk.Widget | None
+    ) -> None:
+        """
+        Show the Help button only while the gramplet is docked in the main
+        Gramps window. Undocked, the detached gramplet window has its own
+        Help button, so a second one would only confuse.
+
+        :param button: The Help button.
+        :param _previous: The previous toplevel (unused).
+        """
+        toplevel = button.get_toplevel()
+        if not toplevel.is_toplevel():
+            return  # not in a window yet
+        button.set_visible(toplevel is self.uistate.window)
+
     def refresh_fuzzy_button(self) -> None:
         """
         Show the Fuzzy Match Lookup button only while Fuzzy Matching is
@@ -2233,13 +2343,15 @@ class DataEntryGramplet(Gramplet):
         """
         Open the Fuzzy Matching addon's Fuzzy Match Lookup window.
 
-        The window is seeded with the New person's "Surname, Given": the
-        surname is looked up and selected, and the given name goes into the
-        window's "Given name contains" filter (Fuzzy Matching versions that
-        accept ``given_filter``; older ones only scroll to the closest
-        given name). If the surname is blank, the Active person's preferred
-        surname is used; with neither, the window opens with a blank
-        surname, ready to type into. A person double-clicked there is
+        The window is seeded with the New person's "Surname, Given": its
+        own "Surname, Given" field gets the same text (Fuzzy Matching
+        versions that accept ``query``), so the surname is looked up and
+        the given name narrows the person list; older versions get it as
+        ``given_filter``, or only scroll to the closest given name. If the
+        surname is blank, the Active person's preferred surname is used;
+        with neither, the window opens with a blank field, ready to type
+        into. While it stays open, editing the name here updates it live
+        (see :meth:`cb_np_name_changed`). A person double-clicked there is
         handed back to :meth:`_apply_fuzzy_match`.
         Same behavior as the Photo Tagging gramplet's "Fuzzy Match Lookup…"
         context menu item.
@@ -2268,7 +2380,9 @@ class DataEntryGramplet(Gramplet):
             accepts_filter = "given_filter" in params
         except (TypeError, ValueError):
             accepts_filter = False
-        if accepts_filter:
+        if accepts_filter and "query" in params:
+            kwargs["query"] = join_name(surname, given)
+        elif accepts_filter:
             kwargs["given_filter"] = given
         if accepts_filter and "select_hint" in params:
             kwargs["select_hint"] = _("updates Data Entry New Person")
@@ -2356,15 +2470,23 @@ class DataEntryGramplet(Gramplet):
         if position == Gtk.EntryIconPosition.SECONDARY:
             entry.set_text("")
 
-    def cb_np_name_changed(self, _entry: Gtk.Entry) -> None:
+    def cb_np_name_changed(self, entry: Gtk.Entry) -> None:
         """
         Editing the New person name by hand drops a link to an existing
-        person (the text no longer describes that person).
+        person (the text no longer describes that person), and updates a
+        Fuzzy Match Lookup window this gramplet opened, live (the window
+        waits for a pause in typing; a window another addon opened is left
+        alone).
 
-        :param _entry: The name entry (unused).
+        :param entry: The name entry.
         """
-        if not self._linking and self._linked_handle:
+        if self._linking:
+            return
+        if self._linked_handle:
             self.unlink_person()
+        update_fuzzy_lookup = get_fuzzy_live_update()
+        if update_fuzzy_lookup is not None:
+            update_fuzzy_lookup(entry.get_text(), self._apply_fuzzy_match)
 
     def cb_linked_person_deleted(self, handle_list: list[PersonHandle]) -> None:
         """

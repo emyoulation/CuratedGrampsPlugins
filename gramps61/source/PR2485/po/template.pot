@@ -1,4 +1,4 @@
-# Translation template for the 0.1.0 PR2485 Edit Person Tweaks general addon for Gramps.
+# Translation template for the 0.1.3 PR2485 Edit Person Tweaks general addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the PR2485 Edit Person Tweaks package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PR2485 Edit Person Tweaks 0.1.0\n"
+"Project-Id-Version: PR2485 Edit Person Tweaks 0.1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 16:24-0600\n"
+"POT-Creation-Date: 2026-11-16 00:20-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,10 +30,14 @@ msgid ""
 "tip."
 msgstr ""
 
-#: PR2485.py:408
+#: PR2485.py:466
 msgid "Fuzzy Match Lookup: find people whose surname sounds like this one"
 msgstr ""
 
-#: PR2485.py:437
+#: PR2485.py:497
 msgid "surname"
+msgstr ""
+
+#: PR2485.py:504
+msgid "Auto"
 msgstr ""

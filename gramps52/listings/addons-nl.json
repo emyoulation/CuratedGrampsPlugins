@@ -134,14 +134,14 @@
     "g": "5.2",
     "s": 1,
     "z": "AttributesEditor_plus.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/EditAttributesPlus/README.md"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AttributesEditor_plus/README.md"
   },
   {
     "n": "Edit Date Calculator",
     "i": "editdatecalculator",
     "t": 6,
     "d": "Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with the triangle tab on the right edge of the dialog. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.1.0",
+    "v": "0.1.2",
     "g": "5.2",
     "s": 1,
     "z": "EditDateCalculator.addon.tgz",
@@ -201,7 +201,7 @@
     "g": "5.2",
     "s": 3,
     "z": "RoleReversal.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
     "n": "Flat Filter",
@@ -230,7 +230,7 @@
     "i": "Photo Tagging",
     "t": 10,
     "d": "Gramplet voor het labellen van mensen op foto's",
-    "v": "1.2.4",
+    "v": "1.3.0",
     "g": "5.2",
     "s": 1,
     "z": "PhotoTaggingGramplet.addon.tgz",
@@ -287,9 +287,9 @@
     "d": "Makes Family Trees > Import... work when no Family Tree is loaded. A new Family Tree is created, named after the imported file, and the file is imported into it.",
     "v": "0.1.0",
     "g": "5.2",
-    "s": 1,
+    "s": 3,
     "z": "ImportWithoutTree.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/ImportWithoutTree/README.md"
   },
   {
     "n": "Localized Gramps Glossary Terminology",
@@ -382,7 +382,7 @@
     "g": "5.2",
     "s": 3,
     "z": "RoleReversal.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
     "n": "Phonex (French) match of People with the <names>",
@@ -451,11 +451,11 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   },
   {
-    "n": "Theme preferences",
+    "n": "Thema-voorkeuren",
     "i": "ThemesPrefs",
     "t": 6,
     "d": "An addition to Preferences for simple Theme and Font adjustment.  Especially useful for Windows users. Also supports a layered CSS theming system with CSS Themes, CSS Patches, and a personal user override.",
-    "v": "1.0.1",
+    "v": "1.0.3",
     "g": "5.2",
     "s": 2,
     "z": "Themes2.addon.tgz",

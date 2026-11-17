@@ -1,4 +1,4 @@
-# Translation template for the 0.0.1 Edit Date Calculator general addon for Gramps.
+# Translation template for the 0.1.2 Edit Date Calculator general addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Edit Date Calculator package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Edit Date Calculator 0.0.1\n"
+"Project-Id-Version: Edit Date Calculator 0.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 17:53-0500\n"
+"POT-Creation-Date: 2026-11-17 14:22-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: EditDateCalculator.gpr.py:31
 msgid "Edit Date Calculator"
@@ -26,85 +27,6 @@ msgid ""
 "Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with "
 "the triangle tab on the right edge of the dialog. To switch it off, hide "
 "this plugin and restart Gramps."
-msgstr ""
-
-#: datecalculator.py:106 editdate_calc_panel.py:110
-msgid "Reference date"
-msgstr ""
-
-#: datecalculator.py:107 editdate_calc_panel.py:111
-msgid "Date or offset"
-msgstr ""
-
-#: datecalculator.py:117 editdate_calc_panel.py:121
-msgid "a valid Gramps date or date range"
-msgstr ""
-
-#: datecalculator.py:122 editdate_calc_panel.py:126
-msgid ""
-"1. a Date\n"
-"2. a positive or negative number, representing years\n"
-"3. years, months and days: 2, 3, 10\n"
-"    or with units, in any order and each optional: 2y, 3m, 10d\n"
-"A leading minus, or Age / Aged (Aged 45y 3m), subtracts the whole offset."
-msgstr ""
-
-#: datecalculator.py:132 editdate_calc_panel.py:136
-#, python-format
-msgid "\"%(date)s\" or \"%(offset)s\""
-msgstr ""
-
-#: datecalculator.py:135 editdate_calc_panel.py:139
-msgid "Result"
-msgstr ""
-
-#: datecalculator.py:137 editdate_calc_panel.py:141
-msgid "Enter an expression above, then Calculate"
-msgstr ""
-
-#: datecalculator.py:140
-msgid "Result to Date"
-msgstr ""
-
-#: datecalculator.py:142
-msgid "Load the result into the Date fields of the dialog"
-msgstr ""
-
-#: datecalculator.py:145
-msgid "Result to Second Date"
-msgstr ""
-
-#: datecalculator.py:148
-msgid ""
-"Copy the result to the Second date of the dialog; the Type becomes Span "
-"unless it is already a Range or Span"
-msgstr ""
-
-#: datecalculator.py:153 editdate_calc_panel.py:158
-msgid "Calculate"
-msgstr ""
-
-#: datecalculator.py:155 editdate_calc_panel.py:160
-msgid "Copy"
-msgstr ""
-
-#: datecalculator.py:157 editdate_calc_panel.py:162
-msgid "Clear"
-msgstr ""
-
-#: datecalculator.py:248 editdate_calc_panel.py:253
-#, python-format
-msgid "Error: %(field)s must be a date"
-msgstr ""
-
-#: datecalculator.py:261 datecalculator.py:265 editdate_calc_panel.py:266
-#: editdate_calc_panel.py:270
-#, python-format
-msgid "Error: invalid %(field)s"
-msgstr ""
-
-#: datecalculator.py:272 editdate_calc_panel.py:277
-msgid "Error: could not calculate a result"
 msgstr ""
 
 #: editdate.py:99 editdate.py:111
@@ -160,7 +82,7 @@ msgstr ""
 msgid "Date selection"
 msgstr ""
 
-#: editdate.py:365 editdatecalculator.py:405
+#: editdate.py:365 editdatecalculator.py:519 editdatecalculatorOrig.py:406
 msgid "Show or hide the date calculator"
 msgstr ""
 
@@ -270,93 +192,206 @@ msgstr ""
 msgid "Example"
 msgstr ""
 
+#: editdate_calc_panel.py:114
+msgid "Reference date"
+msgstr ""
+
+#: editdate_calc_panel.py:115
+msgid "Date or offset"
+msgstr ""
+
+#: editdate_calc_panel.py:125
+msgid "a valid Gramps date or date range"
+msgstr ""
+
+#: editdate_calc_panel.py:130
+msgid ""
+"1. a Date\n"
+"2. a positive or negative number, representing years\n"
+"3. years, months and days: 2, 3, 10\n"
+"    or with units, in any order and each optional: 2y, 3m, 10d\n"
+"A leading minus, or Age / Aged (Aged 45y 3m), subtracts the whole offset. A "
+"bare number over 130 is read as a year, not an offset."
+msgstr ""
+
+#: editdate_calc_panel.py:141
+#, python-format
+msgid "\"%(date)s\" or \"%(offset)s\""
+msgstr ""
+
 #: editdate_calc_panel.py:144
-msgid "Result to Start Date"
+msgid "Result"
 msgstr ""
 
 #: editdate_calc_panel.py:146
-msgid "Load the result into the Start date fields of the dialog"
+msgid "Enter an expression above, then Calculate"
 msgstr ""
 
 #: editdate_calc_panel.py:149
+msgid "Result to Start Date"
+msgstr ""
+
+#: editdate_calc_panel.py:151
+msgid "Load the result into the Start date fields of the dialog"
+msgstr ""
+
+#: editdate_calc_panel.py:154
 msgid "Result to End Date"
 msgstr ""
 
-#: editdate_calc_panel.py:152
+#: editdate_calc_panel.py:157
 msgid ""
 "Copy the result to the End date of the dialog; if the End date is dimmed, "
 "From becomes a Span, After or any other Type a Range"
 msgstr ""
 
-#: editdatecalculator.py:200
+#: editdate_calc_panel.py:163
+msgid "Calculate"
+msgstr ""
+
+#: editdate_calc_panel.py:165
+msgid "Copy"
+msgstr ""
+
+#: editdate_calc_panel.py:167
+msgid "Clear"
+msgstr ""
+
+#: editdate_calc_panel.py:289 editdate_calc_panel.py:293
+#, python-format
+msgid "Error: invalid %(field)s"
+msgstr ""
+
+#: editdate_calc_panel.py:300
+msgid "Error: could not calculate a result"
+msgstr ""
+
+#: editdatecalculator.py:260 editdatecalculatorOrig.py:201
 msgid "No documentation available"
 msgstr ""
 
-#: editdatecalculator.py:201
+#: editdatecalculator.py:261 editdatecalculatorOrig.py:202
 msgid "This plugin has neither a README.md nor a registered help_url."
 msgstr ""
 
-#: editdatecalculator.py:293
+#: editdatecalculator.py:353 editdatecalculatorOrig.py:294
 msgid "Help"
 msgstr ""
 
-#: editdatecalculator.py:295
+#: editdatecalculator.py:355 editdatecalculatorOrig.py:296
 msgid "Show documentation for this plugin"
 msgstr ""
 
-#: editdatecalculator.py:929 editdatecalculator.py:1529
+#: editdatecalculator.py:1054 editdatecalculator.py:2085
+#: editdatecalculatorOrig.py:930 editdatecalculatorOrig.py:1530
 msgid "Start date"
 msgstr ""
 
-#: editdatecalculator.py:929 editdatecalculator.py:1529
+#: editdatecalculator.py:1054 editdatecalculator.py:2085
+#: editdatecalculatorOrig.py:930 editdatecalculatorOrig.py:1530
 msgid "End date"
 msgstr ""
 
-#: editdatecalculator.py:947
+#: editdatecalculator.py:1072 editdatecalculatorOrig.py:948
 #, python-format
 msgid "Click to use this month and year as the %s; drag to copy them"
 msgstr ""
 
-#: editdatecalculator.py:953
+#: editdatecalculator.py:1078 editdatecalculatorOrig.py:954
 #, python-format
 msgid "Click to use this year as the %s; drag to copy it"
 msgstr ""
 
-#: editdatecalculator.py:960
+#: editdatecalculator.py:1085 editdatecalculatorOrig.py:961
 msgid "Previous month"
 msgstr ""
 
-#: editdatecalculator.py:962
+#: editdatecalculator.py:1087 editdatecalculatorOrig.py:963
 msgid "Next month"
 msgstr ""
 
-#: editdatecalculator.py:963
+#: editdatecalculator.py:1088 editdatecalculatorOrig.py:964
 msgid "Next year"
 msgstr ""
 
-#: editdatecalculator.py:965
+#: editdatecalculator.py:1090 editdatecalculatorOrig.py:966
 msgid "Previous year"
 msgstr ""
 
-#: editdatecalculator.py:1542
+#: editdatecalculator.py:1708
+msgid ""
+"Parsing is live: the Text comment is read as a date while you type.\n"
+"Click to stop parsing."
+msgstr ""
+
+#: editdatecalculator.py:1713
+msgid ""
+"Parsing is off: the Text comment is kept as text.\n"
+"Click to read it as a date now, and while you type."
+msgstr ""
+
+#: editdatecalculator.py:2098 editdatecalculatorOrig.py:1543
 msgid "Range (Between)"
 msgstr ""
 
-#: editdatecalculator.py:1544
+#: editdatecalculator.py:2100 editdatecalculatorOrig.py:1545
 msgid "Span (From-To)"
 msgstr ""
 
-#: editdatecalculator.py:1556
+#: editdatecalculator.py:2112 editdatecalculatorOrig.py:1557
 msgid "Text only: not evaluated as a date"
 msgstr ""
 
-#: editdatecalculator.py:1594
+#: editdatecalculator.py:2158
 msgid ""
-"How Gramps reads this date when comparing it with other dates, using the "
-"About, Before and After ranges set in Preferences"
+"The limit from the Limits tab of the Gramps Preferences that widens this "
+"date when Gramps compares it with other dates."
 msgstr ""
 
-#: editdatecalculator.py:1612
+#: editdatecalculator.py:2173
+msgid ""
+"How Gramps reads this date when comparing it with other dates, using the "
+"About, Before and After ranges set in Preferences.\n"
+"Double-click to copy the evaluated date to the clipboard of the system and "
+"to the Gramps Clipboard."
+msgstr ""
+
+#: editdatecalculator.py:2267 editdatecalculator.py:2350
+#: editdatecalculatorOrig.py:1654
 #, python-format
 msgid "Evaluates to: %s"
+msgstr ""
+
+#: editdatecalculator.py:2267
+msgid "(Copied to the clipboard)"
+msgstr ""
+
+#: editdatecalculator.py:2399
+#, python-format
+msgid "%d year"
+msgid_plural "%d years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: editdatecalculator.py:2413
+msgid "Keep Text only dates as text in editor date fields"
+msgstr ""
+
+#: editdatecalculator.py:2416
+msgid ""
+"When on, a Text only date stays Text only in the Date field of an editor "
+"(such as Edit Event), even if its text reads as a date, until you change "
+"that text. When off, the Date field reads the text as a date, as Gramps does."
+msgstr ""
+
+#: editdatecalculatorOrig.py:1595
+msgid ""
+"How Gramps reads this date when comparing it with other dates, using the "
+"About, Before and After ranges set in Preferences.\n"
+"Double-click to copy the evaluated date."
+msgstr ""
+
+#: editdatecalculatorOrig.py:1626
+#, python-format
+msgid "Copied to the clipboard: %s"
 msgstr ""

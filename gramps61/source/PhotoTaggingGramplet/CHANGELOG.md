@@ -2,6 +2,43 @@
 [ReadMe](README.md) ● [Change Log](CHANGELOG.md) ● [XMP data](XMP_Region_Name.md) ● [Icon List](media/icons/ICONLIST.md) 
 
 ## What's New
+Version 1.2.4 - Oct 2026
+
+#### Precise marquees
+- Marquees are now drawn and saved at full pixel precision. Gramps itself stores a photo region as four whole-number percentages, so until now every marquee snapped to a 1% grid while it was being drawn — 60-pixel steps on a 6000-pixel scan, too coarse to fit a face closely in a large group photo.
+- Each linked marquee is now kept twice: Gramps' own Media Reference gets a whole-number copy, rounded outward so it always contains the real box (reports, the Media Reference editor, exports and other gramplets see no change), and the `PhotoTagging Regions` attribute keeps the precise copy, in the same normalized MWG form as before, now to 6 decimal places.
+- When a photo is opened, the precise copy is used only while it still matches the Media Reference's whole numbers. If the region was changed somewhere else since (for example in the Media Reference editor), that change wins.
+- Photos tagged with earlier versions open exactly as before; their stored boxes were whole-number boxes to begin with. Stored entries for linked people now also record the person's handle (`person_handle`), so they stay matched even if Gramps IDs are renumbered; earlier versions simply ignore the new field.
+
+#### Quick Draw mode follows what you are doing
+- Quick Draw mode is now switched on automatically only when a photo with nothing on it yet is opened — no tagged people, no saved placeholders and no names found in its metadata. A photo that already has marquees opens with Quick Draw off, ready for reviewing them. You can still switch it either way with its toolbar button.
+- Clicking a row in the list, or a person's link in the Caption panel, now switches Quick Draw off and selects that person everywhere: the row, the marquee on the photo, and the caption link. Previously, in Quick Draw mode, a row click only moved the list highlight.
+
+#### Family details from the right-click menu
+- Two new right-click menu items follow **See the person details**: **See ancestor family details** opens the Family editor for the family the person is a child in, and **See descendant family details** opens the Family editor for the family the person is a parent in. A person with more than one parent family (for example, birth and adoptive), or more than one spouse, gets one Family editor for each. Each item is dimmed when the person has no such family.
+
+#### Stability fixes
+- Fixed a crash (`ValueError: list.remove(x): x not in list`) when right-clicking a row in Quick Draw mode — most easily a row with a typed placeholder name on a newly drawn marquee. The right-click menu, and the toolbar buttons, could act on a leftover marquee from before the photo last reloaded instead of the row actually clicked. They now act on the focused row in Quick Draw mode, and ignore any selection that is no longer part of the current photo.
+- "Swap with" and linking an already-tagged person now match people by handle rather than by object, so the same person is always recognized.
+- Fixed a newly drawn marquee being shown in the wrong place — often a large box unrelated to the drag, sometimes at the position and size of a marquee from the previously viewed photo — while its thumbnail in the list was correct. Releasing the mouse at the end of a drag was being treated as a click on empty photo space, which restores the last selected marquee; that marquee was remembered even across photos. A finished drag is now recognized as such, and the remembered marquee is forgotten whenever a photo is loaded.
+- A drag that ends in the blank space beside or below the photo no longer toggles Show/Hide face marquees, and two quick drags in a row are no longer mistaken for a double click (which opens the Media editor).
+
+- Children can now be dragged from the Children tab of the Family editor (and people from the Associations tab of the Person editor) onto a row or a marquee. These drags carry a reference to the person rather than the person, and were ignored.
+- While dragging a person over the list, the row that will receive the drop is now highlighted. Previously there was no indication, and a drop between rows or below the last row silently did nothing.
+- Dropping a person on a marquee in the photo no longer fails silently when a different marquee is selected.
+
+- Removed the hidden keyboard letters (mnemonics) from the right-click menus and the Settings dialog OK button. They were not underlined in the menus, so they could not be discovered, and they added nothing. Alt+Up / Alt+Down for reordering rows, and the standard dialog keys, are unchanged.
+
+- Double-clicking a row number now opens a small box right beside it to type the new row number, instead of the Move Row dialog. The dialog was modal but belonged to the main Gramps window, so when another window was already on top (for example an Edit Person editor opened by a double-click that missed the row number), the dialog opened behind it and blocked it, making Gramps look locked up unless you pressed Esc. The new box blocks nothing: press Enter to move the row, Esc to cancel, or click elsewhere to apply a changed number.
+- Double-clicking a row number no longer also opens the Edit Person editor for that row; it only opens the box to move the row. Double-clicking anywhere else in the row still opens the editor.
+
+- Fixed tagging changes on the open photo (row order, placeholder names, marquee positions) being lost when Gramps was closed, or another Family Tree was loaded, without first moving to a different photo. Gramps closes the database before it asks gramplets to save, so the save at exit never happened; changes are now saved at the start of quitting (before the backup on exit), and just before a Family Tree is closed or switched.
+
+#### Diagnostics
+- This build temporarily logs every marquee draw, resize and release to the terminal (lines starting `PhotoTagging draw-debug:`). This found the wrong-place marquee fixed above. Person drops are logged too (lines starting `PhotoTagging drop-debug:`). The logging will be removed once these fixes are confirmed.
+
+---
+
 Version 1.2.3 - Sep 2026
 
 #### Stability fixes

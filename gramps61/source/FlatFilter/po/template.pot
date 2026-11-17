@@ -1,0 +1,239 @@
+# Translation template for the 2.0.3 Flat Filter gramplet addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Flat Filter package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Flat Filter 2.0.3\n"
+"Report-Msgid-Bugs-To: doug.blank@gmail.com\n"
+"POT-Creation-Date: 2026-10-28 22:27-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: FlatFilter.gpr.py:36 FlatFilter.gpr.py:50
+msgid "Flat Filter"
+msgstr ""
+
+#: FlatFilter.gpr.py:38
+msgid ""
+"Gramplet providing a person filter on relationships, with a choice of "
+"phonetic matching systems"
+msgstr ""
+
+#: FlatFilter.gpr.py:78 FlatFilter.py:1686
+msgid "Flat Filter rule"
+msgstr ""
+
+#: FlatFilter.gpr.py:80
+msgid ""
+"Rule used by custom filters saved with the Define filter button of the Flat "
+"Filter gramplet"
+msgstr ""
+
+#: FlatFilter.py:190
+msgid "No documentation available"
+msgstr ""
+
+#: FlatFilter.py:191
+msgid "This plugin has neither a README.md nor a registered help_url."
+msgstr ""
+
+#: FlatFilter.py:260
+msgid "Help"
+msgstr ""
+
+#: FlatFilter.py:262
+msgid "Show documentation for this plugin"
+msgstr ""
+
+#: FlatFilter.py:365
+msgid "Soundex"
+msgstr ""
+
+#: FlatFilter.py:368
+msgid ""
+"Gramps' built-in Soundex. Install the Fuzzy Matching addon to choose other "
+"phonetic systems."
+msgstr ""
+
+#: FlatFilter.py:570
+msgid "Text:"
+msgstr ""
+
+#: FlatFilter.py:571
+msgid "People with a name matching <text>"
+msgstr ""
+
+#: FlatFilter.py:573
+msgid ""
+"Matches people's names containing a substring, matching a regular "
+"expression, or matching a phonetic code"
+msgstr ""
+
+#: FlatFilter.py:576
+msgid "General filters"
+msgstr ""
+
+#: FlatFilter.py:749
+msgid "Filter name:"
+msgstr ""
+
+#: FlatFilter.py:750
+msgid "Children of name match"
+msgstr ""
+
+#: FlatFilter.py:751
+msgid "Family filters"
+msgstr ""
+
+#: FlatFilter.py:752
+msgid "Matches children of anybody with a given name"
+msgstr ""
+
+#: FlatFilter.py:972
+msgid "given"
+msgstr ""
+
+#: FlatFilter.py:974
+msgid "surname"
+msgstr ""
+
+#: FlatFilter.py:1159
+msgid "Title"
+msgstr ""
+
+#: FlatFilter.py:1160
+msgid "Given"
+msgstr ""
+
+#: FlatFilter.py:1161
+msgid "Call"
+msgstr ""
+
+#: FlatFilter.py:1162
+msgid "Nick"
+msgstr ""
+
+#: FlatFilter.py:1163 FlatFilter.py:1173
+msgid "Alternatives"
+msgstr ""
+
+#: FlatFilter.py:1169
+msgid "Prefix"
+msgstr ""
+
+#: FlatFilter.py:1170 FlatFilter.py:1549
+msgid "Surname"
+msgstr ""
+
+#: FlatFilter.py:1171
+msgid "Suffix"
+msgstr ""
+
+#: FlatFilter.py:1172
+msgid "Clan"
+msgstr ""
+
+#: FlatFilter.py:1177
+msgid "Use pattern matching (Regular expressions)"
+msgstr ""
+
+#: FlatFilter.py:1179
+msgid "Use fuzzy matching"
+msgstr ""
+
+#: FlatFilter.py:1206
+msgid "Person"
+msgstr ""
+
+#: FlatFilter.py:1211
+msgid "Father"
+msgstr ""
+
+#: FlatFilter.py:1212
+msgid "Mother"
+msgstr ""
+
+#: FlatFilter.py:1213
+msgid "Spouse"
+msgstr ""
+
+#: FlatFilter.py:1214
+msgid "Sibling 1"
+msgstr ""
+
+#: FlatFilter.py:1215
+msgid "Sibling 2"
+msgstr ""
+
+#: FlatFilter.py:1216
+msgid "Child 1"
+msgstr ""
+
+#: FlatFilter.py:1217
+msgid "Child 2"
+msgstr ""
+
+#: FlatFilter.py:1279
+msgid "The Define Filter is not yet compatible with Fuzzy Matching options."
+msgstr ""
+
+#: FlatFilter.py:1391
+msgid ""
+"The view uses a phonetic system that this menu does not offer (for example "
+"None). Fuzzy matching here uses Soundex. Choose a system to use it here and "
+"in the view."
+msgstr ""
+
+#: FlatFilter.py:1437
+msgid "Probably Alive"
+msgstr ""
+
+#: FlatFilter.py:1439
+#, python-format
+msgid "example: '%(msg1)s' or '%(msg2)s'"
+msgstr ""
+
+#: FlatFilter.py:1475
+msgid "Save settings"
+msgstr ""
+
+#: FlatFilter.py:1633
+msgid "Supply at least one value"
+msgstr ""
+
+#: FlatFilter.py:1652
+#, python-brace-format
+msgid "Created by the Flat Filter gramplet on {today}"
+msgstr ""
+
+#: FlatFilter.py:1800
+msgid "Find"
+msgstr ""
+
+#: FlatFilter.py:1801
+msgid "_Find"
+msgstr ""
+
+#: FlatFilter.py:1802
+msgid "Reset"
+msgstr ""
+
+#: FlatFilter.py:1803
+msgid "_Reset"
+msgstr ""
+
+#: FlatFilter.py:1804
+msgid "Clear"
+msgstr ""
+
+#: FlatFilter.py:1805
+msgid "_Clear"
+msgstr ""

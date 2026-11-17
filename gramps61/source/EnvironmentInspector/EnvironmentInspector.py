@@ -60,7 +60,7 @@ import webbrowser
 
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gdk, GdkPixbuf, Gio, GLib, Gtk
+from gi.repository import Gdk, GdkPixbuf, Gio, GLib, Gtk, Pango
 
 import gramps.gen.const as _gramps_const
 from gramps.gen.const import GRAMPS_LOCALE as glocale
@@ -75,6 +75,7 @@ from envinsp_settings import LocaleSettings
 from envinsp_help import HelpTab
 import envinsp_catalog
 import envinsp_restart
+import envinsp_addoncheck
 from gramps.gen.config import config as _configman
 
 # Settings file EnvironmentInspector.ini next to this module.
@@ -94,6 +95,9 @@ CONFIG.register("language.baseline-env", "")
 # JSON: the macOS per-application language settings of Gramps before
 # Environment Inspector changed them, or "" when it did not change them.
 CONFIG.register("language.mac-defaults-saved", "")
+# JSON {"code", "locale", "pid"}: written just before "Restart now", so
+# the new Gramps can confirm that the restart worked.
+CONFIG.register("language.restart-announce", "")
 # Status values hidden on the Windows sub-tab of the Translation Preview.
 # Hidden ones are stored (not shown ones) so a new status starts visible.
 CONFIG.register("preview.hidden-statuses", [])
@@ -126,6 +130,31 @@ def _consume_restart_override() -> None:
             CONFIG.set("language.mac-defaults-saved", "")
         CONFIG.save()
 
+
+def _consume_restart_announce() -> dict | None:
+    """
+    The restart that started this Gramps, or None. Read once: the next
+    start is a normal one.
+    """
+    text = CONFIG.get("language.restart-announce")
+    if not text:
+        return None
+    try:
+        data = json.loads(text)
+    except ValueError:
+        data = None
+    if not isinstance(data, dict) or data.get("pid") == os.getpid():
+        return None  # unreadable, or this Gramps is the one about to restart
+    CONFIG.set("language.restart-announce", "")
+    CONFIG.save()
+    return data
+
+
+_RESTARTED_AS = _consume_restart_announce()
+_RESTART_ANNOUNCED = False
+_ADDON_FAILING: int | None = None  # addons that did not load in this language
+_ADDON_SUMMARY: dict | None = None  # counts from the last addon check
+_ADDON_CHECKED = False  # the check runs once per session, unless asked again
 
 # Locale variables of the normal start, when this session was started by
 # a language override (else they are read from the environment).
@@ -192,21 +221,30 @@ def _add_media_search_path() -> None:
 
 
 def _load_icon(icon_name: str, size: int) -> GdkPixbuf.Pixbuf | None:
-    """Look up an icon in the active theme, then in the bundled media folder."""
+    """
+    Look up an icon in the active theme, then in the bundled media folder.
+
+    Newer icon themes (Adwaita since GNOME 46, also in the macOS and
+    Windows builds of Gramps) dropped many full-color icons and keep only
+    the "-symbolic" version, so that name is tried too.
+    """
     _add_media_search_path()
     theme = Gtk.IconTheme.get_default()
-    try:
-        return theme.load_icon(icon_name, size, Gtk.IconLookupFlags.USE_BUILTIN)
-    except Exception:
-        pass
+    names = [icon_name] if icon_name.endswith("-symbolic") else [icon_name, icon_name + "-symbolic"]
+    for name in names:
+        try:
+            return theme.load_icon(name, size, Gtk.IconLookupFlags.USE_BUILTIN)
+        except Exception:
+            pass
     # Safety net in case the search path was reset by a theme change.
-    for ext in (".svg", ".png"):
-        path = os.path.join(_MEDIA_DIR, icon_name + ext)
-        if os.path.isfile(path):
-            try:
-                return GdkPixbuf.Pixbuf.new_from_file_at_size(path, size, size)
-            except Exception:
-                LOG.debug("EnvironmentInspector: cannot load %s", path)
+    for name in names:
+        for ext in (".svg", ".png"):
+            path = os.path.join(_MEDIA_DIR, name + ext)
+            if os.path.isfile(path):
+                try:
+                    return GdkPixbuf.Pixbuf.new_from_file_at_size(path, size, size)
+                except Exception:
+                    LOG.debug("EnvironmentInspector: cannot load %s", path)
     LOG.warning("EnvironmentInspector: icon '%s' not found in theme.", icon_name)
     return None
 
@@ -276,6 +314,8 @@ def _build_constants_rows() -> list[tuple[str, str, str, str, str, str]]:
 
 # Terminal output of a Gramps restarted from the Gramps Translations table.
 _RESTART_LOG = os.path.join(_gramps_const.USER_CACHE, "environment-inspector-restart.log")
+# Addon translation check for the session language (also after a restart).
+_TRANSLATION_LOG = os.path.join(_gramps_const.USER_CACHE, "environment-inspector-translations.log")
 
 # Gramps Translations table columns
 (_LC_ICON, _LC_CURRENT, _LC_REGION, _LC_CODE, _LC_NAME, _LC_ENDONYM,
@@ -314,6 +354,8 @@ class EnvironmentInspector(Gramplet):
         self._icon_cache = {}
         self._locale_clip_text = ""
         self._selected_type_filter = "All types"
+        self._lang_rows = []  # filled when the Gramps Translations table first opens
+        GLib.idle_add(self._announce_restart)
 
         # Extract the default scroll container provided automatically by Gramps
         orig_sw = self.gui.get_container_widget()
@@ -644,14 +686,30 @@ class EnvironmentInspector(Gramplet):
         return note
 
     def _language_label(self, code: str) -> str:
-        for row in self._lang_rows:
+        """
+        "Русский (Russian)": the endonym, then the English name (exonym) in
+        parentheses, so the language can be recognized whatever language
+        the interface is in. Only one name when they are the same
+        ("English"). Works before the Gramps Translations table is filled
+        (the restart announcement runs at startup).
+        """
+        endonym = ""
+        for row in getattr(self, "_lang_rows", None) or []:
             if row["code"] == code:
-                return f"{row['name']} ({row['endonym']})" if row["endonym"] != row["name"] else row["name"]
-        return code
+                endonym = row["endonym"]
+                break
+        try:
+            english = envinsp_catalog.english_name(code) or code
+            if not endonym:
+                endonym = envinsp_catalog.endonym(code, glocale) or english
+        except Exception:  # a label must never break the caller
+            LOG.debug("EnvironmentInspector: no name for %s", code, exc_info=True)
+            return endonym or code
+        return f"{endonym} ({english})" if endonym.casefold() != english.casefold() else english
 
     def _region_hint(self, code: str) -> str:
         """The region Gramps pairs with a language (Language tab Region column)."""
-        for row in self._lang_rows:
+        for row in getattr(self, "_lang_rows", None) or []:
             if row["code"] == code:
                 return row.get("region", "")
         return ""
@@ -771,11 +829,17 @@ class EnvironmentInspector(Gramplet):
             self._restart_cancelled()
             return
         log = _RESTART_LOG if envinsp_restart.restart_writes_log() else None
+        CONFIG.set("language.restart-announce",
+                   json.dumps({"code": code, "locale": locale_name, "pid": os.getpid()}))
+        CONFIG.save()
         if envinsp_restart.spawn_restart(code, locale_name, _baseline(), log, self._open_tree_args()):
-            LOG.warning("EnvironmentInspector: restarting Gramps in %s (%s)", code or "the system language",
-                        locale_name or "regional settings unchanged")
+            # Information, not a problem: Gramps shows warnings to the user.
+            LOG.info("EnvironmentInspector: restarting Gramps in %s (%s)", code or "the system language",
+                     locale_name or "regional settings unchanged")
             self.uistate.viewmanager.quit()
         else:
+            CONFIG.set("language.restart-announce", "")
+            CONFIG.save()
             self._show_info(_("Restart failed"),
                             _("Gramps could not start a new Gramps. Restart Gramps yourself."))
 
@@ -907,6 +971,238 @@ class EnvironmentInspector(Gramplet):
         localedir = getattr(gl, "localedir", "") or ""
         return _LocaleInfo(lang_base, english_name, region_display, localedir)
 
+    # --- confirming a restart made by Environment Inspector --------------
+    def _restart_outcome(self) -> tuple[str, str, bool]:
+        """
+        (language label, locale, worked) of the restart that started this
+        Gramps; label is "" for the system language.
+        """
+        code = _RESTARTED_AS.get("code") or ""
+        locale_name = _RESTARTED_AS.get("locale") or ""
+        if not code:
+            return "", locale_name, True
+        worked = code == envinsp_catalog.session_language(glocale)
+        if worked and locale_name:
+            got = (glocale.lang or "").split(".")[0]
+            worked = not got or got == locale_name.split(".")[0]
+        return self._language_label(code), locale_name, worked
+
+    def _addon_check(self, again: bool = False) -> int | None:
+        """
+        Check the addons for the language of this session (see
+        envinsp_addoncheck) and write the log. Runs once per session,
+        whether or not Gramps was restarted in another language; again=True
+        runs it once more (the Refresh link). A failed check is not
+        tried again unless asked.
+        :returns: the number of addons that do not load, or None.
+        """
+        global _ADDON_FAILING, _ADDON_CHECKED, _ADDON_SUMMARY
+        if _ADDON_CHECKED and not again:
+            return _ADDON_FAILING
+        _ADDON_CHECKED = True
+        if not hasattr(envinsp_addoncheck, "write_summary"):
+            # An older envinsp_addoncheck.py next to a newer EnvironmentInspector.py,
+            # or another copy of the module loaded first.
+            LOG.warning("EnvironmentInspector: %s is out of date; install all files "
+                        "of Environment Inspector together.",
+                        getattr(envinsp_addoncheck, "__file__", "envinsp_addoncheck.py"))
+            return None
+        try:
+            _ADDON_SUMMARY = envinsp_addoncheck.write_summary(
+                _TRANSLATION_LOG,
+                _gramps_const.USER_PLUGINS,
+                list(glocale.language),
+                envinsp_addoncheck.registered_dirs(),
+            )
+            _ADDON_FAILING = _ADDON_SUMMARY["failing"]
+        except Exception:
+            _ADDON_SUMMARY = None
+            LOG.warning("EnvironmentInspector: addon translation check failed", exc_info=True)
+        return _ADDON_FAILING
+
+    _RECHECK_URI = "envinsp:check-addons-again"
+    _core = staticmethod(lambda text: glocale.translation.gettext(text))
+
+    def _addon_panel(self) -> Gtk.Label | None:
+        """
+        The Addons line of the Current Locale panel: how the installed
+        addons fare in the language of this session, with links to the
+        full list (the log) and to check again (Refresh). Uses Gramps'
+        own translations of "Addons", "Failed" and "Refresh". Not shown in English
+        sessions, where every addon loads. The check runs when Gramps is
+        idle, so the tab appears at once.
+        """
+        if envinsp_addoncheck.english_session(glocale.language):
+            return None
+        widget = Gtk.Label(xalign=0.0)
+        self._wrap_panel_label(widget)
+        widget.connect("activate-link", self._cb_addon_link)
+        widget.set_markup(GLib.markup_escape_text(_("Checking addons...")))
+        GLib.idle_add(self._fill_addon_panel, widget, False)
+        return widget
+
+    def _fill_addon_panel(self, widget: Gtk.Label, again: bool) -> bool:
+        """Run the check (once, or again) and show its counts."""
+        failing = self._addon_check(again)
+        esc = GLib.markup_escape_text
+        summary = _ADDON_SUMMARY
+        if summary is None:
+            text = "\u26a0 " + esc(_("addon check")) + ": " + esc(self._core("Failed"))
+        else:
+            parts = []
+            if failing:
+                parts.append("\u26a0 " + esc(_trans.ngettext(
+                    "%d addon did not load", "%d addons did not load", failing) % failing))
+            english = summary["english"]
+            parts.append(esc(_trans.ngettext(
+                "%d addon shown in English", "%d addons shown in English", english) % english))
+            parts.append(esc("%d %s" % (summary["translated"], _("translated"))))
+            text = esc(self._core("Addons")) + ": " + " \u25cf ".join(parts)
+        links = []
+        if os.path.isfile(_TRANSLATION_LOG):
+            links.append(f'<a href="{esc(GLib.filename_to_uri(_TRANSLATION_LOG))}">'
+                         f'{esc(_("addon check"))}</a>')
+        links.append(f'<a href="{self._RECHECK_URI}">{esc(self._core("Refresh"))}</a>')
+        widget.set_markup(text + "  " + " \u25cf ".join(links))
+        widget.set_tooltip_text(_(
+            "Addons without a translation for this language are shown in English, "
+            "or do not load at all if Gramps raises an error for them. "
+            "Open the addon check to see which addons they are."))
+        return False  # one-shot idle callback
+
+    def _cb_addon_link(self, label: Gtk.Label, uri: str) -> bool:
+        """Refresh runs the check once more; other links open the log."""
+        if uri == self._RECHECK_URI:
+            label.set_markup(GLib.markup_escape_text(_("Checking addons...")))
+            GLib.idle_add(self._fill_addon_panel, label, True)
+            return True
+        return self._cb_open_log_link(label, uri)
+
+    def _log_link(self, path: str, text: str) -> str:
+        """Markup: a link that opens a log file (only if the file exists)."""
+        esc = GLib.markup_escape_text
+        if not os.path.isfile(path):
+            return esc(text)
+        return f'<a href="{esc(GLib.filename_to_uri(path))}">{esc(text)}</a>'
+
+    def _announce_restart(self) -> bool:
+        """
+        A short status bar line, once, with a link to the log that has the
+        details. Gramps clears its own status bar text after 5 seconds,
+        too soon to click a link, so the line is a label of its own beside
+        the Gramps status text, removed after a minute or when clicked.
+        """
+        global _RESTART_ANNOUNCED
+        if not _RESTARTED_AS or _RESTART_ANNOUNCED:
+            return False
+        _RESTART_ANNOUNCED = True
+        label, _locale, worked = self._restart_outcome()
+        failing = self._addon_check()
+        esc = GLib.markup_escape_text
+        if not worked:
+            markup = "\u26a0 " + esc(_("Gramps did not restart in %s:") % label) + " " + \
+                self._log_link(_RESTART_LOG, _("restart log"))
+        elif failing:
+            markup = esc(_("Restarted in %s.") % label) + " \u26a0 " + self._log_link(
+                _TRANSLATION_LOG,
+                _trans.ngettext("%d addon did not load", "%d addons did not load", failing) % failing)
+        elif label:
+            markup = esc(_("Restarted in %s.") % label)
+        else:
+            markup = esc(_("Restarted in the system language."))
+        LOG.info("EnvironmentInspector: %s", re.sub(r"<[^>]+>", "", markup))
+        status = getattr(self.uistate, "status", None)
+        if not isinstance(status, Gtk.Box):
+            try:
+                self.uistate.push_message(self.dbstate, re.sub(r"<[^>]+>", "", markup))
+            except Exception:
+                LOG.debug("EnvironmentInspector: no status bar", exc_info=True)
+            return False
+        widget = Gtk.Label(xalign=0.0)
+        widget.set_markup(markup)
+
+        def remove(*_args) -> bool:
+            # Gramps' Statusbar.remove() removes a message, not a widget;
+            # destroy() takes the label out of its parent.
+            if widget.get_parent() is not None:
+                widget.destroy()
+            return False
+
+        def cb_link(lbl: Gtk.Label, uri: str) -> bool:
+            handled = self._cb_open_log_link(lbl, uri)
+            remove()
+            return handled
+
+        widget.connect("activate-link", cb_link)
+        status.pack_start(widget, False, True, 4)
+        status.reorder_child(widget, 2)  # after the warning button and progress bar
+        widget.show()
+        GLib.timeout_add_seconds(60, remove)
+        return False  # run once
+
+    def _restart_panel(self) -> Gtk.Label | None:
+        """
+        The Restarted line of the Current Locale panel, with links to the
+        log files in the Gramps cache folder.
+        """
+        if not _RESTARTED_AS:
+            return None
+        label, locale_name, worked = self._restart_outcome()
+        esc = GLib.markup_escape_text
+        if not label:
+            text = esc(_("Restarted by Environment Inspector in the system language."))
+        elif worked:
+            what = f"{label} ({locale_name})" if locale_name else label
+            text = esc(_("Restarted by Environment Inspector in %s.") % what)
+        else:
+            text = "\u26a0 " + esc(_("Restarted by Environment Inspector, but Gramps "
+                                     "did not use %s.") % label)
+        links = []
+        if os.path.isfile(_RESTART_LOG):
+            links.append(f'<a href="{esc(GLib.filename_to_uri(_RESTART_LOG))}">'
+                         f'{esc(_("restart log"))}</a>')
+        # The addon check has its own line (_addon_panel).
+        if links:
+            text += "  " + " \u25cf ".join(links)
+        widget = Gtk.Label(xalign=0.0)
+        widget.set_markup(text)
+        self._wrap_panel_label(widget)
+        self._fit_panel_label(widget)
+        widget.connect("activate-link", self._cb_open_log_link)
+        return widget
+
+    _PANEL_LINE_CHARS = 100
+
+    @staticmethod
+    def _wrap_panel_label(widget: Gtk.Label) -> None:
+        """
+        Wrap only really long lines. A text view gives an anchored widget
+        its minimum width, and the minimum width of a wrapping label is
+        the narrow GTK fallback (about 20 characters), so a one-line
+        message broke into many short lines. _fit_panel_label() sets the
+        minimum width to the text, up to _PANEL_LINE_CHARS; call it after
+        each set_markup().
+        """
+        widget.set_line_wrap(True)
+        widget.set_line_wrap_mode(Pango.WrapMode.WORD)
+        widget.connect("notify::label", EnvironmentInspector._fit_panel_label)
+
+    @staticmethod
+    def _fit_panel_label(widget: Gtk.Label, *_args: object) -> None:
+        """Minimum width = the text length, capped (see _wrap_panel_label)."""
+        chars = min(len(widget.get_text()), EnvironmentInspector._PANEL_LINE_CHARS)
+        widget.set_width_chars(chars)
+        widget.set_max_width_chars(chars)
+
+    def _cb_open_log_link(self, _label: Gtk.Label, uri: str) -> bool:
+        """Open a log file with the default text viewer."""
+        try:
+            path = GLib.filename_from_uri(uri)[0]
+        except GLib.Error:
+            return False
+        open_file_with_default_application(path, self.uistate)
+        return True  # handled
+
     def _language_fields(self, gl: GrampsLocale, info: _LocaleInfo) -> list[tuple[str, str]]:
         """Left column of Current Locale: the language Gramps chose."""
         fields = [
@@ -954,6 +1250,12 @@ class EnvironmentInspector(Gramplet):
             False, False, 0,
         )
         panels.pack_start(self._field_grid(language), False, False, 0)
+        restart = self._restart_panel()
+        if restart is not None:
+            panels.pack_start(restart, False, False, 2)
+        addons = self._addon_panel()
+        if addons is not None:
+            panels.pack_start(addons, False, False, 2)
         panels.show_all()
         buf = self.gui.textview.get_buffer()
         anchor = buf.create_child_anchor(buf.get_end_iter())

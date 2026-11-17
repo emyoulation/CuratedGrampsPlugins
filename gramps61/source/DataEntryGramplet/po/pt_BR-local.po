@@ -1,0 +1,132 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: trunk\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-06 08:57-0800\n"
+"PO-Revision-Date: 2012-08-26 20:57-0300\n"
+"Last-Translator: André Marcelo Alvarenga <andrealvarenga@gmx.net>\n"
+"Language-Team: Brazilian Portuguese>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 1.0\n"
+
+msgid "Data Entry Gramplet"
+msgstr "Gramplet de inserção de dados"
+
+msgid "Gramplet for quick data entry"
+msgstr "Gramplet para rápida inserção de dados"
+
+msgid "Active person"
+msgstr "Pessoa ativa"
+
+msgid "Family:"
+msgstr "Família:"
+
+msgid "Sources?"
+msgstr "Fontes?"
+
+msgid "Surname, Given"
+msgstr "Sobrenome, Nome próprio"
+
+msgid "Save"
+msgstr "Salvar"
+
+msgid "Abandon"
+msgstr "Abandonar"
+
+msgid "New person"
+msgstr "Nova pessoa"
+
+msgid "Add relation"
+msgstr "Adicionar relação"
+
+msgid "No relation to active person"
+msgstr "Nenhuma relação para a pessoa ativa"
+
+msgid "Add as a Parent"
+msgstr "Adicionar como pai/mãe"
+
+msgid "Add as a Mother"
+msgstr "Adicionar como mãe"
+
+msgid "Add as a Father"
+msgstr "Adicionar como pai"
+
+msgid "Add as a Spouse"
+msgstr "Adicionar como cônjuge"
+
+msgid "Add as a Wife"
+msgstr "Adicionar como esposa"
+
+msgid "Add as a Husband"
+msgstr "Adicionar como marido"
+
+msgid "Add as a Sibling"
+msgstr "Adicionar como irmã(o)"
+
+msgid "Add as a Child"
+msgstr "Adicionar como filho(a)"
+
+msgid "Copy Active Data"
+msgstr "Copiar os dados ativos"
+
+msgid "in"
+msgstr "em"
+
+#, python-format
+msgid "Gramplet Data Edit: %s"
+msgstr "Gramplet de edição de dados: %s"
+
+msgid "Please provide a name."
+msgstr "Indique um nome."
+
+msgid "Can't add new person."
+msgstr "Adicionar uma nova pessoa."
+
+msgid "Please set an active person."
+msgstr "Defina uma pessoa como ativa."
+
+msgid "Can't add new person as a parent."
+msgstr "Não foi possível adicionar a nova pessoa como mãe/pai"
+
+msgid "Please set the new person's gender."
+msgstr "Defina o sexo da nova pessoa."
+
+msgid "Can't add new person as a mother."
+msgstr "Não foi possível adicionar a nova pessoa como mãe."
+
+msgid "Can't add new person as a father."
+msgstr "Não foi possível adicionar a nova pessoa como pai."
+
+msgid "Can't add new person as a spouse."
+msgstr "Não foi possível adicionar a nova pessoa como cônjuge."
+
+msgid "Can't add new person as a wife."
+msgstr "Não foi possível adicionar a nova pessoa como esposa."
+
+msgid "Can't add new person as a husband."
+msgstr "Não foi possível adicionar a nova pessoa como marido."
+
+msgid "Can't add new person as a sibling."
+msgstr "Não foi possível adicionar a nova pessoa como irmã(o)."
+
+msgid "Can't add new person as a child."
+msgstr "Não foi possível adicionar a nova pessoa como filho(a)."
+
+msgid "Please set Active person."
+msgstr "Defina a pessoa ativa."
+
+msgid "Can't add new person as a spouse to no one."
+msgstr "Não foi possível adicionar a nova pessoa como cônjuge de ninguém."
+
+msgid "Please set gender on Active or new person."
+msgstr "Defina o sexo na pessoa ativa ou nova."
+
+msgid "Same genders on Active and new person."
+msgstr "Mesmo sexo da pessoa ativa e nova."
+
+msgid "Please set gender on Active person."
+msgstr "Defina o sexo da pessoa ativa."

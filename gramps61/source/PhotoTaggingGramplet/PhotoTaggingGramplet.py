@@ -37,6 +37,7 @@ import re
 import json
 import math
 import pickle
+import inspect
 import logging
 import tempfile
 from urllib.parse import quote
@@ -170,6 +171,31 @@ def _get_fuzzy_match_lookup():
     if module is None:
         return None
     return getattr(module, "show_fuzzy_lookup", None)
+
+
+def _fuzzy_lookup_name_kwargs(show_fuzzy_lookup, given, surname):
+    """
+    The name arguments for show_fuzzy_lookup(): one "Surname, Given"
+    ``query`` for the lookup window's own "Surname, Given" field
+    (Fuzzy Matching versions that accept it), else the older
+    surname/given_name pair. ``given_name`` is passed either way: it
+    selects the closest given name without hiding anyone, which is what
+    a name read from metadata (a nickname, an initial) needs when the
+    field's given part matches nobody.
+
+    :param show_fuzzy_lookup: The function from _get_fuzzy_match_lookup().
+    :param given: Parsed given name, possibly "".
+    :param surname: Parsed surname, possibly "".
+    :returns: A dict of keyword arguments.
+    """
+    kwargs = {"surname": surname, "given_name": given}
+    try:
+        params = inspect.signature(show_fuzzy_lookup).parameters
+    except (TypeError, ValueError):
+        return kwargs
+    if "query" in params:
+        kwargs["query"] = join_surname_given(surname, given)
+    return kwargs
 
 # -------------------------------------------------------------------------
 #
@@ -788,6 +814,40 @@ def split_placeholder_name(name):
     if len(parts) == 1:
         return "", parts[0]
     return " ".join(parts[:-1]), parts[-1]
+
+
+def join_surname_given(surname, given):
+    """
+    Joins a surname and a given name as "Surname, Given" -- the form
+    the Data Entry gramplet's "Surname, Given" field and the Fuzzy
+    Matching addon's "Surname, Given" field both read (a comma marks
+    the given name; without one, everything is surname). The inverse,
+    for that form, of split_placeholder_name().
+
+    :param surname: The surname, possibly "".
+    :param given: The given name, possibly "".
+    :returns: "Surname, Given", just "Surname" for a blank given name,
+        or ", Given" for a blank surname (so the given name is not read
+        back as a surname).
+    """
+    surname = (surname or "").strip()
+    given = (given or "").strip()
+    if not given:
+        return surname
+    return f"{surname}, {given}"
+
+
+def placeholder_query_text(name):
+    """
+    A placeholder or metadata name, in any order split_placeholder_name()
+    understands ("Given Surname" or "Surname, Given"), turned into
+    "Surname, Given" text (see join_surname_given()).
+
+    :param name: The placeholder text.
+    :returns: The "Surname, Given" text, or "".
+    """
+    given, surname = split_placeholder_name(name)
+    return join_surname_given(surname, given)
 
 
 def effective_placeholder_name(region):
@@ -7461,9 +7521,8 @@ class PhotoTaggingGramplet(Gramplet):
             self.dbstate,
             self.uistate,
             self.track,
-            surname=surname,
-            given_name=given,
             on_select=lambda person: self._apply_fuzzy_match(region, person),
+            **_fuzzy_lookup_name_kwargs(show_fuzzy_lookup, given, surname),
         )
         return True
 
@@ -7514,9 +7573,8 @@ class PhotoTaggingGramplet(Gramplet):
             self.dbstate,
             self.uistate,
             self.track,
-            surname=surname,
-            given_name=given,
             on_select=lambda person: self._apply_fuzzy_match(region, person),
+            **_fuzzy_lookup_name_kwargs(show_fuzzy_lookup, given, surname),
         )
 
     def _apply_fuzzy_match(self, region, person):
@@ -7582,8 +7640,7 @@ class PhotoTaggingGramplet(Gramplet):
         belongs here once a second destination exists (see this
         method's own original design note in earlier revisions).
         """
-        given, surname = split_placeholder_name(metadata_clue_name(region))
-        text = ", ".join(part for part in (surname, given) if part)
+        text = placeholder_query_text(metadata_clue_name(region))
         if not text:
             return
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)

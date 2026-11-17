@@ -1,0 +1,59 @@
+# Translation template for the 0.1.0 Phonex (French) match of People with the <names> filter rule addon for Gramps.
+# Copyright (C) 2026 Jérôme Rapinat
+# This file is distributed under the same license as the Phonex (French) match of People with the <names> package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Phonex (French) match of People with the <names> 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-07 08:33-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: phonexfrenchrule.gpr.py:36 phonexfrenchrule.py:349
+msgid "Phonex (French) match of People with the <names>"
+msgstr ""
+
+#: phonexfrenchrule.gpr.py:38
+msgid ""
+"Matches people with a name field having the same Phonex (French) phonetic "
+"encoding as a test name."
+msgstr ""
+
+#: phonexfrenchrule.py:345 phonexfrenchrule.py:347 soundexcustomrule.py:331
+#: soundexcustomrule.py:333
+msgid "Name:"
+msgstr ""
+
+#: phonexfrenchrule.py:351
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same French Phonex code as the given name"
+msgstr ""
+
+#: phonexfrenchrule.py:355 soundexcustomrule.py:341
+msgid "General filters"
+msgstr ""
+
+#: soundexcustomrule.gpr.py:36 soundexcustomrule.py:335
+msgid "Soundex Custom match of People with the <names>"
+msgstr ""
+
+#: soundexcustomrule.gpr.py:38
+msgid ""
+"Matches people with a name field having the same custom Soundex phonetic "
+"encoding as a test name."
+msgstr ""
+
+#: soundexcustomrule.py:337
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same custom Soundex code as the given name"
+msgstr ""

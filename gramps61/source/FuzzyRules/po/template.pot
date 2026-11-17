@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Translation template for the 0.3.2 Soundex match of People with the <names> filter rule addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Soundex match of People with the <names> package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Soundex match of People with the <names> 0.3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 00:10-0500\n"
+"POT-Creation-Date: 2026-09-27 21:14-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,46 +17,184 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.gpr.py:40
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.py:219
-msgid "Match Rating Approach match of People with the <surname>"
+#: daitchmokotoffrule.gpr.py:35 daitchmokotoffrule.py:454
+msgid "D-M match of People with the <names>"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.gpr.py:42
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.py:221
+#: daitchmokotoffrule.gpr.py:37
 msgid ""
-"Matches people whose primary surname has a specified Match Rating Approach "
-"codex"
+"Matches people with a name field having the same Daitch-Mokotoff phonetic "
+"encoding as a test name."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.py:218
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.py:424
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.py:348
-msgid "Surname:"
+#: daitchmokotoffrule.py:450 daitchmokotoffrule.py:452
+#: doublemetaphonerule.py:570 doublemetaphonerule.py:572 matchratingrule.py:296
+#: matchratingrule.py:298 metaphonerule.py:501 metaphonerule.py:503
+#: nysiisrule.py:424 nysiisrule.py:426 phonexrule.py:198 phonexrule.py:200
+#: soundexrule.py:191 soundexrule.py:193
+msgid "Name:"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/matchratingrule.py:224
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.py:429
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.py:351
+#: daitchmokotoffrule.py:456
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same Daitch-Mokotoff code as the given name"
+msgstr ""
+
+#: daitchmokotoffrule.py:460 doublemetaphonerule.py:580 matchratingrule.py:306
+#: metaphonerule.py:511 nysiisrule.py:434 phonexrule.py:207 soundexrule.py:200
 msgid "General filters"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.gpr.py:39
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.py:425
-msgid "Metaphone match of People with the <surname>"
+#: doublemetaphonerule.gpr.py:35 doublemetaphonerule.py:574
+msgid "Double Metaphone match of People with the <names>"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.gpr.py:41
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/metaphonerule.py:427
-msgid "Matches people whose primary surname has a specified Metaphone code"
+#: doublemetaphonerule.gpr.py:37
+msgid ""
+"Matches people with a name field having the same Double Metaphone phonetic "
+"encoding as a test name."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.gpr.py:39
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.py:349
-msgid "NYSIIS match of People with the <surname>"
+#: doublemetaphonerule.py:576
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same Double Metaphone code as the given name"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.gpr.py:41
-#: /home/districtsupport/.gramps/gramps52/plugins/FuzzyRules/nysiisrule.py:350
-msgid "Matches people whose primary surname has a specified NYSIIS code"
+#: matchratingrule.gpr.py:40 matchratingrule.py:300
+msgid "MRA match of People with the <names>"
+msgstr ""
+
+#: matchratingrule.gpr.py:42
+msgid ""
+"Matches people with a name field having the same Match Rating Approach (MRA) "
+"phonetic encoding as a test name."
+msgstr ""
+
+#: matchratingrule.py:302
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same Match Rating Approach (MRA) codex as the given name"
+msgstr ""
+
+#: metaphonerule.gpr.py:39 metaphonerule.py:505
+msgid "Metaphone match of People with the <names>"
+msgstr ""
+
+#: metaphonerule.gpr.py:41
+msgid ""
+"Matches people with a name field having the same Metaphone phonetic encoding "
+"as a test name."
+msgstr ""
+
+#: metaphonerule.py:507
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same Metaphone code as the given name"
+msgstr ""
+
+#: nysiisrule.gpr.py:39 nysiisrule.py:428
+msgid "NYSIIS match of People with the <names>"
+msgstr ""
+
+#: nysiisrule.gpr.py:41
+msgid ""
+"Matches people with a name field having the same NYSIIS (New York State "
+"Identification and Intelligence System) phonetic encoding as a test name."
+msgstr ""
+
+#: nysiisrule.py:430
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same NYSIIS (New York State Identification and "
+"Intelligence System) code as the given name"
+msgstr ""
+
+#: phonetic_name_parts.py:74
+msgid "Title"
+msgstr ""
+
+#: phonetic_name_parts.py:75
+msgid "Given"
+msgstr ""
+
+#: phonetic_name_parts.py:76
+msgid "Call"
+msgstr ""
+
+#: phonetic_name_parts.py:77
+msgid "Nick"
+msgstr ""
+
+#: phonetic_name_parts.py:82
+msgid "Prefix"
+msgstr ""
+
+#: phonetic_name_parts.py:83
+msgid "Surname"
+msgstr ""
+
+#: phonetic_name_parts.py:84
+msgid "Suffix"
+msgstr ""
+
+#: phonetic_name_parts.py:85
+msgid "Clan"
+msgstr ""
+
+#: phonetic_name_parts.py:90
+msgid "Preferred"
+msgstr ""
+
+#: phonetic_name_parts.py:91
+msgid "Alternatives"
+msgstr ""
+
+#: phonetic_name_parts.py:112
+msgid "Match in:"
+msgstr ""
+
+#: phonetic_name_parts.py:300
+msgid "Match in Given name parts:"
+msgstr ""
+
+#: phonetic_name_parts.py:301
+msgid "Match in Surname parts:"
+msgstr ""
+
+#: phonetic_name_parts.py:302
+msgid "Include:"
+msgstr ""
+
+#: phonexrule.gpr.py:34 phonexrule.py:202
+msgid "Phonex match of People with the <names>"
+msgstr ""
+
+#: phonexrule.gpr.py:36
+msgid ""
+"Matches people with a name field having the same Phonex phonetic encoding as "
+"a test name."
+msgstr ""
+
+#: phonexrule.py:204
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same Phonex code as the given name"
+msgstr ""
+
+#: soundexrule.gpr.py:34 soundexrule.py:195
+msgid "Soundex match of People with the <names>"
+msgstr ""
+
+#: soundexrule.gpr.py:36
+msgid ""
+"Matches people with a name field having the same Soundex phonetic encoding "
+"as a test name."
+msgstr ""
+
+#: soundexrule.py:197
+msgid ""
+"Matches people whose selected name fields (preferred surname and call name "
+"by default) have the same Soundex code as the given name"
 msgstr ""

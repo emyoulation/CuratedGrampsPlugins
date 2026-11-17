@@ -28,5 +28,6 @@ MarkdownDash/test/*
 IconBrowser/*.py
 IconBrowser/*.md
 IconBrowser/media/*
+IconBrowser/media/icons/*
 GrampsGlossary/*
 

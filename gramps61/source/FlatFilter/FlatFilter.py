@@ -30,6 +30,7 @@
 import logging
 import os
 import time
+import weakref
 from typing import Callable
 from urllib.parse import quote
 
@@ -347,6 +348,12 @@ def _load_phonetic_systems() -> PhoneticSystems:
     reliably -- see FuzzyMatchAPI.md). Without it, only Gramps' built-in
     Soundex is offered, so the gramplet never loses its fuzzy matching.
 
+    "Enabled" is checked against the Plugin Manager's hidden list:
+    ``import_plugin()`` itself does not check it. The registry dicts are
+    used as they are (not copied), so encoder plugins hidden or shown
+    later -- phonetic_codes rebuilds those dicts in place -- are seen
+    here too; :func:`_cb_hidden_plugins_changed` drops this cache.
+
     :returns: ``(encoders, labels, descriptions)``, each keyed by
         algorithm id, Soundex always first.
     """
@@ -365,13 +372,18 @@ def _load_phonetic_systems() -> PhoneticSystems:
 
     try:
         pmgr = BasePluginManager.get_instance()
-        pdata = pmgr.get_plugin(_FUZZY_MATCH_API_ID)
+        hidden = GuiPluginManager.get_instance().get_hidden_plugin_ids()
+        pdata = (
+            None
+            if _FUZZY_MATCH_API_ID in hidden
+            else pmgr.get_plugin(_FUZZY_MATCH_API_ID)
+        )
         module = pmgr.import_plugin(pdata) if pdata is not None else None
         codes = getattr(module, "phonetic_codes", None) if module else None
         if codes is not None:
-            encoders = dict(codes.ALGORITHMS)
-            labels = dict(codes.ALGORITHM_LABELS)
-            descriptions = dict(getattr(codes, "ALGORITHM_DESCRIPTIONS", {}))
+            encoders = codes.ALGORITHMS
+            labels = codes.ALGORITHM_LABELS
+            descriptions = getattr(codes, "ALGORITHM_DESCRIPTIONS", {})
     except Exception:  # pylint: disable=broad-exception-caught
         # Optional addon: anything going wrong here just means "only
         # Soundex", never a gramplet that fails to load.
@@ -379,6 +391,32 @@ def _load_phonetic_systems() -> PhoneticSystems:
 
     _PHONETIC_SYSTEMS = (encoders, labels, descriptions)
     return _PHONETIC_SYSTEMS
+
+
+# Live Flat Filter sidebars, told when the phonetic systems change. Held
+# weakly so a closed sidebar is not kept alive by this list.
+_PHONETIC_LISTENERS: "weakref.WeakSet" = weakref.WeakSet()
+
+
+def _cb_hidden_plugins_changed(*_args) -> None:
+    """
+    config "plugin.hiddenplugins" callback: the Fuzzy Match API plugin
+    or one of its encoder plugins may have been hidden or shown. Drop
+    the cache, then refresh every sidebar once all config callbacks
+    (phonetic_codes has its own) have run.
+    """
+    global _PHONETIC_SYSTEMS  # pylint: disable=global-statement
+    _PHONETIC_SYSTEMS = None
+
+    def _cb_idle_refresh() -> bool:
+        for sidebar in list(_PHONETIC_LISTENERS):
+            sidebar.cb_phonetic_systems_changed()
+        return False
+
+    GLib.idle_add(_cb_idle_refresh)
+
+
+configman.connect("plugin.hiddenplugins", _cb_hidden_plugins_changed)
 
 
 # Cached ConfigManager, set on first use by _get_config_manager().
@@ -1110,6 +1148,9 @@ class PersonSidebarFilter(
 
     def __init__(self, dbstate, uistate, clicked):
         self.clicked_func = clicked
+        # Weak reference to a host view that shares its phonetic system
+        # (the Fuzzy Grouping view); None anywhere else.
+        self._host_view_ref = None
         self.sensitive_regex = False
 
         # Per-field "Include:" checkboxes that limit the "Person" row's
@@ -1153,6 +1194,7 @@ class PersonSidebarFilter(
         self.algorithm_handler = self.algorithm_combo.connect(
             "changed", self.cb_algorithm_changed
         )
+        _PHONETIC_LISTENERS.add(self)
 
         # Load this addon's own saved checkbox settings via the Gramps
         # config manager, falling back to the hardcoded defaults if
@@ -1251,6 +1293,57 @@ class PersonSidebarFilter(
         self._update_algorithm_tooltip()
         if algorithm_id:
             _save_algorithm_setting(algorithm_id)
+            host = self._host_view()
+            if host is not None:
+                host.set_phonetic_system(algorithm_id, source=self)
+
+    # -- phonetic system shared with the host view ---------------------
+
+    def _host_view(self):
+        """The host view followed for the phonetic system, or None."""
+        return self._host_view_ref() if self._host_view_ref else None
+
+    def follow_host_view(self, view) -> None:
+        """
+        Share the phonetic system with ``view`` both ways: show the view
+        system now and whenever it changes, and send a choice made here
+        to the view (see :meth:`cb_algorithm_changed`).
+
+        :param view: A view offering the PHONETIC_SYSTEM_SYNC protocol
+            (phonetic_system_id, set_phonetic_system,
+            connect_phonetic_system), such as the Fuzzy Grouping view.
+        """
+        self._host_view_ref = weakref.ref(view)
+        view.connect_phonetic_system(self.cb_host_system_changed)
+        self.cb_host_system_changed(view.phonetic_system_id())
+
+    def cb_host_system_changed(self, system_id: str) -> None:
+        """
+        The host view changed phonetic system: show the same one here.
+        Not saved, and not sent back to the view.
+
+        :param system_id: The id of the system the view now uses.
+        """
+        self.algorithm_combo.handler_block(self.algorithm_handler)
+        try:
+            self._show_host_system(system_id)
+        finally:
+            self.algorithm_combo.handler_unblock(self.algorithm_handler)
+
+    def _show_host_system(self, system_id: str) -> None:
+        """
+        Show the host view's phonetic system in the popup menu. When this
+        menu does not offer it (for example None, exact surnames), show no
+        selection: matching then uses Soundex (see
+        :meth:`_current_encoder`), and choosing any system here, Soundex
+        included, is a real change that is sent to the view. Call with the
+        "changed" handler blocked.
+
+        :param system_id: The id of the system the view uses.
+        """
+        if not self.algorithm_combo.set_active_id(system_id):
+            self.algorithm_combo.set_active(-1)
+        self._update_algorithm_tooltip()
 
     def _set_algorithm(self, algorithm_id: str) -> None:
         """
@@ -1267,10 +1360,40 @@ class PersonSidebarFilter(
             self.algorithm_combo.set_active_id(_DEFAULT_ALGORITHM)
         self._update_algorithm_tooltip()
 
+    def cb_phonetic_systems_changed(self) -> None:
+        """
+        A phonetic plugin was hidden or shown: refill the popup menu.
+
+        The saved choice is re-applied, so a system that comes back is
+        selected again; until then Soundex is shown (see
+        :meth:`_set_algorithm`). The saved choice itself is not changed.
+        """
+        self.encoders, labels, self.algorithm_descriptions = _load_phonetic_systems()
+        self.algorithm_combo.handler_block(self.algorithm_handler)
+        self.algorithm_combo.remove_all()
+        for algorithm_id, label in labels.items():
+            self.algorithm_combo.append(algorithm_id, label)
+        host = self._host_view()
+        if host is not None:
+            self._show_host_system(host.phonetic_system_id())
+        else:
+            self._set_algorithm(_load_algorithm_setting())
+        self.algorithm_combo.handler_unblock(self.algorithm_handler)
+
     def _update_algorithm_tooltip(self) -> None:
         """
-        Show the selected phonetic system's description as its tooltip.
+        Show the selected phonetic system's description as its tooltip,
+        or, with no selection in a host view, why nothing is selected.
         """
+        if self.algorithm_combo.get_active_id() is None and self._host_view():
+            self.algorithm_combo.set_tooltip_text(
+                _(
+                    "The view uses a phonetic system that this menu does not "
+                    "offer (for example None). Fuzzy matching here uses "
+                    "Soundex. Choose a system to use it here and in the view."
+                )
+            )
+            return
         description = self.algorithm_descriptions.get(
             self.algorithm_combo.get_active_id() or "", ""
         )
@@ -1395,10 +1518,16 @@ class PersonSidebarFilter(
 
         Blocks the "changed" handler so a fallback to Soundex (saved
         system not installed) does not overwrite the saved choice.
+        In a host view, the view's system is shown instead, so that Reset
+        does not leave this menu out of step with the view.
         """
         self.algorithm_combo.handler_block(self.algorithm_handler)
         try:
-            self._set_algorithm(_load_algorithm_setting())
+            host = self._host_view()
+            if host is not None:
+                self._show_host_system(host.phonetic_system_id())
+            else:
+                self._set_algorithm(_load_algorithm_setting())
         finally:
             self.algorithm_combo.handler_unblock(self.algorithm_handler)
 
@@ -1625,6 +1754,13 @@ class Filter(Gramplet):
         self.filter = self.FILTER_CLASS(
             self.dbstate, self.uistate, self.__filter_clicked
         )
+        # Docked in a view that shares its phonetic system (Fuzzy
+        # Grouping)? Then follow it both ways. Duck-typed: no import.
+        view = getattr(self.gui, "view", None)
+        if getattr(view, "PHONETIC_SYSTEM_SYNC", 0) >= 1 and hasattr(
+            self.filter, "follow_host_view"
+        ):
+            self.filter.follow_host_view(view)
         self.widget = self.filter.get_widget()
         self._add_help_button()
         self._tighten_button_rows()

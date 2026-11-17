@@ -73,17 +73,56 @@ from gramps.gui.dialog import OkDialog
 from gramps.gui.utils import text_to_clipboard
 from gramps.gui.editors.editdate import EditDate, MOD_TEXT, QUAL_TEXT
 from gramps.gui.pluginmanager import GuiPluginManager
+from gramps.gui.widgets.monitoredwidgets import MonitoredDate
 
 from editdate_calc_panel import DateCalculatorPanel
 
 LOG = logging.getLogger(".EditDateCalculator")
 try:
-    _ = glocale.get_addon_translator(__file__).sgettext
+    _TRANSLATOR = glocale.get_addon_translator(__file__)
 except ValueError:
-    _ = glocale.translation.sgettext
+    _TRANSLATOR = glocale.translation
+_ = _TRANSLATOR.sgettext
+ngettext = _TRANSLATOR.ngettext
+# strings that Gramps itself already translates (the Preferences labels)
+_core = glocale.translation.sgettext
 
 # the id= in EditDateCalculator.gpr.py
 PLUGIN_ID = "editdatecalculator"
+
+# Settings of this addon, in editdatecalculator.ini next to this module.
+CONFIG = config.register_manager(PLUGIN_ID, __file__, use_plugins_path=False)
+CONFIG.register("meta.plugin_id", PLUGIN_ID)
+CONFIG.register("meta.schema_version", "1")
+# keep a Text only date Text only in the date field of the editors (see
+# _md_set_date); off by default
+CONFIG.register("behavior.keep-text-only", False)
+CONFIG.load()
+
+
+def _save_config():
+    """
+    Save the settings; a read-only addon folder only loses them.
+    """
+    try:
+        CONFIG.save()
+    except OSError:
+        LOG.warning("Edit Date Calculator: cannot save its settings")
+
+
+_save_config()
+
+# Type menu order: About right after Regular, Range after Span
+_TYPE_ORDER = (
+    Date.MOD_NONE,
+    Date.MOD_ABOUT,
+    Date.MOD_BEFORE,
+    Date.MOD_AFTER,
+    Date.MOD_FROM,
+    Date.MOD_TO,
+    Date.MOD_SPAN,
+    Date.MOD_RANGE,
+)
 
 # Parse button on the Text comment row: full color while parsing is live,
 # grey while it is off.  The icons are in the media folder of this addon.
@@ -2102,16 +2141,32 @@ def _add_evaluation_line(dialog):
     """
     row = dialog.text_entry.get_parent()
     column = row.get_parent()
+    # the Evaluates to line, the Preferences limit line below it, and the
+    # (placeholder) Keep Text only checkbox, in one box
+    lines = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+    lines.set_margin_start(6)
     label = Gtk.Label(xalign=0)
     label.set_selectable(True)
     label.set_line_wrap(True)
-    label.set_margin_start(6)
-    # keep it lined up below the "Text comment:" label, wherever the theme
+    lines.pack_start(label, False, False, 0)
+    limit_label = Gtk.Label(xalign=0)
+    limit_label.set_line_wrap(True)
+    # shown only when a limit applies (not by the dialog's show_all)
+    limit_label.set_no_show_all(True)
+    limit_label.set_tooltip_text(
+        _(
+            "The limit from the Limits tab of the Gramps Preferences that "
+            "widens this date when Gramps compares it with other dates."
+        )
+    )
+    lines.pack_start(limit_label, False, False, 0)
+    lines.pack_start(_make_keep_text_only_check(), False, False, 0)
+    # keep the lines below the "Text comment:" label, wherever the theme
     # and the text direction put that label
     comment_label = dialog.top.get_object("label415")
     if comment_label is not None:
         comment_label.connect(
-            "size-allocate", _cb_comment_label_allocated, label, column
+            "size-allocate", _cb_comment_label_allocated, lines, column
         )
     label.set_tooltip_text(
         _(
@@ -2125,9 +2180,10 @@ def _add_evaluation_line(dialog):
     # label's own (it returns True), so the double-click does not also
     # select a word; a single click or a drag still selects text as before.
     label.connect("button-press-event", _cb_evaluation_pressed, dialog)
-    column.pack_start(label, False, False, 0)
-    label.show()
+    column.pack_start(lines, False, False, 0)
+    lines.show_all()
     dialog._evaluation_label = label
+    dialog._limit_label = limit_label
     dialog._evaluation_value = ""
     dialog._evaluation_flash = 0
     _update_evaluation(dialog, True)
@@ -2292,6 +2348,85 @@ def _update_evaluation(dialog, valid):
         GLib.source_remove(dialog._evaluation_flash)
         dialog._evaluation_flash = 0
     label.set_text(_("Evaluates to: %s") % text if text else "")
+    limit_label = getattr(dialog, "_limit_label", None)
+    if limit_label is not None:
+        limit = _limit_text(date) if text else ""
+        limit_label.set_text(limit)
+        limit_label.set_visible(bool(limit))
+
+
+# the Preferences limits: config key and the label of the Limits tab (the
+# exact text, so Gramps' own translation is used); a Type and Quality use
+# the limit as Date.get_start_stop_range does
+_LIMITS = {
+    "before": ("behavior.date-before-range", "Date 'before' year range: (date - #)"),
+    "after": ("behavior.date-after-range", "Date 'after' year range:  (date + #)"),
+    "about": ("behavior.date-about-range", "Date 'about' year range: (date ± #)"),
+}
+
+
+def _limit_kind(date):
+    """
+    Return which Preferences limit widens this date when Gramps compares
+    it ("before", "after", "about"), or None.
+    """
+    modifier = date.get_modifier()
+    if modifier in (Date.MOD_BEFORE, Date.MOD_TO):
+        return "before"
+    if modifier in (Date.MOD_AFTER, Date.MOD_FROM):
+        return "after"
+    if modifier == Date.MOD_ABOUT or date.get_quality() == Date.QUAL_ESTIMATED:
+        return "about"
+    return None
+
+
+def _limit_text(date):
+    """
+    Return the line naming the Preferences limit that this date uses, for
+    example "Preferences > Limits > Date 'about' year range: (date ± 50
+    years)", or "" if no limit applies.
+
+    The Preferences, Limits and range labels are Gramps' own strings, so
+    they are already translated.
+    """
+    if date is None or date.get_modifier() == Date.MOD_TEXTONLY:
+        return ""
+    kind = _limit_kind(date)
+    if kind is None:
+        return ""
+    key, label = _LIMITS[kind]
+    years = config.get(key)
+    amount = ngettext("%d year", "%d years", years) % years
+    label = " ".join(_core(label).split())  # (one label has a double space)
+    if "#" in label:
+        label = label.replace("#", amount)
+    else:
+        label = "%s: %s" % (label, amount)
+    return " > ".join((_core("Preferences"), _core("Limits"), label))
+
+
+def _make_keep_text_only_check():
+    """
+    Placeholder: a checkbox for the Keep Text only setting, until it finds
+    its proper place in the interface.
+    """
+    check = Gtk.CheckButton(label=_("Keep Text only dates as text in editor date fields"))
+    check.set_tooltip_text(
+        _(
+            "When on, a Text only date stays Text only in the Date field of "
+            "an editor (such as Edit Event), even if its text reads as a "
+            "date, until you change that text. When off, the Date field "
+            "reads the text as a date, as Gramps does."
+        )
+    )
+    check.set_active(CONFIG.get("behavior.keep-text-only"))
+
+    def cb_toggled(button):
+        CONFIG.set("behavior.keep-text-only", button.get_active())
+        _save_config()
+
+    check.connect("toggled", cb_toggled)
+    return check
 
 
 def _replace_help_button(dialog):
@@ -2421,6 +2556,87 @@ def _detach_from_parent(window):
     GLib.idle_add(_release_modal_hint, window)
 
 
+# -------------------------------------------------------------------------
+#
+# Keep Text only dates Text only in the date field of the editors
+#
+# -------------------------------------------------------------------------
+def _is_kept_text(date_obj, text):
+    """
+    Return True if `text` is the text of a Text only date, unchanged.
+    """
+    return (
+        date_obj.get_modifier() == Date.MOD_TEXTONLY
+        and str(text).strip() == date_obj.get_text().strip()
+    )
+
+
+def _md_set_date(self, widget):
+    """
+    Wrapped MonitoredDate.set_date (the date field of an editor, such as
+    Edit Event, parses its text into the Date at every change).
+
+    The text of a Text only date is left unparsed while it is unchanged:
+    otherwise text that happens to read as a date ("1850") would turn the
+    Text only date into a regular date when the editor opens, or when the
+    Date selection dialog hands a Text only date back with OK.  Typing a
+    different text parses it as usual.
+    """
+    if CONFIG.get("behavior.keep-text-only") and _is_kept_text(
+        self.date_obj, self.text_obj.get_text()
+    ):
+        return None
+    return _ORIGINALS["md_set_date"](self, widget)
+
+
+def _md_update_after_editor(self, date_obj):
+    """
+    Wrapped MonitoredDate.update_after_editor: a Text only date from the
+    Date selection dialog is copied as it is, so the field shows its text
+    without parsing it.
+    """
+    if (
+        CONFIG.get("behavior.keep-text-only")
+        and date_obj
+        and date_obj.get_modifier() == Date.MOD_TEXTONLY
+    ):
+        self.date_obj.copy(date_obj)
+    return _ORIGINALS["md_update_after_editor"](self, date_obj)
+
+
+def _install_keep_text_only():
+    """
+    Patch MonitoredDate (once) so Text only dates stay Text only.
+    """
+    if getattr(MonitoredDate, _MARKER, False):
+        return
+    _ORIGINALS["md_set_date"] = MonitoredDate.set_date
+    _ORIGINALS["md_update_after_editor"] = MonitoredDate.update_after_editor
+    MonitoredDate.set_date = _md_set_date
+    MonitoredDate.update_after_editor = _md_update_after_editor
+    setattr(MonitoredDate, _MARKER, True)
+
+
+def _reorder_type_menu():
+    """
+    Reorder the Type menu (the MOD_TEXT table of the editdate module, which
+    EditDate reads each time; this module uses the same table).  Types not
+    named in _TYPE_ORDER keep their places after the named ones, and Text
+    only stays last, where EditDate expects it.
+    """
+    global MOD_TEXT
+    from gramps.gui.editors import editdate as editdate_module
+
+    stock = editdate_module.MOD_TEXT
+    rank = {mod: index for index, mod in enumerate(_TYPE_ORDER)}
+    textonly = [item for item in stock if item[0] == Date.MOD_TEXTONLY]
+    others = [item for item in stock if item[0] != Date.MOD_TEXTONLY]
+    others.sort(key=lambda item: rank.get(item[0], len(rank)))
+    new_order = tuple(others + textonly)
+    editdate_module.MOD_TEXT = new_order
+    MOD_TEXT = new_order
+
+
 def _copy_methods(holder):
     """
     Copy the functions defined on a holder class onto EditDate.
@@ -2438,6 +2654,7 @@ def install():
     """
     if getattr(EditDate, _MARKER, False):
         return True
+    _reorder_type_menu()
     native = vars(EditDate)
     # Gramps 6.1 (or a patched core file) already has the calendars
     calendars = "show_on_calendar" not in native
@@ -2477,6 +2694,10 @@ def install():
         _copy_methods(_CalculatorMethods)
     EditDate.show = _patched_show
     setattr(EditDate, _MARKER, True)
+    try:
+        _install_keep_text_only()
+    except Exception:
+        LOG.exception("Edit Date Calculator: could not patch the date fields")
     LOG.debug(
         "Edit Date Calculator installed (calendars: %s, calculator: %s)",
         calendars,

@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Translation template for the 1.0.3 Theme preferences general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Theme preferences package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-12 20:42-0500\n"
+"Project-Id-Version: Theme preferences 1.0.3\n"
+"Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
+"POT-Creation-Date: 2026-09-14 16:17-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,102 +17,109 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.gpr.py:30
+#: themes.gpr.py:33
 msgid "Theme preferences"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.gpr.py:32
+#: themes.gpr.py:35
 msgid ""
 "An addition to Preferences for simple Theme and Font adjustment.  Especially "
 "useful for Windows users. Also supports a layered CSS theming system with "
 "CSS Themes, CSS Patches, and a personal user override."
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:157
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes_load.py:147
+#: themes.py:125
+#, python-format
+msgid "Failed to read themes.ini: %s"
+msgstr ""
+
+#: themes.py:141
+#, python-format
+msgid "Failed to write themes.ini: %s"
+msgstr ""
+
+#: themes.py:158 themes_load.py:141
 #, python-format
 msgid "CSS file not found: %s"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:163
+#: themes.py:164
 #, python-format
 msgid "Loaded CSS '%s' at priority %d"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:166
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes_load.py:156
+#: themes.py:167 themes_load.py:150
 #, python-format
 msgid "Failed to load CSS '%s': %s"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:249
+#: themes.py:228
 msgid "_Help"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:277
+#: themes.py:251
 msgid "GTK Theme"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:320
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:341
+#: themes.py:283 themes.py:299
 msgid "Theme is hardcoded by GTK_THEME"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:324
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:355
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:421
+#: themes.py:287 themes.py:316 themes.py:390
 #, python-format
 msgid "%s: "
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:324
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:531
+#: themes.py:287 themes.py:493
 msgid "Theme"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:331
+#: themes.py:293
 msgid "Dark Variant"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:355
+#: themes.py:316
 msgid "Font"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:363
+#: themes.py:323
 msgid "_Toolbar"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:363
+#: themes.py:323
 msgid "Text"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:373
+#: themes.py:332
 msgid "Fixed Scrollbar (requires restart)"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:389
+#: themes.py:346
 msgid "CSS Theming"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:396
+#: themes.py:358
+#, python-brace-format
 msgid ""
 "CSS cascade order (lowest to highest priority):\n"
-"  1. gramps.css (core)   2. CSS Theme   3. CSS Patches   4. gramps_user.css"
+"  1. <a href=\"{path1}\">gramps.css</a> (core)   2. <a href=\"{path2}\">CSS "
+"Theme</a>   3. <a href=\"{path3}\">CSS Patches</a>   4. <a "
+"href=\"{path4}\">gramps_user.css</a>"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:408
+#: themes.py:377
 msgid "None (use Gramps default)"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:421
+#: themes.py:390
 msgid "CSS Theme"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:428
+#: themes.py:396
 msgid "CSS Patches:"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:459
+#: themes.py:427
 #, python-format
 msgid ""
 "No patches found.\n"
@@ -120,58 +127,63 @@ msgid ""
 "%s"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:478
+#: themes.py:445
 msgid "User CSS Override"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:498
+#: themes.py:462
 msgid "Edit gramps_user.css in default text editor"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:509
+#: themes.py:471
 msgid "Open CSS folder in file manager"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:527
+#: themes.py:489
 msgid "Restore to defaults"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:546
-msgid "\\u2713 gramps_user.css is present and active"
+#: themes.py:501
+msgid "✓ gramps_user.css is present and active"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:551
+#: themes.py:505
 msgid "(gramps_user.css not yet created)"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:773
+#: themes.py:558 themes.py:751
+msgid "No default file manager found"
+msgstr ""
+
+#: themes.py:560
+#, python-format
+msgid "Could not open folder '%s': %s"
+msgstr ""
+
+#: themes.py:663
 msgid "Cannot set environment variable GTK_OVERLAY_SCROLLING"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:855
+#: themes.py:739
 msgid "No default text editor found for gramps_user.css"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:858
+#: themes.py:741
 #, python-format
 msgid "Could not open gramps_user.css: %s"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:871
-msgid "No default file manager found"
-msgstr ""
-
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes.py:873
+#: themes.py:753
 #, python-format
 msgid "Could not open CSS folder: %s"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes_load.py:153
+#: themes_load.py:147
 #, python-format
 msgid "Loaded CSS: %s (priority %d)"
 msgstr ""
 
-#: /home/districtsupport/.gramps/gramps52/plugins/Themes2/themes_load.py:192
+#: themes_load.py:186
 #, python-format
 msgid ""
 "Themes addon: prefs version mismatch (stored '%s', expected '%s') – purging "

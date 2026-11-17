@@ -1,0 +1,142 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: de\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-03 15:04-0700\n"
+"PO-Revision-Date: 2026-05-11 10:34+0000\n"
+"Last-Translator: Mirko Leonhäuser <mirko@leonhaeuser.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/gramps-project/"
+"addons/de/>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2026.5-dev\n"
+
+msgid "Data Entry Gramplet"
+msgstr "Dateneingabe Gramplet"
+
+msgid "Gramplet for quick data entry"
+msgstr "Gramplet zur schnellen Dateneingabe"
+
+msgid "Active person"
+msgstr "Aktive Person"
+
+msgid "Family:"
+msgstr "Familie:"
+
+msgid "Sources?"
+msgstr "Quellen?"
+
+msgid "Surname, Given"
+msgstr "Nachname, Vorname"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Abandon"
+msgstr "Abbrechen"
+
+msgid "New person"
+msgstr "Neue Person"
+
+msgid "Add relation"
+msgstr "Beziehung hinzufügen"
+
+msgid "No relation to active person"
+msgstr "Keine Beziehung zur aktiven Person"
+
+msgid "Add as a Parent"
+msgstr "Als Elternteil hinzufügen"
+
+msgid "Add as a Mother"
+msgstr "Als Mutter hinzufügen"
+
+msgid "Add as a Father"
+msgstr "Als Vater hinzufügen"
+
+msgid "Add as a Spouse"
+msgstr "Als Partner hinzufügen"
+
+msgid "Add as a Wife"
+msgstr "Als Frau hinzufügen"
+
+msgid "Add as a Husband"
+msgstr "Als Mann hinzufügen"
+
+msgid "Add as a Sibling"
+msgstr "Als Geschwister hinzufügen"
+
+msgid "Add as a Child"
+msgstr "Als Kind hinzufügen"
+
+msgid "Copy Active Data"
+msgstr "Aktive Daten kopieren"
+
+msgid "in"
+msgstr "in"
+
+msgid "No Family Tree is open."
+msgstr "Es ist kein Stammbaum geöffnet."
+
+msgid "Please open a Family Tree to edit data."
+msgstr "Bitte öffne einen Stammbaum, um Daten zu bearbeiten."
+
+#, python-format
+msgid "Gramplet Data Edit: %s"
+msgstr "Gramplet-Daten bearbeiten: %s"
+
+msgid "Please open a Family Tree before adding a person."
+msgstr "Bitte öffne einen Stammbaum, bevor du eine Person hinzufügst."
+
+msgid "Please provide a name."
+msgstr "Bitte gib einen Namen an."
+
+msgid "Can't add new person."
+msgstr "Kann neue Person nicht hinzufügen."
+
+msgid "Please set an active person."
+msgstr "Bitte setz eine aktive Person."
+
+msgid "Can't add new person as a parent."
+msgstr "Kann neue Person nicht als Elternteil hinzufügen."
+
+msgid "Please set the new person's gender."
+msgstr "Bitte gib das Geschlecht der neuen Person an."
+
+msgid "Can't add new person as a mother."
+msgstr "Kann neue Person nicht als Mutter hinzufügen."
+
+msgid "Can't add new person as a father."
+msgstr "Kann neue Person nicht als Vater hinzufügen."
+
+msgid "Can't add new person as a spouse."
+msgstr "Kann neue Person nicht als Partner hinzufügen."
+
+msgid "Can't add new person as a wife."
+msgstr "Kann neue Person nicht als Ehefrau hinzufügen."
+
+msgid "Can't add new person as a husband."
+msgstr "Kann neue Person nicht als Ehemann hinzufügen."
+
+msgid "Can't add new person as a sibling."
+msgstr "Kann neue Person nicht als Geschwister hinzufügen."
+
+msgid "Can't add new person as a child."
+msgstr "Kann neue Person nicht als Kind hinzufügen."
+
+msgid "Please set Active person."
+msgstr "Bitte aktive Person setzen."
+
+msgid "Can't add new person as a spouse to no one."
+msgstr "Kann neue Person nicht als Partner zu niemandem hinzufügen."
+
+msgid "Please set gender on Active or new person."
+msgstr "Bitte Geschlecht der aktiven oder neuen Person einstellen."
+
+msgid "Same genders on Active and new person."
+msgstr "Gleiche Geschlechter bei Aktiver und neuer Person."
+
+msgid "Please set gender on Active person."
+msgstr "Bitte gib Sie bei aktiver Person das Geschlecht an."

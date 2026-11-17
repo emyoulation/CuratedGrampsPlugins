@@ -39,7 +39,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
             "and other events and sources, on one form instead of working "
             "through a dozen editing dialogs"
         ),
-        version="1.1.1",  # build 20261111.2017
+        version="1.2.0",  # build 20261116.0511
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         audience=EXPERT,

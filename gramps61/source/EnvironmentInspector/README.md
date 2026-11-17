@@ -9,6 +9,8 @@ Environment Inspector shows what Gramps knows about your computer: the language 
 ### Language
 The **Current Locale** panel lists the locale code, the language, the region, the English name and the endonym (the name of the language in that language) of the current session, and the folder where Gramps looks for translations. Click the globe icon to copy these lines.
 
+In a language other than English, an **Addons** line at the bottom of the panel shows how your installed addons work in this language: how many did not load, how many are shown in English because they have no translation, and how many are translated. Click **addon check** to open the full list, with the name of each addon. Click **Refresh** to check again, for example after you install an addon or a translation. If some addons did not load, the [Addon Locale Fix](https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md) addon makes them load, in English.
+
 The **Gramps Translations** table lists every installed Gramps translation, with a region flag, the language code, the English name, the endonym and the number of translated strings. Double-click anywhere on the heading row to open or close the table. Click its icon to copy the summary line, or the whole table when it is open. Click a column heading to sort the table.
 
 Double-click a language in the table to use it the next time Gramps starts. A dialog asks how to go on:
@@ -83,13 +85,12 @@ To deactivate or uninstall Environment Inspector, open the **Help** menu and cho
 ## More information
 * [CHANGELOG.md](CHANGELOG.md) lists the changes in each version and ends with the outstanding issues: planned features, ideas that need discussion, and limits of Gramps itself.
 * [Constants](media/EfficientConstants.md) is a short developer reference for using the Gramps constants in an addon.
-* After a restart, Environment Inspector writes two log files in the Gramps cache folder: `environment-inspector-restart.log`, with the messages of the restarted Gramps, and, after a restart in another language, `environment-inspector-translations.log`, which lists the installed addons that do not load in that language. To find the folder, search for `USER_CACHE` on the Gramps Constants tab and double-click the row; on Linux it is usually `~/.cache/gramps/`.
+* Environment Inspector writes two log files in the Gramps cache folder: `environment-inspector-restart.log`, with the messages of a Gramps restarted from the Gramps Translations table, and `environment-inspector-translations.log`, the addon check for the language of the current session (the **addon check** link on the Language tab opens it). The addon check lists the installed addons that do not load in that language, the addons that are shown in English because they have no translation, and the translated addons. To find the folder, search for `USER_CACHE` on the Gramps Constants tab and double-click the row; on Linux it is usually `~/.cache/gramps/`.
 * Environment Inspector saves its few settings (a language chosen for the next start, how Gramps was started before that choice, and the **Show catalog text** choices) in `EnvironmentInspector.ini`, in its own folder.
 
 ---
 
 ## Technical Specifications & AI Lineage
-
 ### System Environment Specifications
 * **Minimum Software Target:** Gramps 5.2.0 or later.
 * **Component Classification:** Dashboard Gramplet.

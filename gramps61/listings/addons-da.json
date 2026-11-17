@@ -123,14 +123,14 @@
     "g": "6.1",
     "s": 1,
     "z": "AttributesEditor_plus.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/EditAttributesPlus/README.md"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AttributesEditor_plus/README.md"
   },
   {
     "n": "Edit Date Calculator",
     "i": "editdatecalculator",
     "t": 6,
     "d": "Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with the triangle tab on the right edge of the dialog. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.1.0",
+    "v": "0.1.2",
     "g": "6.1",
     "s": 1,
     "z": "EditDateCalculator.addon.tgz",
@@ -190,7 +190,7 @@
     "g": "6.1",
     "s": 3,
     "z": "RoleReversal.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
     "n": "Flat Filter",
@@ -213,6 +213,17 @@
     "s": 3,
     "z": "FlatFilter.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/FlatFilter/DefineFilter.md"
+  },
+  {
+    "n": "FotoMærkning",
+    "i": "Photo Tagging",
+    "t": 10,
+    "d": "Gramplet til at mærke personer i fotos",
+    "v": "1.3.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "PhotoTaggingGramplet.addon.tgz",
+    "h": "https://gramps.discourse.group/t/1889/14"
   },
   {
     "n": "Fuzzy Grouping",
@@ -253,9 +264,9 @@
     "d": "Makes Family Trees > Import... work when no Family Tree is loaded. A new Family Tree is created, named after the imported file, and the file is imported into it.",
     "v": "0.1.0",
     "g": "6.1",
-    "s": 1,
+    "s": 3,
     "z": "ImportWithoutTree.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/ImportWithoutTree/README.md"
   },
   {
     "n": "Komplet individuel rapport (sorteret)",
@@ -359,7 +370,7 @@
     "g": "6.1",
     "s": 3,
     "z": "RoleReversal.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
     "n": "Phonex (French) match of People with the <names>",
@@ -371,17 +382,6 @@
     "s": 1,
     "z": "FuzzyRules_romjerome.addon.tgz",
     "h": "https://gramps.discourse.group/t/9951/49"
-  },
-  {
-    "n": "Photo Tagging",
-    "i": "Photo Tagging",
-    "t": 10,
-    "d": "Gramplet for tagging people in photos",
-    "v": "1.2.4",
-    "g": "6.1",
-    "s": 1,
-    "z": "PhotoTaggingGramplet.addon.tgz",
-    "h": "https://gramps.discourse.group/t/1889/14"
   },
   {
     "n": "PR2388 Tilbud om eksempelslægtsbog",
@@ -439,7 +439,7 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
   },
   {
-    "n": "Theme preferences",
+    "n": "Temaindstillinger",
     "i": "ThemesPrefs",
     "t": 6,
     "d": "An addition to Preferences for simple Theme and Font adjustment.  Especially useful for Windows users. Also supports a layered CSS theming system with CSS Themes, CSS Patches, and a personal user override.",

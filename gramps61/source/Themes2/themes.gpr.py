@@ -37,7 +37,7 @@ if VERSION_TUPLE >= (5, 2, 0):
             " Also supports a layered CSS theming system with"
             " CSS Themes, CSS Patches, and a personal user override."
         ),
-        version="1.0.0",
+        version="1.0.3",
         gramps_target_version=major_version,
         fname="themes_load.py",
         authors=["Paul Culley"],
@@ -46,7 +46,7 @@ if VERSION_TUPLE >= (5, 2, 0):
         maintainers_email=["emyoulation@yahoo.com"],
         category=TOOL_UTILS,
         load_on_reg=True,
-        status=EXPERIMENTAL,
-        help_url="https://github.com/emyoulation/CuratedGrampsPlugins/gramps61/source/Theme2/README.md",
-        # help_url="Addon:Theme2",
+        status=BETA,
+        # help_url="https://github.com/emyoulation/CuratedGrampsPlugins/gramps61/source/Theme2/README.md",
+        help_url="Addon:ThemePreferences",
     )

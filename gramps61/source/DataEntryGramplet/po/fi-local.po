@@ -1,0 +1,143 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: fi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-02 12:49-0700\n"
+"PO-Revision-Date: 2026-07-26 17:40+0000\n"
+"Last-Translator: Juha Mäkeläinen <juha.makelainen@iki.fi>\n"
+"Language-Team: Finnish <https://hosted.weblate.org/projects/gramps-project/"
+"addons/fi/>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2026.8.dev0\n"
+"Generated-By: pygettext.py 1.4\n"
+
+msgid "Data Entry Gramplet"
+msgstr "Tiedonsyöttö-gramplet"
+
+msgid "Gramplet for quick data entry"
+msgstr "Gramplet nopeaan tiedonsyöttöön"
+
+msgid "Active person"
+msgstr "Aktiivihenkilö"
+
+msgid "Family:"
+msgstr "Perhe:"
+
+msgid "Sources?"
+msgstr "Lähteet?"
+
+msgid "Surname, Given"
+msgstr "Sukunimi, Etunimi"
+
+msgid "Save"
+msgstr "Tallenna"
+
+msgid "Abandon"
+msgstr "Hylkää"
+
+msgid "New person"
+msgstr "Uusi henkilö"
+
+msgid "Add relation"
+msgstr "Lisää sukulaisuus"
+
+msgid "No relation to active person"
+msgstr "Ei sukua aktiiviselle henkilölle"
+
+msgid "Add as a Parent"
+msgstr "Lisää vanhemmaksi"
+
+msgid "Add as a Mother"
+msgstr "Lisää äidiksi"
+
+msgid "Add as a Father"
+msgstr "Lisää isäksi"
+
+msgid "Add as a Spouse"
+msgstr "Lisää puoliso"
+
+msgid "Add as a Wife"
+msgstr "Lisää vaimona"
+
+msgid "Add as a Husband"
+msgstr "Lisää aviomiehenä"
+
+msgid "Add as a Sibling"
+msgstr "Lisää sisaruksena"
+
+msgid "Add as a Child"
+msgstr "Lisää lapseksi"
+
+msgid "Copy Active Data"
+msgstr "Kopioi aktiiviset tiedot"
+
+msgid "in"
+msgstr "paikassa"
+
+msgid "No Family Tree is open."
+msgstr "Sukupuuta ei ole avattu."
+
+msgid "Please open a Family Tree to edit data."
+msgstr "Avaa sukupuu muokataksesi tietoja."
+
+#, python-format
+msgid "Gramplet Data Edit: %s"
+msgstr "Gramplet-tietojen muokkaus: %s"
+
+msgid "Please open a Family Tree before adding a person."
+msgstr "Avaa sukupuu lisätäksesi henkilön."
+
+msgid "Please provide a name."
+msgstr "Anna nimi."
+
+msgid "Can't add new person."
+msgstr "Uutta henkilöa ei voi lisätä."
+
+msgid "Please set an active person."
+msgstr "Valise ensin aktiivihenkilö."
+
+msgid "Can't add new person as a parent."
+msgstr "Uutta henkilöä ei voi lisätä vanhemmaksi."
+
+msgid "Please set the new person's gender."
+msgstr "Aseta uuden henkilön sukupuoli."
+
+msgid "Can't add new person as a mother."
+msgstr "Uutta henkilöä ei voi lisätä äidiksi."
+
+msgid "Can't add new person as a father."
+msgstr "Uutta henkilöä ei voi lisätä isäksi."
+
+msgid "Can't add new person as a spouse."
+msgstr "Uutta henkilöä ei voi lisätä puolisoksi."
+
+msgid "Can't add new person as a wife."
+msgstr "Uutta henkilöä ei voi lisätä vaimoksi."
+
+msgid "Can't add new person as a husband."
+msgstr "Uutta henkilöä ei voi lisätä aviopuolisoksi."
+
+msgid "Can't add new person as a sibling."
+msgstr "Uutta henkilöä ei voi lisätä sisarukseksi."
+
+msgid "Can't add new person as a child."
+msgstr "Uutta henkilöä ei voi lisätä lapseksi."
+
+msgid "Please set Active person."
+msgstr "Valise ensin aktiivihenkilö."
+
+msgid "Can't add new person as a spouse to no one."
+msgstr "Ei voi lisätä uutta henkilöä puolisoksi kenellekään."
+
+msgid "Please set gender on Active or new person."
+msgstr "Aseta sukupuoli aktiiviselle tai uudelle henkilölle."
+
+msgid "Same genders on Active and new person."
+msgstr "Samat sukupuolet aktiivisella ja uudella henkilöllä."
+
+msgid "Please set gender on Active person."
+msgstr "Aseta sukupuoli aktiivihenkilölle."

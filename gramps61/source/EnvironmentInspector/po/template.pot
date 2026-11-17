@@ -1,4 +1,4 @@
-# Translation template for the 2.1.1 Environment Inspector gramplet addon for Gramps.
+# Translation template for the 2.2.0 Environment Inspector gramplet addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Environment Inspector package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Environment Inspector 2.1.1\n"
+"Project-Id-Version: Environment Inspector 2.2.0\n"
 "Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
-"POT-Creation-Date: 2026-11-15 09:32-0600\n"
+"POT-Creation-Date: 2026-11-16 11:34-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: EnvironmentInspector.gpr.py:34 EnvironmentInspector.gpr.py:50
 msgid "Environment Inspector"
@@ -28,87 +29,87 @@ msgid ""
 "string constants, and a preview of other Gramps translations."
 msgstr ""
 
-#: EnvironmentInspector.py:241
+#: EnvironmentInspector.py:279
 msgid "Remote Directory"
 msgstr ""
 
-#: EnvironmentInspector.py:243 EnvironmentInspector.py:245
+#: EnvironmentInspector.py:281 EnvironmentInspector.py:283
 msgid "Directory"
 msgstr ""
 
-#: EnvironmentInspector.py:243 EnvironmentInspector.py:250
+#: EnvironmentInspector.py:281 EnvironmentInspector.py:288
 msgid "Hidden"
 msgstr ""
 
-#: EnvironmentInspector.py:245 EnvironmentInspector.py:250
+#: EnvironmentInspector.py:283 EnvironmentInspector.py:288
 msgid "Not hidden"
 msgstr ""
 
-#: EnvironmentInspector.py:250 EnvironmentInspector.py:252
+#: EnvironmentInspector.py:288 EnvironmentInspector.py:290
 msgid "Glade Interface"
 msgstr ""
 
-#: EnvironmentInspector.py:254
+#: EnvironmentInspector.py:292
 msgid "File"
 msgstr ""
 
-#: EnvironmentInspector.py:255 EnvironmentInspector.py:1057
+#: EnvironmentInspector.py:293 EnvironmentInspector.py:1359
 #: envinsp_settings.py:361
 msgid "Value"
 msgstr ""
 
-#: EnvironmentInspector.py:340 EnvironmentInspector.py:914
+#: EnvironmentInspector.py:382 EnvironmentInspector.py:1210
 msgid "Language"
 msgstr ""
 
-#: EnvironmentInspector.py:341
+#: EnvironmentInspector.py:383
 msgid "Locale Settings"
 msgstr ""
 
-#: EnvironmentInspector.py:342
+#: EnvironmentInspector.py:384
 msgid "Translation Preview"
 msgstr ""
 
-#: EnvironmentInspector.py:343
+#: EnvironmentInspector.py:385
 msgid "Gramps Constants"
 msgstr ""
 
-#: EnvironmentInspector.py:344
+#: EnvironmentInspector.py:386
 msgid "Help"
 msgstr ""
 
-#: EnvironmentInspector.py:353
+#: EnvironmentInspector.py:395
 msgid "Copy to clipboard"
 msgstr ""
 
-#: EnvironmentInspector.py:432 envinsp_preview.py:54 envinsp_preview.py:358
+#: EnvironmentInspector.py:474 envinsp_preview.py:54 envinsp_preview.py:358
 msgid "Current"
 msgstr ""
 
-#: EnvironmentInspector.py:443 EnvironmentInspector.py:870
-#: EnvironmentInspector.py:916
+#: EnvironmentInspector.py:485 EnvironmentInspector.py:934
+#: EnvironmentInspector.py:1212
 msgid "Region"
 msgstr ""
 
-#: EnvironmentInspector.py:444 EnvironmentInspector.py:870
+#: EnvironmentInspector.py:486 EnvironmentInspector.py:934
 msgid "Code"
 msgstr ""
 
-#: EnvironmentInspector.py:445 EnvironmentInspector.py:870
-#: EnvironmentInspector.py:1046
+#: EnvironmentInspector.py:487 EnvironmentInspector.py:934
+#: EnvironmentInspector.py:1348
 msgid "Name"
 msgstr ""
 
-#: EnvironmentInspector.py:446 EnvironmentInspector.py:870
-#: EnvironmentInspector.py:918
+#: EnvironmentInspector.py:488 EnvironmentInspector.py:934
+#: EnvironmentInspector.py:1214
 msgid "Endonym"
 msgstr ""
 
-#: EnvironmentInspector.py:447 EnvironmentInspector.py:870
+#: EnvironmentInspector.py:489 EnvironmentInspector.py:934
 msgid "Strings"
 msgstr ""
 
-#: EnvironmentInspector.py:455
+#: EnvironmentInspector.py:497
 msgid ""
 "Double-click a language to use it the next time Gramps starts; double-click "
 "it again to go back. Region: the region named in the translation code, or "
@@ -116,20 +117,20 @@ msgid ""
 "translated entries in the catalog."
 msgstr ""
 
-#: EnvironmentInspector.py:540
+#: EnvironmentInspector.py:582
 msgid "Restart"
 msgstr ""
 
-#: EnvironmentInspector.py:666
+#: EnvironmentInspector.py:724
 #, python-format
 msgid "%(locale)s (Windows locale %(windows)s)"
 msgstr ""
 
-#: EnvironmentInspector.py:691
+#: EnvironmentInspector.py:749
 msgid "Interface language only (keep the current regional settings)"
 msgstr ""
 
-#: EnvironmentInspector.py:695
+#: EnvironmentInspector.py:753
 #, python-format
 msgid ""
 "No %(language)s locale is installed on this system, so dates, sorting and "
@@ -137,152 +138,217 @@ msgid ""
 "language support for %(language)s to use them."
 msgstr ""
 
-#: EnvironmentInspector.py:700
+#: EnvironmentInspector.py:758
 msgid "Regional settings (dates, numbers, sorting, spell checking):"
 msgstr ""
 
-#: EnvironmentInspector.py:708
+#: EnvironmentInspector.py:766
 msgid "the system language"
 msgstr ""
 
-#: EnvironmentInspector.py:714
+#: EnvironmentInspector.py:772
 #, python-format
 msgid "Restart Gramps in %s?"
 msgstr ""
 
-#: EnvironmentInspector.py:721
+#: EnvironmentInspector.py:779
 msgid ""
 "Gramps closes normally, including the backup on exit, and then starts again."
 msgstr ""
 
-#: EnvironmentInspector.py:723
+#: EnvironmentInspector.py:781
 #, python-format
 msgid "Its terminal messages are written to %s."
 msgstr ""
 
-#: EnvironmentInspector.py:728
+#: EnvironmentInspector.py:786
 msgid ""
 "The language sets the interface text. The regional settings set dates, "
 "numbers, sorting, the spelling dictionary and the locale of GTK itself."
 msgstr ""
 
-#: EnvironmentInspector.py:735
+#: EnvironmentInspector.py:793
 msgid ""
 "This is for one start only. If you choose Later, the next start from the "
 "desktop menu uses this language once; starting Gramps from a terminal does "
 "not."
 msgstr ""
 
-#: EnvironmentInspector.py:739
+#: EnvironmentInspector.py:797
 msgid ""
 "This is for one start only. If you choose Later, the next start from the "
 "Finder or the Dock uses this language once."
 msgstr ""
 
-#: EnvironmentInspector.py:742
+#: EnvironmentInspector.py:800
 msgid ""
 "This is for one start only. Gramps started again in the usual way uses the "
 "system language."
 msgstr ""
 
-#: EnvironmentInspector.py:745
+#: EnvironmentInspector.py:803
 msgid ""
 "Restarting automatically is not available on this system; restart Gramps "
 "yourself."
 msgstr ""
 
-#: EnvironmentInspector.py:747
+#: EnvironmentInspector.py:805
 msgid ""
 "Open editors with unsaved changes ask whether to save them first. The family "
 "tree that is open now is opened again."
 msgstr ""
 
-#: EnvironmentInspector.py:751
+#: EnvironmentInspector.py:809
 msgid "Later"
 msgstr ""
 
-#: EnvironmentInspector.py:753
+#: EnvironmentInspector.py:811
 msgid "Cancel"
 msgstr ""
 
-#: EnvironmentInspector.py:755
+#: EnvironmentInspector.py:813
 msgid "Restart now"
 msgstr ""
 
-#: EnvironmentInspector.py:766
+#: EnvironmentInspector.py:824
 msgid "Desktop start not changed"
 msgstr ""
 
-#: EnvironmentInspector.py:779
+#: EnvironmentInspector.py:843
 msgid "Restart failed"
 msgstr ""
 
-#: EnvironmentInspector.py:780
+#: EnvironmentInspector.py:844
 msgid "Gramps could not start a new Gramps. Restart Gramps yourself."
 msgstr ""
 
-#: EnvironmentInspector.py:825
+#: EnvironmentInspector.py:889
 msgid "Save Changes?"
 msgstr ""
 
-#: EnvironmentInspector.py:826
+#: EnvironmentInspector.py:890
 msgid ""
 "Gramps is about to restart. If you close without saving, the changes you "
 "have made will be lost."
 msgstr ""
 
-#: EnvironmentInspector.py:842
+#: EnvironmentInspector.py:906
 msgid "Restart cancelled"
 msgstr ""
 
-#: EnvironmentInspector.py:845
+#: EnvironmentInspector.py:909
 msgid ""
 "An editor still has unsaved changes. Save or close it, then double-click the "
 "language again, or restart Gramps yourself."
 msgstr ""
 
-#: EnvironmentInspector.py:896
+#: EnvironmentInspector.py:960
 msgid "Unknown"
 msgstr ""
 
-#: EnvironmentInspector.py:898
+#: EnvironmentInspector.py:962
 msgid "N/A"
 msgstr ""
 
-#: EnvironmentInspector.py:913
+#: EnvironmentInspector.py:1040 EnvironmentInspector.py:1076
+msgid "Checking addons..."
+msgstr ""
+
+#: EnvironmentInspector.py:1050 EnvironmentInspector.py:1064
+msgid "addon check"
+msgstr ""
+
+#: EnvironmentInspector.py:1055 EnvironmentInspector.py:1108
+#, python-format
+msgid "%d addon did not load"
+msgid_plural "%d addons did not load"
+msgstr[0] ""
+msgstr[1] ""
+
+#: EnvironmentInspector.py:1058
+#, python-format
+msgid "%d addon shown in English"
+msgid_plural "%d addons shown in English"
+msgstr[0] ""
+msgstr[1] ""
+
+#: EnvironmentInspector.py:1059 envinsp_preview.py:256
+msgid "translated"
+msgstr ""
+
+#: EnvironmentInspector.py:1068
+msgid ""
+"Addons without a translation for this language are shown in English, or do "
+"not load at all if Gramps raises an error for them. Open the addon check to "
+"see which addons they are."
+msgstr ""
+
+#: EnvironmentInspector.py:1103
+#, python-format
+msgid "Gramps did not restart in %s:"
+msgstr ""
+
+#: EnvironmentInspector.py:1104 EnvironmentInspector.py:1163
+msgid "restart log"
+msgstr ""
+
+#: EnvironmentInspector.py:1106 EnvironmentInspector.py:1110
+#, python-format
+msgid "Restarted in %s."
+msgstr ""
+
+#: EnvironmentInspector.py:1112
+msgid "Restarted in the system language."
+msgstr ""
+
+#: EnvironmentInspector.py:1153
+msgid "Restarted by Environment Inspector in the system language."
+msgstr ""
+
+#: EnvironmentInspector.py:1156
+#, python-format
+msgid "Restarted by Environment Inspector in %s."
+msgstr ""
+
+#: EnvironmentInspector.py:1158
+#, python-format
+msgid "Restarted by Environment Inspector, but Gramps did not use %s."
+msgstr ""
+
+#: EnvironmentInspector.py:1209
 msgid "Locale Code"
 msgstr ""
 
-#: EnvironmentInspector.py:915
+#: EnvironmentInspector.py:1211
 msgid "Lang"
 msgstr ""
 
-#: EnvironmentInspector.py:917
+#: EnvironmentInspector.py:1213
 msgid "English Name"
 msgstr ""
 
-#: EnvironmentInspector.py:922
+#: EnvironmentInspector.py:1218
 msgid "Locale Directory"
 msgstr ""
 
-#: EnvironmentInspector.py:951
+#: EnvironmentInspector.py:1247
 msgid "Current Locale"
 msgstr ""
 
-#: EnvironmentInspector.py:982
+#: EnvironmentInspector.py:1284
 #, python-format
 msgid "Gramps Translations (%d)"
 msgstr ""
 
-#: EnvironmentInspector.py:987
+#: EnvironmentInspector.py:1289
 msgid "Double-click to expand or collapse the list"
 msgstr ""
 
-#: EnvironmentInspector.py:1004
+#: EnvironmentInspector.py:1306
 msgid "Filter by name or value…"
 msgstr ""
 
-#: EnvironmentInspector.py:1011
+#: EnvironmentInspector.py:1313
 msgid "Filter constants by Type metadata"
 msgstr ""
 
@@ -390,10 +456,6 @@ msgstr ""
 
 #: envinsp_preview.py:252
 msgid "Show catalog text:"
-msgstr ""
-
-#: envinsp_preview.py:256
-msgid "translated"
 msgstr ""
 
 #: envinsp_preview.py:257

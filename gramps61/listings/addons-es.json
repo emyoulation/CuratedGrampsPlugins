@@ -146,14 +146,14 @@
     "g": "6.1",
     "s": 1,
     "z": "AttributesEditor_plus.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/EditAttributesPlus/README.md"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AttributesEditor_plus/README.md"
   },
   {
     "n": "Edit Date Calculator",
     "i": "editdatecalculator",
     "t": 6,
     "d": "Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with the triangle tab on the right edge of the dialog. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.1.0",
+    "v": "0.1.2",
     "g": "6.1",
     "s": 1,
     "z": "EditDateCalculator.addon.tgz",
@@ -170,6 +170,17 @@
     "z": "EnvironmentInspector.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/EnvironmentInspector",
     "a": 0
+  },
+  {
+    "n": "Etiquetado fotográfico",
+    "i": "Photo Tagging",
+    "t": 10,
+    "d": "Gramplet para etiquetar a la gente en fotos",
+    "v": "1.3.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "PhotoTaggingGramplet.addon.tgz",
+    "h": "https://gramps.discourse.group/t/1889/14"
   },
   {
     "n": "Event Date Modifiers",
@@ -213,7 +224,7 @@
     "g": "6.1",
     "s": 3,
     "z": "RoleReversal.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
     "n": "Flat Filter",
@@ -276,9 +287,9 @@
     "d": "Makes Family Trees > Import... work when no Family Tree is loaded. A new Family Tree is created, named after the imported file, and the file is imported into it.",
     "v": "0.1.0",
     "g": "6.1",
-    "s": 1,
+    "s": 3,
     "z": "ImportWithoutTree.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/ImportWithoutTree/README.md"
   },
   {
     "n": "Informe completo de una persona (ordenado)",
@@ -382,7 +393,7 @@
     "g": "6.1",
     "s": 3,
     "z": "RoleReversal.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversalRule"
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
     "n": "Phonex (French) match of People with the <names>",
@@ -394,17 +405,6 @@
     "s": 1,
     "z": "FuzzyRules_romjerome.addon.tgz",
     "h": "https://gramps.discourse.group/t/9951/49"
-  },
-  {
-    "n": "Photo Tagging",
-    "i": "Photo Tagging",
-    "t": 10,
-    "d": "Gramplet for tagging people in photos",
-    "v": "1.2.4",
-    "g": "6.1",
-    "s": 1,
-    "z": "PhotoTaggingGramplet.addon.tgz",
-    "h": "https://gramps.discourse.group/t/1889/14"
   },
   {
     "n": "PR2388 Oferta de árbol de ejemplo",
@@ -429,6 +429,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PR2485/CHANGELOG.md"
   },
   {
+    "n": "Preferencias del tema",
+    "i": "ThemesPrefs",
+    "t": 6,
+    "d": "An addition to Preferences for simple Theme and Font adjustment.  Especially useful for Windows users. Also supports a layered CSS theming system with CSS Themes, CSS Patches, and a personal user override.",
+    "v": "1.0.3",
+    "g": "6.1",
+    "s": 2,
+    "z": "Themes2.addon.tgz",
+    "h": "Addon:ThemePreferences"
+  },
+  {
     "n": "Pruned Branch",
     "i": "PrunedBranch",
     "t": 2,
@@ -449,17 +460,6 @@
     "s": 3,
     "z": "FuzzyRules.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/FuzzyRules/README.md"
-  },
-  {
-    "n": "Theme preferences",
-    "i": "ThemesPrefs",
-    "t": 6,
-    "d": "An addition to Preferences for simple Theme and Font adjustment.  Especially useful for Windows users. Also supports a layered CSS theming system with CSS Themes, CSS Patches, and a personal user override.",
-    "v": "1.0.3",
-    "g": "6.1",
-    "s": 2,
-    "z": "Themes2.addon.tgz",
-    "h": "Addon:ThemePreferences"
   },
   {
     "n": "Undocked Gramplets",

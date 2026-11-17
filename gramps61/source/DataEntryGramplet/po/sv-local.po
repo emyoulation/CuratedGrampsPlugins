@@ -1,0 +1,142 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-02 12:49-0700\n"
+"PO-Revision-Date: 2026-06-02 18:04+0000\n"
+"Last-Translator: Pär Ekholm <github1@m.pekholm.org>\n"
+"Language-Team: Swedish <https://hosted.weblate.org/projects/gramps-project/"
+"addons/sv/>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2026.6\n"
+
+msgid "Data Entry Gramplet"
+msgstr "Gramplet för datainmatning"
+
+msgid "Gramplet for quick data entry"
+msgstr "Gramplet för snabb datainmatning"
+
+msgid "Active person"
+msgstr "Aktiv person"
+
+msgid "Family:"
+msgstr "Familj:"
+
+msgid "Sources?"
+msgstr "Källor?"
+
+msgid "Surname, Given"
+msgstr "Efternamn, Förnamn"
+
+msgid "Save"
+msgstr "Spara"
+
+msgid "Abandon"
+msgstr "Överge"
+
+msgid "New person"
+msgstr "Ny person"
+
+msgid "Add relation"
+msgstr "Lägg till släktskap"
+
+msgid "No relation to active person"
+msgstr "Ingen släktskap till aktiv person"
+
+msgid "Add as a Parent"
+msgstr "Lägg till som föräldrar"
+
+msgid "Add as a Mother"
+msgstr "Lägg till som mor"
+
+msgid "Add as a Father"
+msgstr "Lägg till som far"
+
+msgid "Add as a Spouse"
+msgstr "Lägg till som maka/make"
+
+msgid "Add as a Wife"
+msgstr "Lägg till som hustru"
+
+msgid "Add as a Husband"
+msgstr "Lägg till som make"
+
+msgid "Add as a Sibling"
+msgstr "Lägg till som syskon"
+
+msgid "Add as a Child"
+msgstr "Lägg till som barn"
+
+msgid "Copy Active Data"
+msgstr "Kopiera aktiva data"
+
+msgid "in"
+msgstr "i"
+
+msgid "No Family Tree is open."
+msgstr "Inget släktträd är öppet."
+
+msgid "Please open a Family Tree to edit data."
+msgstr "Öppna ett släktträd för att redigera data."
+
+#, python-format
+msgid "Gramplet Data Edit: %s"
+msgstr "Grampletdataredigering: %s"
+
+msgid "Please open a Family Tree before adding a person."
+msgstr "Vänligen öppna ett släktträd innan du lägger till en person."
+
+msgid "Please provide a name."
+msgstr "Ange ett namn."
+
+msgid "Can't add new person."
+msgstr "Kan inte lägga till en ny person."
+
+msgid "Please set an active person."
+msgstr "Ange en person."
+
+msgid "Can't add new person as a parent."
+msgstr "Kan ej lägga till en ny person som förälder."
+
+msgid "Please set the new person's gender."
+msgstr "Ange den nya personens kön."
+
+msgid "Can't add new person as a mother."
+msgstr "Kan ej lägga till ny person som mor."
+
+msgid "Can't add new person as a father."
+msgstr "Kan ej lägga till ny person som far."
+
+msgid "Can't add new person as a spouse."
+msgstr "kan ej lägga till ny person som make/maka."
+
+msgid "Can't add new person as a wife."
+msgstr "Kan ej lägga till ny person som hustru."
+
+msgid "Can't add new person as a husband."
+msgstr "Kan ej lägga till ny person som make."
+
+msgid "Can't add new person as a sibling."
+msgstr "Kan ej lägga till ny person som syskon."
+
+msgid "Can't add new person as a child."
+msgstr "kan ej lägga till ny person som barn."
+
+msgid "Please set Active person."
+msgstr "Ange aktiv person."
+
+msgid "Can't add new person as a spouse to no one."
+msgstr "Kan ej lägga till ny person som make/maka till ingen."
+
+msgid "Please set gender on Active or new person."
+msgstr "Ange kön på aktiv eller ny person."
+
+msgid "Same genders on Active and new person."
+msgstr "Samma kön på aktiv och ny peson."
+
+msgid "Please set gender on Active person."
+msgstr "Ange kön för aktiv person."

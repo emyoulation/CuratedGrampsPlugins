@@ -97,7 +97,7 @@ location,source,target,id,fuzzy,context,translator_comments,developer_comments
 ,Primary role,Primäre Rolle,,yes,terminology,"",Gramps_Glossary/de#primary
 ,Private flag,Vertraulich Markierung,,yes,terminology,"",Gramps_Glossary/de#private
 ,Private tag,Vertraulich Markierung,,yes,terminology,"",Gramps_Glossary/de#private_tag
-,project,Projekt,,False,,"Eine kuratierte Sammlung von Add-ons, die vom Add-on-Manager als Menü verwendet werden",
+,project,Projekt,,False,,"Eine kuratierte Sammlung von Add-ons, die dem Addon-Manager als Menü bekannt ist.",
 ,Public flag,Öffentlich Markierung,,yes,terminology,"",Gramps_Glossary/de#public
 ,Public tag,Öffentlich Markierung,,yes,terminology,"",Gramps_Glossary/de#public_tag
 ,Quick View,Schnellansicht,,yes,terminology,"",Gramps_Glossary/de#quickview
@@ -137,7 +137,7 @@ location,source,target,id,fuzzy,context,translator_comments,developer_comments
 ,View mode,Ansichtsmodus,,yes,terminology,"Anzeigelayouts, die die strukturierten Informationen einer Ansichtskategorie auf vorhersehbare Weise darstellen",Gramps_Glossary/de#viewmode
 ,View,Sicht,,yes,terminology,"der aktuell aktive Anzeigemodus in einer Kategorie mit gefilterten Daten. Einschließlich zusätzlicher Bedienelemente und Gramplet-Anzeigen",Gramps_Glossary/de#view
 ,Wiki,Wiki,,yes,terminology,"eine gemeinsam gepflegte Website",Gramps_Glossary/de#wiki
-,Witness,Zeuge,,yes,,"ein Begriff, der die Ereignisrolle als Beobachter identifiziert",Gramps_Glossary/de#witness
+,Witness,Zeuge,,yes,,"eine Rolle, die darauf hinweist, dass sie als Beobachter (oder Zeuge) an dem Ereignis teilgenommen haben",Gramps_Glossary/de#witness
 ,XML,XML,,yes,terminology,"ein Akronym für Extensible Markup Language: ein strukturiertes Dateiformat, das benutzerdefinierte Tags ermöglicht",Gramps_Glossary/de#xml
 ,you,du,,False,,,
 
