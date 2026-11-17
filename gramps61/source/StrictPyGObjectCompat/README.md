@@ -63,19 +63,23 @@ There is nothing new to see in Gramps. The best sign is that the errors describe
 
 *After: the Details tab shows the selected place again, including its Type.*
 
-If you start Gramps from a terminal window, you can see a short message when the helper is active:
+The helper does not add any messages to the terminal window. To check that it is working, start Gramps from a terminal window with this command:
+
+`gramps --debug=.StrictPyGObjectCompat`
+
+When the helper is active, a short message appears:
 
 `Strict PyGObject 3.56.0 detected; applied compatibility patches: Gtk.Label string, CellRendererTextEdit reference.`
 
-If the Gramps program files themselves still contain the two problems, a second message follows. It says that a permanent fix is possible for technically adept users and shows where to find this document. See "Permanent fix" below.
+If the Gramps program files themselves still contain the two problems, a second message follows. It says that a permanent fix is possible for technically adept users and shows where to find this document. See "Permanent fix" below. If Gramps was installed as a Snap or Flatpak, the second message instead says that the fix will arrive with a Gramps update, because those program files cannot be changed.
 
 ![Terminal window showing the messages from the helper](media/terminal_after.png)
 
-*Messages from the helper in the terminal window.*
+*Messages from the helper in the terminal window. They now appear only when Gramps is started with the command above.*
 
-You may also see messages that begin with "Converted". Each one points to a spot in Gramps or an addon that needs a small repair by its authors. These messages are helpful to include if you report a problem on the Gramps forum, but you do not need to do anything about them yourself.
+With the same command you may also see messages that begin with "Converted". Each one points to a spot in Gramps or an addon that needs a small repair by its authors. These messages are helpful to include if you report a problem on the Gramps forum, but you do not need to do anything about them yourself.
 
-If you see no message at all, your computer does not need the helper, and it is resting.
+If you see no message even with that command, your computer does not need the helper, and it is resting.
 
 ## Removing it
 When future versions of Gramps and your addons have been repaired, you may not need this helper anymore. You can uninstall it in the Addon Manager at any time and restart Gramps. Nothing in your family tree changes when you add or remove it.
@@ -84,7 +88,7 @@ When future versions of Gramps and your addons have been repaired, you may not n
 This helper covers text labels, which is where these errors are most common. If a different kind of screen element has the same problem, you may still see an error. Please report it on the Gramps forum and include the message from the terminal window, so it can be added.
 
 ## Permanent fix (for technically adept users)
-The helper repairs the problems each time Gramps starts. If you are comfortable with a terminal window and administrator access, you can instead repair the two Gramps program files that cause them. This section applies to Gramps 5.2 and 6.0. Keeping the helper installed afterwards is still a good idea, because it also protects you from the same label problem in addons.
+The helper repairs the problems each time Gramps starts. If you are comfortable with a terminal window and administrator access, you can instead repair the two Gramps program files that cause them. This section applies to Gramps 5.2 and 6.0. It does not apply if Gramps was installed as a Snap or Flatpak: those program files cannot be changed, even with administrator access. Keep the helper installed instead, and the problems will be fixed for good by a future Gramps update. Keeping the helper installed afterwards is still a good idea, because it also protects you from the same label problem in addons.
 
 The helper folder includes two repaired files, `placedetails.py` and `cellrenderertextedit.py`. Each one is a copy of the Gramps 6.0.8 file with one line changed. The program code in these two files is the same in Gramps 5.2.4 and 6.0.8, so the copies fit both. The steps below are written for Linux. On Windows and macOS, the same two files are inside the Gramps installation folder, and replacing them needs administrator rights.
 
@@ -112,7 +116,7 @@ The helper folder includes two repaired files, `placedetails.py` and `cellrender
    sudo cp "$A/placedetails.py" "$G/plugins/gramplet/"
    sudo cp "$A/cellrenderertextedit.py" "$G/gui/widgets/"
    ```
-6. Start Gramps from a terminal window. The message about a permanent fix no longer appears.
+6. Start Gramps from a terminal window with `gramps --debug=.StrictPyGObjectCompat`. The message about a permanent fix no longer appears.
 
 To undo the repair, copy the `.orig` files back over the repaired ones, or reinstall Gramps (on Fedora: `sudo dnf reinstall gramps`). A Gramps update also replaces these files. If the permanent fix message comes back after an update, the new files still need the repair, and you can repeat the steps above.
 
@@ -123,7 +127,7 @@ At registration (`load_on_reg`, GUI sessions only), the addon probes with `Gio.S
 
 The same PyGObject release changed how a Python vfunc may return a new object that nothing else references. Version 3.54 added a reference and handed ownership back to GTK silently. Version 3.56 adds the reference, warns (`RuntimeWarning: Adding extra reference … bugzilla.gnome.org/show_bug.cgi?id=687522`) and never releases it. The PyGObject source notes that its reference-count check does not hold on Python 3.14. Gramps `CellRendererTextEdit.do_start_editing` (`gramps/gui/widgets/cellrenderertextedit.py`) returns a new `Gtk.Entry` with no Python reference, so every cell edit in an `EmbeddedList` leaks one entry. Because PyGObject binds a vfunc to the function present when the class is created, reassigning `do_start_editing` on the existing class has no effect. The addon instead defines a subclass whose `do_start_editing` calls the original and keeps the returned entry on the renderer until the next edit, then rebinds `CellRendererTextEdit` in the `embeddedlist` module globals, which is the only place Gramps 5.2 and 6.0 create the renderer. Tested on Python 3.14 with PyGObject 3.56.0: without the patch, none of six edited entries were finalized and six warnings appeared; with it, there were no warnings and every entry except the one still held was finalized. Each patch is applied independently, so a failure in one does not block the other.
 
-After patching, the addon checks whether the installed core files still contain the bugs: a regular expression on the source of `placedetails.py`, and `inspect.getsource` on `CellRendererTextEdit.do_start_editing` looking for `self.<name> = entry`. Only if one of them is unfixed does it log the second message that points to the "Permanent fix" section. The bundled repaired copies keep the CRLF line endings of the original `cellrenderertextedit.py`.
+After patching, the addon checks whether the installed core files still contain the bugs: a regular expression on the source of `placedetails.py`, and `inspect.getsource` on `CellRendererTextEdit.do_start_editing` looking for `self.<name> = entry`. Only if one of them is unfixed does it log the second message that points to the "Permanent fix" section; for a Snap or Flatpak install (detected from the `SNAP` or `FLATPAK_ID` environment variable, or a Gramps path under `/snap/` or `/app/`) it logs a read-only notice instead. All of the addon's own messages, including the "Converted" call-site reports, are logged at debug level under `.StrictPyGObjectCompat`, so a normal start prints nothing; a patch that fails to apply is still logged as an error. The bundled repaired copies keep the CRLF line endings of the original `cellrenderertextedit.py`.
 
 Only `Gtk.Label` is wrapped for the string conversion, on purpose. A global shim for all string properties would hide new bugs and depend on PyGObject internals. Other widgets (for example `Gtk.Entry(text=...)` or `Gtk.Button(label=...)`) can be added with the same pattern if field reports show a need.
 

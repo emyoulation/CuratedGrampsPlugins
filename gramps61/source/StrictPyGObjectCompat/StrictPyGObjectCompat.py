@@ -32,6 +32,11 @@ present does it:
    can be reported upstream.
 2. swap in a CellRendererTextEdit subclass that keeps a Python reference to
    the editing Gtk.Entry, so PyGObject neither warns nor adds a reference.
+
+The addon itself stays silent in the terminal. Its own messages (patches
+applied, "Converted ... to str", the permanent-fix hint) are debug
+messages, shown only with: gramps --debug=.StrictPyGObjectCompat
+Real failures (a patch that could not be applied) are still errors.
 """
 
 import inspect
@@ -74,7 +79,7 @@ def _report_once(value):
         key = (filename, frame.lineno)
         if key not in _reported_callsites:
             _reported_callsites.add(key)
-            LOG.warning(
+            LOG.debug(
                 "Converted %s to str for Gtk.Label at %s:%d",
                 type(value).__name__,
                 filename,
@@ -186,6 +191,25 @@ def unfixed_core_files():
     return unfixed
 
 
+def packaged_install():
+    """Return "Snap" or "Flatpak" if Gramps runs from a read-only package.
+
+    Program files there cannot be edited, even with administrator rights,
+    so the "Permanent fix" hint would only send the user on a dead end.
+    """
+    try:
+        import gramps
+
+        gramps_dir = os.path.realpath(os.path.dirname(gramps.__file__))
+    except Exception:
+        gramps_dir = ""
+    if os.environ.get("SNAP") or gramps_dir.startswith("/snap/"):
+        return "Snap"
+    if os.environ.get("FLATPAK_ID") or gramps_dir.startswith("/app/"):
+        return "Flatpak"
+    return None
+
+
 def load_on_reg(dbstate, uistate, plugin):
     """Called by the Gramps plugin manager at startup."""
     import gi
@@ -212,16 +236,26 @@ def load_on_reg(dbstate, uistate, plugin):
             LOG.exception("Could not apply the %s compatibility patch.", name)
 
     if applied:
-        LOG.warning(
+        # Debug only: working as intended is not news on every startup.
+        LOG.debug(
             "Strict PyGObject %s detected; applied compatibility patches: %s.",
             gi.__version__,
             ", ".join(applied),
         )
         if unfixed_core_files():
-            LOG.warning(
-                "A permanent fix to the Gramps program files is possible for "
-                "technically adept users. See 'Permanent fix' in the "
-                "StrictPyGObjectCompat documentation: %s",
-                os.path.join(os.path.dirname(__file__), "README.md"),
-            )
+            package = packaged_install()
+            if package:
+                LOG.debug(
+                    "The Gramps program files still need the fix, but this "
+                    "%s install is read-only. The fix will arrive with a "
+                    "Gramps update; until then this addon covers it.",
+                    package,
+                )
+            else:
+                LOG.debug(
+                    "A permanent fix to the Gramps program files is possible "
+                    "for technically adept users. See 'Permanent fix' in the "
+                    "StrictPyGObjectCompat documentation: %s",
+                    os.path.join(os.path.dirname(__file__), "README.md"),
+                )
     return []

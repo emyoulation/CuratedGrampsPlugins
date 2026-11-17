@@ -1,4 +1,4 @@
-# Translation template for the 1.9.18 Addon Pack and Ship tool addon for Gramps.
+# Translation template for the 1.9.21 Addon Pack and Ship tool addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Addon Pack and Ship package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Addon Pack and Ship 1.9.18\n"
+"Project-Id-Version: Addon Pack and Ship 1.9.21\n"
 "Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
-"POT-Creation-Date: 2026-10-22 22:39-0500\n"
+"POT-Creation-Date: 2026-11-17 08:08-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: AddonPackShip.gpr.py:45 AddonPackShip.py:1841 AddonPackShip.py:1842
-#: AddonPackShip.py:5169 AddonPackShip.py:5246
+#: AddonPackShip.gpr.py:43 AddonPackShip.py:1898 AddonPackShip.py:1899
+#: AddonPackShip.py:5644 AddonPackShip.py:5721
 msgid "Addon Pack and Ship"
 msgstr ""
 
-#: AddonPackShip.gpr.py:47
+#: AddonPackShip.gpr.py:45
 msgid ""
 "Packaging and distribution tool - create release-ready Gramps addon plugin "
 "packages and listings for GitHub publishing"
@@ -36,133 +36,142 @@ msgstr ""
 msgid "No third-party addons found. Install some addons first."
 msgstr ""
 
-#: AddonPackShip.py:943
+#: AddonPackShip.py:945
 msgid "Could Not Save Configuration"
 msgstr ""
 
-#: AddonPackShip.py:1195 AddonPackShip.py:1224 AddonPackShip.py:5237
+#: AddonPackShip.py:1215
+msgid "No source folder is kept."
+msgstr ""
+
+#: AddonPackShip.py:1219
+msgid "Not inside a local GitHub clone."
+msgstr ""
+
+#: AddonPackShip.py:1252 AddonPackShip.py:1281 AddonPackShip.py:5712
 msgid "Folder Not Found"
 msgstr ""
 
-#: AddonPackShip.py:1196
+#: AddonPackShip.py:1253
 #, python-brace-format
 msgid ""
 "Output location folder does not exist yet:\n"
 "{}"
 msgstr ""
 
-#: AddonPackShip.py:1225
+#: AddonPackShip.py:1282
 #, python-brace-format
 msgid ""
 "Addon folder does not exist:\n"
 "{}"
 msgstr ""
 
-#: AddonPackShip.py:1547
+#: AddonPackShip.py:1604
 msgid ""
 "GitHub Desktop was not found on this computer. Install it from https://"
 "desktop.github.com/ (on Linux, the community-maintained build at https://"
 "github.com/shiftkey/desktop)."
 msgstr ""
 
-#: AddonPackShip.py:1573
+#: AddonPackShip.py:1630
 #, python-brace-format
 msgid "Could not start GitHub Desktop: {}"
 msgstr ""
 
-#: AddonPackShip.py:1585
+#: AddonPackShip.py:1642
 msgid "Could Not Open GitHub Desktop"
 msgstr ""
 
-#: AddonPackShip.py:1587
+#: AddonPackShip.py:1644
 msgid "Launched GitHub Desktop."
 msgstr ""
 
-#: AddonPackShip.py:1626
+#: AddonPackShip.py:1683
 msgid "GitHub Desktop"
 msgstr ""
 
-#: AddonPackShip.py:1646
+#: AddonPackShip.py:1703
 #, python-brace-format
 msgid ""
 "Start GitHub Desktop, or bring it to the front if it's already running.\n"
 "Detected local repositories: {}"
 msgstr ""
 
-#: AddonPackShip.py:1652
+#: AddonPackShip.py:1709
 msgid "Start GitHub Desktop, or bring it to the front if it's already running."
 msgstr ""
 
-#: AddonPackShip.py:1755
+#: AddonPackShip.py:1812
 msgid "No Versions Found"
 msgstr ""
 
-#: AddonPackShip.py:1756
+#: AddonPackShip.py:1813
 msgid ""
 "Could not find any local make<NN>.py to update, and the GitHub branch list "
 "could not be reached (check your network connection)."
 msgstr ""
 
-#: AddonPackShip.py:1765
+#: AddonPackShip.py:1822
 msgid "Update existing scripts:"
 msgstr ""
 
-#: AddonPackShip.py:1771
+#: AddonPackShip.py:1828
 msgid "Add newly available scripts:"
 msgstr ""
 
-#: AddonPackShip.py:1777
+#: AddonPackShip.py:1834
 msgid "Existing files are backed up (.bak) before being overwritten. Continue?"
 msgstr ""
 
-#: AddonPackShip.py:1782
+#: AddonPackShip.py:1839
 msgid "Update Scripts from GitHub?"
 msgstr ""
 
-#: AddonPackShip.py:1784
+#: AddonPackShip.py:1841
 msgid "Yes, Update"
 msgstr ""
 
-#: AddonPackShip.py:1785 AddonPackShip.py:4393 AddonPackShip.py:4765
+#: AddonPackShip.py:1842 AddonPackShip.py:3938 AddonPackShip.py:4747
+#: AddonPackShip.py:5196
 msgid "Cancel"
 msgstr ""
 
-#: AddonPackShip.py:1828
+#: AddonPackShip.py:1885
 msgid "Update Scripts Results"
 msgstr ""
 
-#: AddonPackShip.py:1829
+#: AddonPackShip.py:1886
 msgid "Checked gramps-project/addons-source on GitHub:"
 msgstr ""
 
-#: AddonPackShip.py:1831
+#: AddonPackShip.py:1888
 msgid ""
 "Restart Addon Pack and Ship (or re-open this tool) to see any newly added "
 "Gramps version checkboxes."
 msgstr ""
 
-#: AddonPackShip.py:1882
+#: AddonPackShip.py:1939
 msgid "Filter Addons:"
 msgstr ""
 
-#: AddonPackShip.py:1890
+#: AddonPackShip.py:1947
 msgid "Select All Visible"
 msgstr ""
 
-#: AddonPackShip.py:1894
+#: AddonPackShip.py:1951
 msgid "Deselect All"
 msgstr ""
 
-#: AddonPackShip.py:1903 AddonPackShip.py:2614 AddonPackShip.py:2638
-#: AddonPackShip.py:2651
+#: AddonPackShip.py:1960 AddonPackShip.py:2756 AddonPackShip.py:2780
+#: AddonPackShip.py:2793
 msgid "All Types"
 msgstr ""
 
-#: AddonPackShip.py:1905 AddonPackShip.py:2610
+#: AddonPackShip.py:1962 AddonPackShip.py:2752
 msgid "Selected"
 msgstr ""
 
-#: AddonPackShip.py:1915
+#: AddonPackShip.py:1972
 msgid ""
 "Filter list by plugin type.\n"
 "Selected = only the plugins that are checked now\n"
@@ -170,31 +179,31 @@ msgid ""
 "TOOL = tools  REPORT = reports  GENERAL = utilities"
 msgstr ""
 
-#: AddonPackShip.py:1926
+#: AddonPackShip.py:1983
 msgid "Search bundles and plugins…"
 msgstr ""
 
-#: AddonPackShip.py:1928
+#: AddonPackShip.py:1985
 msgid ""
 "Search across all plugin fields: name, type, id, path, authors, version, "
 "category, and more.\n"
 "All words must match (order ignored, case-insensitive)."
 msgstr ""
 
-#: AddonPackShip.py:1939
+#: AddonPackShip.py:1996
 msgid "Build Selected"
 msgstr ""
 
-#: AddonPackShip.py:1943
+#: AddonPackShip.py:2000
 msgid "Compile Translations"
 msgstr ""
 
-#: AddonPackShip.py:1951
+#: AddonPackShip.py:2008
 #, python-brace-format
 msgid "{tool} missing"
 msgstr ""
 
-#: AddonPackShip.py:1954
+#: AddonPackShip.py:2011
 #, python-brace-format
 msgid ""
 "The gettext translation tools are not installed, so translations cannot be "
@@ -206,11 +215,11 @@ msgid ""
 "Then close and reopen Addon Pack and Ship (on Windows, restart Gramps)."
 msgstr ""
 
-#: AddonPackShip.py:1968
+#: AddonPackShip.py:2025
 msgid "Amend Listings"
 msgstr ""
 
-#: AddonPackShip.py:1970
+#: AddonPackShip.py:2027
 #, python-brace-format
 msgid ""
 "Create or amend the {listing} listing(s) for selected addons, for each "
@@ -221,15 +230,15 @@ msgid ""
 "then rebuild only the addons you want listed."
 msgstr ""
 
-#: AddonPackShip.py:1988
+#: AddonPackShip.py:2045
 msgid "Package Targets:"
 msgstr ""
 
-#: AddonPackShip.py:1996
+#: AddonPackShip.py:2053
 msgid "<b>Gramps Versions:</b>"
 msgstr ""
 
-#: AddonPackShip.py:2009
+#: AddonPackShip.py:2066
 #, python-brace-format
 msgid ""
 "Build and list packages for Gramps {label} (using {script}).\n"
@@ -240,24 +249,24 @@ msgid ""
 "automatically."
 msgstr ""
 
-#: AddonPackShip.py:2024
+#: AddonPackShip.py:2081
 #, python-brace-format
 msgid "No make<NN>.py scripts found — using default '{}'."
 msgstr ""
 
-#: AddonPackShip.py:2057
+#: AddonPackShip.py:2114
 msgid "<b>Output location:</b>"
 msgstr ""
 
-#: AddonPackShip.py:2060
+#: AddonPackShip.py:2117
 msgid "Open the output location folder in your file browser."
 msgstr ""
 
-#: AddonPackShip.py:2072
+#: AddonPackShip.py:2129
 msgid "Choose a parent folder for the generated version folders"
 msgstr ""
 
-#: AddonPackShip.py:2077
+#: AddonPackShip.py:2134
 #, python-brace-format
 msgid ""
 "Where the {version_dirs} output folders (each with {download_dir} and "
@@ -269,25 +278,25 @@ msgid ""
 "GitHub Desktop."
 msgstr ""
 
-#: AddonPackShip.py:2097
+#: AddonPackShip.py:2154
 msgid "(pick a detected Git repo folder…)"
 msgstr ""
 
-#: AddonPackShip.py:2102
+#: AddonPackShip.py:2159
 msgid ""
 "Local Git repository clones found under common GitHub Desktop / developer "
 "folders (e.g. ~/Documents/GitHub). Selecting one sets the parent folder on "
 "the right."
 msgstr ""
 
-#: AddonPackShip.py:2124
+#: AddonPackShip.py:2181
 msgid ""
 "Save the current settings under the name typed in the box to the right (same "
 "as pressing Enter there). Overwrites a configuration of that name if one "
 "already exists."
 msgstr ""
 
-#: AddonPackShip.py:2140
+#: AddonPackShip.py:2197
 #, python-brace-format
 msgid ""
 "Named configurations, saved to {ini} in the folder of this tool. Each one "
@@ -299,38 +308,38 @@ msgid ""
 "automatically the next time this tool is opened."
 msgstr ""
 
-#: AddonPackShip.py:2152
+#: AddonPackShip.py:2209
 msgid "Configuration name…"
 msgstr ""
 
-#: AddonPackShip.py:2191
+#: AddonPackShip.py:2248
 #, python-brace-format
 msgid ""
 "Select installed addons to package and publish.\n"
 "Right-click for listing actions (filter by / open {listing})."
 msgstr ""
 
-#: AddonPackShip.py:2233
+#: AddonPackShip.py:2290
 msgid "Open this tool's documentation."
 msgstr ""
 
-#: AddonPackShip.py:2243
+#: AddonPackShip.py:2300
 msgid "📦 Pack and Ship"
 msgstr ""
 
-#: AddonPackShip.py:2252
+#: AddonPackShip.py:2309
 msgid "Close"
 msgstr ""
 
-#: AddonPackShip.py:2268
+#: AddonPackShip.py:2325
 msgid "Build Mode:"
 msgstr ""
 
-#: AddonPackShip.py:2274
+#: AddonPackShip.py:2331
 msgid "β  Beta"
 msgstr ""
 
-#: AddonPackShip.py:2276
+#: AddonPackShip.py:2333
 #, python-brace-format
 msgid ""
 "Beta build — includes everything for testers and translators:\n"
@@ -345,11 +354,11 @@ msgid ""
 "Uses {manifest_beta} if present, otherwise auto-includes all extras."
 msgstr ""
 
-#: AddonPackShip.py:2293
+#: AddonPackShip.py:2350
 msgid "Δ  Release"
 msgstr ""
 
-#: AddonPackShip.py:2296
+#: AddonPackShip.py:2353
 #, python-brace-format
 msgid ""
 "Release build — clean end-user package:\n"
@@ -363,46 +372,81 @@ msgid ""
 "Uses {manifest} if present."
 msgstr ""
 
-#: AddonPackShip.py:2313
+#: AddonPackShip.py:2371
+msgid "Source:"
+msgstr ""
+
+#: AddonPackShip.py:2380
+msgid "Source location:"
+msgstr ""
+
+#: AddonPackShip.py:2382
+msgid "Choose a parent folder for the uncompressed addon source folders"
+msgstr ""
+
+#: AddonPackShip.py:2386
+#, python-brace-format
+msgid ""
+"Each build also copies the files it packs, uncompressed, into {addon_dir} in "
+"this folder -- the same files as the {beta} or {release} package. Only "
+"changed files are copied, and files that are not in the package are removed "
+"from {addon_dir}.\n"
+"Point it at a source folder in a local Git repository clone (for example "
+"{example}) to publish the source with GitHub Desktop.\n"
+"Empty (the default): no source folder is kept."
+msgstr ""
+
+#: AddonPackShip.py:2410
+msgid "Empty the source location: no source folder is kept."
+msgstr ""
+
+#: AddonPackShip.py:2422
+#, python-brace-format
+msgid ""
+"GitHub web address of the source location. The source folder of an addon "
+"(this address plus its folder name) is a good {help_url} for an addon in "
+"development."
+msgstr ""
+
+#: AddonPackShip.py:2432
 msgid "Listings:"
 msgstr ""
 
-#: AddonPackShip.py:2326
+#: AddonPackShip.py:2445
 msgid "Multilingual"
 msgstr ""
 
-#: AddonPackShip.py:2329
+#: AddonPackShip.py:2448
 #, python-brace-format
 msgid ""
-"Off (default): listings are English-only, regardless of how many languages "
-"an addon has translations for.\n"
-"On: every {listing} that already exists is updated with the selected addon "
-"(translated where a translation exists, English otherwise). A new {listing} "
-"is created only when the name or description in the {gpr} of the addon is "
-"actually translated into that language."
+"Every {listing} that already exists is always updated with the selected "
+"addons (translated where a translation exists, English otherwise).\n"
+"Off (default): no new {listing} is created.\n"
+"On: a new {listing} is created when the name or description in the {gpr} of "
+"the addon is actually translated into that language."
 msgstr ""
 
-#: AddonPackShip.py:2353
+#: AddonPackShip.py:2471
 msgid "Duplicate into unverified/incompatible versions anyway"
 msgstr ""
 
-#: AddonPackShip.py:2356
+#: AddonPackShip.py:2474
 #, python-brace-format
 msgid ""
-"Off (default): a multi-version build skips duplicating the package into any "
-"Gramps version that the {gpr} of the addon does not demonstrably support (an "
-"explicit version-range gate that excludes it, or a hardcoded {target} naming "
-"a different one).\n"
-"On: duplicates into every checked version regardless. Nothing about the "
-"{gpr} itself is ever changed either way -- this only controls whether a "
-"mismatched version still gets a copy."
+"Off (default): an addon with an adaptive {gpr} (one with a version check) is "
+"not packed or listed for a checked Gramps version that its version check "
+"rejects.\n"
+"On: it is packed and listed for every checked version regardless.\n"
+"Addons whose {gpr} is not adaptive (no version check, or a hardcoded "
+"{target}) are never packed for several versions silently: Pack and Ship "
+"warns and asks first. Nothing about the {gpr} itself is ever changed."
 msgstr ""
 
-#: AddonPackShip.py:2372
+#: AddonPackShip.py:2490
 msgid "Remove untranslated listings…"
 msgstr ""
 
-#: AddonPackShip.py:2375
+#: AddonPackShip.py:2493
 #, python-brace-format
 msgid ""
 "For each checked Gramps Version, find every {listing} whose names and "
@@ -413,15 +457,30 @@ msgid ""
 "translation files are touched."
 msgstr ""
 
-#: AddonPackShip.py:2392
+#: AddonPackShip.py:2510
+msgid "Remove all language listings…"
+msgstr ""
+
+#: AddonPackShip.py:2512
+#, python-brace-format
+msgid ""
+"For each checked Gramps Version, offer to delete every {listing} except "
+"{en_listing}, including files with translated names and descriptions. "
+"Afterwards the Addon Manager shows the English catalog in every language. "
+"Files that contain translations are marked in the list before you confirm. "
+"No {po_dir} or {locale_dir} translation files are touched, and a later "
+"listing run with Multilingual on can create the files again."
+msgstr ""
+
+#: AddonPackShip.py:2534
 msgid "Maintenance:"
 msgstr ""
 
-#: AddonPackShip.py:2398
+#: AddonPackShip.py:2540
 msgid "Update Scripts…"
 msgstr ""
 
-#: AddonPackShip.py:2405
+#: AddonPackShip.py:2547
 msgid ""
 "Fetch the current Gramps 5.2+ packaging scripts from gramps-project/addons-"
 "source on GitHub, overwriting this tool's bundled copies (a timestamped "
@@ -431,33 +490,33 @@ msgid ""
 "automatically."
 msgstr ""
 
-#: AddonPackShip.py:2427
+#: AddonPackShip.py:2569
 msgid "Session Logs"
 msgstr ""
 
-#: AddonPackShip.py:2428
+#: AddonPackShip.py:2570
 msgid "Open the session logs folder."
 msgstr ""
 
-#: AddonPackShip.py:2435
+#: AddonPackShip.py:2577
 msgid "Build"
 msgstr ""
 
-#: AddonPackShip.py:2437
+#: AddonPackShip.py:2579
 msgid "Options"
 msgstr ""
 
-#: AddonPackShip.py:2802
+#: AddonPackShip.py:2944
 #, python-brace-format
 msgid "Will bump {} to {} on next build. Click to cancel."
 msgstr ""
 
-#: AddonPackShip.py:2810
+#: AddonPackShip.py:2952
 #, python-brace-format
 msgid "Click to flag {} for a patch version bump ({} → {}) on its next build."
 msgstr ""
 
-#: AddonPackShip.py:2920
+#: AddonPackShip.py:3062
 #, python-brace-format
 msgid ""
 "Open {} for {}\n"
@@ -468,7 +527,7 @@ msgid ""
 "Path: {}"
 msgstr ""
 
-#: AddonPackShip.py:2926
+#: AddonPackShip.py:3068
 #, python-brace-format
 msgid ""
 "Create {} for {}\n"
@@ -479,64 +538,149 @@ msgid ""
 "Folder: {}"
 msgstr ""
 
-#: AddonPackShip.py:2997 AddonPackShip.py:3065
+#: AddonPackShip.py:3139 AddonPackShip.py:3207
 #, python-brace-format
 msgid "Open the folder for {} in your file browser."
 msgstr ""
 
-#: AddonPackShip.py:3134
+#: AddonPackShip.py:3276
 msgid "selected version"
 msgstr ""
 
-#: AddonPackShip.py:3141
+#: AddonPackShip.py:3283
 msgid "Show all addons (clear listing filter)"
 msgstr ""
 
-#: AddonPackShip.py:3145
+#: AddonPackShip.py:3287
 #, python-brace-format
 msgid "Filter list to addons in {}'s listing"
 msgstr ""
 
-#: AddonPackShip.py:3153
+#: AddonPackShip.py:3295
 #, python-brace-format
 msgid "Open the {listing} of {version} for editing"
 msgstr ""
 
-#: AddonPackShip.py:3235
+#: AddonPackShip.py:3377
 msgid "Could Not Open File"
 msgstr ""
 
-#: AddonPackShip.py:3236
+#: AddonPackShip.py:3378
 #, python-brace-format
 msgid ""
 "Could not open {}:\n"
 "{}"
 msgstr ""
 
-#: AddonPackShip.py:3434
+#: AddonPackShip.py:3471
+#, python-brace-format
+msgid ""
+"The {gpr} of the selected addon is not adaptive: it has no version check. "
+"Packing it for this Gramps version lists it there as compatible without any "
+"check. Pack and Ship asks before doing so."
+msgstr ""
+
+#: AddonPackShip.py:3611
 #, python-brace-format
 msgid ""
 "<small>Found <b>{bundle_count}</b> bundles (<b>{plugin_count}</b> registered "
 "plugins) in your Gramps installation.</small>"
 msgstr ""
 
-#: AddonPackShip.py:3559
+#: AddonPackShip.py:3737
 msgid "make_addon.py not found in AddonPackShip directory"
 msgstr ""
 
-#: AddonPackShip.py:3653
+#: AddonPackShip.py:3849
+#, python-brace-format
+msgid ""
+"  Not packed or listed for {versions}: the version check in the {gpr} of "
+"this addon rejects them."
+msgstr ""
+
+#: AddonPackShip.py:3857
+#, python-brace-format
+msgid "its {gpr} names one Gramps version in {target}"
+msgstr ""
+
+#: AddonPackShip.py:3862
+#, python-brace-format
+msgid "its {gpr} has no version check"
+msgstr ""
+
+#: AddonPackShip.py:3876
+#, python-brace-format
+msgid ""
+"  ⚠ Packed for every checked Gramps version on request, although its {gpr} "
+"is not adaptive. Make sure that the code really works in each of them."
+msgstr ""
+
+#: AddonPackShip.py:3885
+#, python-brace-format
+msgid "  Packed and listed only for {versions}: its {gpr} is not adaptive."
+msgstr ""
+
+#: AddonPackShip.py:3890
+#, python-brace-format
+msgid ""
+"  Skipped: its {gpr} is not adaptive, and the Gramps version it was written "
+"for is not checked."
+msgstr ""
+
+#: AddonPackShip.py:3910
+msgid "none of the checked versions"
+msgstr ""
+
+#: AddonPackShip.py:3911
+#, python-brace-format
+msgid "  • {addon}: {reason}. Safe: {target}"
+msgstr ""
+
+#: AddonPackShip.py:3919
+msgid ""
+"Packing these addons for several Gramps versions can break them for users"
+msgstr ""
+
+#: AddonPackShip.py:3922
+#, python-brace-format
+msgid ""
+"You checked Gramps {checked}. These addons are not adaptive:\n"
+"\n"
+"{addons}\n"
+"\n"
+"An adaptive {gpr} checks the running Gramps version before it registers the "
+"addon (for example {example}). Without that check, the same package is "
+"listed in the Addon Manager of every checked Gramps version as compatible, "
+"although it was written for one version only. Users of the other versions "
+"can then install an addon that fails to load or does not work correctly.\n"
+"\n"
+"Only the safe versions (recommended): pack and list each of these addons "
+"only for the version shown.\n"
+"All checked versions anyway: only when you have tested the addon in every "
+"checked version."
+msgstr ""
+
+#: AddonPackShip.py:3940
+msgid "All checked versions anyway"
+msgstr ""
+
+#: AddonPackShip.py:3943
+msgid "Only the safe versions"
+msgstr ""
+
+#: AddonPackShip.py:4007
 #, python-brace-format
 msgid ""
 "  Version not bumped for {}: no plain version string found in its "
 "registration"
 msgstr ""
 
-#: AddonPackShip.py:3658
+#: AddonPackShip.py:4012
 #, python-brace-format
 msgid "  Version bumped in {} ({}): {} → {}"
 msgstr ""
 
-#: AddonPackShip.py:3688
+#: AddonPackShip.py:4042
 #, python-brace-format
 msgid ""
 "  Skipped {version}: the {gpr} of this addon does not register under that "
@@ -545,14 +689,14 @@ msgid ""
 "if you know it is actually compatible."
 msgstr ""
 
-#: AddonPackShip.py:3699
+#: AddonPackShip.py:4053
 #, python-brace-format
 msgid ""
 "  Warning: duplicating for {version} anyway (forced) — the {gpr} of this "
 "addon does not register under that version."
 msgstr ""
 
-#: AddonPackShip.py:3715
+#: AddonPackShip.py:4069
 #, python-brace-format
 msgid ""
 "  Note: the {gpr} of {addon} has no version-range gate, so compatibility "
@@ -560,31 +704,31 @@ msgid ""
 "of the addon supports that Gramps version before publishing."
 msgstr ""
 
-#: AddonPackShip.py:3736
+#: AddonPackShip.py:4090
 #, python-brace-format
 msgid "  Duplicated package for {}"
 msgstr ""
 
-#: AddonPackShip.py:3739
+#: AddonPackShip.py:4093
 #, python-brace-format
 msgid "  Could not duplicate package for {}: {}"
 msgstr ""
 
-#: AddonPackShip.py:3743
+#: AddonPackShip.py:4097
 #, python-brace-format
 msgid "  Warning: built package not found — nothing to duplicate for {}"
 msgstr ""
 
-#: AddonPackShip.py:4066
+#: AddonPackShip.py:4420
 msgid "Single Selection Required"
 msgstr ""
 
-#: AddonPackShip.py:4067
+#: AddonPackShip.py:4421
 #, python-brace-format
 msgid "Please select exactly one addon to edit its {manifest}."
 msgstr ""
 
-#: AddonPackShip.py:4245
+#: AddonPackShip.py:4599
 #, python-brace-format
 msgid ""
 "{file} is ready for {addon}.\n"
@@ -599,7 +743,7 @@ msgid ""
 "Copy any lines you want to include into the body above."
 msgstr ""
 
-#: AddonPackShip.py:4263
+#: AddonPackShip.py:4617
 #, python-brace-format
 msgid ""
 "{file} is ready for {addon}.\n"
@@ -611,21 +755,21 @@ msgid ""
 "Please open the file manually."
 msgstr ""
 
-#: AddonPackShip.py:4279 AddonPackShip.py:4382 AddonPackShip.py:4448
-#: AddonPackShip.py:4463 AddonPackShip.py:4546 AddonPackShip.py:4602
+#: AddonPackShip.py:4633 AddonPackShip.py:4736 AddonPackShip.py:4802
+#: AddonPackShip.py:4817 AddonPackShip.py:4900 AddonPackShip.py:4956
 msgid "No Selection"
 msgstr ""
 
-#: AddonPackShip.py:4280
+#: AddonPackShip.py:4634
 msgid "Please select at least one addon to build."
 msgstr ""
 
-#: AddonPackShip.py:4294
+#: AddonPackShip.py:4648
 #, python-brace-format
 msgid "Cannot build - the following addon(s) have malformed {gpr} files:"
 msgstr ""
 
-#: AddonPackShip.py:4299 AddonPackShip.py:4483 AddonPackShip.py:4622
+#: AddonPackShip.py:4653 AddonPackShip.py:4837 AddonPackShip.py:4976
 msgid ""
 "\n"
 "\n"
@@ -633,43 +777,43 @@ msgid ""
 "\n"
 msgstr ""
 
-#: AddonPackShip.py:4300 AddonPackShip.py:4484 AddonPackShip.py:4623
+#: AddonPackShip.py:4654 AddonPackShip.py:4838 AddonPackShip.py:4977
 msgid "Wrong:"
 msgstr ""
 
-#: AddonPackShip.py:4301 AddonPackShip.py:4485 AddonPackShip.py:4624
+#: AddonPackShip.py:4655 AddonPackShip.py:4839 AddonPackShip.py:4978
 msgid "Correct:"
 msgstr ""
 
-#: AddonPackShip.py:4303 AddonPackShip.py:4487 AddonPackShip.py:4626
+#: AddonPackShip.py:4657 AddonPackShip.py:4841 AddonPackShip.py:4980
 #, python-brace-format
 msgid "Please fix the {gpr} file(s) and try again."
 msgstr ""
 
-#: AddonPackShip.py:4307 AddonPackShip.py:4491 AddonPackShip.py:4630
+#: AddonPackShip.py:4661 AddonPackShip.py:4845 AddonPackShip.py:4984
 #, python-brace-format
 msgid "Malformed {gpr} File"
 msgstr ""
 
-#: AddonPackShip.py:4327
+#: AddonPackShip.py:4681
 msgid "Translation:"
 msgstr ""
 
-#: AddonPackShip.py:4330
+#: AddonPackShip.py:4684
 msgid "Choose a language"
 msgstr ""
 
-#: AddonPackShip.py:4347
+#: AddonPackShip.py:4701
 #, python-brace-format
 msgid ""
 "Language of the translation to edit. The file name uses this code: {po_file}"
 msgstr ""
 
-#: AddonPackShip.py:4351
+#: AddonPackShip.py:4705
 msgid "Edit translation…"
 msgstr ""
 
-#: AddonPackShip.py:4353
+#: AddonPackShip.py:4707
 #, python-brace-format
 msgid ""
 "For each selected addon, open {po_file} in the default editor for {po_ext} "
@@ -680,66 +824,66 @@ msgid ""
 "result."
 msgstr ""
 
-#: AddonPackShip.py:4383
+#: AddonPackShip.py:4737
 msgid "Please select at least one addon to translate."
 msgstr ""
 
-#: AddonPackShip.py:4389
+#: AddonPackShip.py:4743
 msgid "Open Many Files?"
 msgstr ""
 
-#: AddonPackShip.py:4390
+#: AddonPackShip.py:4744
 #, python-brace-format
 msgid "This opens {count} translation files, one for each selected addon."
 msgstr ""
 
-#: AddonPackShip.py:4392
+#: AddonPackShip.py:4746
 msgid "Open them"
 msgstr ""
 
-#: AddonPackShip.py:4401
+#: AddonPackShip.py:4755
 msgid "Missing make_addon.py"
 msgstr ""
 
-#: AddonPackShip.py:4402
+#: AddonPackShip.py:4756
 msgid "make_addon.py was not found next to this tool."
 msgstr ""
 
-#: AddonPackShip.py:4420
+#: AddonPackShip.py:4774
 msgid ""
 "Next steps: translate and save each file, then click Compile Translations."
 msgstr ""
 
-#: AddonPackShip.py:4423
+#: AddonPackShip.py:4777
 msgid ""
 "⚠ Restart Gramps to see the new translations. Gramps keeps the translations "
 "cached until it restarts. Reloading the plugin is not enough to see updated "
 "strings."
 msgstr ""
 
-#: AddonPackShip.py:4426
+#: AddonPackShip.py:4780
 msgid "Edit Translation"
 msgstr ""
 
-#: AddonPackShip.py:4449
+#: AddonPackShip.py:4803
 msgid "Please select at least one addon to compile."
 msgstr ""
 
-#: AddonPackShip.py:4464
+#: AddonPackShip.py:4818
 msgid "Please select at least one addon to list."
 msgstr ""
 
-#: AddonPackShip.py:4478
+#: AddonPackShip.py:4832
 #, python-brace-format
 msgid ""
 "Cannot create listing - the following addon(s) have malformed {gpr} files:"
 msgstr ""
 
-#: AddonPackShip.py:4515
+#: AddonPackShip.py:4869
 msgid "Missing Package Files"
 msgstr ""
 
-#: AddonPackShip.py:4517
+#: AddonPackShip.py:4871
 #, python-brace-format
 msgid ""
 "The following addons do not have {tgz} files yet:\n"
@@ -751,23 +895,23 @@ msgid ""
 "• Try creating listings anyway (may result in empty entries)"
 msgstr ""
 
-#: AddonPackShip.py:4525
+#: AddonPackShip.py:4879
 msgid "Build First"
 msgstr ""
 
-#: AddonPackShip.py:4526
+#: AddonPackShip.py:4880
 msgid "Create Anyway"
 msgstr ""
 
-#: AddonPackShip.py:4547
+#: AddonPackShip.py:4901
 msgid "Please select at least one addon to clean."
 msgstr ""
 
-#: AddonPackShip.py:4558
+#: AddonPackShip.py:4912
 msgid "Clean Selected Addons?"
 msgstr ""
 
-#: AddonPackShip.py:4560
+#: AddonPackShip.py:4914
 #, python-brace-format
 msgid ""
 "This will remove Python cache files from:\n"
@@ -795,28 +939,28 @@ msgid ""
 "Continue with Clean?"
 msgstr ""
 
-#: AddonPackShip.py:4580
+#: AddonPackShip.py:4934
 msgid "Yes, Clean Cache"
 msgstr ""
 
-#: AddonPackShip.py:4581 AddonPackShip.py:4671
+#: AddonPackShip.py:4935 AddonPackShip.py:5025
 msgid "No, Cancel"
 msgstr ""
 
-#: AddonPackShip.py:4603
+#: AddonPackShip.py:4957
 msgid "Please select at least one addon to package."
 msgstr ""
 
-#: AddonPackShip.py:4617
+#: AddonPackShip.py:4971
 #, python-brace-format
 msgid "Cannot package - the following addon(s) have malformed {gpr} files:"
 msgstr ""
 
-#: AddonPackShip.py:4643
+#: AddonPackShip.py:4997
 msgid "Δ Release Build — Intentionally Lossy"
 msgstr ""
 
-#: AddonPackShip.py:4645
+#: AddonPackShip.py:4999
 #, python-brace-format
 msgid ""
 "You are about to create a RELEASE package for:\n"
@@ -847,28 +991,28 @@ msgid ""
 "Continue with Release build?"
 msgstr ""
 
-#: AddonPackShip.py:4670
+#: AddonPackShip.py:5024
 msgid "Yes, Build Release"
 msgstr ""
 
-#: AddonPackShip.py:4732 AddonPackShip.py:4746 AddonPackShip.py:4781
+#: AddonPackShip.py:5086 AddonPackShip.py:5100 AddonPackShip.py:5109
 msgid "Remove untranslated listings"
 msgstr ""
 
-#: AddonPackShip.py:4733
+#: AddonPackShip.py:5087 AddonPackShip.py:5136
 msgid "This needs a newer make_addon.py in the AddonPackShip folder."
 msgstr ""
 
-#: AddonPackShip.py:4747
+#: AddonPackShip.py:5101
 msgid ""
 "No untranslated language listings were found for the checked Gramps Versions."
 msgstr ""
 
-#: AddonPackShip.py:4756
+#: AddonPackShip.py:5110
 msgid "Remove untranslated listings?"
 msgstr ""
 
-#: AddonPackShip.py:4758
+#: AddonPackShip.py:5112
 #, python-brace-format
 msgid ""
 "These language listings contain no translated names or descriptions -- every "
@@ -880,79 +1024,120 @@ msgid ""
 "Delete them?"
 msgstr ""
 
-#: AddonPackShip.py:4764
+#: AddonPackShip.py:5130
+msgid "Remove all language listings"
+msgstr ""
+
+#: AddonPackShip.py:5153
+#, python-brace-format
+msgid ""
+"No language listings other than {en_listing} were found for the checked "
+"Gramps Versions."
+msgstr ""
+
+#: AddonPackShip.py:5159
+msgid "contains translations"
+msgstr ""
+
+#: AddonPackShip.py:5168
+msgid "Remove all language listings?"
+msgstr ""
+
+#: AddonPackShip.py:5170
+#, python-brace-format
+msgid ""
+"These language listings will be deleted, so that only {en_listing} remains:\n"
+"\n"
+"{files}\n"
+"\n"
+"Translated names and descriptions in files marked ⚠ are lost from the "
+"listings (the {po_dir} translation files of each addon are kept). Delete "
+"them?"
+msgstr ""
+
+#: AddonPackShip.py:5195
 msgid "Delete"
 msgstr ""
 
-#: AddonPackShip.py:4777
+#: AddonPackShip.py:5208
 #, python-brace-format
 msgid "Removed {} file(s)."
 msgstr ""
 
-#: AddonPackShip.py:4779
+#: AddonPackShip.py:5210
 msgid "Could not remove:"
 msgstr ""
 
-#: AddonPackShip.py:4809
+#: AddonPackShip.py:5239
 msgid "Preparing..."
 msgstr ""
 
-#: AddonPackShip.py:4852 AddonPackShip.py:4984
+#: AddonPackShip.py:5296
+#, python-brace-format
+msgid "– {}: skipped (see the notes below)"
+msgstr ""
+
+#: AddonPackShip.py:5303 AddonPackShip.py:5449
 #, python-brace-format
 msgid "Building {}"
 msgstr ""
 
-#: AddonPackShip.py:4865 AddonPackShip.py:5026
+#: AddonPackShip.py:5318 AddonPackShip.py:5492
 #, python-brace-format
 msgid "Listing {} for {}"
 msgstr ""
 
-#: AddonPackShip.py:4886
+#: AddonPackShip.py:5339
 #, python-brace-format
 msgid "{} completed:"
 msgstr ""
 
-#: AddonPackShip.py:4896 AddonPackShip.py:5081
+#: AddonPackShip.py:5349 AddonPackShip.py:5556
 #, python-brace-format
 msgid "{} Complete"
 msgstr ""
 
-#: AddonPackShip.py:4931
+#: AddonPackShip.py:5384
 msgid "OK"
 msgstr ""
 
-#: AddonPackShip.py:5061
+#: AddonPackShip.py:5444
+#, python-brace-format
+msgid "– Build: {}: skipped (see the notes below)"
+msgstr ""
+
+#: AddonPackShip.py:5536
 #, python-brace-format
 msgid "Build mode: {}"
 msgstr ""
 
-#: AddonPackShip.py:5071
+#: AddonPackShip.py:5546
 msgid "📁 Output location(s):"
 msgstr ""
 
-#: AddonPackShip.py:5078
+#: AddonPackShip.py:5553
 msgid "Your addons are ready to share!"
 msgstr ""
 
-#: AddonPackShip.py:5184
+#: AddonPackShip.py:5659
 msgid "No Help URL"
 msgstr ""
 
-#: AddonPackShip.py:5186
+#: AddonPackShip.py:5661
 #, python-brace-format
 msgid "This tool has no {field} registered in its {gpr}."
 msgstr ""
 
-#: AddonPackShip.py:5198
+#: AddonPackShip.py:5673
 msgid "Could Not Open Browser"
 msgstr ""
 
-#: AddonPackShip.py:5199
+#: AddonPackShip.py:5674
 #, python-brace-format
 msgid "Could not open {}"
 msgstr ""
 
-#: AddonPackShip.py:5238
+#: AddonPackShip.py:5713
 #, python-brace-format
 msgid ""
 "No session logs yet — nothing has been run in this session:\n"

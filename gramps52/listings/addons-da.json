@@ -91,6 +91,17 @@
     "a": 1
   },
   {
+    "n": "Complete Individual Report (Sorted)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
+  },
+  {
     "n": "Config Inspector",
     "i": "Config Inspector",
     "t": 2,
@@ -421,7 +432,7 @@
     "i": "StrictPyGObjectCompat",
     "t": 6,
     "d": "On systems with PyGObject 3.56 or newer, prevents crashes such as the Place Details gramplet 'Must be string' error, and stops a small memory leak when editing table cells in editors. Does nothing on older systems.",
-    "v": "0.1.0",
+    "v": "0.1.1",
     "g": "5.2",
     "s": 1,
     "z": "StrictPyGObjectCompat.addon.tgz",

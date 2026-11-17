@@ -1,0 +1,481 @@
+# Translation template for the 1.1.0 Complete Individual Report (Sorted) report addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Complete Individual Report (Sorted) package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Complete Individual Report (Sorted) 1.1.0\n"
+"Report-Msgid-Bugs-To: don@gramps-project.org\n"
+"POT-Creation-Date: 2026-11-17 12:16-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: IndivComplete_sort.gpr.py:29
+msgid "Complete Individual Report (Sorted)"
+msgstr ""
+
+#: IndivComplete_sort.gpr.py:31
+msgid ""
+"Produces a complete report on the selected people, sorted by surname, given "
+"name and birth date"
+msgstr ""
+
+#: IndivComplete_sort.py:386
+#, python-format
+msgid "%(str1)s in %(str2)s. "
+msgstr ""
+
+#. Translators: needed for Arabic, ignore otherwise
+#. make sure it's translated, so it can be used below, in "combine"
+#. Translators: needed for Arabic, ignore otherwise
+#: IndivComplete_sort.py:396 IndivComplete_sort.py:403
+#: IndivComplete_sort.py:1358
+#, python-format
+msgid "%(str1)s, %(str2)s"
+msgstr ""
+
+#. Translators: e.g. (a stepfather): John Smith, relationship: Step
+#: IndivComplete_sort.py:444
+#, python-format
+msgid "%(parent-name)s, relationship: %(rel-type)s"
+msgstr ""
+
+#: IndivComplete_sort.py:468
+msgid "Notes"
+msgstr ""
+
+#: IndivComplete_sort.py:504
+msgid "Alternate Parents"
+msgstr ""
+
+#: IndivComplete_sort.py:529 IndivComplete_sort.py:531
+#: IndivComplete_sort.py:1262
+msgid "Father"
+msgstr ""
+
+#: IndivComplete_sort.py:538 IndivComplete_sort.py:540
+#: IndivComplete_sort.py:1263
+msgid "Mother"
+msgstr ""
+
+#: IndivComplete_sort.py:583
+msgid "Relationship to home person"
+msgstr ""
+
+#: IndivComplete_sort.py:604
+msgid "Alternate Names"
+msgstr ""
+
+#: IndivComplete_sort.py:632
+msgid "Addresses"
+msgstr ""
+
+#: IndivComplete_sort.py:657
+msgid "Associations"
+msgstr ""
+
+#: IndivComplete_sort.py:684 IndivComplete_sort.py:919
+msgid "Attributes"
+msgstr ""
+
+#: IndivComplete_sort.py:711 IndivComplete_sort.py:931
+msgid "LDS Ordinance"
+msgstr ""
+
+#: IndivComplete_sort.py:718 IndivComplete_sort.py:932
+msgid "Type"
+msgstr ""
+
+#: IndivComplete_sort.py:719 IndivComplete_sort.py:933
+msgid "Date"
+msgstr ""
+
+#: IndivComplete_sort.py:720 IndivComplete_sort.py:934
+msgid "Status"
+msgstr ""
+
+#: IndivComplete_sort.py:721 IndivComplete_sort.py:935
+msgid "Temple"
+msgstr ""
+
+#: IndivComplete_sort.py:722 IndivComplete_sort.py:936
+msgid "Place"
+msgstr ""
+
+#: IndivComplete_sort.py:760
+msgid "Tags"
+msgstr ""
+
+#: IndivComplete_sort.py:802
+msgid "Images"
+msgstr ""
+
+#: IndivComplete_sort.py:813
+msgid "Non existing media found in the Gallery"
+msgstr ""
+
+#: IndivComplete_sort.py:861
+msgid "Families"
+msgstr ""
+
+#: IndivComplete_sort.py:882
+msgid "unknown"
+msgstr ""
+
+#: IndivComplete_sort.py:905
+msgid "Children"
+msgstr ""
+
+#: IndivComplete_sort.py:1054
+msgid "Empty report"
+msgstr ""
+
+#: IndivComplete_sort.py:1054
+msgid "You did not specify anybody"
+msgstr ""
+
+#: IndivComplete_sort.py:1064 IndivComplete_sort.py:1188
+msgid "Complete Individual Report"
+msgstr ""
+
+#: IndivComplete_sort.py:1064
+msgid "Generating report"
+msgstr ""
+
+#: IndivComplete_sort.py:1248
+msgid "Could not add photo to page"
+msgstr ""
+
+#. Translators: for French, else ignore
+#. Translators: needed for French, ignore otherwise
+#: IndivComplete_sort.py:1250 IndivComplete_sort.py:1293
+#: IndivComplete_sort.py:1368 genealogical_numbering.py:981
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr ""
+
+#: IndivComplete_sort.py:1251
+msgid "File does not exist"
+msgstr ""
+
+#. Translators: needed for French, ignore otherwise
+#: IndivComplete_sort.py:1258 IndivComplete_sort.py:1260
+#: IndivComplete_sort.py:1261 IndivComplete_sort.py:1262
+#: IndivComplete_sort.py:1263
+#, python-format
+msgid "%s:"
+msgstr ""
+
+#: IndivComplete_sort.py:1260
+msgid "Name"
+msgstr ""
+
+#: IndivComplete_sort.py:1261
+msgid "Gender"
+msgstr ""
+
+#: IndivComplete_sort.py:1269
+msgid "Male"
+msgstr ""
+
+#: IndivComplete_sort.py:1271
+msgid "Female"
+msgstr ""
+
+#: IndivComplete_sort.py:1273
+msgid "Other"
+msgstr ""
+
+#: IndivComplete_sort.py:1275
+msgid "Unknown"
+msgstr ""
+
+#: IndivComplete_sort.py:1288
+msgid "(image)"
+msgstr ""
+
+#: IndivComplete_sort.py:1404
+msgid "People"
+msgstr ""
+
+#: IndivComplete_sort.py:1407
+msgid "Filter"
+msgstr ""
+
+#: IndivComplete_sort.py:1408
+msgid "Select the filter to be applied to the report."
+msgstr ""
+
+#: IndivComplete_sort.py:1412
+msgid "Filter Person"
+msgstr ""
+
+#: IndivComplete_sort.py:1413
+msgid "The center person for the filter."
+msgstr ""
+
+#: IndivComplete_sort.py:1418
+msgid "Sort by"
+msgstr ""
+
+#: IndivComplete_sort.py:1421
+msgid "Surname, given name, birth date"
+msgstr ""
+
+#: IndivComplete_sort.py:1424
+msgid "Surname, given name, Gramps ID"
+msgstr ""
+
+#: IndivComplete_sort.py:1427
+msgid "Birth date, surname, given name"
+msgstr ""
+
+#: IndivComplete_sort.py:1429 genealogical_numbering.py:903
+msgid "Gramps ID"
+msgstr ""
+
+#: IndivComplete_sort.py:1431
+msgid "Kinship, starting from the Filter Person"
+msgstr ""
+
+#: IndivComplete_sort.py:1433
+msgid "Numbering system"
+msgstr ""
+
+#: IndivComplete_sort.py:1436
+msgid ""
+"Sorting method to use. Kinship lists each family together: parents, then "
+"children in birth order, then the families of the children and of the "
+"parents. People not related to the Filter Person come last, sorted by name. "
+"Numbering system lists the numbered ancestors, then the numbered descendants "
+"(see the Identifiers tab), then everyone else by name."
+msgstr ""
+
+#: IndivComplete_sort.py:1448
+msgid "List people without a birth date first"
+msgstr ""
+
+#: IndivComplete_sort.py:1452
+msgid ""
+"Whether people with no birth date (or baptism or christening date) come "
+"before the people with dates."
+msgstr ""
+
+#: IndivComplete_sort.py:1463
+msgid "Display"
+msgstr ""
+
+#: IndivComplete_sort.py:1477
+msgid "Use name of person as title"
+msgstr ""
+
+#: IndivComplete_sort.py:1480
+msgid ""
+"Whether the title should be the name of the person, or 'Complete Individual "
+"Report'"
+msgstr ""
+
+#: IndivComplete_sort.py:1486
+msgid "List events chronologically"
+msgstr ""
+
+#: IndivComplete_sort.py:1487
+msgid "Whether to sort events into chronological order."
+msgstr ""
+
+#: IndivComplete_sort.py:1490
+msgid "Page break before end notes"
+msgstr ""
+
+#: IndivComplete_sort.py:1491
+msgid "Whether to start a new page before the end notes."
+msgstr ""
+
+#: IndivComplete_sort.py:1495
+msgid "Include"
+msgstr ""
+
+#: IndivComplete_sort.py:1498
+msgid "Include Notes"
+msgstr ""
+
+#: IndivComplete_sort.py:1499
+msgid "Whether to include Person and Family Notes."
+msgstr ""
+
+#: IndivComplete_sort.py:1502
+msgid "Include Source Information"
+msgstr ""
+
+#: IndivComplete_sort.py:1503
+msgid "Whether to cite sources."
+msgstr ""
+
+#: IndivComplete_sort.py:1507
+msgid "Include sources notes"
+msgstr ""
+
+#: IndivComplete_sort.py:1510
+msgid ""
+"Whether to include source notes in the Endnotes section. Only works if "
+"Include sources is selected."
+msgstr ""
+
+#: IndivComplete_sort.py:1518
+msgid "Include Photo/Images from Gallery"
+msgstr ""
+
+#: IndivComplete_sort.py:1519
+msgid "Whether to include images."
+msgstr ""
+
+#: IndivComplete_sort.py:1522
+msgid "Include Tags"
+msgstr ""
+
+#: IndivComplete_sort.py:1523
+msgid "Whether to include tags."
+msgstr ""
+
+#: IndivComplete_sort.py:1526
+msgid "Include Attributes"
+msgstr ""
+
+#: IndivComplete_sort.py:1527
+msgid "Whether to include attributes."
+msgstr ""
+
+#: IndivComplete_sort.py:1530
+msgid "Include Addresses"
+msgstr ""
+
+#: IndivComplete_sort.py:1531
+msgid "Whether to include addresses."
+msgstr ""
+
+#: IndivComplete_sort.py:1534
+msgid "Include Census Events"
+msgstr ""
+
+#: IndivComplete_sort.py:1535
+msgid "Whether to include Census Events."
+msgstr ""
+
+#: IndivComplete_sort.py:1539
+msgid "Include relationship to center person"
+msgstr ""
+
+#: IndivComplete_sort.py:1542
+msgid "Whether to include relationships to the center person"
+msgstr ""
+
+#: IndivComplete_sort.py:1549
+msgid "Identifiers"
+msgstr ""
+
+#: IndivComplete_sort.py:1564
+msgid "Sections"
+msgstr ""
+
+#: IndivComplete_sort.py:1567
+msgid "Event groups"
+msgstr ""
+
+#: IndivComplete_sort.py:1568
+msgid "Check if a separate section is required."
+msgstr ""
+
+#: IndivComplete_sort.py:1633
+msgid "The style used for the title."
+msgstr ""
+
+#: IndivComplete_sort.py:1645
+msgid "The style used for the section headers."
+msgstr ""
+
+#: IndivComplete_sort.py:1656
+msgid "The style used for the spouse's name."
+msgstr ""
+
+#: IndivComplete_sort.py:1665
+msgid "The basic style used for the text display."
+msgstr ""
+
+#: IndivComplete_sort.py:1675
+msgid "The basic style used for table headings."
+msgstr ""
+
+#: IndivComplete_sort.py:1685
+msgid "The style used for image notes."
+msgstr ""
+
+#: IndivComplete_sort.py:1695
+msgid "The style used for image descriptions."
+msgstr ""
+
+#: center_person_gui.py:78
+msgid "Select a different person"
+msgstr ""
+
+#: center_person_gui.py:90
+msgid "Select a person for the report"
+msgstr ""
+
+#: genealogical_numbering.py:903 genealogical_numbering.py:1123
+msgid "Do not include"
+msgstr ""
+
+#: genealogical_numbering.py:907
+msgid ""
+"An attribute is replaced by the Gramps ID when the attribute has no value."
+msgstr ""
+
+#: genealogical_numbering.py:918
+msgid "Person label"
+msgstr ""
+
+#: genealogical_numbering.py:925
+msgid "Family label"
+msgstr ""
+
+#: genealogical_numbering.py:957
+msgid "None"
+msgstr ""
+
+#: genealogical_numbering.py:982
+msgid "Home Person"
+msgstr ""
+
+#: genealogical_numbering.py:986
+#, python-format
+msgid "Active person: %s"
+msgstr ""
+
+#: genealogical_numbering.py:1111
+msgid "Center Person"
+msgstr ""
+
+#: genealogical_numbering.py:1112
+msgid "The center person for the report"
+msgstr ""
+
+#: genealogical_numbering.py:1117
+msgid "Ancestor numbering system"
+msgstr ""
+
+#: genealogical_numbering.py:1118
+msgid "Descendant numbering system"
+msgstr ""
+
+#: genealogical_numbering.py:1135
+msgid ""
+"The numbering system to be used. An attribute is replaced by the Person "
+"label when the attribute has no value."
+msgstr ""

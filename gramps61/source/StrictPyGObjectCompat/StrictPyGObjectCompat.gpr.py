@@ -30,7 +30,7 @@ if (5, 2, 0) <= VERSION_TUPLE < (6, 1, 0):
             "small memory leak when editing table cells in editors. Does "
             "nothing on older systems."
         ),
-        version="0.1.0",  # build 20261102.0302
+        version="0.1.1",  # build 20261117.1440
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="StrictPyGObjectCompat.py",

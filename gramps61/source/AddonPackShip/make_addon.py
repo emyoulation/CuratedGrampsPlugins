@@ -57,6 +57,7 @@ import contextlib
 import subprocess
 import shutil
 import tarfile
+import filecmp
 import tempfile
 import time
 import json
@@ -526,10 +527,207 @@ def expand_manifest_pattern(pattern, addon_path, addon_name):
     
     return files
 
+def find_unpacked_files(addon_path, files_to_include):
+    """
+    Return addon-relative paths of files in the addon folder that are
+    not in ``files_to_include``.
+
+    Build leftovers are skipped: ``__pycache__`` and ``.git`` folders,
+    and ``*.pyc``, ``*.pyo`` and ``*~`` files.
+    """
+    packed = {os.path.normpath(os.path.abspath(f)) for f in files_to_include}
+    skip_dirs = {'__pycache__', '.git'}
+    unpacked = []
+    for root, dirs, filenames in os.walk(addon_path):
+        dirs[:] = sorted(d for d in dirs if d not in skip_dirs)
+        for fname in sorted(filenames):
+            if fname.endswith(('~', '.pyc', '.pyo')):
+                continue
+            full = os.path.normpath(os.path.abspath(os.path.join(root, fname)))
+            if full not in packed:
+                unpacked.append(os.path.relpath(full, addon_path))
+    return unpacked
+
+def _github_folder_url(folder):
+    """
+    Return the GitHub web URL of `folder` when it sits inside a local
+    clone of a GitHub repository, e.g.
+    ``https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/MyAddon``.
+
+    Reads only ``.git/config`` (the ``origin`` remote) and
+    ``.git/HEAD`` (the checked-out branch), so no git executable is
+    needed.
+
+    :param folder: A folder inside the clone (it need not exist yet).
+    :returns: The URL, or ``None`` when the folder is not in a GitHub
+        clone or the branch cannot be read.
+    """
+    folder = os.path.abspath(folder)
+    root = folder
+    while not os.path.isdir(os.path.join(root, '.git')):
+        parent = os.path.dirname(root)
+        if parent == root:
+            return None
+        root = parent
+    git_dir = os.path.join(root, '.git')
+
+    remote_url = None
+    try:
+        with open(os.path.join(git_dir, 'config'), encoding='utf-8') as fh:
+            in_origin = False
+            for line in fh:
+                line = line.strip()
+                if line.startswith('['):
+                    in_origin = line == '[remote "origin"]'
+                elif in_origin and line.startswith('url'):
+                    remote_url = line.split('=', 1)[1].strip()
+                    break
+        with open(os.path.join(git_dir, 'HEAD'), encoding='utf-8') as fh:
+            head = fh.read().strip()
+    except OSError:
+        return None
+    if not remote_url or not head.startswith('ref: refs/heads/'):
+        return None
+    branch = head[len('ref: refs/heads/'):]
+
+    match = re.match(
+        r'^(?:https?://github\.com/|git@github\.com:|ssh://git@github\.com/)'
+        r'([^/]+)/(.+?)(?:\.git)?/?$', remote_url)
+    if not match:
+        return None
+    owner, repo = match.groups()
+    rel = os.path.relpath(folder, root).replace(os.sep, '/')
+    url = f"https://github.com/{owner}/{repo}/tree/{branch}"
+    return url if rel == '.' else f"{url}/{rel}"
+
+
+def _gpr_help_urls(addon_path):
+    """
+    Return the help_url values of the register() calls in the addon's
+    .gpr.py, read without importing Gramps (a plain text search).
+
+    :returns: A list of help_url strings (possibly empty).
+    """
+    gpr_file = _find_gpr_file(addon_path)
+    if not gpr_file:
+        return []
+    try:
+        with open(gpr_file, encoding='utf-8', errors='replace') as fh:
+            text = fh.read()
+    except OSError:
+        return []
+    urls = []
+    for match in re.finditer(r'help_url\s*=\s*\(?((?:\s*["\'][^"\']*["\'])+)',
+                             text):
+        # Join implicitly concatenated string pieces, as Black writes
+        # a long URL split inside parentheses.
+        urls.append("".join(re.findall(r'["\']([^"\']*)["\']',
+                                       match.group(1))))
+    return urls
+
+
+def update_source_folder(addon_path, source_dir, files_to_include):
+    """
+    Mirror the files of one build into an uncompressed source folder,
+    ``<source_dir>/<addon_name>/`` -- the counterpart of the
+    addons-source repository next to the addons (downloads and
+    listings) repository.
+
+    Afterwards the source folder holds exactly the files of this build
+    (the beta or release file set): only files whose content differs
+    are copied, and any other file in ``<source_dir>/<addon_name>/`` is
+    removed, along with folders left empty. Nothing outside that folder
+    is touched, and ``.git`` folders are never entered.
+
+    :param addon_path: Path to the addon's directory.
+    :param source_dir: Parent folder of the per-addon source folders.
+    :param files_to_include: The absolute file paths this build packed.
+    :returns: ``True`` on success, ``False`` if any copy failed.
+    """
+    addon_name = os.path.basename(os.path.normpath(addon_path))
+    dest_root = os.path.join(source_dir, addon_name)
+    print(f"  Updating source folder: {dest_root}")
+
+    copied, unchanged, failed = [], 0, []
+    packed_rel = set()
+    for src in files_to_include:
+        rel = os.path.relpath(src, addon_path)
+        packed_rel.add(os.path.normpath(rel))
+        dst = os.path.join(dest_root, rel)
+        if os.path.isfile(dst) and filecmp.cmp(src, dst, shallow=False):
+            unchanged += 1
+            continue
+        try:
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy2(src, dst)
+            copied.append(rel)
+        except OSError as exc:
+            failed.append(f"{rel}: {exc}")
+
+    print(f"    {len(copied)} file(s) updated, {unchanged} unchanged")
+    for rel in copied:
+        print(f"     + {rel}")
+    for line in failed:
+        print(f"    Error: could not copy {line}")
+
+    # The source folder holds exactly the files of this build: anything
+    # else in it (left over from an earlier build, the other build mode,
+    # or a hand copy) is removed. Only <source_dir>/<addon_name>/ is
+    # touched; .git folders are never entered.
+    removed = []
+    for root, dirs, filenames in os.walk(dest_root):
+        dirs[:] = [d for d in dirs if d != '.git']
+        for fname in filenames:
+            full = os.path.join(root, fname)
+            rel = os.path.relpath(full, dest_root)
+            if os.path.normpath(rel) in packed_rel:
+                continue
+            try:
+                os.remove(full)
+                removed.append(rel)
+            except OSError as exc:
+                failed.append(f"{rel}: {exc}")
+                print(f"    Error: could not remove {rel}: {exc}")
+    # Remove folders left empty, deepest first.
+    for root, dirs, filenames in os.walk(dest_root, topdown=False):
+        if root != dest_root and not os.listdir(root):
+            try:
+                os.rmdir(root)
+            except OSError:
+                pass
+    if removed:
+        print(f"    {len(removed)} file(s) removed (not in this build):")
+        for rel in sorted(removed):
+            print(f"     - {rel}")
+
+    # The GitHub URL of this source folder is the preferred help_url
+    # for an addon in development.
+    url = _github_folder_url(dest_root)
+    if url:
+        print(f"    Source on GitHub: {url}")
+        help_urls = _gpr_help_urls(addon_path)
+        if not help_urls:
+            print("    Note: the .gpr.py has no help_url; the URL above"
+                  " could be used.")
+        elif url not in help_urls:
+            print(f"    Note: the .gpr.py help_url is {help_urls[0]}"
+                  " (not the source folder URL above).")
+        if os.path.isfile(os.path.join(dest_root, 'CHANGELOG.md')):
+            print("    Changelog on GitHub: "
+                  + url.replace('/tree/', '/blob/', 1) + "/CHANGELOG.md")
+
+    return not failed
+
+
 def build_addon(addon_path: str, output_dir: str,
-                 build_mode: str = 'beta') -> bool:
+                 build_mode: str = 'beta',
+                 source_dir: str | None = None) -> bool:
     """
     Build .addon.tgz file.
+
+    When `source_dir` is given, the same files are also mirrored,
+    uncompressed, into ``<source_dir>/<addon_name>/`` -- see
+    update_source_folder(). Empty or ``None`` keeps no source folder.
 
     :param addon_path: Path to the addon's source directory.
     :param output_dir: This run's ``<output_parent>/<version_code>``
@@ -561,6 +759,9 @@ def build_addon(addon_path: str, output_dir: str,
     compile_translations(addon_path, output_dir)
     
     files_to_include = []
+    # Every MANIFEST / MANIFEST.beta pattern applied in this build, for
+    # the "no files found" error report.
+    manifest_patterns = []
 
     # ── 1. Core files (always included in both modes) ────────────────────
     core_py = glob.glob(os.path.join(addon_path, '*.py'))
@@ -598,6 +799,7 @@ def build_addon(addon_path: str, output_dir: str,
             # Use MANIFEST.beta patterns (additive on top of core)
             patterns = read_manifest(addon_path, filename='MANIFEST.beta')
             if patterns:
+                manifest_patterns.extend(patterns)
                 print(f"  β Beta: using MANIFEST.beta ({len(patterns)} pattern(s)):")
                 for pattern in patterns:
                     matched = expand_manifest_pattern(pattern, addon_path, addon_name)
@@ -649,6 +851,7 @@ def build_addon(addon_path: str, output_dir: str,
             if os.path.exists(manifest_rel_path):
                 patterns = read_manifest(addon_path, filename='MANIFEST')
                 if patterns:
+                    manifest_patterns.extend(patterns)
                     print(f"  Also applying MANIFEST ({len(patterns)} pattern(s)):")
                     for pattern in patterns:
                         matched = expand_manifest_pattern(
@@ -671,6 +874,7 @@ def build_addon(addon_path: str, output_dir: str,
         if os.path.exists(manifest_path):
             patterns = read_manifest(addon_path, filename='MANIFEST')
             if patterns:
+                manifest_patterns.extend(patterns)
                 print(f"  Δ Release: applying MANIFEST ({len(patterns)} pattern(s)):")
                 for pattern in patterns:
                     matched = expand_manifest_pattern(
@@ -698,7 +902,21 @@ def build_addon(addon_path: str, output_dir: str,
         return False
     
     print(f"  Including {len(files_to_include)} file(s) in archive")
-    
+
+    # ── 5. Report files in the addon folder that this mode leaves out ────
+    # Adapted from the "unaccounted files" check in Kevin White's
+    # package_addon.py (github.com/ghcaveman/gramps_devutil), but based on
+    # the folder contents rather than git, since APS packs installed
+    # plugin folders that are usually not git checkouts.
+    unpacked = find_unpacked_files(addon_path, files_to_include)
+    if unpacked:
+        manifest_name = 'MANIFEST.beta' if build_mode == 'beta' else 'MANIFEST'
+        print(f"  Note: {len(unpacked)} file(s) in {addon_name}/ will NOT be "
+              f"packed in {mode_label} mode (add them to {manifest_name} "
+              f"if they are needed):")
+        for rel in unpacked:
+            print(f"     {rel}")
+
     # Create output directory
     download_dir = os.path.join(output_dir, 'download')
     os.makedirs(download_dir, exist_ok=True)
@@ -714,10 +932,14 @@ def build_addon(addon_path: str, output_dir: str,
                 tar.add(file_path, arcname=arcname)
         
         print(f"  Created: {tgz_file}")
-        return True
     except Exception as e:
         print(f"  Error creating tarball: {e}")
         return False
+
+    # ── 6. Mirror the same files into the uncompressed source folder ─────
+    if source_dir:
+        return update_source_folder(addon_path, source_dir, files_to_include)
+    return True
 
 def _build_listing_entry(plugin_data, addon_name):
     """
@@ -2805,7 +3027,8 @@ def run_command(
         target_languages: list[str] | None = None,
         session_id: str | None = None,
         multilingual: bool | None = None,
-        wait_callback=None
+        wait_callback=None,
+        source_dir: str | None = None
 ) -> tuple[bool, str, str]:
     """
     Run one packaging command and return its outcome.
@@ -2867,6 +3090,10 @@ def run_command(
         make<NN>.py) -- lets a GUI caller keep its window responsive.
         ``None`` (the default, used by this module's own CLI
         ``main()``) waits normally.
+    :param source_dir: Only used by ``'build'``. Parent folder of the
+        uncompressed per-addon source folders that are kept in step with
+        each build (see update_source_folder()). Empty or ``None`` (the
+        default) keeps no source folder.
     :returns: ``(success, stdout, stderr)``.
     """
     global _WAIT_CALLBACK  # pylint: disable=global-statement
@@ -2874,13 +3101,15 @@ def run_command(
     _WAIT_CALLBACK = wait_callback
     try:
         return _run_command(command, addon_path, output_dir, build_mode,
-                            target_languages, session_id, multilingual)
+                            target_languages, session_id, multilingual,
+                            source_dir)
     finally:
         _WAIT_CALLBACK = previous_wait_callback
 
 
 def _run_command(command, addon_path, output_dir, build_mode,
-                 target_languages, session_id, multilingual):
+                 target_languages, session_id, multilingual,
+                 source_dir=None):
     """
     The body of run_command(), separated so run_command() can set and
     reliably reset _WAIT_CALLBACK around it. See run_command() for the
@@ -2915,7 +3144,8 @@ def _run_command(command, addon_path, output_dir, build_mode,
                 # See module docstring: intentionally not delegated (no
                 # automatic version increments).
                 success = build_addon(addon_path, output_dir,
-                                       build_mode=build_mode)
+                                       build_mode=build_mode,
+                                       source_dir=source_dir)
                 _log_build_style_command(
                     'build', upstream_script, version_code, addon_name,
                     addon_path, output_dir, build_mode, success, session_id)
@@ -3109,9 +3339,9 @@ def main() -> None:
     Kept for standalone/CI use (``python3 make_addon.py <command>
     <addon_path> <output_dir>``); AddonPackShip.py itself no longer
     goes through this -- it imports this module and calls
-    run_command() directly. BUILD_MODE and ADDON_LANGUAGES environment
-    variables are only read here, at the CLI boundary, and passed into
-    run_command() as plain arguments.
+    run_command() directly. BUILD_MODE, ADDON_LANGUAGES and SOURCE_DIR
+    environment variables are only read here, at the CLI boundary, and
+    passed into run_command() as plain arguments.
     """
     if len(sys.argv) < 4:
         print("Usage: make_addon.py <command> <addon_path> <output_dir>")
@@ -3128,7 +3358,8 @@ def main() -> None:
 
     success, stdout, stderr = run_command(
         command, addon_path, output_dir, build_mode=build_mode,
-        target_languages=target_languages)
+        target_languages=target_languages,
+        source_dir=os.environ.get('SOURCE_DIR') or None)
 
     if stdout:
         print(stdout, end='' if stdout.endswith('\n') else '\n')

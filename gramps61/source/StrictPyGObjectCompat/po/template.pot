@@ -1,4 +1,4 @@
-# Translation template for the 0.1.0 Strict PyGObject Compatibility general addon for Gramps.
+# Translation template for the 0.1.1 Strict PyGObject Compatibility general addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Strict PyGObject Compatibility package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Strict PyGObject Compatibility 0.1.0\n"
+"Project-Id-Version: Strict PyGObject Compatibility 0.1.1\n"
 "Report-Msgid-Bugs-To: https://gramps.discourse.group/t/10178\n"
-"POT-Creation-Date: 2026-11-02 10:26-0600\n"
+"POT-Creation-Date: 2026-11-17 08:43-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

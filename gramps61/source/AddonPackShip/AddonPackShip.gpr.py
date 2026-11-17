@@ -45,7 +45,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6,2,0):
             "Packaging and distribution tool - create release-ready "
             "Gramps addon plugin packages and listings for GitHub publishing"
         ),
-        version = '1.9.20',  # build 20261028.1548
+        version = '1.9.21',  # build 20261028.1548
         gramps_target_version = major_version,
         status = STABLE,
         audience = EXPERT,

@@ -11,6 +11,18 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AddonMarketplace"
   },
   {
+    "n": "Addon Pack and Ship",
+    "i": "addonpackship",
+    "t": 2,
+    "d": "Packaging and distribution tool - create release-ready Gramps addon plugin packages and listings for GitHub publishing",
+    "v": "1.9.21",
+    "g": "5.2",
+    "s": 3,
+    "z": "AddonPackShip.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AddonPackShip",
+    "a": 1
+  },
+  {
     "n": "Beta What's Next",
     "i": "Beta What's Next",
     "t": 10,
@@ -32,6 +44,17 @@
     "s": 1,
     "z": "ClipboardRefMenu.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
+  },
+  {
+    "n": "Complete Individual Report (Sorted)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Data Entry Gramplet",
@@ -132,6 +155,17 @@
     "s": 1,
     "z": "PR2485.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PR2485/CHANGELOG.md"
+  },
+  {
+    "n": "Strict PyGObject Compatibility",
+    "i": "StrictPyGObjectCompat",
+    "t": 6,
+    "d": "On systems with PyGObject 3.56 or newer, prevents crashes such as the Place Details gramplet 'Must be string' error, and stops a small memory leak when editing table cells in editors. Does nothing on older systems.",
+    "v": "0.1.1",
+    "g": "5.2",
+    "s": 1,
+    "z": "StrictPyGObjectCompat.addon.tgz",
+    "h": "https://gramps.discourse.group/t/10178"
   },
   {
     "n": "Tungumálalagfæring viðbóta",

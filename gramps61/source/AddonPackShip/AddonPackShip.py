@@ -886,6 +886,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             'versions': {code: checkbox.get_active()
                          for code, checkbox in self.version_checkboxes.items()},
             'output_dir': self.get_output_parent_dir(),
+            'source_dir': self.get_source_dir(),
             'filter_text': (self.author_filter_entry.get_text()
                             if hasattr(self, 'author_filter_entry') else ''),
             'type_filter': (self.type_filter_combo.get_active_text()
@@ -923,6 +924,7 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         parser.set(name, 'build_mode', state['build_mode'])
         parser.set(name, 'versions', json.dumps(state['versions']))
         parser.set(name, 'output_dir', state['output_dir'])
+        parser.set(name, 'source_dir', state['source_dir'])
         parser.set(name, 'filter_text', state['filter_text'])
         parser.set(name, 'type_filter', state['type_filter'] or '')
         # Only the checked plugin IDs are worth storing -- unchecked is
@@ -980,6 +982,16 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         output_dir = parser.get(name, 'output_dir', fallback='')
         if output_dir and os.path.isdir(output_dir):
             self.output_dir_chooser.set_filename(output_dir)
+
+        # An empty (or now missing) source location keeps no source
+        # folder for this configuration.
+        if hasattr(self, 'source_dir_chooser'):
+            source_dir = parser.get(name, 'source_dir', fallback='')
+            if source_dir and os.path.isdir(source_dir):
+                self.source_dir_chooser.set_filename(source_dir)
+            else:
+                self.source_dir_chooser.unselect_all()
+            self._refresh_source_url_label()
 
         if hasattr(self, 'author_filter_entry'):
             self.author_filter_entry.set_text(
@@ -1169,6 +1181,51 @@ class AddonPackShip(tool.Tool, ManagedWindow):
             if chosen:
                 return chosen
         return os.path.dirname(os.path.abspath(__file__))
+
+    def get_source_dir(self):
+        """
+        Return the "Source location" folder chosen on the Options tab:
+        the parent of the uncompressed per-addon source folders that
+        each build keeps in step (see make_addon.update_source_folder()).
+
+        :returns: absolute directory path, or ``''`` when no source
+            folder is kept.
+        """
+        chooser = getattr(self, 'source_dir_chooser', None)
+        if chooser is not None:
+            return chooser.get_filename() or ''
+        return ''
+
+    def _refresh_source_url_label(self):
+        """
+        Show the GitHub URL that the chosen source location has, when it
+        is inside a local GitHub clone -- the help_url to use for an
+        addon in development is that URL plus ``/<addon folder>``.
+        """
+        label = getattr(self, 'source_url_label', None)
+        if label is None:
+            return
+        source_dir = self.get_source_dir()
+        url = None
+        make_addon = _get_make_addon_module()
+        if source_dir and make_addon is not None and hasattr(
+                make_addon, '_github_folder_url'):
+            url = make_addon._github_folder_url(source_dir)
+        if not source_dir:
+            label.set_text(_("No source folder is kept."))
+        elif url:
+            label.set_text(url + "/<addon>")
+        else:
+            label.set_text(_("Not inside a local GitHub clone."))
+
+    def cb_source_dir_changed(self, _widget):
+        """Update the GitHub URL line when the source location changes."""
+        self._refresh_source_url_label()
+
+    def cb_clear_source_dir(self, _button):
+        """Stop keeping a source folder (empty source location)."""
+        self.source_dir_chooser.unselect_all()
+        self._refresh_source_url_label()
 
     def cb_open_output_folder(self, linkbutton: Gtk.LinkButton) -> bool:
         """
@@ -2308,6 +2365,68 @@ class AddonPackShip(tool.Tool, ManagedWindow):
         build_mode_box.pack_start(self.radio_release, False, False, 0)
 
         options_vbox.pack_start(build_mode_frame, False, False, 0)
+
+        # Source frame: an uncompressed copy of each built addon, kept in
+        # step with every build (like addons-source next to addons).
+        source_frame = Gtk.Frame(label=_("Source:"))
+        source_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        source_box.set_border_width(6)
+        source_frame.add(source_box)
+
+        source_row = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        source_row.pack_start(
+            Gtk.Label(label=_("Source location:")), False, False, 0)
+        self.source_dir_chooser = Gtk.FileChooserButton(
+            title=_("Choose a parent folder for the uncompressed"
+                    " addon source folders"),
+            action=Gtk.FileChooserAction.SELECT_FOLDER)
+        self.source_dir_chooser.set_tooltip_text(fill_names(
+            _("Each build also copies the files it packs, uncompressed,"
+              " into {addon_dir} in this folder -- the same files as the"
+              " {beta} or {release} package. Only changed files are"
+              " copied, and files that are not in the package are"
+              " removed from {addon_dir}.\nPoint it at a source"
+              " folder in a local Git repository clone (for example"
+              " {example}) to publish the source with GitHub Desktop.\n"
+              "Empty (the default): no source folder is kept."),
+            addon_dir="<addon>/", beta="β Beta", release="Δ Release",
+            example="gramps61/source/"))
+        for repo_root in self.detect_local_git_repo_roots():
+            try:
+                self.source_dir_chooser.add_shortcut_folder(repo_root)
+            except GObject.GError:
+                pass  # already a shortcut, or otherwise unavailable
+        self.source_dir_chooser.connect(
+            "selection-changed", self.cb_source_dir_changed)
+        source_row.pack_start(self.source_dir_chooser, True, True, 0)
+
+        clear_source_btn = Gtk.Button()
+        clear_source_btn.set_image(Gtk.Image.new_from_icon_name(
+            "edit-clear-symbolic", Gtk.IconSize.BUTTON))
+        clear_source_btn.set_relief(Gtk.ReliefStyle.NONE)
+        clear_source_btn.set_tooltip_text(
+            _("Empty the source location: no source folder is kept."))
+        clear_source_btn.connect("clicked", self.cb_clear_source_dir)
+        source_row.pack_start(clear_source_btn, False, False, 0)
+        source_box.pack_start(source_row, False, False, 0)
+
+        # The GitHub URL of the source folders, selectable so it can be
+        # copied into a help_url.
+        self.source_url_label = Gtk.Label()
+        self.source_url_label.set_selectable(True)
+        self.source_url_label.set_halign(Gtk.Align.START)
+        self.source_url_label.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
+        self.source_url_label.set_tooltip_text(fill_names(
+            _("GitHub web address of the source location. The source"
+              " folder of an addon (this address plus its folder name)"
+              " is a good {help_url} for an addon in development."),
+            help_url="help_url"))
+        source_box.pack_start(self.source_url_label, False, False, 0)
+        self._refresh_source_url_label()
+
+        options_vbox.pack_start(source_frame, False, False, 0)
 
         # Listings frame: Multilingual + the version-coverage override
         listings_frame = Gtk.Frame(label=_("Listings:"))
@@ -3629,6 +3748,12 @@ class AddonPackShip(tool.Tool, ManagedWindow):
                 extra_kwargs['multilingual'] = (
                     self.multilingual_check.get_active()
                     if hasattr(self, 'multilingual_check') else False)
+            if command == 'build' and 'source_dir' in inspect.signature(
+                    make_addon.run_command).parameters:
+                # Only the primary build of build_for_versions() runs
+                # 'build', so the single (version-independent) source
+                # folder is updated once per addon, not once per version.
+                extra_kwargs['source_dir'] = self.get_source_dir()
             if 'wait_callback' in inspect.signature(
                     make_addon.run_command).parameters:
                 # Keeps the window responsive (and the progress window
