@@ -1,0 +1,548 @@
+# zh_TW translation for the Complete Individual Report (Sorted) addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the IndivComplete_sort package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: IndivComplete_sort 1.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-17 12:46-0600\n"
+"PO-Revision-Date: 2026-11-17 13:10-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Chinese (Traditional Han script) <https://hosted.weblate.org/projects/gramps-project/addons/zh_Hant/>\n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: IndivComplete_sort/IndivComplete_sort.py:467
+#, python-format
+msgid "%(str1)s in %(str2)s. "
+msgstr "%(str1)s 在 %(str2)s。 "
+
+#. Translators: needed for Arabic, ignore otherwise
+#. make sure it's translated, so it can be used below, in "combine"
+#. Translators: needed for Arabic, ignore otherwise
+#: IndivComplete_sort/IndivComplete_sort.py:477
+#: IndivComplete_sort/IndivComplete_sort.py:484
+#: IndivComplete_sort/IndivComplete_sort.py:1540
+#, python-format
+msgid "%(str1)s, %(str2)s"
+msgstr "%(str1)s，%(str2)s"
+
+#. Translators: e.g. (a stepfather): John Smith, relationship: Step
+#: IndivComplete_sort/IndivComplete_sort.py:541
+#, python-format
+msgid "%(parent-name)s, relationship: %(rel-type)s"
+msgstr "%(parent-name)s，關係：%(rel-type)s"
+
+#: IndivComplete_sort/IndivComplete_sort.py:565
+msgid "Notes"
+msgstr "備註"
+
+#: IndivComplete_sort/IndivComplete_sort.py:604
+msgid "Alternate Parents"
+msgstr "其他父母"
+
+#: IndivComplete_sort/IndivComplete_sort.py:629
+#: IndivComplete_sort/IndivComplete_sort.py:631
+#: IndivComplete_sort/IndivComplete_sort.py:1428
+msgid "Father"
+msgstr "父親"
+
+#: IndivComplete_sort/IndivComplete_sort.py:638
+#: IndivComplete_sort/IndivComplete_sort.py:640
+#: IndivComplete_sort/IndivComplete_sort.py:1429
+msgid "Mother"
+msgstr "母親"
+
+#: IndivComplete_sort/IndivComplete_sort.py:690
+msgid "Relationship to home person"
+msgstr "與首頁人物的關係"
+
+#: IndivComplete_sort/IndivComplete_sort.py:711
+msgid "Alternate Names"
+msgstr "其他姓名"
+
+#: IndivComplete_sort/IndivComplete_sort.py:739
+msgid "Addresses"
+msgstr "地址"
+
+#: IndivComplete_sort/IndivComplete_sort.py:764
+msgid "Associations"
+msgstr "關聯性"
+
+#: IndivComplete_sort/IndivComplete_sort.py:791
+#: IndivComplete_sort/IndivComplete_sort.py:1026
+msgid "Attributes"
+msgstr "屬性"
+
+#: IndivComplete_sort/IndivComplete_sort.py:818
+#: IndivComplete_sort/IndivComplete_sort.py:1038
+msgid "LDS Ordinance"
+msgstr "後期聖徒教儀"
+
+#: IndivComplete_sort/IndivComplete_sort.py:825
+#: IndivComplete_sort/IndivComplete_sort.py:1039
+msgid "Type"
+msgstr "類別"
+
+#: IndivComplete_sort/IndivComplete_sort.py:826
+#: IndivComplete_sort/IndivComplete_sort.py:1040
+msgid "Date"
+msgstr "日期"
+
+#: IndivComplete_sort/IndivComplete_sort.py:827
+#: IndivComplete_sort/IndivComplete_sort.py:1041
+msgid "Status"
+msgstr "狀態"
+
+#: IndivComplete_sort/IndivComplete_sort.py:828
+#: IndivComplete_sort/IndivComplete_sort.py:1042
+msgid "Temple"
+msgstr "聖殿"
+
+#: IndivComplete_sort/IndivComplete_sort.py:829
+#: IndivComplete_sort/IndivComplete_sort.py:1043
+msgid "Place"
+msgstr "地點"
+
+#: IndivComplete_sort/IndivComplete_sort.py:867
+msgid "Tags"
+msgstr "標籤"
+
+#: IndivComplete_sort/IndivComplete_sort.py:909
+msgid "Images"
+msgstr "圖片"
+
+#: IndivComplete_sort/IndivComplete_sort.py:920
+msgid "Non existing media found in the Gallery"
+msgstr "相簿中發現不存在的媒體"
+
+#: IndivComplete_sort/IndivComplete_sort.py:968
+msgid "Families"
+msgstr "家庭"
+
+#: IndivComplete_sort/IndivComplete_sort.py:989
+msgid "unknown"
+msgstr "未知"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1012
+msgid "Children"
+msgstr "子女"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1199
+msgid "Empty report"
+msgstr "空白報告"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1199
+msgid "You did not specify anybody"
+msgstr "您未指定任何人物"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1209
+#: IndivComplete_sort/IndivComplete_sort.py:1353
+msgid "Complete Individual Report"
+msgstr "人物完整報告"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1209
+msgid "Generating report"
+msgstr "正在產生報告"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1414
+msgid "Could not add photo to page"
+msgstr "無法向頁面新增照片"
+
+#. Translators: for French, else ignore
+#. Translators: needed for French, ignore otherwise
+#: IndivComplete_sort/IndivComplete_sort.py:1416
+#: IndivComplete_sort/IndivComplete_sort.py:1459
+#: IndivComplete_sort/IndivComplete_sort.py:1554
+#: IndivComplete_sort/genealogical_numbering.py:1447
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s：%(str2)s"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1417
+msgid "File does not exist"
+msgstr "檔案不存在"
+
+#. Translators: needed for French, ignore otherwise
+#: IndivComplete_sort/IndivComplete_sort.py:1424
+#: IndivComplete_sort/IndivComplete_sort.py:1426
+#: IndivComplete_sort/IndivComplete_sort.py:1427
+#: IndivComplete_sort/IndivComplete_sort.py:1428
+#: IndivComplete_sort/IndivComplete_sort.py:1429
+#, python-format
+msgid "%s:"
+msgstr "%s："
+
+#: IndivComplete_sort/IndivComplete_sort.py:1426
+msgid "Name"
+msgstr "名稱"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1427
+msgid "Gender"
+msgstr "性別"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1435
+msgid "Male"
+msgstr "男"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1437
+msgid "Female"
+msgstr "女"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1439
+msgid "Other"
+msgstr "其餘"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1441
+msgid "Unknown"
+msgstr "未知"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1454
+msgid "(image)"
+msgstr "（圖片）"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1612
+msgid "People"
+msgstr "人物"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1615
+msgid "Filter"
+msgstr "篩選器"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1616
+msgid "Select the filter to be applied to the report."
+msgstr "選取要套用至報告的篩選器。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1620
+msgid "Filter Person"
+msgstr "篩選器人物"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1621
+msgid "The center person for the filter."
+msgstr "篩選器的中心人物。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1626
+msgid "Sort by"
+msgstr "排列"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1629
+msgid "Surname, given name, birth date"
+msgstr "姓，名字，出生日期"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1632
+msgid "Surname, given name, Gramps ID"
+msgstr "姓，名字，Gramps ID"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1635
+msgid "Birth date, surname, given name"
+msgstr "出生日期，姓，名字"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1637
+#: IndivComplete_sort/genealogical_numbering.py:1324
+msgid "Gramps ID"
+msgstr "Gramps ID"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1639
+msgid "Kinship, starting from the Filter Person"
+msgstr "親屬關係，從篩選器人物開始"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1641
+msgid "Numbering system"
+msgstr "編號系統"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1644
+msgid ""
+"Sorting method to use. Kinship lists each family together: parents, then "
+"children in birth order, then the families of the children and of the "
+"parents. People not related to the Filter Person come last, sorted by name. "
+"Numbering system lists the numbered ancestors, then the numbered descendants"
+" (see the Identifiers tab), then everyone else by name."
+msgstr ""
+"要使用的排序方式。親屬關係會將每個家庭列在一起：父母，接著依出生順序排列的子女，接著是子女的家庭與父母的家庭。與篩選器人物無親屬關係的人物排在最後，依姓名排序。編號系統會先列出已編號的祖先，接著是已編號的後代（請參閱「識別碼」分頁），接著依姓名列出其他所有人。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1656
+msgid "List people without a birth date first"
+msgstr "先列出沒有出生日期的人物"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1660
+msgid ""
+"Whether people with no birth date (or baptism or christening date) come "
+"before the people with dates."
+msgstr "是否將沒有出生日期（或洗禮日期）的人物排在有日期的人物之前。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1671
+msgid "Display"
+msgstr "顯示"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1685
+msgid "Use name of person as title"
+msgstr "使用人物姓名作為標題"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1688
+msgid ""
+"Whether the title should be the name of the person, or 'Complete Individual "
+"Report'"
+msgstr "標題應為人物姓名，或為「人物完整報告」"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1694
+msgid "List events chronologically"
+msgstr "按年代順序列出事件"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1695
+msgid "Whether to sort events into chronological order."
+msgstr "是否依時間順序排列事件。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1698
+msgid "Page break before end notes"
+msgstr "尾註之前的分頁"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1699
+msgid "Whether to start a new page before the end notes."
+msgstr "是否在尾註前開始一個新頁面."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1703
+msgid "Include"
+msgstr "包含"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1706
+msgid "Include Notes"
+msgstr "包含備註"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1707
+msgid "Whether to include Person and Family Notes."
+msgstr "是否包含人物與家庭備註。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1710
+msgid "Include Source Information"
+msgstr "包含來源資訊"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1711
+msgid "Whether to cite sources."
+msgstr "是否引用來源."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1715
+msgid "Include sources notes"
+msgstr "包含來源備註"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1718
+msgid ""
+"Whether to include source notes in the Endnotes section. Only works if "
+"Include sources is selected."
+msgstr "是否在尾註區段包含來源備註。僅在選取「包含來源」時有效。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1726
+msgid "Include Photo/Images from Gallery"
+msgstr "包含相簿中的照片／圖片"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1727
+msgid "Whether to include images."
+msgstr "是否包含圖片。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1730
+msgid "Include Tags"
+msgstr "包含標籤"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1731
+msgid "Whether to include tags."
+msgstr "是否包含標籤。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1734
+msgid "Include Attributes"
+msgstr "包含屬性"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1735
+msgid "Whether to include attributes."
+msgstr "是否包含屬性."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1738
+msgid "Include Addresses"
+msgstr "包含地址"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1739
+msgid "Whether to include addresses."
+msgstr "是否包含地址."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1742
+msgid "Include Census Events"
+msgstr "包含人口普查事件"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1743
+msgid "Whether to include Census Events."
+msgstr "是否包含人口普查事件。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1747
+msgid "Include relationship to center person"
+msgstr "包含與中心人物的關係"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1750
+msgid "Whether to include relationships to the center person"
+msgstr "是否包含與中心人物的關係"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1757
+msgid "Identifiers"
+msgstr "識別碼"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1772
+msgid "Sections"
+msgstr "部分"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1775
+msgid "Event groups"
+msgstr "事件分組"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1776
+msgid "Check if a separate section is required."
+msgstr "若需要獨立區段，請勾選。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1841
+msgid "The style used for the title."
+msgstr "標題應用的風格."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1853
+msgid "The style used for the section headers."
+msgstr "章節標題使用的樣式。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1864
+msgid "The style used for the spouse's name."
+msgstr "配偶姓名風格."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1873
+msgid "The basic style used for the text display."
+msgstr "文字顯示的基本樣式。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1883
+msgid "The basic style used for table headings."
+msgstr "表格標題的基本風格."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1893
+msgid "The style used for image notes."
+msgstr "圖片備註使用的樣式。"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1903
+msgid "The style used for image descriptions."
+msgstr "圖片說明所使用的樣式。"
+
+#: IndivComplete_sort/genealogical_numbering.py:299
+msgid "Sosa-Stradonitz number"
+msgstr "Sosa-Stradonitz 編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:315
+msgid "Ahnentafel numbering"
+msgstr "Ahnentafel 編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:377
+#: IndivComplete_sort/genealogical_numbering.py:404
+msgid "Attribute"
+msgstr "屬性"
+
+#: IndivComplete_sort/genealogical_numbering.py:454
+msgid "Simple numbering"
+msgstr "簡易編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:489
+msgid "Henry numbering"
+msgstr "亨利編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:522
+msgid "Modified Henry numbering"
+msgstr "修正的 Henry 編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:553
+msgid "d'Aboville numbering"
+msgstr "d'Aboville 編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:587
+msgid "de Villiers/Pama numbering"
+msgstr "de Villiers/Pama 編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:632
+msgid "Meurgey de Tupigny numbering"
+msgstr "Meurgey de Tupigny 編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:666
+msgid "Record (Modified Register) numbering"
+msgstr "記錄（修訂註冊）編號"
+
+#: IndivComplete_sort/genealogical_numbering.py:687
+msgid "A numbering system needs a direction and an id."
+msgstr "編號系統需要方向與 ID。"
+
+#: IndivComplete_sort/genealogical_numbering.py:874
+msgid "Unknown numbering system."
+msgstr "未知的編號系統。"
+
+#: IndivComplete_sort/genealogical_numbering.py:1324
+#: IndivComplete_sort/genealogical_numbering.py:1607
+msgid "Do not include"
+msgstr "不包含"
+
+#: IndivComplete_sort/genealogical_numbering.py:1327
+msgid ""
+"An attribute is replaced by the Gramps ID when the attribute has no value."
+msgstr "當屬性沒有值時，以 Gramps ID 取代。"
+
+#: IndivComplete_sort/genealogical_numbering.py:1349
+msgid "Person label"
+msgstr "人物標籤"
+
+#: IndivComplete_sort/genealogical_numbering.py:1369
+msgid "Family label"
+msgstr "家庭標籤"
+
+#: IndivComplete_sort/genealogical_numbering.py:1410
+msgid "None"
+msgstr "無"
+
+#: IndivComplete_sort/genealogical_numbering.py:1448
+msgid "Home Person"
+msgstr "首頁人物"
+
+#: IndivComplete_sort/genealogical_numbering.py:1452
+#, python-format
+msgid "Active person: %s"
+msgstr "目前人物：%s"
+
+#: IndivComplete_sort/genealogical_numbering.py:1595
+msgid "Center Person"
+msgstr "中心人物"
+
+#: IndivComplete_sort/genealogical_numbering.py:1596
+msgid "The center person for the report"
+msgstr "此報告的中心人物"
+
+#: IndivComplete_sort/genealogical_numbering.py:1601
+msgid "Ancestor numbering system"
+msgstr "祖先編號系統"
+
+#: IndivComplete_sort/genealogical_numbering.py:1602
+msgid "Descendant numbering system"
+msgstr "後代編號系統"
+
+#: IndivComplete_sort/genealogical_numbering.py:1620
+msgid ""
+"The numbering system to be used. An attribute is replaced by the Person "
+"label when the attribute has no value."
+msgstr "要使用的編號系統。當屬性沒有值時，以人物標籤取代。"
+
+#: IndivComplete_sort/IndivComplete_sort.gpr.py:29
+msgid "Complete Individual Report (Sorted)"
+msgstr "人物完整報告（已排序）"
+
+#: IndivComplete_sort/IndivComplete_sort.gpr.py:31
+msgid ""
+"Produces a complete report on the selected people, sorted by surname, given "
+"name and birth date"
+msgstr "產生所選人物的完整報告，依姓、名字與出生日期排序"
+
+#: IndivComplete_sort/center_person_gui.py:95
+msgid "Select a different person"
+msgstr "選擇另一位人物"
+
+#: IndivComplete_sort/center_person_gui.py:111
+msgid "Select a person for the report"
+msgstr "選擇一個人輸出報告"

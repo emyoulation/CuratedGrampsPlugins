@@ -46,17 +46,6 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "5.2",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Correccion de la lenga dels complements",
     "i": "AddonLocaleFix",
     "t": 6,
@@ -166,6 +155,17 @@
     "s": 1,
     "z": "PR2485.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PR2485/CHANGELOG.md"
+  },
+  {
+    "n": "Rapòrt individual complet (triat)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Produtz un rapòrt complet sus las personas seleccionadas, triadas per nom d'ostal, pichon nom e data de naissença",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Strict PyGObject Compatibility",

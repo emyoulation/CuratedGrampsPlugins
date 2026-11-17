@@ -31,7 +31,7 @@ if VERSION_TUPLE >= (5, 2, 0):
             "Produces a complete report on the selected people, "
             "sorted by surname, given name and birth date"
         ),
-        version="1.1.0",  # build 20261117.1816
+        version="1.1.0",  # build 20261117.1845
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="IndivComplete_sort.py",

@@ -23,6 +23,17 @@
     "a": 1
   },
   {
+    "n": "Adroddiad Unigolyn Cyflawn (wedi'i drefnu)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Yn creu adroddiad cyflawn ar y bobl a ddewiswyd, wedi'u trefnu yn ôl cyfenw, enw cyntaf a dyddiad geni",
+    "v": "1.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
+  },
+  {
     "n": "Beta What's Next",
     "i": "Beta What's Next",
     "t": 10,
@@ -101,17 +112,6 @@
     "z": "CSV.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
     "a": 1
-  },
-  {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.0",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Config Inspector",

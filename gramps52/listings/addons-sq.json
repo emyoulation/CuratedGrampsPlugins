@@ -46,17 +46,6 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "5.2",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Data Entry Gramplet",
     "i": "Data Entry Gramplet",
     "t": 10,
@@ -155,6 +144,17 @@
     "s": 1,
     "z": "PR2485.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PR2485/CHANGELOG.md"
+  },
+  {
+    "n": "Raport Personal i Përfunduar (i renditur)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Krijon një raport të plotë për personat e zgjedhur, të renditur sipas mbiemrit, emrit dhe datës së lindjes",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Rregullim i gjuhës së shtesave",

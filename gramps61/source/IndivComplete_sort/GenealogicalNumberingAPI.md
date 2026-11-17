@@ -92,7 +92,7 @@ def person_identifier(self, person):
 ```python
 class MyNumbering(gn.DescendantSystem):      # or gn.AncestorSystem
     system_id = "my_numbering"               # stable: saved in settings
-    label = gn._T_("My numbering")           # translated when shown
+    label = gn.N_("My numbering")           # translated when shown
     example = "1, 1-1, 1-2"                  # shown in menus, keep it short
 
     def format(self, rec):                   # rec is a NumberRecord

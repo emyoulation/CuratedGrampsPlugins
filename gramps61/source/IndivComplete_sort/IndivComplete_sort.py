@@ -35,66 +35,76 @@ a kinship order adapted from Matthias Basler's KinSorter (MantisBT 0010362).
 See https://gramps.discourse.group/t/sorting-complete-individual-report/1804
 """
 
-# ------------------------------------------------------------------------
-#
-# standard python modules
-#
-# ------------------------------------------------------------------------
+# The report keeps the structure of the core Complete Individual Report,
+# whose long methods and module name (matching the plugin id) pylint flags:
+# pylint: disable=too-many-lines,invalid-name,too-many-locals,too-many-branches
+# pylint: disable=too-many-statements,too-many-instance-attributes
+# pylint: disable=too-many-public-methods,too-few-public-methods
+
+# ------------------------
+# Python modules
+# ------------------------
+from __future__ import annotations
+
 import os
 from collections import defaultdict
+from typing import TYPE_CHECKING, Any, Callable, Iterator
 
-# ------------------------------------------------------------------------
-#
+# ------------------------
 # Gramps modules
-#
-# ------------------------------------------------------------------------
+# ------------------------
 from gramps.gen.const import GRAMPS_LOCALE as glocale
-
-try:
-    _trans = glocale.get_addon_translator(__file__)
-except ValueError:
-    _trans = glocale.translation
-_ = _trans.gettext
-from gramps.gen.lib import EventRoleType, EventType, Person, NoteType
+from gramps.gen.const import URL_WIKISTRING
+from gramps.gen.display.place import displayer as _pd
+from gramps.gen.errors import ReportError
+from gramps.gen.lib import (
+    Attribute,
+    Event,
+    EventRef,
+    EventRoleType,
+    EventType,
+    NoteType,
+    Person,
+)
+from gramps.gen.plug import PluginRegister
 from gramps.gen.plug.docgen import (
-    IndexMark,
-    FontStyle,
-    ParagraphStyle,
-    TableStyle,
-    TableCellStyle,
     FONT_SANS_SERIF,
     INDEX_TYPE_TOC,
     PARA_ALIGN_CENTER,
     PARA_ALIGN_RIGHT,
+    FontStyle,
+    IndexMark,
+    ParagraphStyle,
+    StyleSheet,
+    TableCellStyle,
+    TableStyle,
 )
-from gramps.gen.display.place import displayer as _pd
 from gramps.gen.plug.menu import (
+    BooleanListOption,
     BooleanOption,
     EnumeratedListOption,
     FilterOption,
+    Menu,
     PersonOption,
-    BooleanListOption,
 )
-from gramps.gen.plug.report import Report
-from gramps.gen.plug.report import utils
-from gramps.gen.plug.report import MenuReportOptions
 from gramps.gen.plug.report import Bibliography
 from gramps.gen.plug.report import endnotes as Endnotes
-from gramps.gen.plug.report import stdoptions
+from gramps.gen.plug.report import MenuReportOptions, Report, stdoptions, utils
+from gramps.gen.proxy import CacheProxyDb
+from gramps.gen.relationship import get_relationship_calculator
+from gramps.gen.utils.db import get_birth_or_fallback
 from gramps.gen.utils.file import media_path_full
 from gramps.gen.utils.lds import TEMPLES
-from gramps.gen.proxy import CacheProxyDb
-from gramps.gen.errors import ReportError
-from gramps.gen.utils.db import get_birth_or_fallback
 
 # ------------------------
-# Addon modules
+# Gramps specific
 # ------------------------
 from genealogical_numbering import (
+    NONE_ID,
     OPT_ANCESTOR,
     OPT_DESCENDANT,
     OPT_FOCAL,
-    NONE_ID,
+    Numbering,
     add_family_label_option,
     add_numbering_options,
     add_person_label_option,
@@ -104,8 +114,21 @@ from genealogical_numbering import (
     use_attribute_memory,
 )
 
+if TYPE_CHECKING:  # gramps.gen.types is not in Gramps 5.2
+    from gramps.gen.db import DbReadBase
+    from gramps.gen.types import FamilyHandle, PersonHandle
+    from gramps.gen.user import User
+
+try:
+    _trans = glocale.get_addon_translator(__file__)
+except ValueError:
+    _trans = glocale.translation
+_ = _trans.gettext
+
+PLUGIN_ID = "IndivComplete_sort"  # the id registered in the .gpr.py
+
 # Remember the attribute types last used, in IndivComplete_sort.ini
-use_attribute_memory("IndivComplete_sort", os.path.dirname(__file__))
+use_attribute_memory(PLUGIN_ID, os.path.dirname(__file__))
 
 # ------------------------------------------------------------------------
 #
@@ -115,8 +138,16 @@ use_attribute_memory("IndivComplete_sort", os.path.dirname(__file__))
 
 
 # _T_ is a gramps-defined keyword -- see po/update_po.py and po/genpot.sh
-def _T_(value, context=""):  # enable deferred translations
-    return "%s\x04%s" % (context, value) if context else value
+def _T_(value: str, context: str = "") -> str:  # pylint: disable=invalid-name
+    """
+    Mark a string for deferred translation (the Gramps _T_ keyword, see
+    po/genpot.sh).
+
+    :param value: The untranslated string.
+    :param context: Optional translation context.
+    :returns: The string, with its context when given.
+    """
+    return f"{context}\x04{value}" if context else value
 
 
 CUSTOM = _T_("Custom")
@@ -139,6 +170,24 @@ SORT_BIRTH_SURNAME_GIVEN = 2
 SORT_GRAMPS_ID = 3
 SORT_KINSHIP = 4
 SORT_NUMBERING = 5
+
+
+def registered_help_url() -> str:
+    """
+    Return the help_url registered in the .gpr.py, as a web address.
+
+    The report dialog Help button ignores the registration and opens the
+    wiki page named after the report, unless the options class has a
+    ``help_url`` attribute; this keeps the .gpr.py the one place to set it.
+
+    :returns: The address; a wiki page name such as "Addon:Name" becomes a
+        wiki address. "" when nothing is registered.
+    """
+    pdata = PluginRegister.get_instance().get_plugin(PLUGIN_ID)
+    url = getattr(pdata, "help_url", "") or ""
+    if url and not url.startswith(("http://", "https://")):
+        url = URL_WIKISTRING + url.replace(" ", "_")
+    return url
 
 
 # ------------------------------------------------------------------------
@@ -168,31 +217,52 @@ class KinSorter:
     never reaches are returned separately so the report can list them too.
     """
 
-    def __init__(self, db, birth_key):
+    def __init__(
+        self, db: DbReadBase, birth_key: Callable[[Person], tuple[int, int]]
+    ) -> None:
         """
-        :param db: database (or proxy) to read from
-        :param birth_key: function(person) giving a sort key for birth order
+        Create the sorter.
+
+        :param db: The database (or proxy) to read from.
+        :param birth_key: Function giving a sort key for birth order.
         """
         self.db = db
         self.birth_key = birth_key
 
-    def sort(self, handles, start_person):
+    def sort(
+        self, handles: list[PersonHandle], start_person: Person
+    ) -> tuple[list[PersonHandle], list[PersonHandle]]:
         """
-        Return (ordered, unreached): the handles in kinship order, and the
-        handles the walk never reached (unrelated to the start person).
+        Order people by family relationship.
+
+        :param handles: The people to order.
+        :param start_person: The person the walk starts from.
+        :returns: (the handles in kinship order, the handles the walk never
+            reached because they are not related to the start person).
         """
         wanted = set(handles)
         ordered = []
         added = set()
         visited_families = set()
 
-        def add_person(handle):
+        def add_person(handle: PersonHandle | None) -> None:
+            """
+            List a wanted person once.
+
+            :param handle: The person handle.
+            """
             if handle and handle in wanted and handle not in added:
                 added.add(handle)
                 ordered.append(handle)
 
-        def walk_family(family_handle):
-            """Yield ("person", h) to list or ("family", h) to walk next."""
+        def walk_family(family_handle: FamilyHandle) -> Iterator[tuple[str, Any]]:
+            """
+            Walk one family.
+
+            :param family_handle: The family handle.
+            :returns: ("person", handle) items to list and ("family", handle) items
+                to walk next.
+            """
             family = self.db.get_family_from_handle(family_handle)
             if family is None:
                 return
@@ -228,7 +298,12 @@ class KinSorter:
                     if other_family != family_handle:
                         yield ("family", other_family)
 
-        def run(first_items):
+        def run(first_items: list[tuple[str, Any]]) -> None:
+            """
+            Walk the tree without recursion.
+
+            :param first_items: The items to start from.
+            """
             stack = [iter(first_items)]
             while stack:
                 try:
@@ -264,15 +339,15 @@ class KinSorter:
 class IndivCompleteSortReport(Report):
     """the Complete Individual Report"""
 
-    def __init__(self, database, options, user):
+    def __init__(
+        self, database: DbReadBase, options: IndivCompleteSortOptions, user: User
+    ) -> None:
         """
         Create the IndivCompleteSortReport object that produces the report.
 
-        The arguments are:
-
-        database        - the Gramps database instance
-        options         - instance of the Options class for this report
-        user            - a gen.user.User() instance
+        :param database: The Gramps database instance.
+        :param options: The options of this report.
+        :param user: The user interface (gen.user.User).
 
         This report needs the following parameters (class variables)
         that come in the options class.
@@ -285,7 +360,9 @@ class IndivCompleteSortReport(Report):
         person_sort   - Order in which people are listed.
         undated_first - List people without a birth date first.
         pid       - Filter Person, also the start of the kinship order.
-        grampsid  - Whether or not to include any Gramps IDs
+        inc_id    - Person label (Do not include, Gramps ID, attribute)
+        num_*     - Center Person, ancestor and descendant numbering
+        family_label  - Family label (Do not include, Gramps ID, attribute)
         images    - Whether or not to include images.
         sections  - Which event groups should be given separate sections.
         name_format   - Preferred format to display names
@@ -325,8 +402,8 @@ class IndivCompleteSortReport(Report):
         self.undated_first = menu.get_option_by_name("undated_first").get_value()
         self.kin_start_gid = menu.get_option_by_name("pid").get_value()
         self._menu = menu
-        self.anc_numbering = None
-        self.desc_numbering = None
+        self.anc_numbering: Numbering | None = None
+        self.desc_numbering: Numbering | None = None
         self.family_label = family_label_from_menu(menu)
 
         self.name_is_title = menu.get_option_by_name("name_title").get_value()
@@ -355,21 +432,25 @@ class IndivCompleteSortReport(Report):
         self.home_person = self._db.get_default_person()  # might be None
         self.increlname = menu.get_option_by_name("incl_relname").get_value()
         if self.increlname and self.home_person:
-            from gramps.gen.relationship import get_relationship_calculator
-
             self.rel_calc = get_relationship_calculator(
                 reinit=True, clocale=self._locale
             )
 
-        self.bibli = None
-        self.family_notes_list = []
-        self.names_notes_list = []
+        self.bibli: Any = None
+        self.family_notes_list: list[str] = []
+        self.names_notes_list: list[str] = []
         self.mime0 = None
-        self.person = None
+        self.person: Any = None  # the person being written
 
-    def write_fact(self, event_ref, event, show_type=True):
+    def write_fact(
+        self, event_ref: EventRef, event: Event, show_type: bool = True
+    ) -> None:
         """
-        Writes a single event.
+        Write a single event.
+
+        :param event_ref: The reference to the event.
+        :param event: The event.
+        :param show_type: Show the event type in the first column.
         """
         role = event_ref.get_role()
         description = event.get_description()
@@ -383,7 +464,7 @@ class IndivCompleteSortReport(Report):
             place_name = _pd.display_event(self._db, event, self.place_format)
             place_endnote = self._cite_endnote(place)
         # make sure it's translated, so it can be used below, in "combine"
-        ignore = _("%(str1)s in %(str2)s. ") % {"str1": "", "str2": ""}
+        dummy_ignore = _("%(str1)s in %(str2)s. ") % {"str1": "", "str2": ""}
         date_place = self.combine("%(str1)s in %(str2)s. ", "%s. ", date, place_name)
 
         if show_type:
@@ -393,14 +474,14 @@ class IndivCompleteSortReport(Report):
                 column_1 = column_1 + " (" + self._(role.xml_str()) + ")"
             # Translators: needed for Arabic, ignore otherwise
             # make sure it's translated, so it can be used below, in "combine"
-            ignore = _("%(str1)s, %(str2)s") % {"str1": "", "str2": ""}
+            dummy_ignore = _("%(str1)s, %(str2)s") % {"str1": "", "str2": ""}
             column_2 = self.combine("%(str1)s, %(str2)s", "%s", description, date_place)
         else:
             # Groups with a single type (remove event type from first column)
             column_1 = date
             # Translators: needed for Arabic, ignore otherwise
             # make sure it's translated, so it can be used below, in "combine"
-            ignore = _("%(str1)s, %(str2)s") % {"str1": "", "str2": ""}
+            dummy_ignore = _("%(str1)s, %(str2)s") % {"str1": "", "str2": ""}
             column_2 = self.combine("%(str1)s, %(str2)s", "%s", description, place_name)
 
         event_ref_endnotes = self._cite_endnote(event_ref, prior=place_endnote)
@@ -423,7 +504,10 @@ class IndivCompleteSortReport(Report):
             note = self._db.get_note_from_handle(notehandle)
             text = note.get_styledtext()
             if self.use_gramps_id:
-                text = text + " [%s]" % note.get_gramps_id()
+                # StyledText + str keeps the note styles (an f-string would drop them)
+                text = (
+                    text + " [%s]" % note.get_gramps_id()
+                )  # pylint: disable=consider-using-f-string
             note_format = note.get_format()
             self.doc.write_styled_note(
                 text,
@@ -435,8 +519,21 @@ class IndivCompleteSortReport(Report):
         self.doc.end_cell()
         self.doc.end_row()
 
-    def write_p_entry(self, label, parent_name, rel_type, pmark=None):
-        """write parent entry"""
+    def write_p_entry(
+        self,
+        label: str,
+        parent_name: str,
+        rel_type: str,
+        pmark: IndexMark | None = None,
+    ) -> None:
+        """
+        Write a parent entry.
+
+        :param label: The first column text.
+        :param parent_name: The parent name.
+        :param rel_type: The relationship type.
+        :param pmark: The index mark of the parent.
+        """
         self.doc.start_row()
         self.write_cell(label)
         if parent_name:
@@ -450,8 +547,8 @@ class IndivCompleteSortReport(Report):
             self.write_cell("")
         self.doc.end_row()
 
-    def write_note(self):
-        """write a note"""
+    def write_note(self) -> None:
+        """Write the notes of the person."""
         notelist = self.person.get_note_list()[
             :
         ]  # we don't want to modify cached original
@@ -473,7 +570,10 @@ class IndivCompleteSortReport(Report):
             note = self._db.get_note_from_handle(notehandle)
             text = note.get_styledtext()
             if self.use_gramps_id:
-                text = text + " [%s]" % note.get_gramps_id()
+                # StyledText + str keeps the note styles (an f-string would drop them)
+                text = (
+                    text + " [%s]" % note.get_gramps_id()
+                )  # pylint: disable=consider-using-f-string
             note_format = note.get_format()
             self.doc.start_row()
             self.doc.start_cell("IDS-NormalCell", 2)
@@ -491,8 +591,8 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_alt_parents(self):
-        """write any alternate parents"""
+    def write_alt_parents(self) -> None:
+        """Write any alternate parents."""
 
         family_handle_list = self.person.get_parent_family_handle_list()
         if len(family_handle_list) < 2:
@@ -543,19 +643,26 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def get_name(self, person):
-        """prepare the name to display"""
+    def get_name(self, person: Person) -> str:
+        """
+        Return the name to display, with the person identifier in brackets.
+
+        :param person: The person.
+        :returns: The name.
+        """
         name = self._name_display.display(person)
         identifier = self.person_identifier(person)
         if identifier:
             return "%(name)s [%(gid)s]" % {"name": name, "gid": identifier}
         return name
 
-    def person_identifier(self, person):
+    def person_identifier(self, person: Person) -> str:
         """
-        Return the identifier printed after a person's name: their
-        ancestor number(s), else their descendant number(s), else the
-        Person label ("" when that is "Do not include").
+        Return the identifier printed after a person's name.
+
+        :param person: The person.
+        :returns: Their ancestor number(s), else their descendant number(s),
+            else the Person label ("" when that is "Do not include").
         """
         handle = person.get_handle()
         for numbering in (self.anc_numbering, self.desc_numbering):
@@ -563,8 +670,8 @@ class IndivCompleteSortReport(Report):
                 return ", ".join(numbering.numbers(handle))
         return self.person_label(person)
 
-    def write_home_relationship(self):
-        """write the person's relationship to the home/default person"""
+    def write_home_relationship(self) -> None:
+        """Write the relationship of the person to the Home Person."""
 
         if not (
             self.increlname and self.home_person and self.home_person != self.person
@@ -591,8 +698,8 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_alt_names(self):
-        """write any alternate names of the person"""
+    def write_alt_names(self) -> None:
+        """Write any alternate names of the person."""
 
         alt_names = self.person.get_alternate_names()
         if len(alt_names) < 1:
@@ -618,8 +725,8 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_addresses(self):
-        """write any addresses of the person"""
+    def write_addresses(self) -> None:
+        """Write any addresses of the person."""
 
         alist = self.person.get_address_list()
 
@@ -645,8 +752,8 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_associations(self):
-        """write any associations of the person"""
+    def write_associations(self) -> None:
+        """Write any associations of the person."""
 
         if len(self.person.get_person_ref_list()) < 1:
             return
@@ -670,8 +777,8 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_attributes(self):
-        """write any attributes of the person"""
+    def write_attributes(self) -> None:
+        """Write any attributes of the person."""
 
         attr_list = self.person.get_attribute_list()
 
@@ -697,8 +804,8 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_LDS_ordinances(self):
-        """write any LDS ordinances of the person"""
+    def write_LDS_ordinances(self) -> None:  # pylint: disable=invalid-name
+        """Write any LDS ordinances of the person."""
 
         ord_list = self.person.get_lds_ord_list()
 
@@ -746,8 +853,8 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_tags(self):
-        """write any tags the person has"""
+    def write_tags(self) -> None:
+        """Write any tags the person has."""
 
         thlist = self.person.get_tag_list()
         if len(thlist) == 0 or not self.use_tags:
@@ -771,8 +878,8 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_images(self):
-        """write any images the person has"""
+    def write_images(self) -> None:
+        """Write any images the person has."""
 
         media_list = self.person.get_media_list()
         if (not self.use_images) or (not media_list):
@@ -848,11 +955,11 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_families(self):
-        """write any families the person has"""
+    def write_families(self) -> None:
+        """Write any families the person has, with the Family label."""
 
         family_handle_list = self.person.get_family_handle_list()
-        if not len(family_handle_list):
+        if not family_handle_list:
             return
 
         self.doc.start_table("three", "IDS-IndTable")
@@ -964,10 +1071,14 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def get_event_list(self, event_ref_list):
+    def get_event_list(
+        self, event_ref_list: list[EventRef]
+    ) -> list[tuple[EventRef, Event]]:
         """
-        Return a list of (EventRef, Event) pairs.  Order by event date
-        if the user option is set.
+        Return the events, in date order when the user option is set.
+
+        :param event_ref_list: The event references.
+        :returns: (EventRef, Event) pairs.
         """
         event_list = []
         for ind, event_ref in enumerate(event_ref_list):
@@ -978,18 +1089,21 @@ class IndivCompleteSortReport(Report):
                         continue
                     sort_value = event.get_date_object().get_sort_value()
                     # first sort on date, equal dates, then sort as in GUI.
-                    event_list.append(
-                        (str(sort_value) + "%04i" % ind, event_ref, event)
-                    )
+                    event_list.append((f"{sort_value}{ind:04d}", event_ref, event))
 
         if self.sort:
             event_list.sort()
 
         return [(item[1], item[2]) for item in event_list]
 
-    def write_section(self, event_ref_list, event_group_sect):
+    def write_section(
+        self, event_ref_list: list[EventRef], event_group_sect: str
+    ) -> None:
         """
-        Writes events in a single event group.
+        Write the events of a single event group.
+
+        :param event_ref_list: The event references.
+        :param event_group_sect: The event group.
         """
         self.doc.start_table(event_group_sect, "IDS-IndTable")
         self.doc.start_row()
@@ -1005,12 +1119,11 @@ class IndivCompleteSortReport(Report):
         self.doc.start_paragraph("IDS-Normal")
         self.doc.end_paragraph()
 
-    def write_events(self):
+    def write_events(self) -> None:
         """
-        Write events.  The user can create separate sections for a
-        pre-defined set of event groups.  When an event has a type
-        contained within a group it is moved from the Individual Facts
-        section into its own section.
+        Write events. The user can create separate sections for a pre-defined
+        set of event groups. When an event has a type contained within a group
+        it is moved from the Individual Facts section into its own section.
         """
         event_dict = defaultdict(list)
         event_ref_list = self.person.get_event_ref_list()
@@ -1027,14 +1140,42 @@ class IndivCompleteSortReport(Report):
             if group in event_dict:
                 self.write_section(event_dict[group], group)
 
-    def write_cell(self, text, endnotes=None, mark=None, style="IDS-Normal", span=1):
-        """write a cell"""
+    def write_cell(  # pylint: disable=too-many-arguments,too-many-positional-arguments
+        self,
+        text: str,
+        endnotes: str | None = None,
+        mark: IndexMark | None = None,
+        style: str = "IDS-Normal",
+        span: int = 1,
+    ) -> None:
+        """
+        Write a table cell.
+
+        :param text: The text.
+        :param endnotes: The endnote references.
+        :param mark: The index mark.
+        :param style: The paragraph style.
+        :param span: The number of columns.
+        """
         self.doc.start_cell("IDS-NormalCell", span)
         self.write_paragraph(text, endnotes=endnotes, mark=mark, style=style)
         self.doc.end_cell()
 
-    def write_paragraph(self, text, endnotes=None, mark=None, style="IDS-Normal"):
-        """write a paragraph"""
+    def write_paragraph(
+        self,
+        text: str,
+        endnotes: str | None = None,
+        mark: IndexMark | None = None,
+        style: str = "IDS-Normal",
+    ) -> None:
+        """
+        Write a paragraph.
+
+        :param text: The text.
+        :param endnotes: The endnote references.
+        :param mark: The index mark.
+        :param style: The paragraph style.
+        """
         self.doc.start_paragraph(style)
         self.doc.write_text(text, mark)
         if endnotes:
@@ -1043,8 +1184,12 @@ class IndivCompleteSortReport(Report):
             self.doc.end_superscript()
         self.doc.end_paragraph()
 
-    def write_report(self):
-        """write the report"""
+    def write_report(self) -> None:
+        """
+        Write the report.
+
+        :raises ReportError: When nobody is selected.
+        """
         plist = self._db.get_person_handles()
         if self.filter:
             ind_list = self.filter.apply(self._db, plist, user=self._user)
@@ -1075,11 +1220,13 @@ class IndivCompleteSortReport(Report):
         if self._user:
             self._user.end_progress()
 
-    def _birth_sort_value(self, person):
+    def _birth_sort_value(self, person: Person) -> int:
         """
-        Return the sort value of the birth date, falling back to a
-        baptism or christening date when the birth has no usable date.
-        Returns 0 when no date is known.
+        Return the sort value of the birth date, falling back to a baptism
+        or christening date when the birth has no usable date.
+
+        :param person: The person.
+        :returns: The date sort value, or 0 when no date is known.
         """
         event = get_birth_or_fallback(self._db, person)
         if event and event.get_date_object().get_sort_value():
@@ -1097,9 +1244,12 @@ class IndivCompleteSortReport(Report):
                     return sortval
         return 0
 
-    def _sort_people(self, handles):
+    def _sort_people(self, handles: list[PersonHandle]) -> list[PersonHandle]:
         """
-        Return the person handles in the order chosen in the options.
+        Return the people in the order chosen in the options.
+
+        :param handles: The people in the report.
+        :returns: The sorted handles.
         """
         if self.person_sort == SORT_NUMBERING:
             return self._sort_by_numbering(handles)
@@ -1120,10 +1270,13 @@ class IndivCompleteSortReport(Report):
         self.person_sort = SORT_KINSHIP
         return ordered
 
-    def _sort_by_numbering(self, handles):
+    def _sort_by_numbering(self, handles: list[PersonHandle]) -> list[PersonHandle]:
         """
-        Ancestors in ancestor-number order, then descendants in
-        descendant-number order, then everyone else by name.
+        Order people by the chosen numbering systems.
+
+        :param handles: The people in the report.
+        :returns: Ancestors in ancestor-number order, then descendants in
+            descendant-number order, then everyone else by name.
         """
         remaining = set(handles)
         ordered = []
@@ -1139,21 +1292,27 @@ class IndivCompleteSortReport(Report):
         self.person_sort = SORT_NUMBERING
         return ordered
 
-    def _birth_order_key(self, person):
+    def _birth_order_key(self, person: Person) -> tuple[int, int]:
         """
-        Return a sort key putting people in birth order, with undated
-        people first or last as chosen in the options.
+        Return a sort key putting people in birth order, with undated people
+        first or last as chosen in the options.
+
+        :param person: The person.
+        :returns: The sort key.
         """
         sortval = self._birth_sort_value(person)
         if sortval:
             return (1 if self.undated_first else 0, sortval)
         return (0 if self.undated_first else 1, 0)
 
-    def _person_sort_key(self, person_handle):
+    def _person_sort_key(self, person_handle: PersonHandle) -> tuple[Any, ...]:
         """
         Return a sort key for a person, according to the chosen sort order.
         Every key ends with the Gramps ID and handle, so the order is the
         same each time the report is run.
+
+        :param person_handle: The person handle.
+        :returns: The sort key.
         """
         person = self._db.get_person_from_handle(person_handle)
         if person is None:
@@ -1166,6 +1325,7 @@ class IndivCompleteSortReport(Report):
 
         birth = self._birth_order_key(person)
 
+        key: tuple[Any, ...]
         if self.person_sort == SORT_SURNAME_GIVEN_ID:
             key = (surname, given)
         elif self.person_sort == SORT_BIRTH_SURNAME_GIVEN:
@@ -1176,12 +1336,17 @@ class IndivCompleteSortReport(Report):
             key = (surname, given, birth)
         return (key, gid, person_handle)
 
-    def write_person(self, count):
-        """write a person"""
+    def write_person(self, count: int) -> None:
+        """
+        Write the pages of one person.
+
+        :param count: The position of the person in the report (0 is first).
+        """
         if count != 0:
             self.doc.page_break()
         self.bibli = Bibliography(Bibliography.MODE_DATE | Bibliography.MODE_PAGE)
 
+        text2, mark2 = "", None
         if self.name_is_title:
             title1 = self._name_display.display(self.person)
         else:
@@ -1233,6 +1398,7 @@ class IndivCompleteSortReport(Report):
 
         media_list = self.person.get_media_list()
         p_style = "IDS-PersonTable2"
+        image_filename = ""
         self.mime0 = None
         if self.use_images and len(media_list) > 0:
             media0 = media_list[0]
@@ -1255,7 +1421,7 @@ class IndivCompleteSortReport(Report):
         self.doc.start_row()
 
         # Translators: needed for French, ignore otherwise
-        ignore = self._("%s:")
+        dummy_ignore = self._("%s:")
         self.doc.start_cell("IDS-NormalCell")
         self.write_paragraph(self._("%s:") % self._("Name"))
         self.write_paragraph(self._("%s:") % self._("Gender"))
@@ -1296,7 +1462,7 @@ class IndivCompleteSortReport(Report):
                     }
                     endnotes = self._cite_endnote(attr, prior=endnotes)
                     self.write_paragraph(
-                        "(%s)" % text, endnotes=endnotes, style="IDS-ImageNote"
+                        f"({text})", endnotes=endnotes, style="IDS-ImageNote"
                     )
                     endnotes = ""
             if endnotes and len(attr_list) == 0:
@@ -1332,8 +1498,18 @@ class IndivCompleteSortReport(Report):
                 elocale=self._locale,
             )
 
-    def combine(self, format_both, format_single, str1, str2):
-        """Combine two strings with a given format."""
+    def combine(
+        self, format_both: str, format_single: str, str1: str, str2: str
+    ) -> str:
+        """
+        Combine two strings with a given format.
+
+        :param format_both: Format used when both strings are given.
+        :param format_single: Format used when one string is given.
+        :param str1: The first string.
+        :param str2: The second string.
+        :returns: The combined text.
+        """
         text = ""
         if str1 and str2:
             text = self._(format_both) % {"str1": str1, "str2": str2}
@@ -1343,8 +1519,14 @@ class IndivCompleteSortReport(Report):
             text = format_single % str2
         return text
 
-    def _cite_endnote(self, obj, prior=""):
-        """cite any endnotes the person has"""
+    def _cite_endnote(self, obj: Any, prior: str = "") -> str:
+        """
+        Cite the sources of an object.
+
+        :param obj: The object with citations.
+        :param prior: Endnote references to add to.
+        :returns: The endnote references.
+        """
         if not self.use_srcs:
             return ""
         if not obj:
@@ -1358,8 +1540,12 @@ class IndivCompleteSortReport(Report):
             txt = self._("%(str1)s, %(str2)s") % {"str1": prior, "str2": txt}
         return txt
 
-    def do_attributes(self, attr_list):
-        """a convenience method"""
+    def do_attributes(self, attr_list: list[Attribute]) -> None:
+        """
+        Write attributes as paragraphs.
+
+        :param attr_list: The attributes.
+        """
         if not self.use_attrs:
             return
         for attr in attr_list:
@@ -1383,23 +1569,45 @@ class IndivCompleteSortOptions(MenuReportOptions):
     Defines options and provides handling interface.
     """
 
-    def __init__(self, name, dbase):
+    def __init__(self, name: str, dbase: DbReadBase) -> None:
+        """
+        Create the options.
+
+        :param name: The report name.
+        :param dbase: The database.
+        """
         self.__db = dbase
-        self.__pid = None
-        self.__filter = None
-        self.__person_sort = None
-        self.__numbering = {}
-        self.__cites = None
-        self.__incsrcnotes = None
-        self._nf = None
-        self.__show_relships = None
+        url = registered_help_url()
+        if url:
+            # used by the report dialog Help button instead of the wiki
+            self.help_url = url
+        # The menu options, created in add_menu_options()
+        self.__pid: Any = None
+        self.__filter: Any = None
+        self.__person_sort: Any = None
+        self.__numbering: dict[str, Any] = {}
+        self.__cites: Any = None
+        self.__incsrcnotes: Any = None
+        self._nf: Any = None
+        self.__show_relships: Any = None
         MenuReportOptions.__init__(self, name, dbase)
 
-    def get_subject(self):
-        """Return a string that describes the subject of the report."""
+    def get_subject(self) -> str:
+        """
+        Return a string that describes the subject of the report.
+
+        :returns: The filter name.
+        """
         return self.__filter.get_filter().get_name()
 
-    def add_menu_options(self, menu):
+    def add_menu_options(
+        self, menu: Menu
+    ) -> None:  # pylint: disable=too-many-statements,too-many-locals
+        """
+        Add the report options to the menu.
+
+        :param menu: The menu.
+        """
         ################################
         category_name = _("People")
         ################################
@@ -1407,12 +1615,12 @@ class IndivCompleteSortOptions(MenuReportOptions):
         self.__filter = FilterOption(_("Filter"), 0)
         self.__filter.set_help(_("Select the filter to be applied to the report."))
         menu.add_option(category_name, "filter", self.__filter)
-        self.__filter.connect("value-changed", self.__filter_changed)
+        self.__filter.connect("value-changed", self.cb_filter_changed)
 
         self.__pid = PersonOption(_("Filter Person"))
         self.__pid.set_help(_("The center person for the filter."))
         menu.add_option(category_name, "pid", self.__pid)
-        self.__pid.connect("value-changed", self.__update_filters)
+        self.__pid.connect("value-changed", self.cb_update_filters)
 
         self.__person_sort = EnumeratedListOption(
             _("Sort by"), SORT_SURNAME_GIVEN_BIRTH
@@ -1442,7 +1650,7 @@ class IndivCompleteSortOptions(MenuReportOptions):
             )
         )
         menu.add_option(category_name, "person_sort", self.__person_sort)
-        self.__person_sort.connect("value-changed", self.__filter_changed)
+        self.__person_sort.connect("value-changed", self.cb_filter_changed)
 
         undated_first = BooleanOption(
             _("List people without a birth date first"), False
@@ -1464,9 +1672,9 @@ class IndivCompleteSortOptions(MenuReportOptions):
         ################################
 
         self._nf = stdoptions.add_name_format_option(menu, category_name)
-        self._nf.connect("value-changed", self.__update_filters)
+        self._nf.connect("value-changed", self.cb_update_filters)
 
-        self.__update_filters()
+        self.cb_update_filters()
 
         stdoptions.add_place_format_option(menu, category_name)
 
@@ -1502,7 +1710,7 @@ class IndivCompleteSortOptions(MenuReportOptions):
         self.__cites = BooleanOption(_("Include Source Information"), True)
         self.__cites.set_help(_("Whether to cite sources."))
         menu.add_option(category_name, "cites", self.__cites)
-        self.__cites.connect("value-changed", self.__sources_changed)
+        self.__cites.connect("value-changed", self.cb_sources_changed)
 
         self.__incsrcnotes = BooleanOption(_("Include sources notes"), False)
         self.__incsrcnotes.set_help(
@@ -1512,8 +1720,8 @@ class IndivCompleteSortOptions(MenuReportOptions):
             )
         )
         menu.add_option(category_name, "incsrcnotes", self.__incsrcnotes)
-        self.__incsrcnotes.connect("value-changed", self.__sources_changed)
-        self.__sources_changed()
+        self.__incsrcnotes.connect("value-changed", self.cb_sources_changed)
+        self.cb_sources_changed()
 
         images = BooleanOption(_("Include Photo/Images from Gallery"), True)
         images.set_help(_("Whether to include images."))
@@ -1543,7 +1751,7 @@ class IndivCompleteSortOptions(MenuReportOptions):
         )
         menu.add_option(category_name, "incl_relname", self.__show_relships)
 
-        self.__filter_changed()
+        self.cb_filter_changed()
 
         ################################
         category_name = _("Identifiers")
@@ -1555,8 +1763,8 @@ class IndivCompleteSortOptions(MenuReportOptions):
             menu, category_name, self.__db, default_ancestor=NONE_ID
         )
         for name in (OPT_ANCESTOR, OPT_DESCENDANT):
-            self.__numbering[name].connect("value-changed", self.__numbering_changed)
-        self.__numbering_changed()
+            self.__numbering[name].connect("value-changed", self.cb_numbering_changed)
+        self.cb_numbering_changed()
 
         add_family_label_option(menu, category_name, self.__db)
 
@@ -1572,10 +1780,8 @@ class IndivCompleteSortOptions(MenuReportOptions):
 
         menu.add_option(category_name, "sections", opt)
 
-    def __update_filters(self):
-        """
-        Update the filter list based on the selected person
-        """
+    def cb_update_filters(self) -> None:
+        """Update the filter list based on the selected person."""
         gid = self.__pid.get_value()
         person = self.__db.get_person_from_gramps_id(gid)
         nfv = self._nf.get_value()
@@ -1584,10 +1790,10 @@ class IndivCompleteSortOptions(MenuReportOptions):
         )
         self.__filter.set_filters(filter_list)
 
-    def __filter_changed(self):
+    def cb_filter_changed(self) -> None:
         """
-        Handle filter change. If the filter is not specific to a person,
-        disable the person option
+        Handle filter change. If the filter is not specific to a person (and the
+        kinship order is not chosen), disable the person option.
         """
         if self.__filter is None or self.__person_sort is None:
             return  # called while the menu is still being built
@@ -1601,25 +1807,27 @@ class IndivCompleteSortOptions(MenuReportOptions):
             # The other filters need a center person (assume custom ones too)
             self.__pid.set_available(True)
 
-    def __numbering_changed(self):
-        """
-        The Center Person is only needed when a numbering system is chosen.
-        """
+    def cb_numbering_changed(self) -> None:
+        """The Center Person is only needed when a numbering system is chosen."""
         used = any(
             self.__numbering[name].get_value() != NONE_ID
             for name in (OPT_ANCESTOR, OPT_DESCENDANT)
         )
         self.__numbering[OPT_FOCAL].set_available(used)
 
-    def __sources_changed(self):
-        """
-        If Endnotes are not enabled, disable sources in the Endnotes.
-        """
+    def cb_sources_changed(self) -> None:
+        """If Endnotes are not enabled, disable sources in the Endnotes."""
         cites_value = self.__cites.get_value()
         self.__incsrcnotes.set_available(cites_value)
 
-    def make_default_style(self, default_style):
-        """Make the default output style for the Individual Complete Report."""
+    def make_default_style(
+        self, default_style: StyleSheet
+    ) -> None:  # pylint: disable=too-many-statements
+        """
+        Make the default output style for the report.
+
+        :param default_style: The style sheet to fill.
+        """
         # Paragraph Styles
         font = FontStyle()
         font.set_bold(1)

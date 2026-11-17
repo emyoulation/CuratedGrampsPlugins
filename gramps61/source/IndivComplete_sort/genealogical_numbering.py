@@ -18,20 +18,23 @@
 #
 
 """
-Genealogical numbering systems, reusable by any report, gramplet or tool.
+Genealogical numbering systems and identifier options, reusable by any
+report, gramplet or tool.
 
-One registry holds every system. Each system is either an ancestor system
-(numbers the forebears of a focal person, e.g. Sosa-Stradonitz/Kekule) or
-a descendant system (numbers the offspring of a focal person, e.g. Henry,
-d'Aboville). A plugin picks one of each, independently, for one focal
-person.
+One registry holds every numbering system. Each system is either an
+ancestor system (numbers the forebears of a focal person, e.g.
+Sosa-Stradonitz/Kekule) or a descendant system (numbers the offspring of a
+focal person, e.g. Henry, d'Aboville). A plugin picks one of each,
+independently, for one focal person (the Center Person).
 
 The tree is walked once per direction; a system only formats the numbers
-and decides their sort order, so a new system is a small class:
+and decides their sort order, so a new system is a small class::
 
     class MySystem(DescendantSystem):
         system_id = "my_system"
-        label = _T_("My numbering")       # deferred translation
+        label = N_("My numbering")       # deferred translation
+        example = "1, 1-1, 1-2"           # shown in menus
+
         def format(self, rec):
             return "-".join(str(i) for i in (1,) + rec.path)
 
@@ -40,52 +43,34 @@ and decides their sort order, so a new system is a small class:
 Pedigree collapse and cousin marriages give one person several numbers;
 all of them are kept (up to ``max_numbers``), smallest/first found first.
 
-Every identifier choice is one drop-down list that folds in the
-attribute types, so a menu needs no separate attribute selectors:
+Every identifier choice is one drop-down list whose "Attribute: <type>"
+item shows the attribute type last used in that choice; in the GUI the
+item has a submenu with every attribute type (center_person_gui.py).
 
-* Person label / Family label: "Do not include", "Gramps ID",
-  "Attribute: <type>" (the value of that attribute, else the Gramps ID)
-* Ancestor / Descendant numbering: "Do not include", the numbering
-  systems, "Attribute: <type>" (numbers the same relatives, shows the
-  attribute, else the Person label, else the Gramps ID)
+See GenealogicalNumberingAPI.md for a usage guide.
 
-Only "Attribute: <type>" shows at the top level, with the type last used
-in that choice (remembered, see use_attribute_memory()); in the GUI its
-submenu lists every attribute type, custom types first.
-
-Typical use in a report::
-
-    import genealogical_numbering as gn
-
-    gn.use_attribute_memory("<plugin id>", os.path.dirname(__file__))
-
-    # in add_menu_options():
-    gn.add_person_label_option(menu, category_name, dbase)
-    gn.add_numbering_options(menu, category_name, dbase)
-    gn.add_family_label_option(menu, category_name, dbase)
-
-    # in the report:
-    person_label = gn.person_label_from_menu(menu)
-    family_label = gn.family_label_from_menu(menu)
-    anc, desc = gn.numbering_from_menu(self._db, menu, person_label)
-    if anc:
-        anc.numbers(person_handle)   # -> ["4", "18"]
-
-The ancestor system adapted from the Sosa numbering in core reports
+The ancestor system follows the Sosa numbering in core reports
 (ancestorreport.py, detancestralreport.py, gvhourglass.py); the descendant
 systems match descendreport.py and detdescendantreport.py, which each
-carry their own, slightly different, copies of this logic.
+carry their own copies of this logic.
 """
+
+# pylint: disable=too-many-lines
+# (one shared module is easier for other addons to copy than several)
 
 # ------------------------
 # Python modules
 # ------------------------
+from __future__ import annotations
+
 import heapq
 import importlib.util
 import logging
 import os
 import sys
-from collections import deque, namedtuple
+from collections import deque
+from types import ModuleType
+from typing import TYPE_CHECKING, Any, Callable, Iterator, NamedTuple
 
 # ------------------------
 # Gramps modules
@@ -93,9 +78,13 @@ from collections import deque, namedtuple
 from gramps.gen.config import config as configman
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gen.display.name import displayer as name_displayer
-from gramps.gen.lib import AttributeType
-from gramps.gen.plug.menu import EnumeratedListOption
+from gramps.gen.lib import AttributeType, Family, Person
+from gramps.gen.plug.menu import EnumeratedListOption, Menu
 from gramps.gen.plug.report.utils import roman
+
+if TYPE_CHECKING:  # gramps.gen.types is not in Gramps 5.2
+    from gramps.gen.db import DbReadBase
+    from gramps.gen.types import PersonHandle
 
 LOG = logging.getLogger(__name__)
 
@@ -106,14 +95,22 @@ except ValueError:
 _ = _trans.gettext
 
 
-def _T_(value):  # enable deferred translations (see po/genpot.sh)
+def N_(value: str) -> str:  # pylint: disable=invalid-name
+    """
+    Mark a string for translation without translating it now (the deferred
+    translation keyword that make.py passes to xgettext).
+
+    :param value: The untranslated string.
+    :returns: The same string.
+    """
     return value
 
+
+Translator = Callable[[str], str]
 
 ANCESTOR = "ancestor"
 DESCENDANT = "descendant"
 NONE_ID = "none"
-
 GRAMPS_ID = "gramps_id"
 ATTR_PREFIX = "attr:"  # option value "attr:<attribute type name>"
 
@@ -121,7 +118,7 @@ ATTR_PREFIX = "attr:"  # option value "attr:<attribute type name>"
 OPT_FOCAL = "num_focal"
 OPT_ANCESTOR = "num_ancestor"
 OPT_DESCENDANT = "num_descendant"
-# "inc_id" is the name of Gramps' own "Include Gramps ID" option, which the
+# "inc_id" is the name of the core "Include Gramps ID" option, which the
 # Person label replaces: saved settings and books carry over (0 = Do not
 # include, 1 or 2 = Gramps ID).
 OPT_PERSON_LABEL = "inc_id"
@@ -137,16 +134,33 @@ FAMILY = "family"
 HOME_PERSON = "home"
 ACTIVE_PERSON = "active"
 
-# One number of one person.
-#   ancestor systems:   number = Sosa number (1 = focal person)
-#   descendant systems: path = child positions below the focal person,
-#                       e.g. (2, 1) = first child of the second child;
-#                       seq = order found, generation by generation (1 = focal)
-#                       gen_seq = order found within its generation
-#   both:               generation (1 = focal person)
-NumberRecord = namedtuple(
-    "NumberRecord", ["handle", "generation", "number", "path", "seq", "gen_seq"]
-)
+GUI_MODULE = "center_person_gui"
+
+
+# ------------------------------------------------------------
+#
+# NumberRecord
+#
+# ------------------------------------------------------------
+class NumberRecord(NamedTuple):
+    """
+    One number of one person.
+
+    :param handle: The person handle.
+    :param generation: 1 for the focal person.
+    :param number: The Sosa number (ancestor systems only).
+    :param path: Child positions below the focal person, e.g. (2, 1) is the
+        first child of the second child (descendant systems only).
+    :param seq: Order found, generation by generation (1 is the focal person).
+    :param gen_seq: Order found within its generation.
+    """
+
+    handle: PersonHandle
+    generation: int
+    number: int
+    path: tuple[int, ...]
+    seq: int
+    gen_seq: int
 
 
 # ------------------------------------------------------------
@@ -158,48 +172,75 @@ class NumberingSystem:
     """
     Base class of all numbering systems.
 
-    :cvar system_id: stable identifier, saved in report options and books
-    :cvar direction: ANCESTOR or DESCENDANT
-    :cvar label: untranslated label (translated when shown)
-    :cvar unique: True when a person can only have one number
+    :cvar system_id: Stable identifier, saved in report options and books.
+    :cvar direction: ANCESTOR or DESCENDANT.
+    :cvar label: Untranslated label (translated when shown).
+    :cvar example: Short sample shown in menus, e.g. "1, 11, 1A".
+    :cvar unique: True when a person can only have one number.
+    :cvar uses_attribute: True for the Attribute systems.
     """
 
     system_id = ""
     direction = ""
     label = ""
-    example = ""  # short sample shown in menus, e.g. "1, 11, 1A"
+    example = ""
     unique = False
     uses_attribute = False
 
-    def format(self, rec):
-        """Return the display text of one NumberRecord."""
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the display text of one number.
+
+        :param rec: The number to format.
+        :returns: The display text.
+        """
         raise NotImplementedError
 
-    def display(self, rec, numbering):
+    def display(self, rec: NumberRecord, numbering: Numbering) -> str:
         """
-        Return the display text of one NumberRecord for a Numbering.
-        Systems that need the database or the chosen attribute override
-        this; the others only implement format().
+        Return the display text of one number for a Numbering. Systems that
+        need the database or the chosen attribute override this; the others
+        only implement format().
+
+        :param rec: The number to show.
+        :param numbering: The Numbering the number belongs to.
+        :returns: The display text.
         """
+        del numbering  # only used by the Attribute systems
         return self.format(rec)
 
-    def sort_key(self, rec):
-        """Return a sort key putting numbered people in this system's order."""
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Return a sort key putting numbered people in this system's order.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return (rec.seq,)
 
-    def get_label(self, translate=None):
-        """Return the label, translated by ``translate`` (default: GUI)."""
+    def get_label(self, translate: Translator | None = None) -> str:
+        """
+        Return the label.
+
+        :param translate: Translation function (default: the GUI language).
+        :returns: The translated label.
+        """
         return (translate or _)(self.label)
 
-    def get_menu_label(self, translate=None):
-        """Return the label with its example, e.g. "Henry numbering (1, 11, 1A)"."""
+    def get_menu_label(self, translate: Translator | None = None) -> str:
+        """
+        Return the label with its example, e.g. "Henry numbering (1, 11, 1A)".
+
+        :param translate: Translation function (default: the GUI language).
+        :returns: The menu text.
+        """
         label = self.get_label(translate)
-        return "%s (%s)" % (label, self.example) if self.example else label
+        return f"{label} ({self.example})" if self.example else label
 
 
 # ------------------------------------------------------------
 #
-# AncestorSystem / DescendantSystem
+# AncestorSystem
 #
 # ------------------------------------------------------------
 class AncestorSystem(NumberingSystem):
@@ -207,225 +248,424 @@ class AncestorSystem(NumberingSystem):
 
     direction = ANCESTOR
 
-    def sort_key(self, rec):
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the Sosa number.
+
+        :param rec: The number to format.
+        :returns: The display text.
+        """
+        return str(rec.number)
+
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Sort by Sosa number.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return (rec.number,)
 
 
+# ------------------------------------------------------------
+#
+# DescendantSystem
+#
+# ------------------------------------------------------------
 class DescendantSystem(NumberingSystem):
     """Base for systems numbering the descendants of the focal person."""
 
     direction = DESCENDANT
 
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the running number.
+
+        :param rec: The number to format.
+        :returns: The display text.
+        """
+        return str(rec.seq)
+
 
 # ------------------------------------------------------------
 #
-# Built-in systems
+# SosaStradonitz
 #
 # ------------------------------------------------------------
 class SosaStradonitz(AncestorSystem):
     """Sosa-Stradonitz (Ahnentafel, Kekule): father 2n, mother 2n+1."""
 
     system_id = "sosa"
-    label = _T_("Sosa-Stradonitz number")
+    label = N_("Sosa-Stradonitz number")
     example = "1, 2, 3, 4"
 
-    def format(self, rec):
-        return str(rec.number)
 
-
+# ------------------------------------------------------------
+#
+# AhnentafelNumbering
+#
+# ------------------------------------------------------------
 class AhnentafelNumbering(SosaStradonitz):
     """
-    Ahnentafel: the same numbers as Sosa-Stradonitz (father 2n,
-    mother 2n+1), offered under the name many genealogists know it by.
+    Ahnentafel: the same numbers as Sosa-Stradonitz (father 2n, mother
+    2n+1), offered under the name many genealogists know it by.
     """
 
     system_id = "ahnentafel"
-    label = _T_("Ahnentafel numbering")
+    label = N_("Ahnentafel numbering")
     example = "1, 2, 3, 4"
 
 
-def attribute_value(obj, attribute):
+def attribute_value(obj: Person | Family, attribute: str) -> str:
     """
-    Return the value of the first attribute of type ``attribute`` (an XML
-    type name such as "Identification Number", or a custom type name) of
-    a Person or Family, or "" when it has no such value.
+    Return the value of the first attribute of a type.
+
+    :param obj: The Person or Family.
+    :param attribute: XML type name such as "Identification Number", or a
+        custom type name.
+    :returns: The value, or "" when there is none.
     """
     if attribute:
         for attr in obj.get_attribute_list():
             if attr.get_type().xml_str() == attribute and attr.get_value().strip():
-                return attr.get_value().strip()
+                return str(attr.get_value()).strip()
     return ""
 
 
-def attribute_or_gramps_id(obj, attribute):
-    """Return the attribute value, or the Gramps ID when it has none."""
-    return attribute_value(obj, attribute) or obj.get_gramps_id()
+def attribute_or_gramps_id(obj: Person | Family, attribute: str) -> str:
+    """
+    Return an attribute value, or the Gramps ID when there is none.
+
+    :param obj: The Person or Family.
+    :param attribute: The attribute type name.
+    :returns: The attribute value or the Gramps ID.
+    """
+    return attribute_value(obj, attribute) or str(obj.get_gramps_id())
 
 
-def attribute_label(attribute, translate=None):
+def attribute_label(attribute: str, translate: Translator | None = None) -> str:
     """
-    Return the display name of an attribute type name: the translated
-    label of a standard type, or a custom type name unchanged.
+    Return the display name of an attribute type name.
+
+    :param attribute: The attribute type name.
+    :param translate: Translation function (default: the GUI language).
+    :returns: The translated label of a standard type, or a custom type
+        name unchanged.
     """
-    for value, label, xml in AttributeType._BASEMAP:
+    for (
+        dummy_value,
+        label,
+        xml,
+    ) in AttributeType._BASEMAP:  # pylint: disable=protected-access
         if xml == attribute:
             return (translate or _)(label)
     return attribute or ""
 
 
-class _AttributeMixin:
+# ------------------------------------------------------------
+#
+# AncestorAttribute
+#
+# ------------------------------------------------------------
+class AncestorAttribute(AncestorSystem):
     """
-    Show a Person Attribute instead of a number; when the person has no
-    value, show the Numbering's fallback label (the Person label), and
-    when that is empty too, the Gramps ID.
+    Ancestors of the focal person, shown by a Person Attribute; without a
+    value, by the Numbering fallback (the Person label), else the Gramps ID.
     """
 
-    label = _T_("Attribute")
+    system_id = "ancestor_attribute"
+    label = N_("Attribute")
     unique = True
     uses_attribute = True
 
-    def format(self, rec):
-        return ""
+    def display(self, rec: NumberRecord, numbering: Numbering) -> str:
+        """
+        Return the attribute value, the fallback label or the Gramps ID.
 
-    def display(self, rec, numbering):
-        person = numbering.db.get_person_from_handle(rec.handle)
-        if person is None:
-            return ""
-        value = attribute_value(person, numbering.attribute)
-        if not value and numbering.fallback is not None:
-            value = numbering.fallback(person)
-        return value or person.get_gramps_id()
+        :param rec: The number to show.
+        :param numbering: The Numbering, with the attribute and fallback.
+        :returns: The display text.
+        """
+        return _attribute_display(rec, numbering)
 
 
-class AncestorAttribute(_AttributeMixin, AncestorSystem):
-    """Ancestors of the focal person, shown by a Person Attribute."""
-
-    system_id = "ancestor_attribute"
-
-
-class DescendantAttribute(_AttributeMixin, DescendantSystem):
-    """Descendants of the focal person, shown by a Person Attribute."""
+# ------------------------------------------------------------
+#
+# DescendantAttribute
+#
+# ------------------------------------------------------------
+class DescendantAttribute(DescendantSystem):
+    """
+    Descendants of the focal person, shown by a Person Attribute; without a
+    value, by the Numbering fallback (the Person label), else the Gramps ID.
+    """
 
     system_id = "descendant_attribute"
+    label = N_("Attribute")
+    unique = True
+    uses_attribute = True
 
-    def sort_key(self, rec):
+    def display(self, rec: NumberRecord, numbering: Numbering) -> str:
+        """
+        Return the attribute value, the fallback label or the Gramps ID.
+
+        :param rec: The number to show.
+        :param numbering: The Numbering, with the attribute and fallback.
+        :returns: The display text.
+        """
+        return _attribute_display(rec, numbering)
+
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Sort family branch by family branch.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return rec.path
 
 
+def _attribute_display(rec: NumberRecord, numbering: Numbering) -> str:
+    """
+    Return the text of an Attribute system number.
+
+    :param rec: The number to show.
+    :param numbering: The Numbering, with the attribute and fallback.
+    :returns: The attribute value, else the fallback, else the Gramps ID.
+    """
+    person = numbering.db.get_person_from_handle(rec.handle)
+    if person is None:
+        return ""
+    value = attribute_value(person, numbering.attribute or "")
+    if not value and numbering.fallback is not None:
+        value = numbering.fallback(person)
+    return value or str(person.get_gramps_id())
+
+
+# ------------------------------------------------------------
+#
+# SimpleNumbering
+#
+# ------------------------------------------------------------
 class SimpleNumbering(DescendantSystem):
     """Generation number only, as in the Descendant Report."""
 
     system_id = "simple"
-    label = _T_("Simple numbering")
+    label = N_("Simple numbering")
     example = "1, 2, 2, 3"
     unique = True
 
-    def format(self, rec):
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the generation.
+
+        :param rec: The number to format.
+        :returns: The display text.
+        """
         return str(rec.generation)
 
-    def sort_key(self, rec):
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Sort generation by generation.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return (rec.generation, rec.gen_seq)
 
 
 HENRY = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
+# ------------------------------------------------------------
+#
+# HenryNumbering
+#
+# ------------------------------------------------------------
 class HenryNumbering(DescendantSystem):
     """Henry: one character per generation, 1-9 then A-Z, then (n)."""
 
     system_id = "henry"
-    label = _T_("Henry numbering")
+    label = N_("Henry numbering")
     example = "1, 11, 1A"
 
-    def format(self, rec):
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the Henry number.
+
+        :param rec: The number to format.
+        :returns: The display text.
+        """
         return "1" + "".join(
-            HENRY[i - 1] if i <= len(HENRY) else "(%d)" % i for i in rec.path
+            HENRY[i - 1] if i <= len(HENRY) else f"({i})" for i in rec.path
         )
 
-    def sort_key(self, rec):
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Sort family branch by family branch.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return rec.path
 
 
+# ------------------------------------------------------------
+#
+# ModifiedHenryNumbering
+#
+# ------------------------------------------------------------
 class ModifiedHenryNumbering(DescendantSystem):
     """Modified Henry: digits 1-9, then (10), (11), ..."""
 
     system_id = "modified_henry"
-    label = _T_("Modified Henry numbering")
+    label = N_("Modified Henry numbering")
     example = "1, 11, 1(10)"
 
-    def format(self, rec):
-        return "1" + "".join(str(i) if i < 10 else "(%d)" % i for i in rec.path)
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the Modified Henry number.
 
-    def sort_key(self, rec):
+        :param rec: The number to format.
+        :returns: The display text.
+        """
+        return "1" + "".join(str(i) if i < 10 else f"({i})" for i in rec.path)
+
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Sort family branch by family branch.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return rec.path
 
 
+# ------------------------------------------------------------
+#
+# DAbovilleNumbering
+#
+# ------------------------------------------------------------
 class DAbovilleNumbering(DescendantSystem):
     """d'Aboville: child positions separated by dots, e.g. 1.3.2."""
 
     system_id = "daboville"
-    label = _T_("d'Aboville numbering")
+    label = N_("d'Aboville numbering")
     example = "1, 1.1, 1.2.3"
 
-    def format(self, rec):
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the d'Aboville number.
+
+        :param rec: The number to format.
+        :returns: The display text.
+        """
         return ".".join(str(i) for i in (1,) + rec.path)
 
-    def sort_key(self, rec):
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Sort family branch by family branch.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return rec.path
 
 
 PAMA = "abcdefghijklmnopqrstuvwxyz"
 
 
+# ------------------------------------------------------------
+#
+# VilliersPamaNumbering
+#
+# ------------------------------------------------------------
 class VilliersPamaNumbering(DescendantSystem):
     """de Villiers/Pama: generation letter plus child position, a1b3c2."""
 
     system_id = "villiers_pama"
-    label = _T_("de Villiers/Pama numbering")
+    label = N_("de Villiers/Pama numbering")
     example = "a1, a1b1, a1b2c3"
 
     @staticmethod
-    def _letter(generation):
+    def _letter(generation: int) -> str:
+        """
+        Return the letter of a generation.
+
+        :param generation: 1 for the focal person.
+        :returns: "a" to "z", then "[27]" and so on.
+        """
         if generation <= len(PAMA):
             return PAMA[generation - 1]
-        return "[%d]" % generation
+        return f"[{generation}]"
 
-    def format(self, rec):
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the de Villiers/Pama number.
+
+        :param rec: The number to format.
+        :returns: The display text.
+        """
         return "a1" + "".join(
             self._letter(gen) + str(i) for gen, i in enumerate(rec.path, start=2)
         )
 
-    def sort_key(self, rec):
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Sort family branch by family branch.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return rec.path
 
 
+# ------------------------------------------------------------
+#
+# MeurgeyNumbering
+#
+# ------------------------------------------------------------
 class MeurgeyNumbering(DescendantSystem):
     """Meurgey de Tupigny: Roman generation, then order in generation."""
 
     system_id = "meurgey"
-    label = _T_("Meurgey de Tupigny numbering")
+    label = N_("Meurgey de Tupigny numbering")
     example = "I, II-1, III-1"
     unique = True
 
-    def format(self, rec):
-        if rec.generation == 1:
-            return roman(1)
-        return "%s-%d" % (roman(rec.generation), rec.gen_seq)
+    def format(self, rec: NumberRecord) -> str:
+        """
+        Return the Meurgey de Tupigny number.
 
-    def sort_key(self, rec):
+        :param rec: The number to format.
+        :returns: The display text.
+        """
+        if rec.generation == 1:
+            return str(roman(1))
+        return f"{roman(rec.generation)}-{rec.gen_seq}"
+
+    def sort_key(self, rec: NumberRecord) -> tuple[int, ...]:
+        """
+        Sort generation by generation.
+
+        :param rec: The number to sort.
+        :returns: The sort key.
+        """
         return (rec.generation, rec.gen_seq)
 
 
+# ------------------------------------------------------------
+#
+# RecordNumbering
+#
+# ------------------------------------------------------------
 class RecordNumbering(DescendantSystem):
     """Record (Modified Register): one running number, generation order."""
 
     system_id = "record"
-    label = _T_("Record (Modified Register) numbering")
+    label = N_("Record (Modified Register) numbering")
     example = "1, 2, 3, 4"
     unique = True
-
-    def format(self, rec):
-        return str(rec.seq)
 
 
 # ------------------------------------------------------------
@@ -433,30 +673,41 @@ class RecordNumbering(DescendantSystem):
 # Registry
 #
 # ------------------------------------------------------------
-_SYSTEMS = {}
+_SYSTEMS: dict[str, NumberingSystem] = {}
 
 
-def register_system(system):
+def register_system(system: NumberingSystem) -> None:
     """
     Add (or replace) a numbering system in the registry.
 
-    :param system: instance of an AncestorSystem or DescendantSystem subclass
+    :param system: Instance of an AncestorSystem or DescendantSystem subclass.
+    :raises ValueError: When the system has no direction or system_id.
     """
     if system.direction not in (ANCESTOR, DESCENDANT) or not system.system_id:
-        raise ValueError("numbering system needs a direction and a system_id")
+        raise ValueError(_("A numbering system needs a direction and an id."))
     _SYSTEMS[system.system_id] = system
 
 
-def get_system(system_id):
-    """Return the registered system with this id, or None."""
+def get_system(system_id: str) -> NumberingSystem | None:
+    """
+    Return a registered system.
+
+    :param system_id: The system id.
+    :returns: The system, or ``None`` when there is none with this id.
+    """
     return _SYSTEMS.get(system_id)
 
 
-def get_systems(direction, include_attribute=False):
+def get_systems(
+    direction: str, include_attribute: bool = False
+) -> list[NumberingSystem]:
     """
     Return the registered systems of one direction, in registry order.
-    The Attribute systems are left out unless asked for, because menus
-    offer them once per attribute type ("Attribute: <type>").
+
+    :param direction: ANCESTOR or DESCENDANT.
+    :param include_attribute: Include the Attribute system, which menus
+        offer once per attribute type ("Attribute: <type>").
+    :returns: The systems.
     """
     return [
         system
@@ -466,8 +717,13 @@ def get_systems(direction, include_attribute=False):
     ]
 
 
-def attribute_system(direction):
-    """Return the registered Attribute system of one direction."""
+def attribute_system(direction: str) -> NumberingSystem | None:
+    """
+    Return the registered Attribute system of one direction.
+
+    :param direction: ANCESTOR or DESCENDANT.
+    :returns: The system, or ``None``.
+    """
     for system in _SYSTEMS.values():
         if system.direction == direction and system.uses_attribute:
             return system
@@ -495,15 +751,25 @@ for _system in (
 # Tree walking
 #
 # ------------------------------------------------------------
-def _walk_ancestors(db, focal_handle, max_generations, max_numbers):
+def _walk_ancestors(
+    db: DbReadBase,
+    focal_handle: PersonHandle,
+    max_generations: int | None,
+    max_numbers: int,
+) -> Iterator[NumberRecord]:
     """
-    Yield ancestor NumberRecords in increasing Sosa number.
+    Yield ancestor numbers in increasing Sosa number. A priority queue
+    keeps the numbers in order, so each person gets their ``max_numbers``
+    smallest numbers even with pedigree collapse or loops.
 
-    A priority queue keeps the numbers in order, so each person gets their
-    ``max_numbers`` smallest numbers even with pedigree collapse or loops.
+    :param db: The database.
+    :param focal_handle: The focal person (number 1).
+    :param max_generations: Generations to number, ``None`` for all.
+    :param max_numbers: Most numbers kept per person.
+    :returns: The numbers.
     """
-    heap = [(1, focal_handle)]
-    counts = {}
+    heap: list[tuple[int, PersonHandle]] = [(1, focal_handle)]
+    counts: dict[PersonHandle, int] = {}
     seq = 0
     while heap:
         number, handle = heapq.heappop(heap)
@@ -516,9 +782,7 @@ def _walk_ancestors(db, focal_handle, max_generations, max_numbers):
         if max_generations and generation >= max_generations:
             continue
         person = db.get_person_from_handle(handle)
-        if person is None:
-            continue
-        family_handle = person.get_main_parents_family_handle()
+        family_handle = person.get_main_parents_family_handle() if person else None
         family = db.get_family_from_handle(family_handle) if family_handle else None
         if family is None:
             continue
@@ -528,17 +792,28 @@ def _walk_ancestors(db, focal_handle, max_generations, max_numbers):
             heapq.heappush(heap, (number * 2 + 1, family.get_mother_handle()))
 
 
-def _walk_descendants(db, focal_handle, max_generations, max_numbers):
+def _walk_descendants(  # pylint: disable=too-many-locals
+    db: DbReadBase,
+    focal_handle: PersonHandle,
+    max_generations: int | None,
+    max_numbers: int,
+) -> Iterator[NumberRecord]:
     """
-    Yield descendant NumberRecords generation by generation.
+    Yield descendant numbers generation by generation. Children are taken
+    family by family, in the order of the person's family list and each
+    family's child list (as the core reports do).
 
-    Children are taken family by family, in the order of the person's
-    family list and each family's child list (as the core reports do).
+    :param db: The database.
+    :param focal_handle: The focal person (number 1).
+    :param max_generations: Generations to number, ``None`` for all.
+    :param max_numbers: Most numbers kept per person.
+    :returns: The numbers.
     """
-    queue = deque([(focal_handle, ())])
-    counts = {}
+    empty_path: tuple[int, ...] = ()
+    queue = deque([(focal_handle, empty_path)])
+    counts: dict[PersonHandle, int] = {}
+    gen_seq: dict[int, int] = {}
     seq = 0
-    gen_seq = {}
     while queue:
         handle, path = queue.popleft()
         if counts.get(handle, 0) >= max_numbers:
@@ -572,30 +847,31 @@ class Numbering:
     """
     The numbers one system gives the relatives of one focal person.
 
-    :param db: database (or proxy)
-    :param focal_handle: handle of the focal person (number 1)
-    :param system: a registered NumberingSystem (or its system_id)
-    :param max_generations: generations to number, None for all
-    :param max_numbers: most numbers kept per person (pedigree collapse)
-    :param attribute: attribute type name, for the Attribute systems
-    :param fallback: function(person) giving the text the Attribute systems
-                     show when the person has no value (e.g. a Label)
+    :param db: The database (or proxy).
+    :param focal_handle: The focal person (number 1).
+    :param system: A registered NumberingSystem, or its system_id.
+    :param max_generations: Generations to number, ``None`` for all.
+    :param max_numbers: Most numbers kept per person (pedigree collapse).
+    :param attribute: Attribute type name, for the Attribute systems.
+    :param fallback: Function giving the text the Attribute systems show
+        when a person has no value (e.g. a Label).
+    :raises ValueError: When the system is unknown.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
-        db,
-        focal_handle,
-        system,
-        max_generations=None,
-        max_numbers=10,
-        attribute=None,
-        fallback=None,
-    ):
+        db: DbReadBase,
+        focal_handle: PersonHandle,
+        system: NumberingSystem | str | None,
+        max_generations: int | None = None,
+        max_numbers: int = 10,
+        attribute: str | None = None,
+        fallback: Callable[[Person], str] | None = None,
+    ) -> None:
         if isinstance(system, str):
             system = get_system(system)
         if system is None:
-            raise ValueError("unknown numbering system")
+            raise ValueError(_("Unknown numbering system."))
         self.db = db
         self.system = system
         self.attribute = attribute
@@ -603,42 +879,91 @@ class Numbering:
         self.focal_handle = focal_handle
         limit = 1 if system.unique else max(1, max_numbers)
         walk = _walk_ancestors if system.direction == ANCESTOR else _walk_descendants
-        self._records = {}
+        self._records: dict[PersonHandle, list[NumberRecord]] = {}
         for rec in walk(db, focal_handle, max_generations, limit):
             self._records.setdefault(rec.handle, []).append(rec)
 
-    def __contains__(self, handle):
+    def __contains__(self, handle: object) -> bool:
+        """
+        Return whether a person is numbered.
+
+        :param handle: The person handle.
+        :returns: ``True`` when numbered.
+        """
         return handle in self._records
 
-    def __len__(self):
+    def __len__(self) -> int:
+        """
+        Return the number of numbered people.
+
+        :returns: The count.
+        """
         return len(self._records)
 
-    def handles(self):
-        """Return the numbered handles, in this system's order."""
-        return sorted(self._records, key=self.sort_key)
+    def handles(self) -> list[PersonHandle]:
+        """
+        Return the numbered people, in this system's order.
 
-    def records(self, handle):
-        """Return the NumberRecords of a person (empty list if none)."""
+        :returns: The person handles.
+        """
+        return sorted(self._records, key=self._sort_key_of)
+
+    def records(self, handle: PersonHandle) -> list[NumberRecord]:
+        """
+        Return the numbers of a person.
+
+        :param handle: The person handle.
+        :returns: The NumberRecords (empty when not numbered).
+        """
         return list(self._records.get(handle, []))
 
-    def numbers(self, handle):
-        """Return the display numbers of a person (empty list if none)."""
+    def numbers(self, handle: PersonHandle) -> list[str]:
+        """
+        Return the display numbers of a person.
+
+        :param handle: The person handle.
+        :returns: The display numbers (empty when not numbered).
+        """
         return [self.system.display(rec, self) for rec in self._records.get(handle, [])]
 
-    def primary(self, handle):
-        """Return the first (smallest) number of a person, or None."""
+    def primary(self, handle: PersonHandle) -> str | None:
+        """
+        Return the first (smallest) number of a person.
+
+        :param handle: The person handle.
+        :returns: The display number, or ``None``.
+        """
         recs = self._records.get(handle)
         return self.system.display(recs[0], self) if recs else None
 
-    def generation(self, handle):
-        """Return the generation of the first number (1 = focal), or None."""
+    def generation(self, handle: PersonHandle) -> int | None:
+        """
+        Return the generation of a person's first number.
+
+        :param handle: The person handle.
+        :returns: 1 for the focal person, or ``None``.
+        """
         recs = self._records.get(handle)
         return recs[0].generation if recs else None
 
-    def sort_key(self, handle):
-        """Return the sort key of a person's first number, or None."""
+    def sort_key(self, handle: PersonHandle) -> tuple[int, ...] | None:
+        """
+        Return the sort key of a person's first number.
+
+        :param handle: The person handle.
+        :returns: The sort key, or ``None``.
+        """
         recs = self._records.get(handle)
         return self.system.sort_key(recs[0]) if recs else None
+
+    def _sort_key_of(self, handle: PersonHandle) -> tuple[int, ...]:
+        """
+        Return the sort key of a numbered person.
+
+        :param handle: A numbered person handle.
+        :returns: The sort key.
+        """
+        return self.system.sort_key(self._records[handle][0])
 
 
 # ------------------------------------------------------------
@@ -651,23 +976,33 @@ class Label:
     The label shown for a Person or Family: nothing, its Gramps ID, or an
     attribute value (falling back to the Gramps ID).
 
-    :param choice: NONE_ID, GRAMPS_ID or "attr:<attribute type name>"
+    :param choice: NONE_ID, GRAMPS_ID or "attr:<attribute type name>".
     """
 
-    def __init__(self, choice=NONE_ID):
+    def __init__(self, choice: str = NONE_ID) -> None:
         self.choice = choice or NONE_ID
         self.attribute = split_attribute(self.choice)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
+        """
+        Return whether a label is shown.
+
+        :returns: ``False`` for "Do not include".
+        """
         return self.choice != NONE_ID
 
-    def __call__(self, obj):
-        """Return the label text of a Person or Family ("" when none)."""
+    def __call__(self, obj: Person | Family | None) -> str:
+        """
+        Return the label of a Person or Family.
+
+        :param obj: The Person or Family.
+        :returns: The label, or "" for "Do not include".
+        """
         if obj is None or self.choice == NONE_ID:
             return ""
         if self.attribute:
             return attribute_or_gramps_id(obj, self.attribute)
-        return obj.get_gramps_id()
+        return str(obj.get_gramps_id())
 
 
 # ------------------------------------------------------------
@@ -676,7 +1011,6 @@ class Label:
 #
 # ------------------------------------------------------------
 SCHEMA_VERSION = "3"
-_MEMORY = None
 
 
 class AttributeMemory:
@@ -685,11 +1019,14 @@ class AttributeMemory:
     by option name), in an .ini next to the plugin (Gramps ConfigManager,
     with a [meta] block). An .ini written by another plugin id or another
     schema is replaced.
+
+    :param plugin_id: The plugin id, also the .ini file name.
+    :param folder: The plugin folder.
     """
 
     KEYS = (OPT_PERSON_LABEL, OPT_ANCESTOR, OPT_DESCENDANT, OPT_FAMILY_LABEL)
 
-    def __init__(self, plugin_id, folder):
+    def __init__(self, plugin_id: str, folder: str) -> None:
         self.config = configman.register_manager(
             plugin_id,
             os.path.join(folder, plugin_id + ".ini"),
@@ -700,7 +1037,7 @@ class AttributeMemory:
         self.config.register("meta.plugin_id", "")
         self.config.register("meta.schema_version", "")
         for key in self.KEYS:
-            self.config.register("attributes.%s" % key, "")
+            self.config.register(f"attributes.{key}", "")
         self.config.load()
         found = (
             self.config.get("meta.plugin_id"),
@@ -715,7 +1052,7 @@ class AttributeMemory:
             self.config.set("meta.schema_version", SCHEMA_VERSION)
             self.save()
 
-    def _drop_unknown_keys(self):
+    def _drop_unknown_keys(self) -> None:
         """Forget settings of an older schema that are no longer used."""
         for section, settings in self.config.data.items():
             known = self.config.default.get(section, {})
@@ -723,45 +1060,75 @@ class AttributeMemory:
                 if setting not in known:
                     del settings[setting]
 
-    def get(self, key):
-        """Return the attribute type last used in one choice, or ""."""
+    def get(self, key: str) -> str:
+        """
+        Return the attribute type last used in one choice.
+
+        :param key: The option name.
+        :returns: The attribute type name, or "".
+        """
         if key not in self.KEYS:
             return ""
-        return self.config.get("attributes.%s" % key)
+        return str(self.config.get(f"attributes.{key}"))
 
-    def set(self, key, attribute):
-        """Remember the attribute type used in one choice."""
+    def set(self, key: str, attribute: str) -> None:
+        """
+        Remember the attribute type used in one choice.
+
+        :param key: The option name.
+        :param attribute: The attribute type name.
+        """
         if key in self.KEYS and attribute and attribute != self.get(key):
-            self.config.set("attributes.%s" % key, attribute)
+            self.config.set(f"attributes.{key}", attribute)
             self.save()
 
-    def save(self):
+    def save(self) -> None:
         """Write the .ini, ignoring a read-only plugin folder."""
         try:
             self.config.save()
-        except OSError:
-            pass
+        except OSError as err:
+            LOG.debug("Could not save %s: %s", self.config.filename, err)
 
 
-def use_attribute_memory(plugin_id, folder):
+_MEMORY: dict[str, AttributeMemory] = {}
+
+
+def use_attribute_memory(plugin_id: str, folder: str) -> AttributeMemory:
     """
     Remember the attribute types last used in ``folder``/``plugin_id``.ini.
     Call once, from the plugin using these helpers, before building menus.
+
+    :param plugin_id: The plugin id, also the .ini file name.
+    :param folder: The plugin folder.
+    :returns: The AttributeMemory.
     """
-    global _MEMORY
-    if _MEMORY is None:
-        _MEMORY = AttributeMemory(plugin_id, folder)
-    return _MEMORY
+    if "memory" not in _MEMORY:
+        _MEMORY["memory"] = AttributeMemory(plugin_id, folder)
+    return _MEMORY["memory"]
 
 
-def _remembered(key):
-    return _MEMORY.get(key) if _MEMORY is not None else ""
+def _remembered(key: str) -> str:
+    """
+    Return the attribute type last used in one choice.
+
+    :param key: The option name.
+    :returns: The attribute type name, or "".
+    """
+    memory = _MEMORY.get("memory")
+    return memory.get(key) if memory is not None else ""
 
 
-def _remember(key, choice):
+def _remember(key: str, choice: str) -> None:
+    """
+    Remember the attribute type of a choice, if it is an attribute.
+
+    :param key: The option name.
+    :param choice: The option value.
+    """
     attribute = split_attribute(choice)
-    if attribute and _MEMORY is not None:
-        _MEMORY.set(key, attribute)
+    memory = _MEMORY.get("memory")
+    if attribute and memory is not None:
+        memory.set(key, attribute)
 
 
 # ------------------------------------------------------------
@@ -769,31 +1136,40 @@ def _remember(key, choice):
 # Menu helpers
 #
 # ------------------------------------------------------------
-def split_attribute(choice):
-    """Return the attribute type of an "attr:<type>" choice, else ""."""
-    if choice and choice.startswith(ATTR_PREFIX):
+def split_attribute(choice: Any) -> str:
+    """
+    Return the attribute type of an "attr:<type>" choice.
+
+    :param choice: The option value.
+    :returns: The attribute type name, or "".
+    """
+    if isinstance(choice, str) and choice.startswith(ATTR_PREFIX):
         return choice[len(ATTR_PREFIX) :]
     return ""
 
 
-def attribute_items(db, kind=PERSON):
+def attribute_items(db: DbReadBase | None, kind: str = PERSON) -> list[tuple[str, str]]:
     """
-    Return (attribute type name, display name) pairs of Person (or Family)
-    attribute types: the custom types used in the tree (sorted), then the
-    standard types.
+    Return the Person (or Family) attribute types: the custom types used in
+    the tree (sorted), then the standard types.
+
+    :param db: The database, for the custom types (may be ``None``).
+    :param kind: PERSON or FAMILY.
+    :returns: (attribute type name, display name) pairs.
     """
-    standard = []
-    for value, label, xml in AttributeType._DATAMAP:
-        if value not in (AttributeType.UNKNOWN, AttributeType.CUSTOM):
-            standard.append((xml, label))
-    custom = []
+    standard = [
+        (xml, label)
+        for value, label, xml in AttributeType._DATAMAP  # pylint: disable=protected-access
+        if value not in (AttributeType.UNKNOWN, AttributeType.CUSTOM)
+    ]
+    custom: list[tuple[str, str]] = []
     if db is not None:
         names = (
             db.get_family_attribute_types()
             if kind == FAMILY
             else db.get_person_attribute_types()
         )
-        known = {xml for xml, label in standard}
+        known = {xml for xml, dummy_label in standard}
         custom = [
             (name, name)
             for name in sorted(set(names), key=glocale.sort_key)
@@ -802,8 +1178,14 @@ def attribute_items(db, kind=PERSON):
     return custom + standard
 
 
-def attribute_choice_text(attribute, translate=None):
-    """Return "Attribute: <display name>" for an attribute type name."""
+def attribute_choice_text(attribute: str, translate: Translator | None = None) -> str:
+    """
+    Return "Attribute: <display name>" for an attribute type name.
+
+    :param attribute: The attribute type name.
+    :param translate: Translation function (default: the GUI language).
+    :returns: The menu text.
+    """
     translate = translate or _
     return translate("%(str1)s: %(str2)s") % {
         "str1": translate("Attribute"),
@@ -820,18 +1202,29 @@ class AttributeChoiceOption(EnumeratedListOption):
     """
     A drop-down list whose last top-level item is "Attribute: <type>".
 
-    In the GUI (center_person_gui.GuiAttributeChoiceOption) that item has
-    a submenu with every attribute type; picking one makes it the shown
-    type. The attribute type last used in this choice is remembered.
-    Elsewhere (command line, books) the list is flat: the top-level items,
-    then one "attr:<type>" item per attribute type, so any type is valid.
+    In the GUI (center_person_gui.GuiAttributeChoiceOption) that item has a
+    submenu with every attribute type; picking one makes it the shown type.
+    The attribute type last used in this choice is remembered. Elsewhere
+    (command line, books) the list is flat: the top-level items, then one
+    "attr:<type>" item per attribute type, so any type is valid.
 
-    :param top_items: (value, text) pairs shown before the Attribute item
-    :param kind: PERSON or FAMILY attribute types
-    :param memory_key: key of the remembered attribute type (option name)
+    :param label: The option label.
+    :param value: The default value.
+    :param top_items: (value, text) pairs shown before the Attribute item.
+    :param db: The database, for the custom attribute types.
+    :param kind: PERSON or FAMILY attribute types.
+    :param memory_key: Key of the remembered attribute type (option name).
     """
 
-    def __init__(self, label, value, top_items, db, kind, memory_key):
+    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
+        self,
+        label: str,
+        value: str,
+        top_items: list[tuple[str, str]],
+        db: DbReadBase | None,
+        kind: str,
+        memory_key: str,
+    ) -> None:
         self.db = db
         self.kind = kind
         self._top = list(top_items)
@@ -840,13 +1233,19 @@ class AttributeChoiceOption(EnumeratedListOption):
         EnumeratedListOption.__init__(self, label, value)
         self._rebuild()
 
-    def _attribute_types(self):
+    def _attribute_types(self) -> list[tuple[str, str]]:
+        """
+        Return the attribute types, including the shown one.
+
+        :returns: (attribute type name, display name) pairs.
+        """
         types = attribute_items(self.db, self.kind)
-        if self.attribute not in (name for name, text in types):
+        if self.attribute not in (name for name, dummy_text in types):
             types.insert(0, (self.attribute, self.attribute))
         return types
 
-    def _rebuild(self):
+    def _rebuild(self) -> None:
+        """Rebuild the flat list of items and tell the GUI."""
         items = list(self._top)
         items.append(
             (ATTR_PREFIX + self.attribute, attribute_choice_text(self.attribute))
@@ -857,12 +1256,16 @@ class AttributeChoiceOption(EnumeratedListOption):
         self.set_items(items)
         self.emit("options-changed")
 
-    def get_tree(self):
+    def get_tree(self) -> list[tuple[str, str, list[tuple[str, str]] | None]]:
         """
-        Return the GUI layout: [(value, text, children)], where only the
-        Attribute item has children: [(value, attribute display name)].
+        Return the GUI layout. Only the Attribute item has children.
+
+        :returns: (value, text, children) for each top-level item, where
+            children are (value, attribute display name) pairs.
         """
-        tree = [(value, text, None) for value, text in self._top]
+        tree: list[tuple[str, str, list[tuple[str, str]] | None]] = [
+            (value, text, None) for value, text in self._top
+        ]
         children = [
             (ATTR_PREFIX + name, text) for name, text in self._attribute_types()
         ]
@@ -875,52 +1278,93 @@ class AttributeChoiceOption(EnumeratedListOption):
         )
         return tree
 
-    def set_value(self, value):
+    def set_value(self, value: Any) -> None:
+        """
+        Set the value; any "attr:<type>" is accepted and becomes the shown
+        attribute type. An unknown value gives the default.
+
+        :param value: The new value. A saved "Include Gramps ID" value
+            (0, 1 or 2) is converted.
+        """
         if not isinstance(value, str) or value in ("0", "1", "2"):
-            # a saved "Include Gramps ID" value: 0 = no, 1 or 2 = yes
             value = GRAMPS_ID if value not in (0, "0", False) else NONE_ID
         attribute = split_attribute(value)
         if attribute:
             if attribute != self.attribute:
                 self.attribute = attribute
                 self._rebuild()
-        elif value not in (v for v, d in self._top):
+        elif value not in (top_value for top_value, dummy_text in self._top):
             value = self._default
         EnumeratedListOption.set_value(self, value)
 
 
-def add_label_option(
-    menu, category_name, name, label, db=None, kind=PERSON, default=GRAMPS_ID
-):
+def add_label_option(  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    menu: Menu,
+    category_name: str,
+    name: str,
+    label: str,
+    db: DbReadBase | None = None,
+    kind: str = PERSON,
+    default: str = GRAMPS_ID,
+) -> AttributeChoiceOption:
     """
     Add a Label choice: "Do not include", "Gramps ID" and
     "Attribute: <last used type>" (with every type in its GUI submenu).
 
-    :param default: NONE_ID, GRAMPS_ID or "attr:<type>"
-    :returns: the created option
+    :param menu: The menu.
+    :param category_name: The tab.
+    :param name: The option name.
+    :param label: The option label.
+    :param db: The database, for the custom attribute types.
+    :param kind: PERSON or FAMILY.
+    :param default: NONE_ID, GRAMPS_ID or "attr:<type>".
+    :returns: The created option.
     """
     _register_gui_options()
     top = [(NONE_ID, _("Do not include")), (GRAMPS_ID, _("Gramps ID"))]
     opt = AttributeChoiceOption(label, default, top, db, kind, name)
     opt.set_help(
-        _(
-            "An attribute is replaced by the Gramps ID when the "
-            "attribute has no value."
-        )
+        _("An attribute is replaced by the Gramps ID when the attribute has no value.")
     )
     menu.add_option(category_name, name, opt)
     return opt
 
 
-def add_person_label_option(menu, category_name, db=None, default=GRAMPS_ID):
-    """Add the "Person label" choice (option name OPT_PERSON_LABEL)."""
+def add_person_label_option(
+    menu: Menu,
+    category_name: str,
+    db: DbReadBase | None = None,
+    default: str = GRAMPS_ID,
+) -> AttributeChoiceOption:
+    """
+    Add the "Person label" choice (option name OPT_PERSON_LABEL).
+
+    :param menu: The menu.
+    :param category_name: The tab.
+    :param db: The database, for the custom attribute types.
+    :param default: NONE_ID, GRAMPS_ID or "attr:<type>".
+    :returns: The created option.
+    """
     return add_label_option(
         menu, category_name, OPT_PERSON_LABEL, _("Person label"), db, PERSON, default
     )
 
 
-def add_family_label_option(menu, category_name, db=None, default=GRAMPS_ID):
-    """Add the "Family label" choice (option name OPT_FAMILY_LABEL)."""
+def add_family_label_option(
+    menu: Menu,
+    category_name: str,
+    db: DbReadBase | None = None,
+    default: str = GRAMPS_ID,
+) -> AttributeChoiceOption:
+    """
+    Add the "Family label" choice (option name OPT_FAMILY_LABEL).
+
+    :param menu: The menu.
+    :param category_name: The tab.
+    :param db: The database, for the custom attribute types.
+    :param default: NONE_ID, GRAMPS_ID or "attr:<type>".
+    :returns: The created option.
+    """
     return add_label_option(
         menu, category_name, OPT_FAMILY_LABEL, _("Family label"), db, FAMILY, default
     )
@@ -937,38 +1381,60 @@ class CenterPersonOption(EnumeratedListOption):
     "Active person: <name> (<id>)" on top, then the bookmarked and recent
     people (each once, sorted by name).
 
-    The value is HOME_PERSON, ACTIVE_PERSON or a Gramps ID; any Gramps ID
-    of the tree is accepted (from saved options, books or the command
-    line) and added to the list. The GUI widget (center_person_gui.py)
-    adds the active and recent people and a "Select a different person"
-    button.
+    The value is HOME_PERSON, ACTIVE_PERSON or a Gramps ID; any Gramps ID of
+    the tree is accepted (from saved options, books or the command line) and
+    added to the list. The GUI widget (center_person_gui.py) adds the active
+    and recent people and a "Select a different person" button.
+
+    :param label: The option label.
+    :param db: The database.
     """
 
-    def __init__(self, label, db):
+    def __init__(self, label: str, db: DbReadBase | None) -> None:
         self.db = db
-        self.active_handle = None
-        self._recent = []
-        self._extra = []
+        self.active_handle: PersonHandle | None = None
+        self._recent: list[PersonHandle] = []
+        self._extra: list[PersonHandle] = []
         EnumeratedListOption.__init__(self, label, HOME_PERSON)
         self.refresh()
 
-    def _describe(self, person):
-        if person is None:
-            return _("None")
-        return "%s (%s)" % (name_displayer.display(person), person.get_gramps_id())
+    @staticmethod
+    def _describe(person: Person | None) -> str:
+        """
+        Return "<name> (<id>)".
 
-    def _person(self, handle):
+        :param person: The person.
+        :returns: The text, or "None".
+        """
+        if person is None:
+            return str(_("None"))
+        return f"{name_displayer.display(person)} ({person.get_gramps_id()})"
+
+    def _person(self, handle: PersonHandle | None) -> Person | None:
+        """
+        Return a person, or ``None`` when the handle is no longer valid.
+
+        :param handle: The person handle.
+        :returns: The person.
+        """
         if not handle or self.db is None:
             return None
         try:
             return self.db.get_person_from_handle(handle)
-        except Exception:  # handle no longer in the tree
-            return None
+        except Exception:  # pylint: disable=broad-exception-caught
+            return None  # the handle is no longer in the tree
 
-    def refresh(self, active_handle=None, recent_handles=None):
+    def refresh(
+        self,
+        active_handle: PersonHandle | None = None,
+        recent_handles: list[PersonHandle] | None = None,
+    ) -> None:
         """
-        Rebuild the list. The GUI passes the active person and the
-        recently viewed people, which the database does not know.
+        Rebuild the list. The GUI passes the active person and the recently
+        viewed people, which the database does not know.
+
+        :param active_handle: The active person.
+        :param recent_handles: The recently viewed people.
         """
         if active_handle is not None:
             self.active_handle = active_handle
@@ -987,12 +1453,12 @@ class CenterPersonOption(EnumeratedListOption):
                 % self._describe(self._person(self.active_handle)),
             ),
         ]
-        handles = []
+        handles: list[PersonHandle] = []
         if self.db is not None:
             handles.extend(self.db.get_bookmarks().get())
         handles.extend(self._recent)
         handles.extend(self._extra)
-        people = {}
+        people: dict[str, Person] = {}
         for handle in handles:
             person = self._person(handle)
             if person is not None:
@@ -1005,8 +1471,12 @@ class CenterPersonOption(EnumeratedListOption):
         self.set_items(items)
         self.emit("options-changed")
 
-    def add_person(self, handle):
-        """Add a person to the list and make them the Center Person."""
+    def add_person(self, handle: PersonHandle) -> None:
+        """
+        Add a person to the list and make them the Center Person.
+
+        :param handle: The person handle.
+        """
         person = self._person(handle)
         if person is None:
             return
@@ -1015,8 +1485,14 @@ class CenterPersonOption(EnumeratedListOption):
         self.refresh()
         self.set_value(person.get_gramps_id())
 
-    def set_value(self, value):
-        if value not in (v for v, d in self.get_items()):
+    def set_value(self, value: Any) -> None:
+        """
+        Set the value; a Gramps ID of the tree is added to the list, an
+        unknown value gives the Home Person.
+
+        :param value: HOME_PERSON, ACTIVE_PERSON or a Gramps ID.
+        """
+        if value not in (item_value for item_value, dummy_text in self.get_items()):
             person = None
             if (
                 value
@@ -1035,11 +1511,14 @@ class CenterPersonOption(EnumeratedListOption):
                 value = HOME_PERSON
         EnumeratedListOption.set_value(self, value)
 
-    def get_center_person(self, db):
+    def get_center_person(self, db: DbReadBase) -> Person | None:
         """
         Return the chosen person: the Home Person, the active person (known
         only while the report dialog is open; else the Home Person), or the
         person with the chosen Gramps ID.
+
+        :param db: The database (or proxy) the report uses.
+        :returns: The person, or ``None`` when there is no Home Person.
         """
         value = self.get_value()
         person = None
@@ -1050,33 +1529,35 @@ class CenterPersonOption(EnumeratedListOption):
         return person or db.get_default_person()
 
 
-GUI_MODULE = "center_person_gui"
-
-
-def _load_gui_module():
+def _load_gui_module() -> ModuleType:
     """
     Load center_person_gui.py from this module's folder. Gramps removes a
-    plugin's folder from sys.path once the plugin is imported, so a plain
+    plugin folder from sys.path once the plugin is imported, so a plain
     import would fail when the report dialog is opened later.
+
+    :returns: The module.
+    :raises ImportError: When the module cannot be loaded.
     """
     if GUI_MODULE in sys.modules:
         return sys.modules[GUI_MODULE]
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), GUI_MODULE + ".py")
     spec = importlib.util.spec_from_file_location(GUI_MODULE, path)
+    if spec is None or spec.loader is None:
+        raise ImportError(path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     sys.modules[GUI_MODULE] = module
     return module
 
 
-def _register_gui_options():
+def _register_gui_options() -> None:
     """Use this module's widgets when the Gramps GUI is running."""
     if "gramps.gui.plug._guioptions" not in sys.modules:
         return
-    try:
-        # pylint: disable=import-outside-toplevel
-        from gramps.gen.plug import BasePluginManager
+    # pylint: disable=import-outside-toplevel
+    from gramps.gen.plug import BasePluginManager
 
+    try:
         gui = _load_gui_module()
     except (ImportError, OSError) as err:
         LOG.warning("Center Person and Attribute menus unavailable: %s", err)
@@ -1086,27 +1567,30 @@ def _register_gui_options():
     pmgr.register_option(AttributeChoiceOption, gui.GuiAttributeChoiceOption)
 
 
-def add_numbering_options(
-    menu,
-    category_name,
-    db=None,
-    ancestor=True,
-    descendant=True,
-    default_ancestor=NONE_ID,
-):
+def add_numbering_options(  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    menu: Menu,
+    category_name: str,
+    db: DbReadBase | None = None,
+    ancestor: bool = True,
+    descendant: bool = True,
+    default_ancestor: str = NONE_ID,
+) -> dict[str, EnumeratedListOption]:
     """
     Add Center Person, ancestor and descendant numbering choices to a menu.
     Each choice lists "Do not include", the numbering systems and
-    "Attribute: <last used type>", with every attribute type in its
-    submenu (in the GUI).
+    "Attribute: <last used type>", with every attribute type in its submenu
+    (in the GUI). The saved values are system ids or "attr:<type>", so books
+    and saved report options keep working when systems are added.
 
-    The saved values are system ids or "attr:<type>", so books and saved
-    report options keep working when systems are added.
-
-    :param db: database, to offer the custom attribute types it uses
-    :returns: dict with the created options, keyed by option name
+    :param menu: The menu.
+    :param category_name: The tab.
+    :param db: The database, for the custom attribute types.
+    :param ancestor: Add the ancestor numbering choice.
+    :param descendant: Add the descendant numbering choice.
+    :param default_ancestor: Default ancestor system id.
+    :returns: The created options, keyed by option name.
     """
-    options = {}
+    options: dict[str, EnumeratedListOption] = {}
     _register_gui_options()
     focal = CenterPersonOption(_("Center Person"), db)
     focal.set_help(_("The center person for the report"))
@@ -1125,6 +1609,7 @@ def add_numbering_options(
             (system.system_id, system.get_menu_label())
             for system in get_systems(direction)
         )
+        opt: EnumeratedListOption
         if attribute_system(direction) is not None:
             opt = AttributeChoiceOption(label, default, top, db, PERSON, name)
         else:
@@ -1141,15 +1626,28 @@ def add_numbering_options(
     return options
 
 
-def _menu_value(menu, name, default=None):
+def _menu_value(menu: Menu, name: str, default: Any = None) -> Any:
+    """
+    Return the value of a menu option.
+
+    :param menu: The menu.
+    :param name: The option name.
+    :param default: Value when the menu has no such option.
+    :returns: The value.
+    """
     option = menu.get_option_by_name(name)
     return option.get_value() if option is not None else default
 
 
-def resolve_numbering_choice(choice, direction):
+def resolve_numbering_choice(
+    choice: str, direction: str
+) -> tuple[NumberingSystem | None, str | None]:
     """
-    Return (system, attribute) for a numbering choice: a system id, or
-    "attr:<type>" for the Attribute system of ``direction``.
+    Return the system and attribute of a numbering choice.
+
+    :param choice: A system id, or "attr:<type>".
+    :param direction: ANCESTOR or DESCENDANT.
+    :returns: (system or ``None``, attribute type name or ``None``).
     """
     attribute = split_attribute(choice)
     if attribute:
@@ -1157,30 +1655,47 @@ def resolve_numbering_choice(choice, direction):
     return get_system(choice), None
 
 
-def person_label_from_menu(menu):
-    """Build the Person Label chosen with add_person_label_option()."""
+def person_label_from_menu(menu: Menu) -> Label:
+    """
+    Build the Person Label chosen with add_person_label_option().
+
+    :param menu: The menu.
+    :returns: The Label.
+    """
     choice = _menu_value(menu, OPT_PERSON_LABEL, NONE_ID)
     _remember(OPT_PERSON_LABEL, choice)
     return Label(choice)
 
 
-def family_label_from_menu(menu):
-    """Build the Family Label chosen with add_family_label_option()."""
+def family_label_from_menu(menu: Menu) -> Label:
+    """
+    Build the Family Label chosen with add_family_label_option().
+
+    :param menu: The menu.
+    :returns: The Label.
+    """
     choice = _menu_value(menu, OPT_FAMILY_LABEL, NONE_ID)
     _remember(OPT_FAMILY_LABEL, choice)
     return Label(choice)
 
 
 def numbering_from_menu(
-    db, menu, person_label=None, max_generations=None, max_numbers=10
-):
+    db: DbReadBase,
+    menu: Menu,
+    person_label: Label | None = None,
+    max_generations: int | None = None,
+    max_numbers: int = 10,
+) -> tuple[Numbering | None, Numbering | None]:
     """
-    Build the numberings chosen with add_numbering_options().
+    Build the numberings chosen with add_numbering_options(). Falls back to
+    the Home Person when no Center Person is set.
 
-    Falls back to the Home Person when no Center Person is set.
-
-    :param person_label: Label used when an Attribute numbering has no value
-    :returns: (ancestor Numbering or None, descendant Numbering or None)
+    :param db: The database (or proxy) the report uses.
+    :param menu: The menu.
+    :param person_label: Label used when an Attribute numbering has no value.
+    :param max_generations: Generations to number, ``None`` for all.
+    :param max_numbers: Most numbers kept per person.
+    :returns: (ancestor Numbering or ``None``, descendant Numbering or ``None``).
     """
     option = menu.get_option_by_name(OPT_FOCAL)
     if isinstance(option, CenterPersonOption):
@@ -1191,8 +1706,7 @@ def numbering_from_menu(
         focal = focal or db.get_default_person()
     if focal is None:
         return None, None
-    fallback = person_label if person_label else None
-    result = []
+    result: list[Numbering | None] = []
     for name, direction in ((OPT_ANCESTOR, ANCESTOR), (OPT_DESCENDANT, DESCENDANT)):
         choice = _menu_value(menu, name, NONE_ID)
         _remember(name, choice)
@@ -1205,9 +1719,9 @@ def numbering_from_menu(
                 max_generations,
                 max_numbers,
                 attribute=attribute,
-                fallback=fallback,
+                fallback=person_label if person_label else None,
             )
             if system
             else None
         )
-    return tuple(result)
+    return result[0], result[1]

@@ -103,17 +103,6 @@
     "a": 1
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.0",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Config Inspector",
     "i": "Config Inspector",
     "t": 2,
@@ -510,6 +499,17 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
+  },
+  {
+    "n": "개인 전체 보고서 (정렬됨)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "선택한 사람들에 대한 전체 보고서를 성, 이름, 생년월일 순으로 정렬하여 생성합니다",
+    "v": "1.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "애드온 언어 수정",

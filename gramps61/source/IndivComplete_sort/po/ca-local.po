@@ -1,0 +1,564 @@
+# ca translation for the Complete Individual Report (Sorted) addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the IndivComplete_sort package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: IndivComplete_sort 1.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-17 12:46-0600\n"
+"PO-Revision-Date: 2026-11-17 13:10-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Catalan <https://hosted.weblate.org/projects/gramps-project/addons/ca/>\n"
+"Language: ca\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: IndivComplete_sort/IndivComplete_sort.py:467
+#, python-format
+msgid "%(str1)s in %(str2)s. "
+msgstr "%(str1)s en %(str2)s. "
+
+#. Translators: needed for Arabic, ignore otherwise
+#. make sure it's translated, so it can be used below, in "combine"
+#. Translators: needed for Arabic, ignore otherwise
+#: IndivComplete_sort/IndivComplete_sort.py:477
+#: IndivComplete_sort/IndivComplete_sort.py:484
+#: IndivComplete_sort/IndivComplete_sort.py:1540
+#, python-format
+msgid "%(str1)s, %(str2)s"
+msgstr "%(str1)s, %(str2)s"
+
+#. Translators: e.g. (a stepfather): John Smith, relationship: Step
+#: IndivComplete_sort/IndivComplete_sort.py:541
+#, python-format
+msgid "%(parent-name)s, relationship: %(rel-type)s"
+msgstr "%(parent-name)s, relació: %(rel-type)s"
+
+#: IndivComplete_sort/IndivComplete_sort.py:565
+msgid "Notes"
+msgstr "Notes"
+
+#: IndivComplete_sort/IndivComplete_sort.py:604
+msgid "Alternate Parents"
+msgstr "Progenitors alternatius"
+
+#: IndivComplete_sort/IndivComplete_sort.py:629
+#: IndivComplete_sort/IndivComplete_sort.py:631
+#: IndivComplete_sort/IndivComplete_sort.py:1428
+msgid "Father"
+msgstr "Pare"
+
+#: IndivComplete_sort/IndivComplete_sort.py:638
+#: IndivComplete_sort/IndivComplete_sort.py:640
+#: IndivComplete_sort/IndivComplete_sort.py:1429
+msgid "Mother"
+msgstr "Mare"
+
+#: IndivComplete_sort/IndivComplete_sort.py:690
+msgid "Relationship to home person"
+msgstr "Relació amb la persona inicial"
+
+#: IndivComplete_sort/IndivComplete_sort.py:711
+msgid "Alternate Names"
+msgstr "Noms Alternatius"
+
+#: IndivComplete_sort/IndivComplete_sort.py:739
+msgid "Addresses"
+msgstr "Adreces"
+
+#: IndivComplete_sort/IndivComplete_sort.py:764
+msgid "Associations"
+msgstr "Associacions"
+
+#: IndivComplete_sort/IndivComplete_sort.py:791
+#: IndivComplete_sort/IndivComplete_sort.py:1026
+msgid "Attributes"
+msgstr "Atributs"
+
+#: IndivComplete_sort/IndivComplete_sort.py:818
+#: IndivComplete_sort/IndivComplete_sort.py:1038
+msgid "LDS Ordinance"
+msgstr "Ritual Mormó"
+
+#: IndivComplete_sort/IndivComplete_sort.py:825
+#: IndivComplete_sort/IndivComplete_sort.py:1039
+msgid "Type"
+msgstr "Tipus"
+
+#: IndivComplete_sort/IndivComplete_sort.py:826
+#: IndivComplete_sort/IndivComplete_sort.py:1040
+msgid "Date"
+msgstr "Data"
+
+#: IndivComplete_sort/IndivComplete_sort.py:827
+#: IndivComplete_sort/IndivComplete_sort.py:1041
+msgid "Status"
+msgstr "Estat"
+
+#: IndivComplete_sort/IndivComplete_sort.py:828
+#: IndivComplete_sort/IndivComplete_sort.py:1042
+msgid "Temple"
+msgstr "Temple"
+
+#: IndivComplete_sort/IndivComplete_sort.py:829
+#: IndivComplete_sort/IndivComplete_sort.py:1043
+msgid "Place"
+msgstr "Lloc"
+
+#: IndivComplete_sort/IndivComplete_sort.py:867
+msgid "Tags"
+msgstr "Etiquetes"
+
+#: IndivComplete_sort/IndivComplete_sort.py:909
+msgid "Images"
+msgstr "Imatges"
+
+#: IndivComplete_sort/IndivComplete_sort.py:920
+msgid "Non existing media found in the Gallery"
+msgstr "Medis audiovisuals no existents trobats a la Galeria"
+
+#: IndivComplete_sort/IndivComplete_sort.py:968
+msgid "Families"
+msgstr "Famílies"
+
+#: IndivComplete_sort/IndivComplete_sort.py:989
+msgid "unknown"
+msgstr "desconegut"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1012
+msgid "Children"
+msgstr "Fills"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1199
+msgid "Empty report"
+msgstr "Informe buit"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1199
+msgid "You did not specify anybody"
+msgstr "No heu especificat ningú"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1209
+#: IndivComplete_sort/IndivComplete_sort.py:1353
+msgid "Complete Individual Report"
+msgstr "Informe Individual Complet"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1209
+msgid "Generating report"
+msgstr "Generant informe"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1414
+msgid "Could not add photo to page"
+msgstr "No s'ha pogut afegirla foto a la pàgina"
+
+#. Translators: for French, else ignore
+#. Translators: needed for French, ignore otherwise
+#: IndivComplete_sort/IndivComplete_sort.py:1416
+#: IndivComplete_sort/IndivComplete_sort.py:1459
+#: IndivComplete_sort/IndivComplete_sort.py:1554
+#: IndivComplete_sort/genealogical_numbering.py:1447
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1417
+msgid "File does not exist"
+msgstr "El fitxer no existeix"
+
+#. Translators: needed for French, ignore otherwise
+#: IndivComplete_sort/IndivComplete_sort.py:1424
+#: IndivComplete_sort/IndivComplete_sort.py:1426
+#: IndivComplete_sort/IndivComplete_sort.py:1427
+#: IndivComplete_sort/IndivComplete_sort.py:1428
+#: IndivComplete_sort/IndivComplete_sort.py:1429
+#, python-format
+msgid "%s:"
+msgstr "%s:"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1426
+msgid "Name"
+msgstr "Nom"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1427
+msgid "Gender"
+msgstr "Gènere"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1435
+msgid "Male"
+msgstr "Home"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1437
+msgid "Female"
+msgstr "Dona"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1439
+msgid "Other"
+msgstr "Un altre"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1441
+msgid "Unknown"
+msgstr "Desconegut"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1454
+msgid "(image)"
+msgstr "(imatge)"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1612
+msgid "People"
+msgstr "Persones"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1615
+msgid "Filter"
+msgstr "Filtre"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1616
+msgid "Select the filter to be applied to the report."
+msgstr "Selecciona el filtre a aplicar a l'informe."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1620
+msgid "Filter Person"
+msgstr "Filtra per Persona"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1621
+msgid "The center person for the filter."
+msgstr "La persona central del filtre."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1626
+msgid "Sort by"
+msgstr "Ordena per"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1629
+msgid "Surname, given name, birth date"
+msgstr "Cognom, nom de pila, data de naixement"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1632
+msgid "Surname, given name, Gramps ID"
+msgstr "Cognom, nom de pila, ID de Gramps"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1635
+msgid "Birth date, surname, given name"
+msgstr "Data de naixement, cognom, nom de pila"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1637
+#: IndivComplete_sort/genealogical_numbering.py:1324
+msgid "Gramps ID"
+msgstr "ID Gramps"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1639
+msgid "Kinship, starting from the Filter Person"
+msgstr "Parentiu, a partir de la persona del filtre"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1641
+msgid "Numbering system"
+msgstr "Sistema de numeració"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1644
+msgid ""
+"Sorting method to use. Kinship lists each family together: parents, then "
+"children in birth order, then the families of the children and of the "
+"parents. People not related to the Filter Person come last, sorted by name. "
+"Numbering system lists the numbered ancestors, then the numbered descendants"
+" (see the Identifiers tab), then everyone else by name."
+msgstr ""
+"Mètode d'ordenació. Parentiu mostra cada família junta: els pares, després "
+"els fills per ordre de naixement, i després les famílies dels fills i dels "
+"pares. Les persones sense parentiu amb la persona del filtre van al final, "
+"ordenades per nom. Sistema de numeració mostra els avantpassats numerats, "
+"després els descendents numerats (vegeu la pestanya Identificadors), i "
+"després tothom més per nom."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1656
+msgid "List people without a birth date first"
+msgstr "Mostra primer les persones sense data de naixement"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1660
+msgid ""
+"Whether people with no birth date (or baptism or christening date) come "
+"before the people with dates."
+msgstr ""
+"Si les persones sense data de naixement (o de baptisme) van abans de les "
+"persones amb dates."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1671
+msgid "Display"
+msgstr "Visualització"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1685
+msgid "Use name of person as title"
+msgstr "Utilitzar el nom de la persona com a títol"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1688
+msgid ""
+"Whether the title should be the name of the person, or 'Complete Individual "
+"Report'"
+msgstr ""
+"Si el títol hauria de ser el nom de la persona, o 'Informe Individual "
+"Complet'"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1694
+msgid "List events chronologically"
+msgstr "Llistar esdeveniments cronològicament"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1695
+msgid "Whether to sort events into chronological order."
+msgstr "Si s'han d'ordenar els esdeveniments en ordre cronològic."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1698
+msgid "Page break before end notes"
+msgstr "Salt de pàgina abans de notes finals"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1699
+msgid "Whether to start a new page before the end notes."
+msgstr "Si s'ha de començar una pàgina abans de les notes finals."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1703
+msgid "Include"
+msgstr "Inclou"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1706
+msgid "Include Notes"
+msgstr "Inclou notes"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1707
+msgid "Whether to include Person and Family Notes."
+msgstr "Si s'ha d'incloure la Persona i les Notes de la família."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1710
+msgid "Include Source Information"
+msgstr "Inclou informació de font"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1711
+msgid "Whether to cite sources."
+msgstr "Si s'han de citar les fonts."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1715
+msgid "Include sources notes"
+msgstr "Inclou notes de fonts"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1718
+msgid ""
+"Whether to include source notes in the Endnotes section. Only works if "
+"Include sources is selected."
+msgstr ""
+"Si s'han d'incloure notes de fonts a la secció de Notes Finals. Només "
+"funciona si s'ha seleccionat Incloure Fonts."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1726
+msgid "Include Photo/Images from Gallery"
+msgstr "Inclou fotos/imatges de la galeria"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1727
+msgid "Whether to include images."
+msgstr "Si s'han d'incloure imatges."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1730
+msgid "Include Tags"
+msgstr "Inclou etiquetes"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1731
+msgid "Whether to include tags."
+msgstr "Si s'han d'incloure les etiquetes."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1734
+msgid "Include Attributes"
+msgstr "Inclou atributs"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1735
+msgid "Whether to include attributes."
+msgstr "Si s'han d'incloure atributs."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1738
+msgid "Include Addresses"
+msgstr "Inclou adreces"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1739
+msgid "Whether to include addresses."
+msgstr "Si s'han d'incloure adreces."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1742
+msgid "Include Census Events"
+msgstr "Inclou esdeveniments del cens"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1743
+msgid "Whether to include Census Events."
+msgstr "Si s'han d'incloure esdeveniments del cens."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1747
+msgid "Include relationship to center person"
+msgstr "Inclou el parentesc amb la persona central"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1750
+msgid "Whether to include relationships to the center person"
+msgstr "Si s'han d'incloure les relacions amb la persona central"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1757
+msgid "Identifiers"
+msgstr "Identificadors"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1772
+msgid "Sections"
+msgstr "Seccions"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1775
+msgid "Event groups"
+msgstr "Grups d'esdeveniments"
+
+#: IndivComplete_sort/IndivComplete_sort.py:1776
+msgid "Check if a separate section is required."
+msgstr "Comprovar si cal una secció separada."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1841
+msgid "The style used for the title."
+msgstr "L'estil que es fa servir per al títol."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1853
+msgid "The style used for the section headers."
+msgstr "L'estil utilitzat per les capçaleres de secció."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1864
+msgid "The style used for the spouse's name."
+msgstr "L'estil utilitzat per al nom del cònjuge."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1873
+msgid "The basic style used for the text display."
+msgstr "L'estil bàsic que es fa servir per mostrar el text."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1883
+msgid "The basic style used for table headings."
+msgstr "L'estil bàsic utilitzat per capçaleres de taula."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1893
+msgid "The style used for image notes."
+msgstr "L'estil utilitzat a les notes de les imatges."
+
+#: IndivComplete_sort/IndivComplete_sort.py:1903
+msgid "The style used for image descriptions."
+msgstr "L'estil utilitzat per les descripcions de les imatges."
+
+#: IndivComplete_sort/genealogical_numbering.py:299
+msgid "Sosa-Stradonitz number"
+msgstr "Número Sosa-Stradonitz"
+
+#: IndivComplete_sort/genealogical_numbering.py:315
+msgid "Ahnentafel numbering"
+msgstr "Numeració Ahnentafel"
+
+#: IndivComplete_sort/genealogical_numbering.py:377
+#: IndivComplete_sort/genealogical_numbering.py:404
+msgid "Attribute"
+msgstr "Atribut"
+
+#: IndivComplete_sort/genealogical_numbering.py:454
+msgid "Simple numbering"
+msgstr "Numeració simple"
+
+#: IndivComplete_sort/genealogical_numbering.py:489
+msgid "Henry numbering"
+msgstr "Numeració Henry"
+
+#: IndivComplete_sort/genealogical_numbering.py:522
+msgid "Modified Henry numbering"
+msgstr "Numeració modificada Henry"
+
+#: IndivComplete_sort/genealogical_numbering.py:553
+msgid "d'Aboville numbering"
+msgstr "Numeració d'Aboville"
+
+#: IndivComplete_sort/genealogical_numbering.py:587
+msgid "de Villiers/Pama numbering"
+msgstr "Numeració de Villiers/Pama"
+
+#: IndivComplete_sort/genealogical_numbering.py:632
+msgid "Meurgey de Tupigny numbering"
+msgstr "Numeració Meurgey de Tupigny"
+
+#: IndivComplete_sort/genealogical_numbering.py:666
+msgid "Record (Modified Register) numbering"
+msgstr "Numeració de Registre Modificat"
+
+#: IndivComplete_sort/genealogical_numbering.py:687
+msgid "A numbering system needs a direction and an id."
+msgstr "Un sistema de numeració necessita una direcció i un identificador."
+
+#: IndivComplete_sort/genealogical_numbering.py:874
+msgid "Unknown numbering system."
+msgstr "Sistema de numeració desconegut."
+
+#: IndivComplete_sort/genealogical_numbering.py:1324
+#: IndivComplete_sort/genealogical_numbering.py:1607
+msgid "Do not include"
+msgstr "No incloguis"
+
+#: IndivComplete_sort/genealogical_numbering.py:1327
+msgid ""
+"An attribute is replaced by the Gramps ID when the attribute has no value."
+msgstr ""
+"Un atribut se substitueix per l'ID de Gramps quan l'atribut no té valor."
+
+#: IndivComplete_sort/genealogical_numbering.py:1349
+msgid "Person label"
+msgstr "Etiqueta de persona"
+
+#: IndivComplete_sort/genealogical_numbering.py:1369
+msgid "Family label"
+msgstr "Etiqueta de família"
+
+#: IndivComplete_sort/genealogical_numbering.py:1410
+msgid "None"
+msgstr "Cap"
+
+#: IndivComplete_sort/genealogical_numbering.py:1448
+msgid "Home Person"
+msgstr "Persona inicial"
+
+#: IndivComplete_sort/genealogical_numbering.py:1452
+#, python-format
+msgid "Active person: %s"
+msgstr "Persona activa: %s"
+
+#: IndivComplete_sort/genealogical_numbering.py:1595
+msgid "Center Person"
+msgstr "Persona Central"
+
+#: IndivComplete_sort/genealogical_numbering.py:1596
+msgid "The center person for the report"
+msgstr "La persona central de l'informe"
+
+#: IndivComplete_sort/genealogical_numbering.py:1601
+msgid "Ancestor numbering system"
+msgstr "Sistema de numeració d'avantpassats"
+
+#: IndivComplete_sort/genealogical_numbering.py:1602
+msgid "Descendant numbering system"
+msgstr "Sistema de numeració de descendents"
+
+#: IndivComplete_sort/genealogical_numbering.py:1620
+msgid ""
+"The numbering system to be used. An attribute is replaced by the Person "
+"label when the attribute has no value."
+msgstr ""
+"Sistema de numeració a utilitzar. Un atribut se substitueix per l'etiqueta "
+"de persona quan l'atribut no té valor."
+
+#: IndivComplete_sort/IndivComplete_sort.gpr.py:29
+msgid "Complete Individual Report (Sorted)"
+msgstr "Informe Individual Complet (ordenat)"
+
+#: IndivComplete_sort/IndivComplete_sort.gpr.py:31
+msgid ""
+"Produces a complete report on the selected people, sorted by surname, given "
+"name and birth date"
+msgstr ""
+"Crea un informe complet sobre les persones seleccionades, ordenades per "
+"cognom, nom de pila i data de naixement"
+
+#: IndivComplete_sort/center_person_gui.py:95
+msgid "Select a different person"
+msgstr "Selecciona una persona diferent"
+
+#: IndivComplete_sort/center_person_gui.py:111
+msgid "Select a person for the report"
+msgstr "Selecciona una persona per l'informe"

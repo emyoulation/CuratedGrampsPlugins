@@ -46,17 +46,6 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "5.2",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Corrección do idioma dos complementos",
     "i": "AddonLocaleFix",
     "t": 6,
@@ -133,6 +122,17 @@
     "s": 1,
     "z": "ImportWithoutTree.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
+  },
+  {
+    "n": "Informe individual completo (ordenado)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Produce un informe completo das persoas seleccionadas, ordenadas por apelido, nome e data de nacemento",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Markdown Utils",

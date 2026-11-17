@@ -46,6 +46,17 @@
     "h": "Addon:Biography_Quickview#Complete_Biography"
   },
   {
+    "n": "Báo cáo cá nhân hoàn chỉnh (đã sắp xếp)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Tạo báo cáo hoàn chỉnh về những người được chọn, sắp xếp theo họ, tên và ngày sinh",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
+  },
+  {
     "n": "Capsule Sources",
     "i": "CapsuleSources",
     "t": 2,
@@ -101,17 +112,6 @@
     "z": "CSV.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
     "a": 1
-  },
-  {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Config Inspector",

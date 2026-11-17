@@ -103,17 +103,6 @@
     "a": 1
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Config Inspector",
     "i": "Config Inspector",
     "t": 2,
@@ -487,6 +476,17 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
+  },
+  {
+    "n": "人物完整報告（已排序）",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "產生所選人物的完整報告，依姓、名字與出生日期排序",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "資料輸入 Gramplet",

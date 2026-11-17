@@ -11,6 +11,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AddonMarketplace"
   },
   {
+    "n": "Alle Daten einer Person (sortiert)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Erzeugt einen vollständigen Bericht über die ausgewählten Personen, sortiert nach Nachname, Vorname und Geburtsdatum",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
+  },
+  {
     "n": "Beta What's Next",
     "i": "Beta What's Next",
     "t": 10,
@@ -32,17 +43,6 @@
     "s": 1,
     "z": "ClipboardRefMenu.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
-  },
-  {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "5.2",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Data Entry Gramplet",

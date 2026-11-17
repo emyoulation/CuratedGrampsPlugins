@@ -103,17 +103,6 @@
     "a": 1
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "5.2",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Config Inspector",
     "i": "Config Inspector",
     "t": 2,
@@ -279,6 +268,17 @@
     "s": 1,
     "z": "ImportWithoutTree.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ImportNoTree/README.md"
+  },
+  {
+    "n": "Kompletná správa o jedincovi (zoradená)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Vytvorí kompletnú správu o vybraných ľuďoch, zoradenú podľa priezviska, krstného mena a dátumu narodenia",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Localized Gramps Glossary Terminology",

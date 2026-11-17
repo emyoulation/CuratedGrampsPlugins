@@ -103,17 +103,6 @@
     "a": 1
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Config Inspector",
     "i": "Config Inspector",
     "t": 2,
@@ -405,6 +394,17 @@
     "s": 1,
     "z": "PhotoTaggingGramplet.addon.tgz",
     "h": "https://gramps.discourse.group/t/1889/14"
+  },
+  {
+    "n": "Potpun izveštaj pojedinca (sortiran)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Napravite potpun izveštaj o izabranim osobama, sortiran po prezimenu, imenu i datumu rođenja",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "PR2388 Example Tree Prompt",

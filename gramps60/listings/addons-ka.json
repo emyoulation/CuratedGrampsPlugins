@@ -103,17 +103,6 @@
     "a": 1
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.0",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Config Inspector",
     "i": "Config Inspector",
     "t": 2,
@@ -521,5 +510,16 @@
     "s": 3,
     "z": "AddonLocaleFix.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
+  },
+  {
+    "n": "სრული პირადი ანგარიში (დალაგებული)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "ქმნის სრულ ანგარიშს არჩეულ პირებზე, დალაგებულს გვარის, სახელისა და დაბადების თარიღის მიხედვით",
+    "v": "1.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   }
 ]

@@ -68,6 +68,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DateModifiersRule"
   },
   {
+    "n": "Cjeloviti izvještaj o osobi (razvrstan)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Izrađuje detaljan izvještaj o odabranim osobama, razvrstanim po prezimenu, imenu i datumu rođenja",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
+  },
+  {
     "n": "Clipboard Ref Menu",
     "i": "ClipboardRefMenu",
     "t": 6,
@@ -101,17 +112,6 @@
     "z": "CSV.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
     "a": 1
-  },
-  {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Config Inspector",

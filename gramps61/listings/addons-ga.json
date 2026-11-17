@@ -90,6 +90,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
   },
   {
+    "n": "Comhlánaigh an Tuarascáil Aonair (sórtáilte)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "Cuireann sé tuarascáil iomlán ar fáil ar na daoine roghnaithe, sórtáilte de réir sloinne, ainm tugtha agus dáta breithe",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
+  },
+  {
     "n": "Comma Separated Values Spreadsheet (CSV) — Enhanced",
     "i": "ex_csv_enhanced",
     "t": 4,
@@ -112,17 +123,6 @@
     "z": "CSV.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/README.md",
     "a": 1
-  },
-  {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   },
   {
     "n": "Config Inspector",

@@ -12,6 +12,7 @@ First version of the fork, as the addon "Complete Individual Report (Sorted)" (I
 - **Attribute submenus.** The Attribute item in each identifier menu opens a list of attribute types and shows the type used last, which is remembered in `IndivComplete_sort.ini`.
 - **Center Person list.** Offers the Home Person, the active person, and bookmarked and recently viewed people, with a button to choose anyone else.
 - **Clearer tabs.** Options regrouped into People, Display, Include, Identifiers and Sections, replacing "Report Options (2)" and "Include (2)".
+- **Help button.** Opens this addon page instead of the Gramps manual page of the built-in report.
 - **Reusable module.** The numbering and identifier options are in `genealogical_numbering.py`, for use by other reports. See [GenealogicalNumberingAPI.md](GenealogicalNumberingAPI.md).
 
 ## 1.0.0
@@ -32,3 +33,19 @@ Known limitations and ideas for later versions.
 - The "Complete Individual Report 2" layout, the "Complete Kinship report" and the enhanced ODF exporter from [MantisBT 0010362](https://gramps-project.org/bugs/view.php?id=10362).
 - On the command line, person-based filters (such as "Descendants of") give "Empty report"; the built-in report does the same.
 - In the built-in Detailed Descendant Report, Modified Henry numbering uses plain Henry numbers from the third generation.
+
+### 6.2 roll in plan
+Beta-test **Complete Individual Report (Sorted)** as an addon for 5.2 through 6.1, then propose it to replace the core **Complete Individual Report** in 6.2. 
+
+#### When we get to the core proposal, these are the parts that would change:
+- **Plugin id:** it would take over the core id `indiv_complete` in `textplugins.gpr.py`. Everyone's saved settings and Books from the current core report would then carry over. The Person label already reuses the `inc_id` option name for the same reason.
+- **The numbering module:** `genealogical_numbering.py` has no GUI code, so it can go under `gramps/gen/` as it is.
+  - **Options:** `CenterPersonOption` and `AttributeChoiceOption` would become normal menu options in `gramps/gen/plug/menu/`.
+  - **Widgets:** the two widgets in `center_person_gui.py` would go into `gramps/gui/plug/_guioptions.py`.
+  - **No more workarounds:** this removes the special loading and plugin-manager registration the addon needs.
+- **Other core reports** could then use the same identifier options, including the Descendant, Detailed Descendant and Ahnentafel reports. The Modified Henry bug in the Detailed Descendant Report would go away at the same time.
+- **Tests and checks:**
+  - **Test file:** core uses `*_test.py` names, in a `test/` folder next to the module, so the test file needs renaming.
+  - **Core checks:** core enforces Black and mypy. The code already passes both, and it already has type hints and Sphinx docstrings.
+- **The `.ini` file** would be dropped. In core, the remembered attribute types would go into Gramps' own `gramps.ini`.
+

@@ -103,17 +103,6 @@
     "a": 1
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Config Inspector",
     "i": "Config Inspector",
     "t": 2,
@@ -510,5 +499,16 @@
     "s": 3,
     "z": "AddonLocaleFix.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/AddonLocaleFix/README.md"
+  },
+  {
+    "n": "தனிப்பட்ட அறிக்கையை முடிக்கவும் (வரிசைப்படுத்தப்பட்டது)",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "தேர்ந்தெடுக்கப்பட்ட நபர்கள் குறித்த முழுமையான அறிக்கையை குடும்பப்பெயர், கொடுக்கப்பட்ட பெயர், பிறந்த தேதி வரிசையில் உருவாக்குகிறது",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   }
 ]

@@ -46,17 +46,6 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
   },
   {
-    "n": "Complete Individual Report (Sorted)",
-    "i": "IndivComplete_sort",
-    "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
-    "v": "1.1.0",
-    "g": "5.2",
-    "s": 1,
-    "z": "IndivComplete_sort.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
-  },
-  {
     "n": "Edit Attributes Plus",
     "i": "EditAttributesPlus",
     "t": 6,
@@ -188,5 +177,16 @@
     "z": "DataEntryGramplet.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
     "a": 1
+  },
+  {
+    "n": "完全な個人レポート（並べ替え）",
+    "i": "IndivComplete_sort",
+    "t": 0,
+    "d": "選択された人物に関する完全なレポートを、姓、名、生年月日の順に並べ替えて生成します",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "IndivComplete_sort.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
   }
 ]

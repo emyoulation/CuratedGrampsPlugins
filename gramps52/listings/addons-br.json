@@ -46,10 +46,10 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/ClipboardRefMenu/README.md"
   },
   {
-    "n": "Complete Individual Report (Sorted)",
+    "n": "Danevell glok an den (rummet)",
     "i": "IndivComplete_sort",
     "t": 0,
-    "d": "Produces a complete report on the selected people, sorted by surname, given name and birth date",
+    "d": "Krouiñ a ra un danevell glok diwar-benn an dud diuzet, rummet dre anv-familh, anv-bihan ha deiz ganedigezh",
     "v": "1.1.0",
     "g": "5.2",
     "s": 1,
