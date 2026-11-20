@@ -1,0 +1,52 @@
+# Copy to .github/workflows/translation-packs.yml in CuratedGrampsPlugins.
+#
+# Builds Translation Updater language packs from the Weblate-maintained .po
+# files on each Gramps maintenance branch and publishes them to the
+# "translation-packs" branch (one commit, force-pushed, so history never grows).
+# Clients read e.g.
+#   https://raw.githubusercontent.com/emyoulation/CuratedGrampsPlugins/translation-packs/gramps60/index.json
+name: Translation packs
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install gettext
+        run: sudo apt-get update -q && sudo apt-get install -y -q gettext
+
+      - name: Build packs
+        run: |
+          set -e
+          for branch in gramps52 gramps60 gramps61; do
+            git clone -q --depth 1 -b "maintenance/$branch" \
+              https://github.com/gramps-project/gramps.git "src/gramps-$branch"
+            git clone -q --depth 1 -b "maintenance/$branch" \
+              https://github.com/gramps-project/addons-source.git "src/addons-$branch"
+            python3 gramps61/source/TranslationUpdater/server/build_translation_packs.py \
+              --branch "$branch" \
+              --gramps "src/gramps-$branch" \
+              --addons "src/addons-$branch" \
+              --out site
+          done
+
+      - name: Publish to translation-packs branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd site
+          git init -q -b translation-packs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Translation packs $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" translation-packs
