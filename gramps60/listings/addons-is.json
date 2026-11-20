@@ -462,6 +462,17 @@
     "h": "Addon:ThemePreferences"
   },
   {
+    "n": "Translation Updater",
+    "i": "TranslationUpdater",
+    "t": 2,
+    "d": "Downloads newer Gramps and addon translations for chosen languages, without changing addon versions.",
+    "v": "0.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "TranslationUpdater.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/TranslationUpdater/README.md"
+  },
+  {
     "n": "Tungumálalagfæring viðbóta",
     "i": "AddonLocaleFix",
     "t": 6,

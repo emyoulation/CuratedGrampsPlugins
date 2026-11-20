@@ -1,0 +1,248 @@
+# Translation template for the 0.1.0 Translation Updater startup general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Translation Updater startup package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Translation Updater startup 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 11:24-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: TranslationUpdater.gpr.py:31
+msgid "Translation Updater startup"
+msgstr ""
+
+#: TranslationUpdater.gpr.py:33
+msgid "Applies translation packs downloaded by the Translation Updater tool."
+msgstr ""
+
+#: TranslationUpdater.gpr.py:52 TranslationUpdater.py:33
+msgid "Translation Updater"
+msgstr ""
+
+#: TranslationUpdater.gpr.py:54
+msgid ""
+"Downloads newer Gramps and addon translations for chosen languages, without "
+"changing addon versions."
+msgstr ""
+
+#: TranslationUpdater.py:66
+msgid ""
+"Download newer translations for Gramps and for your installed addons, in the "
+"languages you choose. Addons keep their version numbers; only the "
+"translations change."
+msgstr ""
+
+#: TranslationUpdater.py:76
+msgid "Languages"
+msgstr ""
+
+#: TranslationUpdater.py:84
+msgid "Language"
+msgstr ""
+
+#: TranslationUpdater.py:85
+msgid "Code"
+msgstr ""
+
+#: TranslationUpdater.py:86
+msgid "Status"
+msgstr ""
+
+#: TranslationUpdater.py:96
+msgid "Refresh list"
+msgstr ""
+
+#: TranslationUpdater.py:97
+msgid "Get the list of published languages"
+msgstr ""
+
+#: TranslationUpdater.py:107
+msgid "Gramps translations"
+msgstr ""
+
+#: TranslationUpdater.py:108
+msgid "Addon translations"
+msgstr ""
+
+#: TranslationUpdater.py:111
+msgid "Also use updated Gramps translations in Glade-built dialogs"
+msgstr ""
+
+#: TranslationUpdater.py:112
+msgid "Takes effect when Gramps restarts"
+msgstr ""
+
+#: TranslationUpdater.py:116
+msgid "Check for updates when Gramps starts (at most once a day)"
+msgstr ""
+
+#: TranslationUpdater.py:128
+msgid "Advanced"
+msgstr ""
+
+#: TranslationUpdater.py:131
+msgid "Source:"
+msgstr ""
+
+#: TranslationUpdater.py:137
+msgid "Branch:"
+msgstr ""
+
+#: TranslationUpdater.py:139
+msgid "Packs folder:"
+msgstr ""
+
+#: TranslationUpdater.py:148
+msgid "Full-coverage launcher"
+msgstr ""
+
+#: TranslationUpdater.py:154
+msgid ""
+"Some text, such as menu labels, is translated before addons load. A separate "
+"launcher starts Gramps with the updated translations from the very beginning."
+msgstr ""
+
+#: TranslationUpdater.py:168
+msgid "Command line equivalent"
+msgstr ""
+
+#: TranslationUpdater.py:171
+msgid "Create launcher"
+msgstr ""
+
+#: TranslationUpdater.py:173
+msgid "Remove launcher"
+msgstr ""
+
+#: TranslationUpdater.py:189
+msgid "Help"
+msgstr ""
+
+#: TranslationUpdater.py:192
+msgid "Close"
+msgstr ""
+
+#: TranslationUpdater.py:195
+msgid "Check for updates"
+msgstr ""
+
+#: TranslationUpdater.py:220
+msgid "Gramps"
+msgstr ""
+
+#: TranslationUpdater.py:222
+msgid "Gramps paused (installed translation changed)"
+msgstr ""
+
+#: TranslationUpdater.py:225
+#, python-format
+msgid "%d addon"
+msgid_plural "%d addons"
+msgstr[0] ""
+msgstr[1] ""
+
+#: TranslationUpdater.py:228
+#, python-format
+msgid "checked %s"
+msgstr ""
+
+#: TranslationUpdater.py:244
+msgid "Press Refresh list to see which languages are published."
+msgstr ""
+
+#: TranslationUpdater.py:273
+msgid "Could not get the language list"
+msgstr ""
+
+#: TranslationUpdater.py:280
+#, python-format
+msgid "%d languages published for %s."
+msgstr ""
+
+#: TranslationUpdater.py:287
+msgid "Choose at least one language first."
+msgstr ""
+
+#: TranslationUpdater.py:292
+msgid "Checking translations"
+msgstr ""
+
+#: TranslationUpdater.py:298
+msgid "Could not check for translations"
+msgstr ""
+
+#: TranslationUpdater.py:308
+msgid "Restart Gramps so every window uses the new translations."
+msgstr ""
+
+#: TranslationUpdater.py:309
+msgid "Translations checked"
+msgstr ""
+
+#: TranslationUpdater.py:316
+msgid "Could not create the launcher"
+msgstr ""
+
+#: TranslationUpdater.py:331
+msgid "Gramps is running from the launcher now."
+msgstr ""
+
+#: TranslationUpdater.py:333
+msgid "Look for \"Gramps (updated translations)\" in your menu."
+msgstr ""
+
+#: TranslationUpdaterLib.py:567
+msgid "Gramps (updated translations)"
+msgstr ""
+
+#: TranslationUpdaterLib.py:568
+msgid "Gramps using translations from Translation Updater"
+msgstr ""
+
+#: TranslationUpdaterLib.py:604
+msgid "This pack format is newer than Translation Updater"
+msgstr ""
+
+#: TranslationUpdaterLib.py:652
+#, python-format
+msgid "Checksum mismatch for %s"
+msgstr ""
+
+#: TranslationUpdaterLib.py:702
+msgid "No translations published for this language"
+msgstr ""
+
+#: TranslationUpdaterLib.py:772
+msgid "Gramps updated"
+msgstr ""
+
+#: TranslationUpdaterLib.py:775
+#, python-format
+msgid "%d addon updated"
+msgid_plural "%d addons updated"
+msgstr[0] ""
+msgstr[1] ""
+
+#: TranslationUpdaterLib.py:779
+#, python-format
+msgid "%d removed"
+msgstr ""
+
+#: TranslationUpdaterLib.py:780
+msgid "up to date"
+msgstr ""
+
+#: TranslationUpdaterLib.py:815
+msgid "Translation updates downloaded; restart Gramps to see them all."
+msgstr ""
