@@ -1,0 +1,188 @@
+# French translation for the Fuzzy Grouping view addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Fuzzy Grouping package.
+# Strings shared with Gramps core are copied from the Gramps French translation team.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: Fuzzy Grouping 0.2.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-02 15:40-0600\n"
+"PO-Revision-Date: 2026-11-20 14:20-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: French <https://hosted.weblate.org/projects/gramps-project/addons/fr/>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+
+#: FuzzyGrouping.gpr.py:41 fuzzygroupingview.py:1340 fuzzygroupingview.py:1729
+#: fuzzygroupingview.py:1920
+msgid "Fuzzy Grouping"
+msgstr "Regroupement phonétique"
+
+#: FuzzyGrouping.gpr.py:43
+msgid ""
+"The view showing all people in the Family Tree grouped by phonetically "
+"similar family names"
+msgstr ""
+"Cette vue affiche toutes les personnes de l'arbre familial groupées par noms"
+" de famille phonétiquement proches"
+
+#: FuzzyGrouping.gpr.py:52
+msgid "People"
+msgstr "Individus"
+
+#: fuzzygroupingview.py:225
+msgid ""
+"Fuzzy Grouping: the last index build did not finish, so subsorting is off. "
+"To turn it on again, use Configure, Subsorting tab."
+msgstr ""
+"Regroupement phonétique : la dernière construction de l'index ne s'est pas "
+"terminée, le sous-tri est donc désactivé. Pour le réactiver, utilisez "
+"Configuration, onglet Sous-tri."
+
+#: fuzzygroupingview.py:271
+msgid "None"
+msgstr "Aucun"
+
+#: fuzzygroupingview.py:272
+msgid "Soundex"
+msgstr "Soundex"
+
+#: fuzzygroupingview.py:302
+msgid ","
+msgstr ","
+
+#: fuzzygroupingview.py:528
+msgid "No documentation available"
+msgstr "Aucune documentation disponible"
+
+#: fuzzygroupingview.py:529
+msgid "This plugin has neither a README.md nor a registered help_url."
+msgstr "Cette extension n'a ni fichier README.md ni help_url enregistrée."
+
+#: fuzzygroupingview.py:579
+#, python-format
+msgid "View the ReadMe markdown docs for the %(addon)s view mode"
+msgstr ""
+"Afficher la documentation ReadMe (Markdown) du mode d'affichage %(addon)s"
+
+#: fuzzygroupingview.py:580
+#, python-format
+msgid "Browse to the Help URL for the %(addon)s view mode"
+msgstr "Ouvrir l'URL d'aide du mode d'affichage %(addon)s"
+
+#: fuzzygroupingview.py:926
+msgid ""
+"Fuzzy Grouping: the index build was cancelled, so subsorting is off. To turn"
+" it on again, use Configure, Subsorting tab."
+msgstr ""
+"Regroupement phonétique : la construction de l'index a été annulée, le sous-"
+"tri est donc désactivé. Pour le réactiver, utilisez Configuration, onglet "
+"Sous-tri."
+
+#: fuzzygroupingview.py:1017
+msgid "Subsorting people with equal sort values"
+msgstr "Sous-tri des individus ayant des valeurs de tri égales"
+
+#: fuzzygroupingview.py:1195 fuzzygroupingview.py:2254
+#: fuzzygroupingview.py:2357
+msgid "Name format"
+msgstr "Format des noms"
+
+#: fuzzygroupingview.py:1298
+msgid "Grouping people"
+msgstr "Regroupement des individus"
+
+#: fuzzygroupingview.py:1575
+msgid "Display Name Editor"
+msgstr "Édition de l'affichage des noms"
+
+#: fuzzygroupingview.py:1684
+msgid "Grouping"
+msgstr "Regroupement"
+
+#: fuzzygroupingview.py:1905
+msgid "Updating display..."
+msgstr "Chargement en cours..."
+
+#: fuzzygroupingview.py:1924
+msgid "Opening the groups"
+msgstr "Ouverture des groupes"
+
+#: fuzzygroupingview.py:2134
+msgid "Subsorting"
+msgstr "Sous-tri"
+
+#: fuzzygroupingview.py:2147
+msgid "Grouping:"
+msgstr "Regroupement :"
+
+#: fuzzygroupingview.py:2148
+msgid "Sample Surname"
+msgstr "Nom de famille représentatif"
+
+#: fuzzygroupingview.py:2150
+msgid "Fuzzy grouping ID"
+msgstr "Code de regroupement phonétique"
+
+#: fuzzygroupingview.py:2162
+msgid "Fuzzy (Phonetic encoding) system:"
+msgstr "Système d'encodage phonétique :"
+
+#: fuzzygroupingview.py:2166
+msgid ""
+"The phonetic system used to group people; None groups on exact surnames"
+msgstr ""
+"Le système phonétique utilisé pour regrouper les individus ; Aucun regroupe "
+"selon les noms de famille exacts"
+
+#: fuzzygroupingview.py:2181
+#, python-format
+msgid "Tree View: first column \"%s\" cannot be changed"
+msgstr "Vue en arbre : la première colonne « %s » ne peut pas être modifiée"
+
+#: fuzzygroupingview.py:2254
+#, python-format
+msgid "%s: "
+msgstr "%s : "
+
+#: fuzzygroupingview.py:2263
+msgid "Drag and drop, or edit the numbers, to change the subsort order"
+msgstr ""
+"Glissez-déposez les lignes, ou modifiez les numéros, pour changer l'ordre du"
+" sous-tri"
+
+#: fuzzygroupingview.py:2284
+msgid "Use the whole list (when off, only number 1 is used)"
+msgstr "Utiliser toute la liste (si décoché, seul le n° 1 est utilisé)"
+
+#: fuzzygroupingview.py:2289
+msgid ""
+"Turned off by itself when a build is cancelled or does not finish. Number 1 "
+"alone is the fastest."
+msgstr ""
+"Se décoche automatiquement lorsqu'une construction est annulée ou ne se "
+"termine pas. Le n° 1 seul est le plus rapide."
+
+#: fuzzygroupingview.py:2322
+msgid "Order"
+msgstr "Ordre"
+
+#: fuzzygroupingview.py:2325
+msgid "Column Name"
+msgstr "Nom de colonne"
+
+#: fuzzygroupingview.py:2549
+msgid "Expand all Nodes"
+msgstr "Déployer tous les nœuds"
+
+#: fuzzygroupingview.py:2553
+msgid "Collapse all Nodes"
+msgstr "Fermer tous les nœuds"
+
+#: fuzzygroupingview.py:2556
+msgid "Grouping (Phonetic encoding)"
+msgstr "Regroupement (encodage phonétique)"

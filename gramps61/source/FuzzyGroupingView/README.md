@@ -82,7 +82,7 @@ Right-click in the view to see the commands of the People views, plus these:
 - **Grouping (Phonetic encoding)** is a submenu with **None** and every available phonetic system. The current system has a mark. Choose another system to build the groups again at once. This is the same choice as the system list in the Configure dialog.
 
 ## The Help icon
-The view adds a **Help icon** at the right end of the toolbar. It shows this document. If Markdown Dash is installed and active, the document opens inside Gramps. Otherwise, the Help web page opens in your browser. Hold the pointer over the icon to see which one a click will open.
+The view adds a **Help icon** to the toolbar, immediately to the right of the **Configure...** button. It shows this document. If Markdown Dash is installed and active, the document opens inside Gramps. Otherwise, the Help web page opens in your browser. Hold the pointer over the icon to see which one a click will open.
 
 ![The Help icon](media/Gnome-help-browser.svg)
 

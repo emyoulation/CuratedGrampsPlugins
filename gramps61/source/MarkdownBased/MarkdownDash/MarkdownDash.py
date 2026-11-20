@@ -39,22 +39,24 @@ gramplet directly::
     from MarkdownDash import open_markdown_file
     open_markdown_file("/path/to/addon/README.md", uistate, parent=self.window)
 
-The function resolves locale variants automatically (``locale/fr_FR/README.md``
-→ ``locale/fr/README.md`` → ``README.md``; implemented once, in
+The function resolves locale variants automatically (``locale/fr/README_fr.md``
+→ ``README_fr.md`` → ``README.md``; the full order is implemented once, in
 :func:`MarkdownUtils.resolve_localized_path`), accepts remote ``https://`` URLs,
 and renders a graceful inline error page — with a localisation-invitation notice
 — when no file is found.  Callers never need to know about the gramplet
 lifecycle or widget internals.
 
-Locale path convention::
+Locale path convention (underscore suffix, never a dot)::
 
     <addon_dir>/
-        README.md                    # English baseline (always present)
+        README.md                    # English baseline
         locale/
-            fr_FR/README.md          # full locale variant (highest priority)
-            fr/README.md             # short-code variant
-            de/README.md
+            fr/README_fr.md          # preferred: translation in its own folder
+            fr_FR/README_fr_FR.md    # regional variant (checked first)
+            de/README_de.md
             ...
+
+A top-level ``README_fr.md`` is also found, after the ``locale/`` folders.
 
 Source-language convention
 --------------------------
@@ -156,6 +158,23 @@ except ImportError:
     link_style_colours = None
     markdown_image_double_click = None
     theme_is_dark = None
+
+# Translation forking (Nov 2026 builds). Older builds lack it; Markdown Dash
+# then hides the localization button and resolves links as before.
+try:
+    from MarkdownUtils import (
+        TranslationsDialog,
+        canonical_document,
+        language_icon_image,
+        open_in_text_editor,
+        resolve_relative_target,
+    )
+except ImportError:
+    TranslationsDialog = None
+    canonical_document = None
+    language_icon_image = None
+    open_in_text_editor = None
+    resolve_relative_target = None
 
 # Backward-compatible names: these moved to MarkdownUtils. Kept so any
 # add-on that still imports them from MarkdownDash keeps working; delete
@@ -922,7 +941,7 @@ class _MarkdownViewer:  # pylint: disable=too-few-public-methods,too-many-instan
         md = f"# \u274c {heading}\n\n{detail}\n\n> {hint}\n"
 
         if self._show_locale_invite:
-            lang_full, user_short = locale_lang()
+            _lang_full, user_short = locale_lang()
             src = self._source_lang  # e.g. "fi", or None for English baseline
             addon_label = f" ({self._addon_name})" if self._addon_name else ""
             md += "\n---\n\n"
@@ -939,7 +958,7 @@ class _MarkdownViewer:  # pylint: disable=too-few-public-methods,too-many-instan
                     "- Translating it into **English** first — this creates "
                     "a `README.md` that all future translators can work from.\n"
                     "- Or translating directly into **{user_lang}** and "
-                    "placing it at `locale/{user_lang}/README.md`.\n\n"
+                    "placing it at `locale/{user_lang}/README_{user_lang}.md`.\n\n"
                     "See the [Gramps Translation HOWTO]"
                     "(https://gramps-project.org/wiki/index.php/Translating_Gramps) "
                     "or ask on the "
@@ -947,7 +966,7 @@ class _MarkdownViewer:  # pylint: disable=too-few-public-methods,too-many-instan
                 ).format(
                     addon=addon_label,
                     src_lang=src,
-                    user_lang=lang_full,
+                    user_lang=user_short,
                 )
             else:
                 # Unlabelled English baseline shown to a non-English user
@@ -955,12 +974,12 @@ class _MarkdownViewer:  # pylint: disable=too-few-public-methods,too-many-instan
                     "No translation is available for **{lang}** yet{addon}. "
                     "The English version has been shown as a fallback.\n\n"
                     "If you would like to contribute a translation, place your "
-                    "translated file at `locale/{lang}/README.md` alongside "
+                    "translated file at `locale/{lang}/README_{lang}.md` in "
                     "this add-on, then see the [Gramps Translation HOWTO]"
                     "(https://gramps-project.org/wiki/index.php/Translating_Gramps) "
                     "or open a request on the "
                     "[Gramps Discourse forum](https://gramps.discourse.group/)."
-                ).format(lang=lang_full, addon=addon_label)
+                ).format(lang=user_short, addon=addon_label)
             md += "\n"
 
         self._render(md)  # pylint: disable=no-member
@@ -1011,6 +1030,7 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
             "_browse_btn",
             "_folder_btn",
             "_edit_btn",
+            "_translate_btn",
         ):
             btn = getattr(self, attr, None)
             sig_attr = attr + "_sids"
@@ -1184,6 +1204,21 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
         self._edit_btn_sids = [self._edit_btn.connect("clicked", self.cb_edit_file)]
         footer.pack_start(self._edit_btn, False, False, 0)
 
+        self._translate_btn = None
+        if TranslationsDialog is not None:
+            self._translate_btn = Gtk.Button()
+            self._translate_btn.set_image(language_icon_image(16))
+            self._translate_btn.set_relief(Gtk.ReliefStyle.NONE)
+            self._translate_btn.set_tooltip_text(
+                _("Edit localized version of current file")
+            )
+            self._translate_btn.set_sensitive(False)
+            self._translate_btn.set_no_show_all(True)
+            self._translate_btn_sids = [
+                self._translate_btn.connect("clicked", self.cb_translate)
+            ]
+            footer.pack_start(self._translate_btn, False, False, 0)
+
         self.info_label = Gtk.Label()
         self.info_label.set_halign(Gtk.Align.START)
         self.info_label.set_ellipsize(Pango.EllipsizeMode.END)
@@ -1344,6 +1379,8 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
 
         if self._edit_btn:
             self._edit_btn.set_sensitive(True)
+        if getattr(self, "_translate_btn", None):
+            self._translate_btn.set_sensitive(True)
         if self._folder_btn:
             self._folder_btn.set_sensitive(True)
             self._populate_folder_menu(path)
@@ -1509,26 +1546,20 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
                 self._set_status(_(f"Could not open: {uri}"), error=True)
 
     def _resolve_path(self, path: str) -> str:
-        """Resolve a relative asset path against the canonical document base.
+        """Resolve a relative link or image path from the current document.
 
-        Asset paths (images, local hyperlinks) in a Markdown file are always
-        relative to the *canonical* (pre-locale-resolution) document directory,
-        not the locale subdirectory where the rendered file actually lives.
-        This means images sitting next to ``README.md`` are still found when a
-        locale variant at ``locale/fi/README.md`` is being displayed.
+        The path is read from the folder of the document itself first, as
+        GitHub does, so ``../../media/x.png`` in ``locale/fr/README_fr.md``
+        works; then from the folder of the original document
+        (``_asset_base``), which keeps older translations written relative to
+        the original folder working. A locale variant of the file is
+        preferred either way. The rules live in
+        :func:`MarkdownUtils.resolve_relative_target`; older MarkdownUtils
+        builds without it get the original-folder lookup only.
 
-        Resolution order for each relative *path*:
-
-        1. Locale-specific asset: ``<asset_base>/locale/<lang>/<path>``
-        2. Canonical asset:        ``<asset_base>/<path>``
-        3. Absolute path returned unchanged.
-        4. *path* returned as-is if nothing resolves (caller handles missing).
-
-        :param path: Relative or absolute asset path from the Markdown source.
-        The locale-aware lookup itself is
-        :func:`MarkdownUtils.resolve_localized_asset`.
-
-        :returns:    Best-matching absolute filesystem path.
+        :param path: Relative or absolute path from the Markdown source.
+        :returns:    Best-matching absolute filesystem path, or *path* as-is
+                     if nothing resolves (the caller handles a missing file).
         """
         if os.path.isabs(path):
             return path
@@ -1540,6 +1571,9 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
             locale_marker = os.sep + "locale" + os.sep
             if locale_marker in base:
                 base = base.split(locale_marker)[0]
+
+        if resolve_relative_target is not None and self.current_file:
+            return resolve_relative_target(self.current_file, base, path)
 
         if not base:
             return path
@@ -1653,7 +1687,9 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
         # English README.md, _asset_base must point at the parent directory.
         # NOTE: path must be absolute here (os.path.abspath above) so that
         # os.path.dirname yields the plugin dir, not the process CWD.
-        canonical_base = os.path.dirname(path)
+        canonical_base = os.path.dirname(
+            canonical_document(path) if canonical_document else path
+        )
         path = self._get_localized_filepath(path)
 
         if not os.path.isfile(path):
@@ -1703,6 +1739,10 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
                 edit_btn = getattr(self, "_edit_btn", None)
                 if edit_btn is not None:
                     edit_btn.show() if show_edit else edit_btn.hide()
+                # The localization button follows the Edit control.
+                translate_btn = getattr(self, "_translate_btn", None)
+                if translate_btn is not None:
+                    translate_btn.show() if show_edit else translate_btn.hide()
                 self.info_label.show() if show_status else self.info_label.hide()
                 browse_btn = getattr(self, "_browse_btn", None)
                 if browse_btn is not None:
@@ -2222,6 +2262,8 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
         if not path or not os.path.isfile(path):
             self._set_status(_("No file loaded to edit"), error=True)
             return
+        if open_in_text_editor is not None and open_in_text_editor(path):
+            return
         uri = "file://" + os.path.abspath(path)
         launched = False
         for mime in ("text/markdown", "text/x-markdown", "text/plain"):
@@ -2235,6 +2277,17 @@ class MarkdownDash(Gramplet):  # pylint: disable=too-many-instance-attributes
                 pass
         if not launched:
             self._open_uri(uri)
+
+    def cb_translate(self, widget: Gtk.Button) -> None:
+        """Callback: list the translations of the current file, or create one."""
+        path = getattr(self, "current_file", None)
+        if not path or not os.path.isfile(path) or TranslationsDialog is None:
+            self._set_status(_("No file loaded to edit"), error=True)
+            return
+        parent = widget.get_toplevel()
+        TranslationsDialog(
+            parent if isinstance(parent, Gtk.Window) else None, path, self._load
+        )
 
     def cb_browse(self, _widget: Gtk.Button) -> None:
         """Callback: open file chooser dialog."""
@@ -2552,6 +2605,7 @@ _SHARED_METHODS = (
     "_set_loaded",
     "_populate_folder_menu",
     "cb_edit_file",
+    "cb_translate",
     "cb_browse",
     "_browse_start_dir",
     "_set_dialog_sort",

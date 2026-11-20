@@ -1,4 +1,4 @@
-# Translation template for the 0.2.3 Markdown Utils general addon for Gramps.
+# Translation template for the 0.2.4 Markdown Utils general addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Markdown Utils package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Markdown Utils 0.2.3\n"
+"Project-Id-Version: Markdown Utils 0.2.4\n"
 "Report-Msgid-Bugs-To: emyoulation@yahoo.com\n"
-"POT-Creation-Date: 2026-11-15 09:06-0600\n"
+"POT-Creation-Date: 2026-11-20 14:19-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,23 +28,63 @@ msgid ""
 "installed so those addons can import it."
 msgstr ""
 
-#: MarkdownUtils.py:3265
+#: MarkdownUtils.py:891
+msgid "Edit localized version of current file"
+msgstr ""
+
+#: MarkdownUtils.py:895
+msgid "_Close"
+msgstr ""
+
+#: MarkdownUtils.py:924
+msgid "Region"
+msgstr ""
+
+#: MarkdownUtils.py:925
+msgid "Code"
+msgstr ""
+
+#: MarkdownUtils.py:926
+msgid "Name"
+msgstr ""
+
+#: MarkdownUtils.py:927
+msgid "Endonym"
+msgstr ""
+
+#: MarkdownUtils.py:936
+msgid ""
+"Region: the region named in the translation code, or else the region Gramps "
+"pairs with the language for Windows."
+msgstr ""
+
+#: MarkdownUtils.py:990
+#, python-format
+msgid "Edit %s"
+msgstr ""
+
+#: MarkdownUtils.py:1008
+#, python-format
+msgid "Create %s"
+msgstr ""
+
+#: MarkdownUtils.py:3952
 msgid "No documentation available"
 msgstr ""
 
-#: MarkdownUtils.py:3266
+#: MarkdownUtils.py:3953
 msgid "This plugin has neither a README.md nor a registered help_url."
 msgstr ""
 
-#: MarkdownUtils.py:3334 help_doc_button.py:46
+#: MarkdownUtils.py:4021 help_doc_button.py:48
 msgid "Help"
 msgstr ""
 
-#: MarkdownUtils.py:3339
+#: MarkdownUtils.py:4026
 #, python-format
 msgid "Show the documentation of %s"
 msgstr ""
 
-#: MarkdownUtils.py:3341
+#: MarkdownUtils.py:4028
 msgid "Show the documentation of this plugin"
 msgstr ""

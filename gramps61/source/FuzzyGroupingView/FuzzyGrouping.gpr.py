@@ -43,7 +43,7 @@ if (5, 2) <= VERSION_TUPLE[:2] < (6, 2):
             "The view showing all people in the Family Tree grouped by "
             "phonetically similar family names"
         ),
-        version="0.2.0",  # build 20261029.0510
+        version="0.2.1",  # build 20261029.0510
         gramps_target_version=major_version,
         status=STABLE,
         fname="fuzzygroupingview.py",

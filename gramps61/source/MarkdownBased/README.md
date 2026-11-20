@@ -13,15 +13,17 @@ Nothing about **Markdown Utils** has a separate window or menu. **Markdown Utils
 ## Documentation in your language
 **Markdown Utils** shows documentation in the language of the Gramps interface when a translation exists. For a French interface (`fr_FR`), the first file found is shown:
 
-1. `locale/fr_FR/README.md`
-2. `locale/fr/README.md`
-3. `README.md` (treated as English)
-4. `README_fr_FR.md` or `README_fr.md`
-5. Any other labeled file, such as `README_fi.md`
+1. `locale/fr_FR/README_fr_FR.md`
+2. `locale/fr_FR/README.md`
+3. `locale/fr/README_fr.md`
+4. `locale/fr/README.md`
+5. `README_fr_FR.md` or `README_fr.md`
+6. `README.md` (treated as English)
+7. Any other labeled file, such as `README_fi.md`
 
 Images and linked files are found the same way: first in `locale/fr_FR/`, then in `locale/fr/`, then in the main folder. In a translated README, write image paths relative to the main folder.
 
-**For translators and authors:** a `README.md` file hides every `README_xx.md` file, so put translations in `locale/xx/README.md`. Name a file like `README_fi.md` only when the documentation exists in that one non-English language. Language codes are 2 lowercase letters, optionally followed by a region, such as `pt_BR`.
+**For translators and authors:** the preferred place for a French translation is `locale/fr/README_fr.md`. Put the language code in the folder name and also at the end of the file name, after an underscore. Always use an underscore before the language code, never a period: write `README_fr.md`, not `README.fr.md`. A translation such as `README_fr.md` next to the English `README.md` also works, but the `locale/fr/` folder is preferred. Name a file like `README_fi.md` without an English `README.md` only when the documentation exists in that one non-English language. Language codes are 2 lowercase letters, optionally followed by an underscore and a region, such as `pt_BR`. The same rules apply to every document, such as `CHANGELOG.md` and `locale/fr/CHANGELOG_fr.md`.
 
 ## The extra layer: documentation that can show you Gramps itself
 Beyond plain formatting, documentation of an addon written this way can go a step further. The documentation can embed pieces of the actual Gramps interface, such as the icon shown on a toolbar button, right inside the text. The documentation can also include links that do not just open a web page, but act on what is in front of you inside Gramps. For example, a link can jump to a place in a tree or view, or open an item for editing. Used this way, the README of an addon stops being just text to read. The README becomes closer to a short guided tour if the author of the addon chooses to write the text that way. Not all addon documentation uses this feature. This feature is an option available to authors of addons, not something that changes how you read a plain README file.

@@ -44,7 +44,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6,2,0):
         id = "markdowndash",
         name = _("Markdown Dash"),
         description = "Dashboard gramplet to view formatted Markdown (.md) files",
-        version = '1.5.3',
+        version = '1.5.4',
         gramps_target_version = major_version,
         status = BETA,
         fname = "MarkdownDash.py",

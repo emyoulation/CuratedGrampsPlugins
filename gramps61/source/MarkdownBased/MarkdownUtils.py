@@ -41,7 +41,7 @@ Provides:
   - ``NAMESPACE_MAP``           -- Gramps object-type → DB getter / editor map
   - ``VIEW_NAMES``              -- lowercase category alias → canonical view name
   - ``locale_lang()``           -- (``ll_CC``, ``ll``) for the current Gramps locale
-  - ``resolve_localized_path()``-- best locale variant of a document (README.md → README.fr.md etc.)
+  - ``resolve_localized_path()``-- best locale variant of a document (README.md → locale/fr/README_fr.md etc.)
   - ``resolve_localized_asset()``-- best locale variant of an image / linked asset
   - ``PathResolution``          -- result of ``resolve_localized_path()``
   - ``LANG_SUFFIX_RE``          -- matches ``<stem>_<lang>.<ext>`` source-language names
@@ -175,9 +175,12 @@ _ = _trans.sgettext
 #       README.md                    # English baseline
 #       README_fi.md                 # or: source-language baseline (Finnish)
 #       locale/
-#           fr_FR/README.md          # full locale variant (highest priority)
-#           fr/README.md             # short-code variant
-#           fr/diagram.png           # localized asset, same lookup order
+#           fr/README_fr.md          # preferred: translation in its own folder
+#           fr_FR/README_fr_FR.md    # regional variant (checked first)
+#           fr/diagram.png           # localized asset
+#
+# Language suffixes always use an underscore (README_fr.md), never a dot.
+# A top-level README_fr.md is also found, but locale/fr/ is preferred.
 #
 # See resolve_localized_path() for the full resolution order.
 #
@@ -254,31 +257,44 @@ class PathResolution:  # pylint: disable=too-few-public-methods
         return bool(self.path) and os.path.isfile(self.path)
 
 
-# Matches  README_fi.md / README_fr_FR.md / MyAddon_help_de.md etc.
+# Matches  README_fi.md / README_fr_FR.md / README_sr_Latn.md etc.
 LANG_SUFFIX_RE = re.compile(
-    r"^(?P<stem>.+?)_(?P<lang>[a-z]{2}(?:_[A-Z]{2})?)(?P<ext>\.[^.]+)$"
+    r"^(?P<stem>.+?)_(?P<lang>[a-z]{2}(?:_(?:[A-Z]{2}|[A-Z][a-z]{3}))?)"
+    r"(?P<ext>\.[^.]+)$"
 )
+# A locale/<code>/ folder name: fr, fr_FR, sr_Latn
+LANG_CODE_RE = re.compile(r"^[a-z]{2}(?:_(?:[A-Z]{2}|[A-Z][a-z]{3}))?$")
 
 
 def resolve_localized_path(path: str) -> PathResolution:
     """Resolve *path* to the best available locale variant.
 
-    Resolution order
-    ----------------
-    1. ``<dir>/locale/<lang_full>/<filename>``  e.g. ``locale/fr_FR/README.md``
-    2. ``<dir>/locale/<lang_short>/<filename>`` e.g. ``locale/fr/README.md``
-    3. ``<dir>/<filename>`` — the unlabelled English baseline.
-    4. ``<dir>/<stem>_<lang><ext>`` — a source-language-labelled baseline
-       (e.g. ``README_fi.md`` meaning the add-on documentation is in Finnish).
-       The matching file with the *user's* language suffix is tried first.
+    Translations use an underscore language suffix, never a dot
+    (``README_fr.md``, not ``README.fr.md``), and their preferred home is the
+    ``locale/<code>/`` subfolder.  For a ``fr_FR`` user and the canonical
+    ``<dir>/README.md``, the first existing file wins:
 
-    In cases 3 and 4, :attr:`PathResolution.is_fallback` is ``True`` when the
-    user's locale is not English (case 3) or does not match the source language
-    (case 4).
+    1. ``<dir>/locale/fr_FR/README_fr_FR.md``
+    2. ``<dir>/locale/fr_FR/README.md``
+    3. ``<dir>/locale/fr/README_fr.md``  -- the preferred translation layout
+    4. ``<dir>/locale/fr/README.md``
+    5. ``<dir>/README_fr_FR.md``          -- top-level translation (allowed)
+    6. ``<dir>/README_fr.md``
+    7. ``<dir>/README.md``                -- unlabeled English baseline
+    8. any other ``<dir>/README_<code>.md`` -- source-language baseline
+       (e.g. ``README_fi.md`` when the documentation exists only in Finnish)
+
+    :attr:`PathResolution.is_fallback` is ``True`` in case 7 for a
+    non-English user, and in case 8 when the file language differs from the
+    user language.
+
+    *path* may itself carry a suffix (``Welcome_en.md``); the suffix is
+    removed before the lookup, so ``Welcome_en.md`` and ``Welcome.md`` find
+    the same variants.
 
     :param path: Absolute or ``~``-prefixed path to the *canonical* (English
-        or unlabelled) baseline file.  The filename need not exist on disk;
-        the stem and extension are used to locate labelled variants.
+        or unlabeled) baseline file.  The filename need not exist on disk;
+        the stem and extension are used to locate labeled variants.
     :returns: A :class:`PathResolution` describing the best available file.
     """
     if not path:
@@ -288,57 +304,68 @@ def resolve_localized_path(path: str) -> PathResolution:
     base_dir = os.path.dirname(path)
     filename = os.path.basename(path)
     lang_full, lang_short = locale_lang()
+    codes = [lang_full] if lang_full == lang_short else [lang_full, lang_short]
 
-    # ── 1 & 2: locale sub-directory variants ────────────────────────────
-    for lang_code in (lang_full, lang_short):
-        variant = os.path.join(base_dir, "locale", lang_code, filename)
-        if os.path.isfile(variant):
-            return PathResolution(
-                variant, is_fallback=False, source_lang=None, user_lang=lang_short
-            )
-
-    # ── 3: unlabelled baseline (README.md) ──────────────────────────────
-    if os.path.isfile(path):
-        is_fb = lang_short not in ("en",)
-        return PathResolution(
-            path, is_fallback=is_fb, source_lang=None, user_lang=lang_short
-        )
-
-    # ── 4: source-language-labelled baseline (README_fi.md) ─────────────
     stem, ext = os.path.splitext(filename)
-    # Try the user's own language first (Finnish user + README_fi.md → no invite)
-    for lang_code in (lang_full, lang_short):
-        candidate = os.path.join(base_dir, f"{stem}_{lang_code}{ext}")
+    labeled = LANG_SUFFIX_RE.match(filename)
+    if labeled:
+        stem, ext = labeled.group("stem"), labeled.group("ext")
+    plain = stem + ext
+
+    # -- 1-4: locale/<code>/ folders, labeled file before unlabeled -------
+    for code in codes:
+        folder = os.path.join(base_dir, "locale", code)
+        for name in (f"{stem}_{code}{ext}", plain):
+            candidate = os.path.join(folder, name)
+            if os.path.isfile(candidate):
+                return PathResolution(
+                    candidate,
+                    is_fallback=False,
+                    source_lang=None,
+                    user_lang=lang_short,
+                )
+
+    # -- 5-6: top-level translation in the user language ------------------
+    for code in codes:
+        candidate = os.path.join(base_dir, f"{stem}_{code}{ext}")
         if os.path.isfile(candidate):
             return PathResolution(
                 candidate,
                 is_fallback=False,
-                source_lang=lang_code,
+                source_lang=code,
                 user_lang=lang_short,
             )
 
-    # Scan for any labelled variant (e.g. README_fi.md when user is English)
+    # -- 7: unlabeled baseline (README.md) --------------------------------
+    canonical = os.path.join(base_dir, plain)
+    if os.path.isfile(canonical):
+        return PathResolution(
+            canonical,
+            is_fallback=lang_short != "en",
+            source_lang=None,
+            user_lang=lang_short,
+        )
+
+    # -- 8: any other labeled file (source-language baseline) -------------
     try:
         entries = os.listdir(base_dir)
     except OSError:
         entries = []
 
     for entry in sorted(entries):
-        m = LANG_SUFFIX_RE.match(entry)
-        if m and m.group("stem") == stem and m.group("ext") == ext:
-            found_lang = m.group("lang")
+        match = LANG_SUFFIX_RE.match(entry)
+        if match and match.group("stem") == stem and match.group("ext") == ext:
             candidate = os.path.join(base_dir, entry)
             if os.path.isfile(candidate):
-                # is_fallback: user differs from source language
-                is_fb = found_lang.split("_")[0] != lang_short
+                found_lang = match.group("lang")
                 return PathResolution(
                     candidate,
-                    is_fallback=is_fb,
+                    is_fallback=found_lang.split("_")[0] != lang_short,
                     source_lang=found_lang,
                     user_lang=lang_short,
                 )
 
-    # Nothing found at all — return the original path (will trigger error page)
+    # Nothing found at all -- return the original path (error page)
     return PathResolution(
         path, is_fallback=False, source_lang=None, user_lang=lang_short
     )
@@ -369,6 +396,666 @@ def resolve_localized_asset(base_dir: str, rel_path: str) -> str:
     if os.path.isfile(candidate):
         return candidate
     return rel_path
+
+
+# ---------------------------------------------------------------------------
+#
+# Translation forking -- copy a document to locale/<code>/<stem>_<code>.md
+#
+# The pure functions below hold the naming and link rules; the dialog
+# (TranslationsDialog, further down) is the only interface code. All of it
+# may later move into a dedicated translator's tool, which would import
+# these functions rather than copy them.
+#
+# ---------------------------------------------------------------------------
+
+
+def canonical_document(path: str) -> str:
+    """Return the original document that *path* is a translation of.
+
+    ``<dir>/locale/fr/README_fr.md``, ``<dir>/locale/fr/README.md`` and
+    ``<dir>/README_fr.md`` all map to ``<dir>/README.md`` when that file
+    exists. When it does not, the first labeled source-language file (such as
+    ``README_fi.md``) is the original. A file that is not a translation is
+    returned unchanged.
+
+    :param path: Path of a document, translated or not.
+    :returns: Absolute path of the original document.
+    """
+    path = os.path.abspath(os.path.expanduser(path))
+    folder = os.path.dirname(path)
+    filename = os.path.basename(path)
+    in_locale = LANG_CODE_RE.match(os.path.basename(folder)) and (
+        os.path.basename(os.path.dirname(folder)) == "locale"
+    )
+    base_dir = os.path.dirname(os.path.dirname(folder)) if in_locale else folder
+    labeled = LANG_SUFFIX_RE.match(filename)
+    if labeled:
+        stem, ext = labeled.group("stem"), labeled.group("ext")
+    else:
+        stem, ext = os.path.splitext(filename)
+    plain = os.path.join(base_dir, stem + ext)
+    if os.path.isfile(plain):
+        return plain
+    if not in_locale:
+        return path  # a top-level labeled file with no English original
+    try:
+        entries = sorted(os.listdir(base_dir))
+    except OSError:
+        entries = []
+    for entry in entries:
+        match = LANG_SUFFIX_RE.match(entry)
+        if match and match.group("stem") == stem and match.group("ext") == ext:
+            return os.path.join(base_dir, entry)
+    return plain
+
+
+def document_language(path: str) -> str:
+    """Return the language code an original document is written in.
+
+    :param path: An original document (see :func:`canonical_document`).
+    :returns: The suffix code of a labeled file such as ``README_fi.md``,
+        otherwise ``"en"``.
+    """
+    match = LANG_SUFFIX_RE.match(os.path.basename(path))
+    return match.group("lang") if match else "en"
+
+
+def translation_target(path: str, lang_code: str) -> str:
+    """Return where a new *lang_code* translation of *path* belongs.
+
+    ``<dir>/README.md`` and ``fr`` give ``<dir>/locale/fr/README_fr.md``.
+
+    :param path: The original document (or any translation of it).
+    :param lang_code: Gramps translation code, such as ``fr`` or ``pt_BR``.
+    :returns: Absolute path of the translation file (it need not exist).
+    """
+    original = canonical_document(path)
+    base_dir = os.path.dirname(original)
+    filename = os.path.basename(original)
+    labeled = LANG_SUFFIX_RE.match(filename)
+    if labeled:
+        stem, ext = labeled.group("stem"), labeled.group("ext")
+    else:
+        stem, ext = os.path.splitext(filename)
+    return os.path.join(base_dir, "locale", lang_code, f"{stem}_{lang_code}{ext}")
+
+
+def existing_translations(path: str) -> list[tuple[str, str]]:
+    """List the translations of a document that already exist.
+
+    Looks in every ``locale/<code>/`` folder (for ``<stem>_<code><ext>`` and
+    then ``<stem><ext>``) and at the top level (``<stem>_<code><ext>``).
+
+    :param path: The original document (or any translation of it).
+    :returns: ``(code, absolute path)`` pairs, sorted by code; a code may
+        appear twice when both a locale folder file and a top-level file
+        exist. The original document itself is never listed.
+    """
+    original = canonical_document(path)
+    base_dir = os.path.dirname(original)
+    filename = os.path.basename(original)
+    labeled = LANG_SUFFIX_RE.match(filename)
+    if labeled:
+        stem, ext = labeled.group("stem"), labeled.group("ext")
+    else:
+        stem, ext = os.path.splitext(filename)
+    found: list[tuple[str, str]] = []
+    locale_dir = os.path.join(base_dir, "locale")
+    try:
+        codes = sorted(os.listdir(locale_dir))
+    except OSError:
+        codes = []
+    for code in codes:
+        if not LANG_CODE_RE.match(code):
+            continue
+        for name in (f"{stem}_{code}{ext}", stem + ext):
+            candidate = os.path.join(locale_dir, code, name)
+            if os.path.isfile(candidate):
+                found.append((code, candidate))
+                break
+    try:
+        entries = sorted(os.listdir(base_dir))
+    except OSError:
+        entries = []
+    for entry in entries:
+        match = LANG_SUFFIX_RE.match(entry)
+        candidate = os.path.join(base_dir, entry)
+        if (
+            match
+            and match.group("stem") == stem
+            and match.group("ext") == ext
+            and candidate != original
+            and os.path.isfile(candidate)
+        ):
+            found.append((match.group("lang"), candidate))
+    found.sort(key=lambda item: (item[0], len(item[1])))
+    return found
+
+
+_URL_SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+_INLINE_TARGET_RE = re.compile(r"(\]\(\s*)(<[^>\n]*>|[^)\s]+)")
+_REF_DEFINITION_RE = re.compile(r"^(\s{0,3}\[[^\]]+\]:\s*)(<[^>\n]*>|\S+)")
+_HTML_ATTR_RE = re.compile(r"""(\b(?:src|href)\s*=\s*)(["'])([^"'\n]*)\2""")
+_FENCE_RE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
+
+
+def _rebase_target(target: str, from_dir: str, to_dir: str) -> str:
+    """Rewrite one relative link target so it works from *to_dir*.
+
+    Web addresses, ``gramps:`` and ``mailto:`` links, absolute paths and
+    ``#anchor`` links are returned unchanged.
+    """
+    bracketed = target.startswith("<") and target.endswith(">")
+    inner = target[1:-1] if bracketed else target
+    if not inner or inner.startswith(("#", "/")) or _URL_SCHEME_RE.match(inner):
+        return target
+    cut = len(inner)
+    for mark in ("#", "?"):
+        pos = inner.find(mark)
+        if pos != -1:
+            cut = min(cut, pos)
+    rel_path, tail = inner[:cut], inner[cut:]
+    if not rel_path:
+        return target
+    absolute = os.path.normpath(os.path.join(from_dir, rel_path))
+    rebased = os.path.relpath(absolute, to_dir).replace(os.sep, "/") + tail
+    return f"<{rebased}>" if bracketed else rebased
+
+
+def _rebase_outside_code(line: str, from_dir: str, to_dir: str) -> str:
+    """Rebase link targets in one line, leaving `code spans` untouched."""
+    parts = re.split(r"(`+[^`]*`+)", line)
+    for index in range(0, len(parts), 2):  # even indexes are outside code
+        part = parts[index]
+        part = _REF_DEFINITION_RE.sub(
+            lambda m: m.group(1) + _rebase_target(m.group(2), from_dir, to_dir),
+            part,
+        )
+        part = _INLINE_TARGET_RE.sub(
+            lambda m: m.group(1) + _rebase_target(m.group(2), from_dir, to_dir),
+            part,
+        )
+        part = _HTML_ATTR_RE.sub(
+            lambda m: m.group(1)
+            + m.group(2)
+            + _rebase_target(m.group(3), from_dir, to_dir)
+            + m.group(2),
+            part,
+        )
+        parts[index] = part
+    return "".join(parts)
+
+
+def rebase_links(md_text: str, from_dir: str, to_dir: str) -> str:
+    """Rewrite the relative links of a Markdown text for a new folder.
+
+    Used when a document is copied into ``locale/<code>/``: ``media/x.png``
+    becomes ``../../media/x.png`` and ``CHANGELOG.md`` becomes
+    ``../../CHANGELOG.md``, so every link still points at the same file, on
+    GitHub as well as in Markdown Dash. Inline links and images, reference
+    definitions and HTML ``src``/``href`` attributes are rewritten; fenced
+    code blocks and code spans are not.
+
+    :param md_text: The Markdown source.
+    :param from_dir: Folder the text was written for.
+    :param to_dir: Folder the text will be saved in.
+    :returns: The rewritten Markdown source.
+    """
+    out = []
+    fence = None
+    for line in md_text.splitlines(keepends=True):
+        match = _FENCE_RE.match(line)
+        if fence:
+            if (
+                match
+                and match.group(1)[0] == fence[0]
+                and len(match.group(1)) >= len(fence)
+            ):
+                fence = None
+            out.append(line)
+            continue
+        if match:
+            fence = match.group(1)
+            out.append(line)
+            continue
+        out.append(_rebase_outside_code(line, from_dir, to_dir))
+    return "".join(out)
+
+
+def fork_translation(path: str, lang_code: str) -> str:
+    """Copy a document to its *lang_code* translation file and rebase links.
+
+    :param path: The original document (or any translation of it); the copy
+        is always made from the original.
+    :param lang_code: Gramps translation code, such as ``fr``.
+    :returns: Absolute path of the new translation file.
+    :raises FileExistsError: when that translation file already exists.
+    :raises OSError: when the original cannot be read or the copy written.
+    """
+    original = canonical_document(path)
+    target = translation_target(original, lang_code)
+    if os.path.exists(target):
+        raise FileExistsError(target)
+    with open(original, encoding="utf-8") as handle:
+        text = handle.read()
+    text = rebase_links(text, os.path.dirname(original), os.path.dirname(target))
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+    with open(target, "x", encoding="utf-8") as handle:
+        handle.write(text)
+    return target
+
+
+def resolve_relative_target(doc_path: str, asset_base: str | None, rel: str) -> str:
+    """Resolve a relative link or image path found in a document.
+
+    The path is first read from the folder of the document itself, as GitHub
+    does, so ``../../media/x.png`` in ``locale/fr/README_fr.md`` works. A
+    locale variant of that file is preferred when one exists (see
+    :func:`resolve_localized_asset`). If nothing is found that way, the path
+    is read from *asset_base* (the folder of the original document), which
+    keeps older translations that were written relative to the original
+    folder working.
+
+    :param doc_path: The document being shown.
+    :param asset_base: Folder of the original document, or ``None``.
+    :param rel: The link target from the Markdown source.
+    :returns: The best existing path, or *rel* unchanged if nothing resolves.
+    """
+    if os.path.isabs(rel):
+        return rel
+    direct = os.path.normpath(os.path.join(os.path.dirname(doc_path), rel))
+    if asset_base:
+        inside = os.path.relpath(direct, asset_base)
+        if not inside.startswith(os.pardir):
+            localized = resolve_localized_asset(asset_base, inside)
+            if os.path.isabs(localized) and os.path.exists(localized):
+                return localized
+    if os.path.exists(direct):
+        return direct
+    if asset_base:
+        return resolve_localized_asset(asset_base, rel)
+    return rel
+
+
+def open_in_text_editor(path: str) -> bool:
+    """Open *path* in the desktop default editor for Markdown files.
+
+    Tries the default application for ``text/markdown``, then
+    ``text/x-markdown``, then ``text/plain``.
+
+    :param path: File to open.
+    :returns: ``True`` when an application was launched.
+    """
+    uri = Gio.File.new_for_path(os.path.abspath(path)).get_uri()
+    for mime in ("text/markdown", "text/x-markdown", "text/plain"):
+        try:
+            app = Gio.AppInfo.get_default_for_type(mime, False)
+            if app and app.launch_uris([uri], None):
+                return True
+        except GLib.Error:
+            continue
+    return False
+
+
+_LANGUAGE_ROWS: list[dict] | None = None
+
+# Gramps pairs each language with a Windows locale "Language_Country" in
+# win32locale._LOCALE_NAMES. These are the countries used there; the flag
+# shows that region. A translation whose own code names a region (pt_BR,
+# zh_TW, de_AT ...) uses that region instead. Same table and rules as the
+# Gramps Translations table of Environment Inspector (envinsp_catalog.py).
+_COUNTRY_ISO = {
+    "Albania": "AL", "Austria": "AT", "Brazil": "BR", "Bulgaria": "BG",
+    "China": "CN", "Croatia": "HR", "Czech Republic": "CZ", "Denmark": "DK",
+    "Finland": "FI", "France": "FR", "Germany": "DE", "Greece": "GR",
+    "Hong Kong": "HK", "Hungary": "HU", "Iran": "IR", "Israel": "IL",
+    "Italy": "IT", "Japan": "JP", "Korea": "KR", "Lithuania": "LT",
+    "Netherlands": "NL", "Norway": "NO", "Poland": "PL", "Portugal": "PT",
+    "Romania": "RO", "Russia": "RU", "Saudi Arabia": "SA",
+    "Serbia and Montenegro": "RS", "Slovakia": "SK", "Slovenia": "SI",
+    "Spain": "ES", "Sweden": "SE", "Taiwan": "TW", "Turkey": "TR",
+    "Ukraine": "UA", "United Kingdom": "GB", "United States": "US",
+    "Vietnam": "VN",
+}  # fmt: skip
+
+
+def _regional_flag(region: str) -> str:
+    """Return the flag emoji of a 2-letter region code, or ``""``."""
+    if len(region) != 2 or not region.isalpha():
+        return ""
+    return "".join(chr(0x1F1E6 + ord(letter) - ord("A")) for letter in region.upper())
+
+
+def _icu_endonym(code: str) -> str:
+    """Return the name of a language in itself from PyICU, or ``""``."""
+    try:
+        from icu import Locale  # pylint: disable=import-outside-toplevel
+    except ImportError:
+        return ""
+    loc = Locale(code)
+    return str(loc.getDisplayName(loc))
+
+
+def translation_languages() -> list[dict]:
+    """Return the languages Gramps has interface translations for.
+
+    Each row is a dict with:
+
+    - ``code``: the translation code, such as ``fr`` or ``pt_BR``.
+    - ``region``: a 2-letter region code, from the translation code when it
+      names one, otherwise from the country Gramps pairs with the language
+      for Windows; ``""`` when neither exists.
+    - ``region_source``: ``"code"``, ``"Gramps"`` or ``""``.
+    - ``flag``: the flag emoji of ``region``, or ``""``.
+    - ``name``: the language name in the current interface language.
+    - ``endonym``: the name in that language itself, from its own Gramps
+      catalog, else from PyICU, else ``""``.
+
+    The list is built once per session, because reading every catalog takes
+    a moment.
+
+    :returns: Rows sorted by code; English ``en`` is left out.
+    """
+    global _LANGUAGE_ROWS  # pylint: disable=global-statement
+    if _LANGUAGE_ROWS is not None:
+        return _LANGUAGE_ROWS
+    import gettext  # pylint: disable=import-outside-toplevel
+
+    try:
+        from gramps.gen.utils.win32locale import (  # pylint: disable=import-outside-toplevel
+            _LOCALE_NAMES,
+        )
+    except ImportError:
+        _LOCALE_NAMES = {}
+    localedir = getattr(glocale, "localedir", None)
+    try:
+        codes = glocale.get_available_translations()
+        names = {code: name for name, code in glocale.get_language_dict().items()}
+    except Exception:  # pylint: disable=broad-exception-caught
+        codes, names = [], {}
+    rows = []
+    for code in sorted(set(codes)):
+        if code == "en":
+            continue
+        entry = _LOCALE_NAMES.get(code) or _LOCALE_NAMES.get(code[:2])
+        english = entry[2] if entry else ""
+        region, source = "", ""
+        parts = code.split("_")
+        if len(parts) > 1 and len(parts[1]) == 2:
+            region, source = parts[1].upper(), "code"
+        elif entry and entry[0] and "_" in entry[0]:
+            region = _COUNTRY_ISO.get(entry[0].split("_", 1)[1], "")
+            source = "Gramps" if region else ""
+        endonym = ""
+        if english and localedir:
+            try:
+                own = gettext.translation("gramps", localedir, languages=[code])
+                endonym = own.gettext(english)
+            except OSError:
+                endonym = ""
+        if (not endonym or endonym == english) and not code.startswith("en"):
+            endonym = _icu_endonym(code)
+        rows.append(
+            {
+                "code": code,
+                "region": region,
+                "region_source": source,
+                "flag": _regional_flag(region),
+                "name": names.get(code)
+                or (glocale.translation.gettext(english) if english else ""),
+                "endonym": endonym,
+            }
+        )
+    _LANGUAGE_ROWS = rows
+    return rows
+
+
+#: Language icon for the Markdown Dash footer (Font Awesome "language",
+#: named ``-symbolic`` so GTK recolors it to the theme text color).
+LANGUAGE_ICON_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "media", "language-symbolic.svg"
+)
+
+
+def _set_symbolic_file_icon(image: Gtk.Image, path: str, size: int) -> None:
+    """Show a ``-symbolic.svg`` file in *image*, in the theme text color."""
+    try:
+        gicon = Gio.FileIcon.new(Gio.File.new_for_path(path))
+        info = Gtk.IconTheme.get_default().lookup_by_gicon(
+            gicon, size, Gtk.IconLookupFlags.FORCE_SIZE
+        )
+        if info is not None:
+            pixbuf, _was_symbolic = info.load_symbolic_for_context(
+                image.get_style_context()
+            )
+            image.set_from_pixbuf(pixbuf)
+            return
+    except GLib.Error:
+        pass
+    image.set_from_icon_name(
+        "preferences-desktop-locale-symbolic", Gtk.IconSize.SMALL_TOOLBAR
+    )
+
+
+def language_icon_image(size: int = 16) -> Gtk.Image:
+    """Return a Gtk.Image of :data:`LANGUAGE_ICON_FILE` that follows the theme.
+
+    :param size: Icon size in pixels.
+    :returns: The image; it redraws itself in the new text color when the
+        theme changes between light and dark.
+    """
+    image = Gtk.Image()
+    _set_symbolic_file_icon(image, LANGUAGE_ICON_FILE, size)
+    image.connect(
+        "style-updated",
+        lambda img: _set_symbolic_file_icon(img, LANGUAGE_ICON_FILE, size),
+    )
+    return image
+
+
+# ------------------------------------------------------------
+#
+# TranslationsDialog
+#
+# ------------------------------------------------------------
+class TranslationsDialog:  # pylint: disable=too-few-public-methods
+    """List the translations of a document, and create new ones.
+
+    Existing translation files come first, with an Edit icon; every other
+    Gramps interface language follows with an Add icon. Double-clicking a
+    row (or clicking its icon) opens the existing file in the desktop text
+    editor, or first creates the file with :func:`fork_translation`.
+
+    :param parent: Window to center on, or ``None``.
+    :param path: The document being shown (original or translation).
+    :param on_open: Called with the path of the file that was opened or
+        created, so the viewer can switch to it; may be ``None``.
+    """
+
+    _COL_ICON, _COL_REGION, _COL_CODE, _COL_NAME, _COL_ENDONYM = range(5)
+    _COL_PATH, _COL_TIP, _COL_ORDER = 5, 6, 7
+
+    def __init__(
+        self,
+        parent: Gtk.Window | None,
+        path: str,
+        on_open: Callable[[str], None] | None = None,
+    ) -> None:
+        """Build and show the dialog."""
+        self._original = canonical_document(path)
+        self._base_dir = os.path.dirname(self._original)
+        self._on_open = on_open
+
+        self.dialog = Gtk.Dialog(
+            title=_("Edit localized version of current file"),
+            transient_for=parent,
+            modal=True,
+        )
+        self.dialog.add_button(_("_Close"), Gtk.ResponseType.CLOSE)
+        self.dialog.set_default_size(620, 520)
+        self.dialog.connect("response", lambda dlg, _response: dlg.destroy())
+
+        area = self.dialog.get_content_area()
+        area.set_spacing(6)
+        area.set_border_width(8)
+
+        heading = Gtk.Label()
+        heading.set_halign(Gtk.Align.START)
+        heading.set_selectable(True)
+        heading.set_markup(
+            "<b>{}</b>\n<small>{}</small>".format(
+                GLib.markup_escape_text(os.path.basename(self._original)),
+                GLib.markup_escape_text(self._base_dir),
+            )
+        )
+        area.pack_start(heading, False, False, 0)
+
+        self._store = Gtk.ListStore(str, str, str, str, str, str, str, int)
+        view = Gtk.TreeView(model=self._store)
+        view.set_tooltip_column(self._COL_TIP)
+        icon_renderer = Gtk.CellRendererPixbuf()
+        self._icon_column = Gtk.TreeViewColumn(
+            "", icon_renderer, icon_name=self._COL_ICON
+        )
+        self._icon_column.set_sort_column_id(self._COL_ORDER)
+        view.append_column(self._icon_column)
+        for title, col in (
+            (_("Region"), self._COL_REGION),
+            (_("Code"), self._COL_CODE),
+            (_("Name"), self._COL_NAME),
+            (_("Endonym"), self._COL_ENDONYM),
+        ):
+            column = Gtk.TreeViewColumn(title, Gtk.CellRendererText(), text=col)
+            column.set_sort_column_id(col)
+            column.set_resizable(True)
+            if col == self._COL_REGION:
+                header = Gtk.Label(label=title)
+                header.set_tooltip_text(
+                    _(
+                        "Region: the region named in the translation code, or "
+                        "else the region Gramps pairs with the language for "
+                        "Windows."
+                    )
+                )
+                header.show()
+                column.set_widget(header)
+            view.append_column(column)
+        view.connect("row-activated", self._cb_row_activated)
+        view.connect("button-press-event", self._cb_button_press)
+
+        scroller = Gtk.ScrolledWindow()
+        scroller.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        scroller.set_shadow_type(Gtk.ShadowType.IN)
+        scroller.add(view)
+        area.pack_start(scroller, True, True, 0)
+
+        self._fill(parent)
+        self.dialog.show_all()
+
+    def _relative(self, path: str) -> str:
+        """Return *path* relative to the folder of the original document."""
+        return os.path.relpath(path, self._base_dir)
+
+    def _fill(self, parent: Gtk.Window | None) -> None:
+        """Fill the table: existing translations first, then the rest."""
+        gdk_window = parent.get_window() if parent is not None else None
+        if gdk_window is not None:
+            gdk_window.set_cursor(
+                Gdk.Cursor.new_from_name(gdk_window.get_display(), "wait")
+            )
+            while Gtk.events_pending():
+                Gtk.main_iteration()
+        try:
+            languages = {row["code"]: row for row in translation_languages()}
+        finally:
+            if gdk_window is not None:
+                gdk_window.set_cursor(None)
+        blank = {"region": "", "flag": "", "name": "", "endonym": ""}
+
+        def region_text(row: dict) -> str:
+            return f"{row['flag']} {row['region']}".strip()
+
+        existing = existing_translations(self._original)
+        for code, path in existing:
+            row = languages.get(code) or languages.get(code.split("_")[0]) or blank
+            self._store.append(
+                [
+                    "gtk-edit",
+                    region_text(row),
+                    code,
+                    row["name"],
+                    row["endonym"],
+                    path,
+                    GLib.markup_escape_text(_("Edit %s") % self._relative(path)),
+                    0,
+                ]
+            )
+        taken = {code for code, _path in existing}
+        taken.add(document_language(self._original))
+        for code, row in sorted(languages.items()):
+            if code in taken:
+                continue
+            target = translation_target(self._original, code)
+            self._store.append(
+                [
+                    "list-add",
+                    region_text(row),
+                    code,
+                    row["name"],
+                    row["endonym"],
+                    target,
+                    GLib.markup_escape_text(_("Create %s") % self._relative(target)),
+                    1,
+                ]
+            )
+
+    def _cb_button_press(self, view: Gtk.TreeView, event: Gdk.EventButton) -> bool:
+        """Act on a single click on the Edit or Add icon of a row."""
+        if event.button != 1 or event.type != Gdk.EventType.BUTTON_PRESS:
+            return False
+        hit = view.get_path_at_pos(int(event.x), int(event.y))
+        if hit and hit[1] is self._icon_column:
+            self._activate(hit[0])
+            return True
+        return False
+
+    def _cb_row_activated(
+        self, _view: Gtk.TreeView, tree_path: Gtk.TreePath, _column: object
+    ) -> None:
+        """Act on a double-click or Enter."""
+        self._activate(tree_path)
+
+    def _activate(self, tree_path: Gtk.TreePath) -> None:
+        """Open the existing file of a row, or create it first."""
+        row = self._store[tree_path]
+        path = row[self._COL_PATH]
+        if row[self._COL_ICON] == "list-add":
+            try:
+                path = fork_translation(self._original, row[self._COL_CODE])
+            except FileExistsError:
+                pass  # made since the dialog opened: just edit it
+            except OSError as err:
+                message = Gtk.MessageDialog(
+                    transient_for=self.dialog,
+                    modal=True,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.CLOSE,
+                    text=str(err),
+                )
+                message.run()
+                message.destroy()
+                return
+        if not open_in_text_editor(path):
+            try:
+                Gio.AppInfo.launch_default_for_uri(
+                    Gio.File.new_for_path(path).get_uri(), None
+                )
+            except GLib.Error as err:
+                LOG.warning("Could not open %s: %s", path, err)
+        self.dialog.destroy()
+        if self._on_open is not None:
+            self._on_open(path)
 
 
 # ---------------------------------------------------------------------------
@@ -3194,7 +3881,7 @@ def find_local_readme(pdata) -> str | None:
     """
     Return the canonical README.md path of a plugin, or None if it has no
     README of any kind (see :func:`resolve_localized_path`: ``README.md``,
-    a source-language ``README_<lang>.md``, or a ``locale/<lang>/README.md``
+    a ``README_<lang>.md``, or a ``locale/<lang>/README_<lang>.md``
     translation). The returned path need not exist on disk; Markdown Dash
     resolves it to the best variant for the language of the user.
 

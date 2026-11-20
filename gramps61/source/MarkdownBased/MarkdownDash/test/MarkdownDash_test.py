@@ -531,20 +531,47 @@ class TestResolveLocalizedPath(unittest.TestCase):
         self.assertIn("locale", r.path)
         self.assertIn("de", r.path)
 
-    def test_english_baseline_beats_foreign_labelled(self) -> None:
-        """An unlabelled ``README.md`` beats a ``README_fi.md`` even for Finnish users.
+    def test_top_level_translation_beats_english_baseline(self) -> None:
+        """A top-level ``README_fi.md`` beats ``README.md`` for Finnish users.
 
-        If the addon ships both ``README.md`` (English) and ``README_fi.md``
-        (Finnish), the ``locale/fi/`` sub-directory variant is checked first
-        (not found here), then ``README.md`` is returned as the next match —
-        the ``README_fi.md`` scan in branch 4 is only reached when the
-        canonical basename doesn't exist.
+        Translations may sit next to the English baseline; they are checked
+        after the ``locale/`` folders but before ``README.md``.
         """
         plugin_dir = _plugin_tree(self._tmpdir, readme=True, labelled=("fi",))
         target = os.path.join(plugin_dir, "README.md")
-        with patch("MarkdownDash._locale_lang", return_value=("fi_FI", "fi")):
+        with patch("MarkdownUtils.locale_lang", return_value=("fi_FI", "fi")):
             r = resolve_localized_path(target)
-        # No locale/fi/ variant → falls through to README.md (branch 3)
+        self.assertEqual(r.path, os.path.join(plugin_dir, "README_fi.md"))
+        self.assertFalse(r.is_fallback)
+
+    def test_labeled_file_in_locale_folder_preferred(self) -> None:
+        """``locale/fr/README_fr.md`` beats ``locale/fr/README.md``."""
+        plugin_dir = _plugin_tree(self._tmpdir, readme=True, locales=("fr",))
+        _touch(os.path.join(plugin_dir, "locale", "fr", "README_fr.md"))
+        target = os.path.join(plugin_dir, "README.md")
+        with patch("MarkdownUtils.locale_lang", return_value=("fr_FR", "fr")):
+            r = resolve_localized_path(target)
+        expected = os.path.join(plugin_dir, "locale", "fr", "README_fr.md")
+        self.assertEqual(r.path, expected)
+        self.assertFalse(r.is_fallback)
+
+    def test_locale_folder_beats_top_level_translation(self) -> None:
+        """``locale/fr/README_fr.md`` beats a top-level ``README_fr.md``."""
+        plugin_dir = _plugin_tree(self._tmpdir, readme=True, labelled=("fr",))
+        _touch(os.path.join(plugin_dir, "locale", "fr", "README_fr.md"))
+        target = os.path.join(plugin_dir, "README.md")
+        with patch("MarkdownUtils.locale_lang", return_value=("fr_FR", "fr")):
+            r = resolve_localized_path(target)
+        expected = os.path.join(plugin_dir, "locale", "fr", "README_fr.md")
+        self.assertEqual(r.path, expected)
+
+    def test_dot_suffix_is_not_a_translation(self) -> None:
+        """``README.fr.md`` is not recognized; only the underscore form is."""
+        plugin_dir = _plugin_tree(self._tmpdir, readme=True)
+        _touch(os.path.join(plugin_dir, "README.fr.md"))
+        target = os.path.join(plugin_dir, "README.md")
+        with patch("MarkdownUtils.locale_lang", return_value=("fr_FR", "fr")):
+            r = resolve_localized_path(target)
         self.assertEqual(r.path, target)
         self.assertTrue(r.is_fallback)
 

@@ -6,6 +6,8 @@
 # BEGIN and END HELP BUTTON BLOCK markers into the host module (recipe:
 # HelpDocButton.md). The Help button itself lives in MarkdownUtils.
 # Do NOT ship this file, or HelpDocButton.md, inside an addon folder.
+# This block is for gramplets, tools and reports. A view gets a toolbar
+# Help icon instead: see "Recipe: add a Help icon to a view toolbar".
 """Help button for gramplet/tool dialogs -- see HelpDocButton.md"""
 
 # ------------------------

@@ -135,7 +135,7 @@ Returns `None` when nothing is found. Lookup order: every style variant of the e
 
 ## Localization API
 - `locale_lang() -> tuple[str, str]`: the full and short codes of the Gramps interface language, such as `("fr_FR", "fr")`; `("en_US", "en")` when unknown.
-- `resolve_localized_path(path: str) -> PathResolution`: given the canonical `<folder>/README.md`, returns the best variant, in this order: `locale/<ll_CC>/README.md`, `locale/<ll>/README.md`, `README.md` (English), `README_<ll_CC>.md` or `README_<ll>.md`, then any other labeled file such as `README_fi.md`. A `README.md` hides every labeled file.
+- `resolve_localized_path(path: str) -> PathResolution`: given the canonical `<folder>/README.md`, returns the best variant, in this order: `locale/<ll_CC>/README_<ll_CC>.md`, `locale/<ll_CC>/README.md`, `locale/<ll>/README_<ll>.md`, `locale/<ll>/README.md`, `README_<ll_CC>.md`, `README_<ll>.md`, `README.md` (English), then any other labeled file such as `README_fi.md` (a source-language baseline). Language suffixes always use an underscore, never a dot. The preferred layout for a translation is `locale/<ll>/README_<ll>.md`; a top-level `README_<ll>.md` is allowed but checked later. A suffix on the requested name is removed first, so `Welcome_en.md` and `Welcome.md` find the same variants.
 - `PathResolution`: fields `path`, `is_fallback` (no variant in the user language was found), `source_lang` (the language of a labeled file, or `None`) and `user_lang`; method `exists()`.
 - `resolve_localized_asset(base_dir: str, rel_path: str) -> str`: the same order for images and linked files, relative to the canonical folder.
 - `LANG_SUFFIX_RE`: matches `<stem>_<ll>[_CC].<ext>`; codes are two lowercase letters with an optional region.

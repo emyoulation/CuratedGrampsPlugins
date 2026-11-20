@@ -68,6 +68,7 @@ import re
 import shutil
 import sys
 import weakref
+import xml.etree.ElementTree as ET
 from collections import Counter, defaultdict
 from time import perf_counter
 from typing import TYPE_CHECKING, Any
@@ -472,6 +473,45 @@ def help_icon_name() -> str:
         theme.set_search_path(theme.get_search_path())
     state["source"], state["name"] = source, name
     return name
+
+
+# The main toolbar XML (grampsgui.py) has no placeholder between the
+# Configure button and the view-mode buttons ("ViewsInCategoryBar", which
+# the navigator fills and empties), so an empty placeholder is inserted once
+# into the master XML of the UIManager, right after Configure. Placeholders
+# are flattened in place at every toolbar rebuild, so the icon keeps its
+# position, and Gramps empties the placeholder when the view is left. Other
+# views (for example Descendants Timeline) share the same placeholder id.
+AFTER_CONFIG_ID = "AfterConfigView"
+_FALLBACK_PLACEHOLDER = "MoreButtons"
+
+
+def ensure_after_config_anchor(uimanager: Any) -> str:
+    """
+    Insert the AfterConfigView placeholder right after the Configure
+    button of the main toolbar, once.
+
+    :param uimanager: The Gramps UIManager.
+    :returns: The placeholder id for the Help icon: AfterConfigView, or
+        MoreButtons when the toolbar has no Configure button to anchor to.
+    """
+    root = getattr(uimanager, "et_xml", None)
+    if root is None:
+        return _FALLBACK_PLACEHOLDER
+    if root.find(f".//placeholder[@id='{AFTER_CONFIG_ID}']") is not None:
+        return AFTER_CONFIG_ID
+    for parent in root.iter():
+        for index, child in enumerate(list(parent)):
+            if (
+                child.tag == "child"
+                and child.find("object[@id='ConfigView']") is not None
+            ):
+                parent.insert(
+                    index + 1, ET.Element("placeholder", {"id": AFTER_CONFIG_ID})
+                )
+                return AFTER_CONFIG_ID
+    LOG.warning("Fuzzy Grouping: no Configure button; Help goes at the toolbar end")
+    return _FALLBACK_PLACEHOLDER
 
 
 def find_local_readme(pdata: PluginData | None) -> str | None:
@@ -1715,6 +1755,7 @@ class FuzzyGroupingView(BasePersonView):
         self._columns_buttons: Gtk.Widget | None = None
         self._refresh_timer: int | None = None  # pending delayed refresh
         self._help_tooltip_text = ""
+        self._help_placeholder = _FALLBACK_PLACEHOLDER
         self.toolbar_ui: list[str] | None = None
         self.popup_ui: list[str] | None = None
         # a new icon theme restyles the Help icon too
@@ -1736,6 +1777,8 @@ class FuzzyGroupingView(BasePersonView):
         # own hidden set, so discover_encoders() already sees the change)
         global_config.connect("plugin.hiddenplugins", self.cb_hidden_plugins_changed)
         # kept as one list object so a system change can update it in place
+        # the Help icon goes immediately right of the Configure button
+        self._help_placeholder = ensure_after_config_anchor(self.uimanager)
         self.toolbar_ui = self._build_toolbar_ui()
         self.additional_uis.append(self.toolbar_ui)
         # replaces the empty "PopUpTree" section of the person view popup
@@ -2448,14 +2491,15 @@ class FuzzyGroupingView(BasePersonView):
     # ---------------------------------------------------------------
     def _build_toolbar_ui(self) -> list[str]:
         """
-        The toolbar XML with the Help icon (the phonetic system is set in
-        Configure or in the right-click menu).
+        The toolbar XML with the Help icon, placed immediately right of
+        the Configure button (the phonetic system is set in Configure or in
+        the right-click menu).
 
         :returns: The toolbar XML, as a one-element list.
         """
         self._help_tooltip_text = help_tooltip()
         toolbar = f"""
-    <placeholder id="MoreButtons">
+    <placeholder id="{self._help_placeholder}">
     <child>
       <object class="GtkToolItem">
         <child>

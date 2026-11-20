@@ -1,5 +1,5 @@
 # Gramps Glossary
-Browse to  [Welcome.md (english)](Welcome.en.md) | [icon-browser.md](icon-browser.md) | [README.md](../README.md) | [README1.md](README1.md) | [GrampsGlossary.md](GrampsGlossary.md).
+Browse to  [Welcome_en.md (English)](Welcome_en.md) | [icon-browser.md](icon-browser.md) | [README.md](../README.md) | [README1.md](README1.md) | [GrampsGlossary.md](GrampsGlossary.md).
 
 *This glossary gives an overview of terms that appear in the [Gramps](https://gramps-project.org/) genealogy software, with a short description, and a link to relevant articles.*
 *(Since knowing a feature's name is necessary for finding the corresponding glossary term, also refer to the* [Visual Guide to the Gramps Interface](https://www.gramps-project.org/wiki/index.php/Gramps_6.0_Wiki_Manual_-_Main_Window#Main_Window).)

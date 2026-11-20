@@ -248,17 +248,6 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/FlatFilter/DefineFilter.md"
   },
   {
-    "n": "Fuzzy Grouping",
-    "i": "fuzzygroupingview",
-    "t": 8,
-    "d": "The view showing all people in the Family Tree grouped by phonetically similar family names",
-    "v": "0.2.0",
-    "g": "5.2",
-    "s": 3,
-    "z": "FuzzyGroupingView.addon.tgz",
-    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/FuzzyGroupingView"
-  },
-  {
     "n": "Fuzzy Match API",
     "i": "Fuzzy Match API",
     "t": 6,
@@ -319,7 +308,7 @@
     "i": "MarkdownUtils",
     "t": 6,
     "d": "Shared Markdown rendering and icon-resolution library used by Markdown Dash, Plugin Manager plus, and other addons. Not a tool or gramplet itself -- installed so those addons can import it.",
-    "v": "0.2.3",
+    "v": "0.2.4",
     "g": "5.2",
     "s": 3,
     "z": "MarkdownBased.addon.tgz",
@@ -438,6 +427,17 @@
     "s": 2,
     "z": "Themes2.addon.tgz",
     "h": "Addon:ThemePreferences"
+  },
+  {
+    "n": "Regroupement phonétique",
+    "i": "fuzzygroupingview",
+    "t": 8,
+    "d": "Cette vue affiche toutes les personnes de l'arbre familial groupées par noms de famille phonétiquement proches",
+    "v": "0.2.1",
+    "g": "5.2",
+    "s": 3,
+    "z": "FuzzyGroupingView.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/FuzzyGroupingView"
   },
   {
     "n": "Soundex match of People with the <names>",

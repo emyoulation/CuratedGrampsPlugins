@@ -112,8 +112,9 @@ You can summon any standard internal Gramps database icon asset directly inline 
 
 The file-loading infrastructure includes built-in fallback rules matching standard BCP47 language locale definitions. When opening `Document.md`, the engine safely checks for localized translation file overrides before reading the generic English source path:
 
-1. `locale/[ll_CC]/Document.md` (e.g., `locale/en_US/Document.md`)
-2. `locale/[ll]/Document.md` (e.g., `locale/en/Document.md`)
-3. `./Document.md` (Base fallback source location)
+1. `locale/[ll_CC]/Document_[ll_CC].md`, then `locale/[ll_CC]/Document.md` (e.g., `locale/fr_FR/Document_fr_FR.md`)
+2. `locale/[ll]/Document_[ll].md`, then `locale/[ll]/Document.md` (e.g., `locale/fr/Document_fr.md`, the preferred place for a translation)
+3. `./Document_[ll_CC].md`, then `./Document_[ll].md` (e.g., `./Document_fr.md`)
+4. `./Document.md` (Base fallback source location)
 
-    ./Document.md (Base fallback source location)
+Language suffixes always use an underscore, never a period: `Document_fr.md`, not `Document.fr.md`.
