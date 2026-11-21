@@ -466,7 +466,7 @@
     "i": "TranslationUpdater",
     "t": 2,
     "d": "Downloads newer Gramps and addon translations for chosen languages, without changing addon versions.",
-    "v": "0.1.0",
+    "v": "0.1.1",
     "g": "6.0",
     "s": 1,
     "z": "TranslationUpdater.addon.tgz",
