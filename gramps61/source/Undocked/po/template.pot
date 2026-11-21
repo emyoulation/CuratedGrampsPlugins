@@ -1,4 +1,4 @@
-# Translation template for the 0.1.0 Undocked Gramplets general addon for Gramps.
+# Translation template for the 0.1.1 Undocked Gramplets general addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Undocked Gramplets package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Undocked Gramplets 0.1.0\n"
+"Project-Id-Version: Undocked Gramplets 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-15 12:15-0600\n"
+"POT-Creation-Date: 2026-11-21 16:25-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,30 +23,52 @@ msgstr ""
 
 #: UndockedGramplets.gpr.py:34
 msgid ""
-"Replaces the Close button of gramplets undocked from a sidebar or bottombar "
-"with a Dock button, and uses the smart Help button of Markdown Utils when "
-"that addon is active."
+"Monkey Patch that replaces the Close button of gramplets undocked from a "
+"sidebar, bottombar or the Dashboard with a Dock button, makes the titlebar "
+"close button really close the gramplet, and uses the smart Help button of "
+"Markdown Utils when that addon is active."
 msgstr ""
 
-#: UndockedGramplets.py:175
+#: UndockedGramplets.py:237
 msgid "View"
 msgstr ""
 
-#: UndockedGramplets.py:201
+#: UndockedGramplets.py:263
 #, python-format
 msgid "%(category)s category %(view)s view"
 msgstr ""
 
-#: UndockedGramplets.py:216
+#: UndockedGramplets.py:281
+msgid "Dock"
+msgstr ""
+
+#: UndockedGramplets.py:312
 #, python-format
 msgid "Dock this gramplet in the %s sidebar"
 msgstr ""
 
-#: UndockedGramplets.py:220
+#: UndockedGramplets.py:316
 #, python-format
 msgid "Dock this gramplet in the %s bottombar"
 msgstr ""
 
-#: UndockedGramplets.py:227
-msgid "Dock"
+#: UndockedGramplets.py:333
+msgid "Dashboard"
+msgstr ""
+
+#: UndockedGramplets.py:335
+#, python-format
+msgid "Dock this gramplet in the %s"
+msgstr ""
+
+#: UndockedGramplets.py:988
+msgid "Move"
+msgstr ""
+
+#: UndockedGramplets.py:989
+msgid "Undock this gramplet into its own window"
+msgstr ""
+
+#: UndockedGramplets.py:992
+msgid "_Help"
 msgstr ""

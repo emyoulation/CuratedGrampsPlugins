@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!--
+    Undocked Gramplets addon for Gramps: good drop point badge.
+    Copyright (C) 2026 Claude AI (wish coding by Brian McCullough)
+    License: GPL-2.0-or-later
+  -->
+  <title>Good drop point</title>
+  <desc>Green square with a white check mark, shown at the lower right of the dragged hand where a gramplet can be dropped.</desc>
+  <rect x="0.5" y="0.5" width="15" height="15" rx="2" ry="2" fill="#228b22" stroke="#ffffff" stroke-width="1"/>
+  <path d="M4 8.3 L6.9 11.2 L12 4.8" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

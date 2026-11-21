@@ -31,11 +31,12 @@ if VERSION_TUPLE[:2] >= (5, 2):
         id="UndockedGramplets",
         name=_("Undocked Gramplets"),
         description=_(
-            "Replaces the Close button of gramplets undocked from a sidebar "
-            "or bottombar with a Dock button, and uses the smart Help button "
-            "of Markdown Utils when that addon is active."
+            "Monkey Patch that replaces the Close button of gramplets undocked "
+            "from a sidebar, bottombar or the Dashboard with a Dock button, makes "
+            "the titlebar close button really close the gramplet, and uses the "
+            "smart Help button of Markdown Utils when that addon is active."
         ),
-        version="0.1.0",  # build 20261115.1836
+        version="0.1.1",  # build 20261121.2207
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="UndockedGramplets.py",
