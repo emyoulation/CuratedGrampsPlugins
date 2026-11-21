@@ -1149,6 +1149,8 @@ def undock_tab(bar, gramplet):
 WINDOW_DEST = "_undocked_gramplets_window_dest"
 # The scrollable setting of a bar, kept while its tab scroll arrows are off.
 SCROLLABLE = "_undocked_gramplets_scrollable"
+# The gramplet to undock once its drag has ended (good drop on the window).
+PENDING_UNDOCK = "_undocked_gramplets_pending_undock"
 
 
 def dragged_bar(context):
@@ -1175,18 +1177,34 @@ def cb_window_drag_motion(window, context, _x_pos, _y_pos, time):
 def cb_window_drag_drop(window, context, _x_pos, _y_pos, time):
     """
     A gramplet tab dropped on the main window: undock it where the badge is
-    good (once the drag has ended and the tab is back in its bar), else the
-    tab stays.
+    good, else the tab stays.
+
+    A good drop is only remembered here; the gramplet is undocked after the
+    drag has ended and GTK has put the tab label back (cb_bar_drag_end).
+    Removing the page while GTK still counts the tab as dragged makes
+    GtkNotebook cancel the drag from its half-dismantled drag window
+    ("g_object_ref: assertion 'G_IS_OBJECT (object)' failed" and
+    "gtk_container_get_focus_child" criticals), and an idle call made from
+    the drop could run before the drag ended.  The drop is reported as not
+    taken, as for a cancelled drop, which is the path where GTK restores the
+    tab; cb_bar_drag_failed skips the slide-back animation.
     """
     bar = dragged_bar(context)
     if bar is None:
         return False
     gramplet = getattr(bar, "undocked_dragged", None)
-    good = gramplet is not None and is_good_tab_drop(bar)
-    Gtk.drag_finish(context, good, False, time)
-    if good:
-        GLib.idle_add(idle_undock_tab, bar, gramplet)
+    if gramplet is not None and is_good_tab_drop(bar):
+        setattr(bar, PENDING_UNDOCK, gramplet)
+    Gtk.drag_finish(context, False, False, time)
     return True
+
+
+def cb_bar_drag_failed(bar, _context, _result):
+    """
+    A good drop on the main window is reported as not taken: skip the GTK
+    animation of the tab sliding back, which would look like a refusal.
+    """
+    return getattr(bar, PENDING_UNDOCK, None) is not None
 
 
 def idle_undock_tab(bar, gramplet):
@@ -1249,7 +1267,10 @@ def cb_bar_drag_begin(bar, _context):
 
 def cb_bar_drag_end(bar, _context):
     """
-    Switch the tab scroll arrows back on after the drag.
+    Switch the tab scroll arrows back on after the drag, and undock the
+    gramplet of a good drop on the main window.  This handler runs before
+    the GtkNotebook one that puts the tab back, so the undocking waits for
+    an idle moment.
     """
     try:
         scrollable = getattr(bar, SCROLLABLE, None)
@@ -1258,6 +1279,10 @@ def cb_bar_drag_end(bar, _context):
             bar.set_scrollable(scrollable)
     except Exception:  # pylint: disable=broad-except
         LOG.exception("Undocked Gramplets: could not show the tab arrows")
+    gramplet = getattr(bar, PENDING_UNDOCK, None)
+    if gramplet is not None:
+        setattr(bar, PENDING_UNDOCK, None)
+        GLib.idle_add(idle_undock_tab, bar, gramplet)
 
 
 def cb_bar_button_press(bar, event):
@@ -1294,6 +1319,49 @@ def cb_bar_leave(_bar, event):
     return False
 
 
+def patch_bar_gramplet_names(bar_class):
+    """
+    Fix two core GrampletBar methods (same code in Gramps 5.2 to 6.1) for a
+    bar whose last gramplet is undocked.  The bar then shows only its
+    "Gramplet Bar" placeholder tab (a Gtk.Label), and:
+
+    * all_gramplets() returned the undocked gramplet objects instead of
+      their names, so has_gramplet() never found them;
+    * remove_gramplet() asked every page for gname, including the
+      placeholder, so "Restore to defaults" failed with
+      "AttributeError: 'Label' object has no attribute 'gname'".
+    """
+    if getattr(bar_class.all_gramplets, MARKER, None):
+        return
+    original_all = bar_class.all_gramplets
+    original_remove = bar_class.remove_gramplet
+
+    def all_gramplets(self):
+        names = [
+            page.gname
+            for page in self.get_children()
+            if not self.empty and hasattr(page, "gname")
+        ]
+        return names + [gramplet.gname for gramplet in self.detached_gramplets]
+
+    def remove_gramplet(self, gname):
+        for gramplet in self.detached_gramplets:
+            if gramplet.gname == gname:
+                # pylint: disable-next=protected-access
+                self._GrampletBar__dock_gramplet(gramplet)
+                self.remove_page(self.page_num(gramplet))
+                return
+        for page_num in range(self.get_n_pages()):
+            if getattr(self.get_nth_page(page_num), "gname", None) == gname:
+                self.remove_page(page_num)
+                return
+
+    setattr(all_gramplets, MARKER, original_all)
+    setattr(remove_gramplet, MARKER, original_remove)
+    bar_class.all_gramplets = all_gramplets
+    bar_class.remove_gramplet = remove_gramplet
+
+
 def patch_grampletbar():
     """
     Wrap GrampletBar.__init__ (drag feedback, hand pointer, right-click menu)
@@ -1317,6 +1385,7 @@ def patch_grampletbar():
         setattr(create_window, MARKER, original_create_window)
         setattr(bar_class, "_GrampletBar__create_window", create_window)
 
+    patch_bar_gramplet_names(bar_class)
     original_init = bar_class.__init__
 
     def init(self, *args, **kwargs):
@@ -1325,6 +1394,7 @@ def patch_grampletbar():
             all_bars.add(self)
             self.connect("drag-begin", cb_bar_drag_begin)
             self.connect("drag-end", cb_bar_drag_end)
+            self.connect("drag-failed", cb_bar_drag_failed)
             self.undocked_feedback = DragFeedback(self, lambda: is_good_tab_drop(self))
             self.add_events(
                 Gdk.EventMask.POINTER_MOTION_MASK

@@ -1,4 +1,4 @@
-# Translation template for the 0.1.1 Undocked Gramplets general addon for Gramps.
+# Translation template for the 0.1.2 Undocked Gramplets general addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Undocked Gramplets package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Undocked Gramplets 0.1.1\n"
+"Project-Id-Version: Undocked Gramplets 0.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 16:25-0600\n"
+"POT-Creation-Date: 2026-11-21 17:23-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,10 +23,10 @@ msgstr ""
 
 #: UndockedGramplets.gpr.py:34
 msgid ""
-"Monkey Patch that replaces the Close button of gramplets undocked from a "
-"sidebar, bottombar or the Dashboard with a Dock button, makes the titlebar "
-"close button really close the gramplet, and uses the smart Help button of "
-"Markdown Utils when that addon is active."
+"Replaces the Close button of gramplets undocked from a sidebar, bottombar or "
+"the Dashboard with a Dock button, makes the title bar close button really "
+"close the gramplet, and uses the smart Help button of Markdown Utils when "
+"that addon is active."
 msgstr ""
 
 #: UndockedGramplets.py:237
