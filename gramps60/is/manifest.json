@@ -1,0 +1,157 @@
+{
+ "addons": {
+  "BirthOrder": {
+   "path": "addons/BirthOrder.mo",
+   "sha256": "a21086f5b708bf41dd2cadaeea5dc9b36cefc8b2fc2f7ff1b35d8523721ac18c",
+   "size": 542,
+   "translated": 1
+  },
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "95bdeae63f5bd4b50605ba532cfa48614ffe8a35fe21ea47036e413f1941f123",
+   "size": 787,
+   "translated": 6
+  },
+  "DenominoViso": {
+   "path": "addons/DenominoViso.mo",
+   "sha256": "5716b3a8ac26a38923470a8b0409352ee6dc90a6625a7f4242d226958b11e1b5",
+   "size": 491,
+   "translated": 1
+  },
+  "Differences": {
+   "path": "addons/Differences.mo",
+   "sha256": "5e843828da80f92c47561ebea438e57ad9046b0fe95476207d2fe93a78d7db15",
+   "size": 509,
+   "translated": 1
+  },
+  "DynamicWeb": {
+   "path": "addons/DynamicWeb.mo",
+   "sha256": "b2a19a27eff0b2cb9855beb3d0e33fe253c1b2b2fcbb7601b5a2a329f1657411",
+   "size": 536,
+   "translated": 1
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "e3d5804d908348156df5e36619f8f93f14f925b3bbd07a28055c20af1bce7890",
+   "size": 570,
+   "translated": 2
+  },
+  "FixCoords": {
+   "path": "addons/FixCoords.mo",
+   "sha256": "04eb41f88d1d5b41550c456b939d16bbcd07f035c3e1c88469dddaa47ca513b9",
+   "size": 522,
+   "translated": 1
+  },
+  "Form": {
+   "path": "addons/Form.mo",
+   "sha256": "40456af23d955aec8bb729a70684f806cb3c92b7662b546d8fa5f3edd5abd3b1",
+   "size": 816,
+   "translated": 8
+  },
+  "GraphView": {
+   "path": "addons/GraphView.mo",
+   "sha256": "bb4d3ca771455913f181f61adee29ad5ef903ebdeb66d6f5173d781f6dfb0c6e",
+   "size": 521,
+   "translated": 1
+  },
+  "ImportMerge": {
+   "path": "addons/ImportMerge.mo",
+   "sha256": "4188b929195f627b802a1933780e317a29c7d9b79d39a87fb9ec2a3b34f7a180",
+   "size": 536,
+   "translated": 2
+  },
+  "LastChange": {
+   "path": "addons/LastChange.mo",
+   "sha256": "5158743a277dfc470ad01d976c2b0b2dbb4c660af4fed58b4e82e7e33d713407",
+   "size": 547,
+   "translated": 2
+  },
+  "MediaVerify": {
+   "path": "addons/MediaVerify.mo",
+   "sha256": "752da458887faa9d41e97e41ac9c0878c40aa64398b441d3b0ab6482c78f9e3c",
+   "size": 496,
+   "translated": 1
+  },
+  "NoteCleanup": {
+   "path": "addons/NoteCleanup.mo",
+   "sha256": "752da458887faa9d41e97e41ac9c0878c40aa64398b441d3b0ab6482c78f9e3c",
+   "size": 496,
+   "translated": 1
+  },
+  "PersonEverything": {
+   "path": "addons/PersonEverything.mo",
+   "sha256": "d6226ce838fe08245af599236ec071e3df272317ff630c9af501a621932075df",
+   "size": 516,
+   "translated": 1
+  },
+  "PlaceCleanup": {
+   "path": "addons/PlaceCleanup.mo",
+   "sha256": "d435c2d7f7d23261a7a18c113636c3f77eb9b239cf1d4ebfa0c8b942fd3041ee",
+   "size": 563,
+   "translated": 2
+  },
+  "PlaceCompletion": {
+   "path": "addons/PlaceCompletion.mo",
+   "sha256": "d042419054c6cac2d8f9fed9706fc766c68a57663613bda70e1bdfaed1c59fbf",
+   "size": 594,
+   "translated": 3
+  },
+  "PlaceCoordinateGramplet": {
+   "path": "addons/PlaceCoordinateGramplet.mo",
+   "sha256": "e309376649d0011014475552d572cb480e4bc5b5350de6337a0d5bf34bbf1da3",
+   "size": 563,
+   "translated": 2
+  },
+  "SourceIndex": {
+   "path": "addons/SourceIndex.mo",
+   "sha256": "3cbbdbc2a2a4b4004c1ba9e9e0f713e3a61a671d00bd25bf48a6cf88c16c5b64",
+   "size": 531,
+   "translated": 2
+  },
+  "TypeCleanup": {
+   "path": "addons/TypeCleanup.mo",
+   "sha256": "4b876de2cc1473e0570f253f3e57fe510c2cb8b504706ab6fdae95c710278d46",
+   "size": 506,
+   "translated": 1
+  },
+  "WebSearch": {
+   "path": "addons/WebSearch.mo",
+   "sha256": "6e8e1a32df79c1911eb1b9d411793f47187b6cd2616c32af6dcef83dd976b0b1",
+   "size": 829,
+   "translated": 7
+  }
+ },
+ "branch": "gramps60",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "8daa195846df13b9089d529dda9906acdfa9e2c072d739c070c9be23e0c92998",
+  "size": 204596
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "3bcac50a9fa24d5a55cb6bd3c97b2a6254c0651f079d1e7ac2209641bf8d67b8",
+  "size": 595388,
+  "translated": 6533
+ },
+ "format": 1,
+ "generated": "2026-11-21T14:41:16+00:00",
+ "lang": "is",
+ "sources": {
+  "addons": {
+   "commit": "85e5d094a71e0b83db3a420c21c65b8239ece283",
+   "date": "2026-11-14T11:54:05-08:00"
+  },
+  "donor_addons": {
+   "commit": "14a6d035bd646db97acf21b07e9d6c09acbfeed2",
+   "date": "2026-11-16T13:10:37-08:00"
+  },
+  "donor_gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  },
+  "gramps": {
+   "commit": "32aa29629b94c549f232cd0b61c137ae95d73acf",
+   "date": "2026-06-17T19:51:52-07:00"
+  }
+ }
+}

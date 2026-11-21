@@ -1,0 +1,53 @@
+{
+ "addons": {
+  "AncestryTableReport": {
+   "path": "addons/AncestryTableReport.mo",
+   "sha256": "44d483963c386cba8d28ab93a75ba54ad04c531e05d6145d173994b013ee27a7",
+   "size": 586,
+   "translated": 1
+  },
+  "ExpandedAncestorTree": {
+   "path": "addons/ExpandedAncestorTree.mo",
+   "sha256": "67faab239525679bc39ba0e28c94bd9eb90a6b5ad339d0353d90d50017b7e179",
+   "size": 604,
+   "translated": 1
+  },
+  "Form": {
+   "path": "addons/Form.mo",
+   "sha256": "0aa84482ce379bce75a71ec84d6739f99692dda2aa289be5a5c74eef7b92d36b",
+   "size": 558,
+   "translated": 1
+  },
+  "TimelinePedigreeView": {
+   "path": "addons/TimelinePedigreeView.mo",
+   "sha256": "0aa84482ce379bce75a71ec84d6739f99692dda2aa289be5a5c74eef7b92d36b",
+   "size": 558,
+   "translated": 1
+  }
+ },
+ "branch": "gramps61",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "96b52f9c60fe3dba3ab1110b4c78ab84a7050fd222a0ca746342fc5ac6b9cbd7",
+  "size": 21123
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "5d10e74e03b6de0cb0d632224a4cb13b74be3fb2be8a222e52f8efd677fb9722",
+  "size": 55610,
+  "translated": 885
+ },
+ "format": 1,
+ "generated": "2026-11-21T14:38:34+00:00",
+ "lang": "ka",
+ "sources": {
+  "addons": {
+   "commit": "14a6d035bd646db97acf21b07e9d6c09acbfeed2",
+   "date": "2026-11-16T13:10:37-08:00"
+  },
+  "gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  }
+ }
+}

@@ -1,0 +1,815 @@
+{
+ "addons": {
+  "AllNamesQuickview": {
+   "path": "addons/AllNamesQuickview.mo",
+   "sha256": "f557ed68f5b9a7f6f9fc4ebd6010e126ac290c81aba72bf031411b09b6974858",
+   "size": 969,
+   "translated": 5
+  },
+  "AncestorFill": {
+   "path": "addons/AncestorFill.mo",
+   "sha256": "063493eae7d98a2773bf1c864cb0d36853b5425cd2958ba67853d2b7a39e0587",
+   "size": 1689,
+   "translated": 10
+  },
+  "AncestryTableReport": {
+   "path": "addons/AncestryTableReport.mo",
+   "sha256": "852e521a3c383d25930c40eb99f5dfeb535f638290a9ea99efad4b70cfaa057d",
+   "size": 792,
+   "translated": 2
+  },
+  "AssociationsTool": {
+   "path": "addons/AssociationsTool.mo",
+   "sha256": "5b36588aa2931bd006f8c0b726b7cbb0caa1b7d12343b6649712dc6daff7f861",
+   "size": 781,
+   "translated": 2
+  },
+  "AttachSourceTool": {
+   "path": "addons/AttachSourceTool.mo",
+   "sha256": "6f77743a96827ee41a4630f661276ac631ff9ae12477ef0041c3ff76b71b9655",
+   "size": 1861,
+   "translated": 15
+  },
+  "AvatarGenerator": {
+   "path": "addons/AvatarGenerator.mo",
+   "sha256": "77209d08037dcdbdf4d08adcadc2cfd1ecc6406c0beaa7fbe4809e7ef3a190b9",
+   "size": 2837,
+   "translated": 20
+  },
+  "Betawhatsnext": {
+   "path": "addons/Betawhatsnext.mo",
+   "sha256": "65a16f0dea5700979eb5d6f559de2b243092df383fff5ba22dd0c4ca737193ee",
+   "size": 680,
+   "translated": 1
+  },
+  "BiographyQuickview": {
+   "path": "addons/BiographyQuickview.mo",
+   "sha256": "141360caa981e3590f365008664827b2b607408f7d2281786a25777e95133978",
+   "size": 766,
+   "translated": 2
+  },
+  "BirthOrder": {
+   "path": "addons/BirthOrder.mo",
+   "sha256": "95b79986c2e3cc9054c5d6815c052ff2276b8de8327abd517f1bf90cb78e5ded",
+   "size": 3906,
+   "translated": 18
+  },
+  "BirthdaysGramplet": {
+   "path": "addons/BirthdaysGramplet.mo",
+   "sha256": "d572b977fb8a73c3592c216a61519ae76729336c6ca6f766100b026c6231f262",
+   "size": 773,
+   "translated": 1
+  },
+  "CalculateEstimatedDates": {
+   "path": "addons/CalculateEstimatedDates.mo",
+   "sha256": "4d243b87c93b882bc7345f1a447372dedd02e472d7036592cf6044dbabfecfe9",
+   "size": 8622,
+   "translated": 56
+  },
+  "ChangeGivenNames": {
+   "path": "addons/ChangeGivenNames.mo",
+   "sha256": "054fa4609fb964b6c7cc3a0b18fe5160209223bfcd0e99cdf84fcea4bd9dfe40",
+   "size": 1575,
+   "translated": 7
+  },
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "e5e703536dab800cff454e8eb0a985d534bb733fb91fb2927ea1e0f73294b708",
+   "size": 1941,
+   "translated": 15
+  },
+  "CircleTreeView": {
+   "path": "addons/CircleTreeView.mo",
+   "sha256": "12ceb5a4403cac9d602bc9b8ae6fe7c68a5b0a606be96b903348229ede01974e",
+   "size": 703,
+   "translated": 2
+  },
+  "CliMerge": {
+   "path": "addons/CliMerge.mo",
+   "sha256": "c9d5186a20f842dbe657dba80971c77241cd9634502dde5881cba8eefdcffd88",
+   "size": 859,
+   "translated": 2
+  },
+  "ClipboardGramplet": {
+   "path": "addons/ClipboardGramplet.mo",
+   "sha256": "a4a9c4ebdf063890d889b517e08e34e97779eb3c1f47003a50a793e4c5970c7b",
+   "size": 899,
+   "translated": 2
+  },
+  "ClockGramplet": {
+   "path": "addons/ClockGramplet.mo",
+   "sha256": "89118c95f48f5e7e7d9fd044ce2df77eb4e4a8e8b4eefe2365ff2105640fea44",
+   "size": 773,
+   "translated": 2
+  },
+  "CombinedView": {
+   "path": "addons/CombinedView.mo",
+   "sha256": "82eaa075ea26823889ced0d6799dadaa9db4f5ea9b4c960d82dd3d08fa5b445d",
+   "size": 1050,
+   "translated": 5
+  },
+  "D3Charts": {
+   "path": "addons/D3Charts.mo",
+   "sha256": "9dd63763ddd17757924200a2cfbc51c902140a75fb6c123ffe49be2bcba709c2",
+   "size": 11076,
+   "translated": 87
+  },
+  "DEWebConnectPack": {
+   "path": "addons/DEWebConnectPack.mo",
+   "sha256": "3b88916267d34117e446ebf5d9d84f322fc4c40ab2ffe49b22c0b596960446e5",
+   "size": 1129,
+   "translated": 7
+  },
+  "DNA": {
+   "path": "addons/DNA.mo",
+   "sha256": "e8fafe9709c60797796c41e3371a502be353af58e6581017fd2e70145f004660",
+   "size": 955,
+   "translated": 6
+  },
+  "DNAMatches": {
+   "path": "addons/DNAMatches.mo",
+   "sha256": "e6a85ad3240974c698d6413f90130470a45625cb9d5cf5f142e9a198ea5a7842",
+   "size": 656,
+   "translated": 1
+  },
+  "DataEntryGramplet": {
+   "path": "addons/DataEntryGramplet.mo",
+   "sha256": "2c85ce29b43a7798cf1c07cc89df87b9cc81e0d61694055343394c797ef87f56",
+   "size": 4229,
+   "translated": 39
+  },
+  "DateCalculator": {
+   "path": "addons/DateCalculator.mo",
+   "sha256": "e4288c50359ba697c400325fd103cd0bce6f6cc5608767a3f2943ce3df09e926",
+   "size": 1062,
+   "translated": 6
+  },
+  "DeepConnectionsGramplet": {
+   "path": "addons/DeepConnectionsGramplet.mo",
+   "sha256": "3ab3117e35ca9e100e2856fac0a4a097ebc07894f301c14caa0c9cf4e9ffc9c2",
+   "size": 1813,
+   "translated": 13
+  },
+  "DenominoViso": {
+   "path": "addons/DenominoViso.mo",
+   "sha256": "7cae72d7c5b7c80968edbbd6ce52d8c1cc9f0dc28f4f107b134ee921b0320aa5",
+   "size": 12789,
+   "translated": 112
+  },
+  "DescendantBooks": {
+   "path": "addons/DescendantBooks.mo",
+   "sha256": "984604150963d6d776753a23bf112e2e44f07eb0239c5efd7406991481cde209",
+   "size": 7703,
+   "translated": 59
+  },
+  "DescendantCount": {
+   "path": "addons/DescendantCount.mo",
+   "sha256": "6d4b96c6c02d56d3f60acdfb19d519f526b1ccae5384943d546a440282823f1e",
+   "size": 805,
+   "translated": 2
+  },
+  "DescendantSpaceTree": {
+   "path": "addons/DescendantSpaceTree.mo",
+   "sha256": "b73198c8d15ee70772ea9a50d2507ce80c4711da5014983c0d15a8b5dee0dac3",
+   "size": 909,
+   "translated": 3
+  },
+  "DescendantsLines": {
+   "path": "addons/DescendantsLines.mo",
+   "sha256": "4efbfb7031c2ca0cdf8041ed2044d8e75e7795bedcdaf6da3be6d018cb8b32b0",
+   "size": 8873,
+   "translated": 61
+  },
+  "DetDescendantReport-images": {
+   "path": "addons/DetDescendantReport-images.mo",
+   "sha256": "d28630cf6b5db7a4300b4b3fbc6325f803e4c9ad872ea0f84c8e813b26be8669",
+   "size": 2721,
+   "translated": 19
+  },
+  "DetId": {
+   "path": "addons/DetId.mo",
+   "sha256": "01ea3b9f246d2826331760b1d2e495842ca6fbdf8daf89ce657fc2e026992d88",
+   "size": 1162,
+   "translated": 4
+  },
+  "Differences": {
+   "path": "addons/Differences.mo",
+   "sha256": "90a344c989ff606685709f03d5d7b604cdce378b96682394ce7a6d2358f7f637",
+   "size": 1868,
+   "translated": 10
+  },
+  "DownloadMedia": {
+   "path": "addons/DownloadMedia.mo",
+   "sha256": "2763965e8698f4376ab4fd3d095d3161f4162685008e4be94829bf824b97036e",
+   "size": 1636,
+   "translated": 9
+  },
+  "DynamicWeb": {
+   "path": "addons/DynamicWeb.mo",
+   "sha256": "048a3ec4dfae2c0059b382b8e6f54aff7d39c26568ac490775e84a7d86421547",
+   "size": 26082,
+   "translated": 204
+  },
+  "EditExifMetadata": {
+   "path": "addons/EditExifMetadata.mo",
+   "sha256": "f0dc4cfefd5e3a733facaef94480ab352618efd1ef1b81262f2ac2a773d4a27f",
+   "size": 10417,
+   "translated": 58
+  },
+  "EventDescriptionEditor": {
+   "path": "addons/EventDescriptionEditor.mo",
+   "sha256": "bf2fcc20e29dc66f4b7d9613ca42c28e687ab739810d10f088c23683f6af5f4b",
+   "size": 1698,
+   "translated": 9
+  },
+  "ExpandedAncestorTree": {
+   "path": "addons/ExpandedAncestorTree.mo",
+   "sha256": "e6cab7ea26cfb6fcd6d44904800ac3ab40b15dd326e46df177b2328b80f0903e",
+   "size": 684,
+   "translated": 1
+  },
+  "ExportProlog": {
+   "path": "addons/ExportProlog.mo",
+   "sha256": "72e5468d15cf23b0f2b1c092d7529b92610a733cc519ad26478b32b678ad4928",
+   "size": 664,
+   "translated": 1
+  },
+  "ExportRaw": {
+   "path": "addons/ExportRaw.mo",
+   "sha256": "e76e9abc44ed725e288cbda65acb77f1aa41672d9b55b7ed202625d2479747f3",
+   "size": 835,
+   "translated": 3
+  },
+  "ExtendedAttributes": {
+   "path": "addons/ExtendedAttributes.mo",
+   "sha256": "648887e407e8b2af0e49d880ace4ac63e28f8e4b6f7012d030268d7d335661e9",
+   "size": 1106,
+   "translated": 4
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "65f3eca3e210e05e6bac4a1ea5679d05eff883896fdeb545a391edc1d2d860ab",
+   "size": 1863,
+   "translated": 8
+  },
+  "FRWebConnectPack": {
+   "path": "addons/FRWebConnectPack.mo",
+   "sha256": "df7a06a748b187095f02f4a91f58bc959224ba3b66a33d5c44dbad388b2d3889",
+   "size": 1039,
+   "translated": 5
+  },
+  "FaceDetection": {
+   "path": "addons/FaceDetection.mo",
+   "sha256": "d2839b9d04272a70c77d47ab1e6cc6b2b852885b11d279e607737b4b9e3ce8c4",
+   "size": 1022,
+   "translated": 5
+  },
+  "FamilySheet": {
+   "path": "addons/FamilySheet.mo",
+   "sha256": "f8ff447de3e6a47b60450c9b6292348599b81676d876be819864bbc497aad435",
+   "size": 3530,
+   "translated": 30
+  },
+  "FamilyTree": {
+   "path": "addons/FamilyTree.mo",
+   "sha256": "0947f4f73a1c367d6e9156554fddde3d7d01574180e161eed8de71e5f2ec6e31",
+   "size": 5388,
+   "translated": 52
+  },
+  "FilterRules": {
+   "path": "addons/FilterRules.mo",
+   "sha256": "9466d1a9b9e72753b6b5fd5682ce60af30fd00b9ee5c09df260bcace688e1b78",
+   "size": 4878,
+   "translated": 34
+  },
+  "Form": {
+   "path": "addons/Form.mo",
+   "sha256": "0d0376b0bbc40dfe7a94755ebb1b7be770e7c20de8d6ba61ebc647306b3fc2de",
+   "size": 7690,
+   "translated": 105
+  },
+  "GWizardFileMerge": {
+   "path": "addons/GWizardFileMerge.mo",
+   "sha256": "a57ad2e228987f32a9b38434d774ceff23015aac36b4f1493361745508bf6315",
+   "size": 656,
+   "translated": 1
+  },
+  "GedcomExtensions": {
+   "path": "addons/GedcomExtensions.mo",
+   "sha256": "276407200284a430879e68b4117be5e027518a118f784f1370101fda803c1d05",
+   "size": 1580,
+   "translated": 12
+  },
+  "GenealogyTree": {
+   "path": "addons/GenealogyTree.mo",
+   "sha256": "6769562575587d239354b525a4d91ba35ad5f90ae6bb7d3279e463ae6daf6f5a",
+   "size": 2445,
+   "translated": 16
+  },
+  "GeoAncestor": {
+   "path": "addons/GeoAncestor.mo",
+   "sha256": "d71948bd003c5939d4ceae94273d5c20cf8b7f28de784031f7125ce6463c9bf0",
+   "size": 1149,
+   "translated": 6
+  },
+  "GetGOV": {
+   "path": "addons/GetGOV.mo",
+   "sha256": "ee421b02b9c6c25530f737efc8b678aa8e42214bdbdddf9704560e5850a45afb",
+   "size": 1039,
+   "translated": 6
+  },
+  "GoogleEarthWriteKML": {
+   "path": "addons/GoogleEarthWriteKML.mo",
+   "sha256": "4a304127845692ec9f26434fa07b57b81cbc422053a40e6b2dd62a7dea294557",
+   "size": 1582,
+   "translated": 9
+  },
+  "GrampsWebApiDb": {
+   "path": "addons/GrampsWebApiDb.mo",
+   "sha256": "96d9693ffd420cdc916c3597d237054142662baa93f5042096be0bb07be9ea0f",
+   "size": 651,
+   "translated": 1
+  },
+  "GrampsWebSync": {
+   "path": "addons/GrampsWebSync.mo",
+   "sha256": "e6fb29077e74bccfe5b9097afa2417445aa50f12617b1fa40bf6a4cc30cd7e1b",
+   "size": 750,
+   "translated": 3
+  },
+  "GrampyScript": {
+   "path": "addons/GrampyScript.mo",
+   "sha256": "2e4ef019388c1b6d9029c294a169af8beee3bb8ad494b6b9c09a9c6a6fe82d6a",
+   "size": 745,
+   "translated": 3
+  },
+  "GraphView": {
+   "path": "addons/GraphView.mo",
+   "sha256": "858f1c4499bdf65763f1111f76b3248025532e64b6a111cd057fd6b9345e3e98",
+   "size": 8733,
+   "translated": 88
+  },
+  "HeadlineNewsGramplet": {
+   "path": "addons/HeadlineNewsGramplet.mo",
+   "sha256": "b909467b9803fa43e31ba67e7825f5b00f90ee8e38ed2d37d325a6d85c5cee77",
+   "size": 896,
+   "translated": 3
+  },
+  "Heatmap": {
+   "path": "addons/Heatmap.mo",
+   "sha256": "1ae25d609c2d1a9911a3ac3e8e9c22813dba08c3b1f84c45e5e9003b1af4590f",
+   "size": 651,
+   "translated": 1
+  },
+  "HouseTimelineGramplet": {
+   "path": "addons/HouseTimelineGramplet.mo",
+   "sha256": "fb640ffd595400f18f9086125a14341d9d3988f93cdf203b02cc1bf193fdaf74",
+   "size": 1526,
+   "translated": 9
+  },
+  "HtmlView": {
+   "path": "addons/HtmlView.mo",
+   "sha256": "dfe960d5a4d7039a8b86154fab162e96c970651d803f5e2cfe5722bce5eea289",
+   "size": 1723,
+   "translated": 10
+  },
+  "HtreePedigreeView": {
+   "path": "addons/HtreePedigreeView.mo",
+   "sha256": "ed9264628c0c7e5ef00fb2dbee03cd52cd73601ebfe05eb97ca97b3c6bd620c5",
+   "size": 1329,
+   "translated": 10
+  },
+  "ImportGramplet": {
+   "path": "addons/ImportGramplet.mo",
+   "sha256": "252015ae8f9ebbf3cf98400239dc211506c3bb0ebbccef1704aa3623c47645d2",
+   "size": 1917,
+   "translated": 8
+  },
+  "ImportMerge": {
+   "path": "addons/ImportMerge.mo",
+   "sha256": "d6896e337274978788ad9e86055d5f724cf54c0ae2a1ce6768362917b1ef4ad1",
+   "size": 8224,
+   "translated": 51
+  },
+  "JSON": {
+   "path": "addons/JSON.mo",
+   "sha256": "4847b9ee1ec5f441aa1836aa5c4275a652085e701510c9b274ae9baf36fa152c",
+   "size": 997,
+   "translated": 6
+  },
+  "LastChange": {
+   "path": "addons/LastChange.mo",
+   "sha256": "38a40046cfad388831acb1bb8c72cc8480471a8e4849a6e9d35a1b677cd7c27a",
+   "size": 2289,
+   "translated": 20
+  },
+  "LifeLineChartView": {
+   "path": "addons/LifeLineChartView.mo",
+   "sha256": "77501768cc0c284bc0def605bddcf1c4efb10e862323216c728187a8d69eeca0",
+   "size": 1040,
+   "translated": 6
+  },
+  "LinesOfDescendency": {
+   "path": "addons/LinesOfDescendency.mo",
+   "sha256": "8b853fb467a22941be6408fa927cfcd6177075288e2c0072ba175f8bde224cf3",
+   "size": 1518,
+   "translated": 8
+  },
+  "ListeEclair": {
+   "path": "addons/ListeEclair.mo",
+   "sha256": "e803b3c1ec1e2722cb439c632716a2df4790be8bb46ea4e941a02cabdeffd6a6",
+   "size": 830,
+   "translated": 2
+  },
+  "MediaBrowser": {
+   "path": "addons/MediaBrowser.mo",
+   "sha256": "41d7ca01ce2799b34d1e8283ca9b48b2b38c2440fef33bd06d8654a4e418c226",
+   "size": 720,
+   "translated": 2
+  },
+  "MediaMerge": {
+   "path": "addons/MediaMerge.mo",
+   "sha256": "2b9a971b5716c3a8fd544082baf7fb7df5f0e7fb6cf379661b844fde7987be2c",
+   "size": 1355,
+   "translated": 5
+  },
+  "MediaReport": {
+   "path": "addons/MediaReport.mo",
+   "sha256": "d844556283f3c786c0ef2aa3537c8723053de8f0ceb6167ea1022665ab3244f8",
+   "size": 3116,
+   "translated": 22
+  },
+  "MediaVerify": {
+   "path": "addons/MediaVerify.mo",
+   "sha256": "9dfa15d834659a685ae06d9c707fe1653818d5e45b699959ed5974e247c2f11f",
+   "size": 3577,
+   "translated": 29
+  },
+  "MongoDB": {
+   "path": "addons/MongoDB.mo",
+   "sha256": "995410ca0d26b22886e9af21627b2c72b01d5099555499877f6d06da7ee5d21c",
+   "size": 768,
+   "translated": 3
+  },
+  "NLWebConnectPack": {
+   "path": "addons/NLWebConnectPack.mo",
+   "sha256": "10186d1b63fe6f0e6f38230877767e09e0d4a3e625165c477135427ea9b50537",
+   "size": 1075,
+   "translated": 5
+  },
+  "NameSuite": {
+   "path": "addons/NameSuite.mo",
+   "sha256": "a917019080f28588054a1ed3ab598394d2c715221fbaff6cedc98e06d1296489",
+   "size": 660,
+   "translated": 1
+  },
+  "NetworkChart": {
+   "path": "addons/NetworkChart.mo",
+   "sha256": "b17268d814593fc5759694a9e401ad9e82faebfdcc8f06fa42f75d7632dc14ef",
+   "size": 14953,
+   "translated": 108
+  },
+  "NoteCleanup": {
+   "path": "addons/NoteCleanup.mo",
+   "sha256": "ee67bd2c0149622aa6a2261b65e9b4fb3743e02e76d80541714f2f77e4e6ead3",
+   "size": 4512,
+   "translated": 26
+  },
+  "NoteGramplet": {
+   "path": "addons/NoteGramplet.mo",
+   "sha256": "ca21bab4ee352a6d193c2a1957c19f35662196ee0636402b79df3c43868511a2",
+   "size": 1030,
+   "translated": 6
+  },
+  "NumberOfAncestorsQuickview": {
+   "path": "addons/NumberOfAncestorsQuickview.mo",
+   "sha256": "4120c5a9b6639928a28263b93c71999e84438daeaf7774b2cf9d090a2f9677a1",
+   "size": 967,
+   "translated": 6
+  },
+  "NumberOfDescendantsQuickview": {
+   "path": "addons/NumberOfDescendantsQuickview.mo",
+   "sha256": "7112bf9635492cac1e5de2c04c2f6860e36e29881de8aaa7a9679bfbfbd172b3",
+   "size": 1552,
+   "translated": 9
+  },
+  "Overview": {
+   "path": "addons/Overview.mo",
+   "sha256": "a4ba58218fa2df6b101f39b7ac15f6d51d44d27e55dc6a9c0f8f498b61b02fd5",
+   "size": 1165,
+   "translated": 7
+  },
+  "PDFForms": {
+   "path": "addons/PDFForms.mo",
+   "sha256": "385ffe7d587ad89a31009f3a0e44ba363d8545c9452cfe45d7e6bd0657bca16b",
+   "size": 689,
+   "translated": 2
+  },
+  "Participants": {
+   "path": "addons/Participants.mo",
+   "sha256": "eeeb1b2c506a55bc50429542d6b73426fc2121754da086ab6ccb8c7561bc1e92",
+   "size": 921,
+   "translated": 2
+  },
+  "PedigreeChart": {
+   "path": "addons/PedigreeChart.mo",
+   "sha256": "9408502480012a71415315c681c39fa188507b69b095e3be93299420cb94ab6b",
+   "size": 1386,
+   "translated": 7
+  },
+  "PersonEverything": {
+   "path": "addons/PersonEverything.mo",
+   "sha256": "347f457d92f6a4c308daffca7f588294fda7cd1334e03871b99dc103f1558340",
+   "size": 3821,
+   "translated": 35
+  },
+  "PhotoTaggingGramplet": {
+   "path": "addons/PhotoTaggingGramplet.mo",
+   "sha256": "941a6ab76bd9414b1140c3e3b4bbb0e3b3e0c2d344cdabe098d4dc1fdf33856a",
+   "size": 3096,
+   "translated": 26
+  },
+  "PhpGedView": {
+   "path": "addons/PhpGedView.mo",
+   "sha256": "b84a2fae0bdcfa51ea731bcd1e84a5d856c0e4f21e3aeb88e5b9a603aa100e39",
+   "size": 1863,
+   "translated": 19
+  },
+  "PlaceCleanup": {
+   "path": "addons/PlaceCleanup.mo",
+   "sha256": "87d2cac0796262951007cfc139d95241693cdd392bd9b510711cd54abe03a4d7",
+   "size": 13545,
+   "translated": 72
+  },
+  "PlaceCompletion": {
+   "path": "addons/PlaceCompletion.mo",
+   "sha256": "d1cdbd5c8f97fa11dd52449a2e61a93ade8f777cea8db8a29c92e429125d8b88",
+   "size": 8619,
+   "translated": 69
+  },
+  "PlaceCoordinateGramplet": {
+   "path": "addons/PlaceCoordinateGramplet.mo",
+   "sha256": "ccc7e5d56b1657280b527fddb4c10ded87236ab42bf962d7f59f30b0aba7aceb",
+   "size": 682,
+   "translated": 1
+  },
+  "PlaceUpdate": {
+   "path": "addons/PlaceUpdate.mo",
+   "sha256": "402c04b9e7c007071733ee678c48df154c4ccea681426d26227ae6176cb86c4b",
+   "size": 2391,
+   "translated": 18
+  },
+  "PluginManager": {
+   "path": "addons/PluginManager.mo",
+   "sha256": "976bb625d832845147760739963ea406533c7392173adced85b34e47c09d6e1c",
+   "size": 2941,
+   "translated": 20
+  },
+  "PostgreSQL": {
+   "path": "addons/PostgreSQL.mo",
+   "sha256": "c1fa670933d513365315e6d234cffb7e6c568e772bb9b015b368bd6cdef56758",
+   "size": 787,
+   "translated": 3
+  },
+  "PostgreSQLEnhanced": {
+   "path": "addons/PostgreSQLEnhanced.mo",
+   "sha256": "8346ed513168159e27ed33f8812e6bb422fdfcbd6f92fcf56093e4c7654eecb7",
+   "size": 683,
+   "translated": 1
+  },
+  "PrerequisitesCheckerGramplet": {
+   "path": "addons/PrerequisitesCheckerGramplet.mo",
+   "sha256": "23932123f8a71a006d3a88586d8215432d1170186efdba57a2a8a5a89b62e2ba",
+   "size": 8236,
+   "translated": 55
+  },
+  "PythonGramplet": {
+   "path": "addons/PythonGramplet.mo",
+   "sha256": "6fe74fc2c4c65af9e7bdd5714115f1ad918a049a54f68d9874dfcf46340347a6",
+   "size": 841,
+   "translated": 3
+  },
+  "Query": {
+   "path": "addons/Query.mo",
+   "sha256": "8708e65c5a1aeda08bf9cebdd702fa9c9a3b577cc7f815279ba762044decf50b",
+   "size": 1234,
+   "translated": 8
+  },
+  "QuiltView": {
+   "path": "addons/QuiltView.mo",
+   "sha256": "551b6058c4d28a6f1d4b37e8c18329ea93a767e6c8ae98d5e38be478eeedc1df",
+   "size": 2812,
+   "translated": 21
+  },
+  "RUWebConnectPack": {
+   "path": "addons/RUWebConnectPack.mo",
+   "sha256": "1b902da4f1165418c851a9d38909310acec61e024ef354988da83fe72c781eb4",
+   "size": 1355,
+   "translated": 10
+  },
+  "RelID": {
+   "path": "addons/RelID.mo",
+   "sha256": "eaea47e3c9da7017688cde993577783cf0bd585690e6fb62e9271b70a642562a",
+   "size": 1858,
+   "translated": 17
+  },
+  "RelatedRelativesGramplet": {
+   "path": "addons/RelatedRelativesGramplet.mo",
+   "sha256": "047227c90f1d309cd1350f158580170cab7f13272ef51a0b72a1f974a3882729",
+   "size": 1232,
+   "translated": 7
+  },
+  "RemoveTagTool": {
+   "path": "addons/RemoveTagTool.mo",
+   "sha256": "f023dbc882ef78e63803ed9f9f6e7609482654e2f0fd460f2ac9942542af5367",
+   "size": 2700,
+   "translated": 23
+  },
+  "RepositoriesReport": {
+   "path": "addons/RepositoriesReport.mo",
+   "sha256": "5af8affe9fd3172ec3388db1c2d1e2f10e84e8c6d2b3902989a06c4990b48b35",
+   "size": 4035,
+   "translated": 32
+  },
+  "RestoreHist": {
+   "path": "addons/RestoreHist.mo",
+   "sha256": "0e1869660b90c32901ecb5d4b5442773360baf2fe502e6329a548ccf089ab9a7",
+   "size": 1309,
+   "translated": 2
+  },
+  "SVWebconnectPack": {
+   "path": "addons/SVWebconnectPack.mo",
+   "sha256": "b17afa8d5445c12974b98dbf98e7251686117ff31cbdb04d8a6e981271310a8f",
+   "size": 712,
+   "translated": 2
+  },
+  "SearchGramplet": {
+   "path": "addons/SearchGramplet.mo",
+   "sha256": "932047276c1da566c19b0712fc061301ab7157bef82328b11e36085f6e489661",
+   "size": 1014,
+   "translated": 7
+  },
+  "SetAttributeTool": {
+   "path": "addons/SetAttributeTool.mo",
+   "sha256": "4f65971e5f595284c0c8cf073b23b5ce91bfe7d823e170998ecc68117db044f4",
+   "size": 2025,
+   "translated": 14
+  },
+  "SetPrivacyTool": {
+   "path": "addons/SetPrivacyTool.mo",
+   "sha256": "f2dcd1fa055fe7185249bddbdd7ad34166bc61ab23081e6275bbca0bb38c697a",
+   "size": 2106,
+   "translated": 12
+  },
+  "SourceIndex": {
+   "path": "addons/SourceIndex.mo",
+   "sha256": "7bfdea2ac839d1b89417e69ca816a61ab0f3906c7c6498420dbeb3795bb6f1d9",
+   "size": 4185,
+   "translated": 44
+  },
+  "SourceReferences": {
+   "path": "addons/SourceReferences.mo",
+   "sha256": "aa5c3f4af522ea3f6a2daf606531330131bd2e3752d06bda2bceea132a5e64ed",
+   "size": 726,
+   "translated": 1
+  },
+  "SourcesCitationsReport": {
+   "path": "addons/SourcesCitationsReport.mo",
+   "sha256": "66292af1d236edb0cdbe5fd7af4994c35686f385f7dfaeb075aa4195bb7c08f8",
+   "size": 3492,
+   "translated": 34
+  },
+  "Sqlite": {
+   "path": "addons/Sqlite.mo",
+   "sha256": "b1075830c44d90cf7db6bd057782c57d9f9a9ae2c4b044b16920e1e4089bab86",
+   "size": 1308,
+   "translated": 5
+  },
+  "SurnameMappingGramplet": {
+   "path": "addons/SurnameMappingGramplet.mo",
+   "sha256": "b859252d87876d4ac170d9d795af63e15cf893c7ce9fb2b71a525e8072ea7e78",
+   "size": 1162,
+   "translated": 8
+  },
+  "TMGimporter": {
+   "path": "addons/TMGimporter.mo",
+   "sha256": "6decf53f9b5fd762efb454a306530156c97a38b9b85089385a5e61ecdcf14bd6",
+   "size": 2352,
+   "translated": 9
+  },
+  "Themes": {
+   "path": "addons/Themes.mo",
+   "sha256": "813738dbd9f7d913cb1bbb1e8982e4a40b51262674e0f2c28a2300758480eca0",
+   "size": 1408,
+   "translated": 7
+  },
+  "ThisDayInFamilyHistory": {
+   "path": "addons/ThisDayInFamilyHistory.mo",
+   "sha256": "83d11a612bbb696695e24d157102cfe1bea9c547157f805efae9376759bc7a04",
+   "size": 14082,
+   "translated": 103
+  },
+  "ThumbnailGenerator": {
+   "path": "addons/ThumbnailGenerator.mo",
+   "sha256": "36db1dbb59a50c1dfb7f656e75d394f25c2f4dfb6f8e11778458f233f78e1a27",
+   "size": 1598,
+   "translated": 8
+  },
+  "TimePedigreeHTML": {
+   "path": "addons/TimePedigreeHTML.mo",
+   "sha256": "74782a9d4b26f2542e0f3c5e5c3b8d0c85e749c5ecfd43b433f097522cbd6559",
+   "size": 699,
+   "translated": 1
+  },
+  "TimelinePedigreeView": {
+   "path": "addons/TimelinePedigreeView.mo",
+   "sha256": "a11f7d2a63143a12ed346f58e574988072a9c8a5fbe598615d97737c7d03ebda",
+   "size": 1932,
+   "translated": 16
+  },
+  "TimelineQuickview": {
+   "path": "addons/TimelineQuickview.mo",
+   "sha256": "46ce877540abbe45fe6b3efff522e37dd796dcc89d55af1201178ae466bec0f2",
+   "size": 1657,
+   "translated": 14
+  },
+  "ToDoReport": {
+   "path": "addons/ToDoReport.mo",
+   "sha256": "e0eeeb7561dff58c1991616f1d19e2b8e83719539ef601c6b09d9efd188e0fb1",
+   "size": 2658,
+   "translated": 20
+  },
+  "Topola": {
+   "path": "addons/Topola.mo",
+   "sha256": "47be2e10541fb584d81252d7e6097de8735ed4e10240081a062036fcf1b2a156",
+   "size": 853,
+   "translated": 2
+  },
+  "TypeCleanup": {
+   "path": "addons/TypeCleanup.mo",
+   "sha256": "aef783530d6e2e70ed29f29568a73f9ef91cfb9c97d5704c4424125695123504",
+   "size": 3455,
+   "translated": 23
+  },
+  "UKWebConnectPack": {
+   "path": "addons/UKWebConnectPack.mo",
+   "sha256": "e07b580627126043317097a8c8293ce537e714197ba1e7dc2b2e781a68870cc8",
+   "size": 1256,
+   "translated": 8
+  },
+  "USWebConnectPack": {
+   "path": "addons/USWebConnectPack.mo",
+   "sha256": "22dc1f0a406b0903800c7869ff1a0f5a583cfb40afc2fb98f7a37117062c3798",
+   "size": 1147,
+   "translated": 7
+  },
+  "WebSearch": {
+   "path": "addons/WebSearch.mo",
+   "sha256": "7efa7e94612100a42abba6cb80af714d8cb369cf26f6b243d323ff41f87e3f74",
+   "size": 671,
+   "translated": 1
+  },
+  "libaccess": {
+   "path": "addons/libaccess.mo",
+   "sha256": "35c40295e19d042ab2c70aaa8f8c7b7660e69d9098cf56d3c66508e5cada213c",
+   "size": 963,
+   "translated": 3
+  },
+  "libwebconnect": {
+   "path": "addons/libwebconnect.mo",
+   "sha256": "cf2526ba0783f814015db9d10f693a7589dc0bb290f05aaef96fab13ba6f8ca0",
+   "size": 744,
+   "translated": 1
+  },
+  "lxml": {
+   "path": "addons/lxml.mo",
+   "sha256": "86c105fc68e0c1efd3ca60aaeabc7b0815b9b7e9f34cc0f8615355f69b338b46",
+   "size": 4247,
+   "translated": 44
+  }
+ },
+ "branch": "gramps61",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "7ecb4276c6f0ffac9424cdcacc3692db2f0b00506e5ca79eb583ae9aab8280c8",
+  "size": 453357
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "c21c3bcca22026be6fb02c7a6af79559c3eae9d2fb2521d81415c86073d91678",
+  "size": 973974,
+  "translated": 7349
+ },
+ "format": 1,
+ "generated": "2026-11-21T14:38:34+00:00",
+ "lang": "ru",
+ "sources": {
+  "addons": {
+   "commit": "14a6d035bd646db97acf21b07e9d6c09acbfeed2",
+   "date": "2026-11-16T13:10:37-08:00"
+  },
+  "gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  }
+ }
+}

@@ -1,0 +1,49 @@
+{
+ "addons": {
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "09bab93701d48c84ccb4f5e331c698653d4acf9444f898587b04963bb30e0304",
+   "size": 516,
+   "translated": 2
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "09bab93701d48c84ccb4f5e331c698653d4acf9444f898587b04963bb30e0304",
+   "size": 516,
+   "translated": 2
+  }
+ },
+ "branch": "gramps60",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "58d9443dcd1952b8143977fd5fb120002107fb8f8204a225044e0e459a71aa80",
+  "size": 137377
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "ab1ce75a46e3398b4d0673f6d896e41ae6ea0a759199b5c313b6fa84a9e81bef",
+  "size": 415632,
+  "translated": 4654
+ },
+ "format": 1,
+ "generated": "2026-11-21T14:41:16+00:00",
+ "lang": "zh_HK",
+ "sources": {
+  "addons": {
+   "commit": "85e5d094a71e0b83db3a420c21c65b8239ece283",
+   "date": "2026-11-14T11:54:05-08:00"
+  },
+  "donor_addons": {
+   "commit": "14a6d035bd646db97acf21b07e9d6c09acbfeed2",
+   "date": "2026-11-16T13:10:37-08:00"
+  },
+  "donor_gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  },
+  "gramps": {
+   "commit": "32aa29629b94c549f232cd0b61c137ae95d73acf",
+   "date": "2026-06-17T19:51:52-07:00"
+  }
+ }
+}

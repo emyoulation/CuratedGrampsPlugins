@@ -1,0 +1,59 @@
+{
+ "addons": {
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "3df45727544c83664611a99dba93b70627a4e478edf586fa1a00d8ab81900c08",
+   "size": 560,
+   "translated": 2
+  },
+  "DynamicWeb": {
+   "path": "addons/DynamicWeb.mo",
+   "sha256": "62ec388839d670ced910686d75bfcdcf236ac22070dc23f8a366d0fd69a9459e",
+   "size": 462,
+   "translated": 1
+  },
+  "EditExifMetadata": {
+   "path": "addons/EditExifMetadata.mo",
+   "sha256": "6b09c30bbf1b9976bb3e2a6f8032cf0087e9d5f022ee3cce1675152282cd57df",
+   "size": 7529,
+   "translated": 54
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "3df45727544c83664611a99dba93b70627a4e478edf586fa1a00d8ab81900c08",
+   "size": 560,
+   "translated": 2
+  },
+  "Themes": {
+   "path": "addons/Themes.mo",
+   "sha256": "3ffc8325696de255b69e780a4f412d89e91dae9721fb3b34cba610f5e16ca8ca",
+   "size": 1007,
+   "translated": 7
+  }
+ },
+ "branch": "gramps61",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "b756bdc6a6d0d46145b00ee2fef0212310bb4c8c5330962581211cc3accc835b",
+  "size": 195362
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "7424258a288d77139ef43a4cae81a7bb7ead92bcd0c51034a36ff8ccdb0dc38a",
+  "size": 606273,
+  "translated": 6248
+ },
+ "format": 1,
+ "generated": "2026-11-21T14:38:34+00:00",
+ "lang": "nn",
+ "sources": {
+  "addons": {
+   "commit": "14a6d035bd646db97acf21b07e9d6c09acbfeed2",
+   "date": "2026-11-16T13:10:37-08:00"
+  },
+  "gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  }
+ }
+}
