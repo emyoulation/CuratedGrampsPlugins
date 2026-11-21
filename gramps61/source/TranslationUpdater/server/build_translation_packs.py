@@ -14,12 +14,23 @@ Output layout (under --out):
     <branch>/<lang>/core/gramps.mo
     <branch>/<lang>/addons/<AddonFolder>.mo
 
-Requires the GNU gettext tools (msgfmt, msgmerge) on PATH.
+Optionally, a newer branch can lend its translations (--donor-gramps,
+--donor-addons). Weblate follows one branch at a time, so once translators
+move to the next Gramps branch, the older branch stops getting translations
+even for strings that are word-for-word the same. With a donor, a translated
+entry from the donor branch wins over the older branch's entry for the same
+string (msgctxt + msgid); strings the older branch does not have are dropped.
+
+Requires the GNU gettext tools (msgfmt, msgmerge, msgcat, msgattrib) on PATH.
 
 Example:
 
     python3 build_translation_packs.py --branch gramps60 \
         --gramps ../gramps --addons ../addons-source --out ../site
+
+    python3 build_translation_packs.py --branch gramps60 \
+        --gramps ../gramps60 --addons ../addons60 \
+        --donor-gramps ../gramps61 --donor-addons ../addons61 --out ../site
 """
 
 import argparse
@@ -113,6 +124,63 @@ def compile_po(po_file, mo_file):
     return None
 
 
+def run(cmd):
+    """Run a gettext tool. Returns an error string or None."""
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        return result.stderr.strip() or "%s failed" % cmd[0]
+    return None
+
+
+def with_donor(po_file, donor_po, tmp_dir, tag):
+    """
+    A .po combining po_file with the translated entries of donor_po; the
+    donor wins for identical strings. Returns (path, error); path is po_file
+    itself when there is no donor file.
+    """
+    if not donor_po or not os.path.isfile(donor_po):
+        return po_file, None
+    clean = os.path.join(tmp_dir, "%s-donor.po" % tag)
+    combined = os.path.join(tmp_dir, "%s-combined.po" % tag)
+    # Only finished donor work: no fuzzy, untranslated or obsolete entries.
+    error = run(
+        [
+            "msgattrib",
+            "--translated",
+            "--no-fuzzy",
+            "--no-obsolete",
+            "-o",
+            clean,
+            donor_po,
+        ]
+    )
+    if error:
+        return po_file, error
+    # --use-first: the donor translation wins; the header comes from the
+    # donor too, which only matters for Plural-Forms (the same per language).
+    error = run(["msgcat", "--use-first", "-o", combined, clean, po_file])
+    os.remove(clean)
+    if error:
+        return po_file, error
+    return combined, None
+
+
+def restrict(po_file, pot, out_po):
+    """Keep only the strings in pot (no fuzzy guesses). Returns an error."""
+    return run(
+        [
+            "msgmerge",
+            "--quiet",
+            "--for-msgfmt",
+            "--no-fuzzy-matching",
+            "-o",
+            out_po,
+            po_file,
+            pot,
+        ]
+    )
+
+
 def languages_in(po_dir):
     """Language codes of the <lang>.po files in a po directory."""
     langs = set()
@@ -132,14 +200,14 @@ def addon_folders(addons_src):
     )
 
 
-def build_addon(addons_src, lang, addon, out_dir, tmp_dir):
+def build_addon(addons_src, lang, addon, out_dir, tmp_dir, lang_po=None):
     """
     Extract one addon's strings from the aggregated Weblate po and compile it.
 
     Mirrors make.py extract_po(): msgmerge --for-msgfmt --no-fuzzy-matching.
     Returns (addon, entry-dict or None, error or None).
     """
-    lang_po = os.path.join(addons_src, "po", f"{lang}.po")
+    lang_po = lang_po or os.path.join(addons_src, "po", f"{lang}.po")
     pot = os.path.join(addons_src, addon, "po", "template.pot")
     tmp_po = os.path.join(tmp_dir, f"{lang}-{addon}.po")
     result = subprocess.run(
@@ -184,6 +252,12 @@ def main():
     parser.add_argument("--branch", required=True, help="e.g. gramps60")
     parser.add_argument("--gramps", help="gramps checkout (core translations)")
     parser.add_argument("--addons", help="addons-source checkout")
+    parser.add_argument(
+        "--donor-gramps", help="newer gramps checkout lending translations"
+    )
+    parser.add_argument(
+        "--donor-addons", help="newer addons-source checkout lending translations"
+    )
     parser.add_argument("--out", required=True, help="output site directory")
     parser.add_argument("--languages", default="", help="comma list; default all")
     parser.add_argument("--jobs", type=int, default=os.cpu_count() or 2)
@@ -194,7 +268,7 @@ def main():
     global STRICT  # pylint: disable=global-statement
     STRICT = args.strict
 
-    for tool in ("msgfmt", "msgmerge"):
+    for tool in ("msgfmt", "msgmerge", "msgcat", "msgattrib"):
         if not shutil.which(tool):
             sys.exit(f"{tool} not found; install GNU gettext")
 
@@ -227,6 +301,15 @@ def main():
             "commit": git_commit(args.addons),
             "date": git_date(args.addons),
         }
+    for key, path in (
+        ("donor_gramps", args.donor_gramps),
+        ("donor_addons", args.donor_addons),
+    ):
+        if path:
+            sources[key] = {"commit": git_commit(path), "date": git_date(path)}
+    core_pot = os.path.join(args.gramps, "po", "gramps.pot") if args.gramps else ""
+    if args.donor_gramps and not os.path.isfile(core_pot):
+        sys.exit("--donor-gramps needs po/gramps.pot in --gramps")
 
     index = {
         "format": FORMAT,
@@ -251,7 +334,17 @@ def main():
             if lang in core_langs:
                 po_file = os.path.join(args.gramps, "po", f"{lang}.po")
                 mo_file = os.path.join(out_dir, "core", "gramps.mo")
-                error = compile_po(po_file, mo_file)
+                error = None
+                if args.donor_gramps:
+                    donor = os.path.join(args.donor_gramps, "po", f"{lang}.po")
+                    combined, error = with_donor(po_file, donor, tmp_dir, lang)
+                    if not error and combined != po_file:
+                        merged = os.path.join(tmp_dir, f"{lang}-core.po")
+                        error = restrict(combined, core_pot, merged)
+                        os.remove(combined)
+                        po_file = merged
+                if not error:
+                    error = compile_po(po_file, mo_file)
                 if error:
                     problems += 1
                     print(f"[{lang}] core skipped: {error}", file=sys.stderr)
@@ -263,10 +356,25 @@ def main():
                         "translated": mo_count(mo_file),
                     }
             if lang in addon_langs:
+                lang_po = os.path.join(args.addons, "po", f"{lang}.po")
+                if args.donor_addons:
+                    donor = os.path.join(args.donor_addons, "po", f"{lang}.po")
+                    lang_po, error = with_donor(
+                        lang_po, donor, tmp_dir, f"{lang}-addons"
+                    )
+                    if error:
+                        problems += 1
+                        print(f"[{lang}] addon donor skipped: {error}", file=sys.stderr)
                 with concurrent.futures.ThreadPoolExecutor(args.jobs) as pool:
                     jobs = [
                         pool.submit(
-                            build_addon, args.addons, lang, addon, out_dir, tmp_dir
+                            build_addon,
+                            args.addons,
+                            lang,
+                            addon,
+                            out_dir,
+                            tmp_dir,
+                            lang_po,
                         )
                         for addon in addons
                     ]

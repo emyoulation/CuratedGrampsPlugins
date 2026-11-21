@@ -693,11 +693,12 @@ def update_packs(languages=None, progress=None):
     want_core = CONFIG.get("packs.core")
     want_addons = CONFIG.get("packs.addons")
 
+    total = max(len(languages), 1)
     for number, code in enumerate(languages):
         result = {"lang": code, "core": False, "addons": 0, "removed": 0, "error": ""}
         results.append(result)
         if progress:
-            progress(number / max(len(languages), 1), code)
+            progress(number / total, code)
         if code not in available:
             result["error"] = _("No translations published for this language")
             continue
@@ -722,7 +723,13 @@ def update_packs(languages=None, progress=None):
 
             addon_state = {}
             published = manifest.get("addons", {}) if want_addons else {}
-            for name, addon_path in sorted(installed.items()):
+            names = sorted(installed.items())
+            for step, (name, addon_path) in enumerate(names):
+                if progress:
+                    progress(
+                        (number + (step + 1) / (len(names) + 1)) / total,
+                        "%s: %s" % (code, name),
+                    )
                 dest = mo_path(addon_pack_root(name), code, ADDON_DOMAIN)
                 entry = published.get(name)
                 if not entry:

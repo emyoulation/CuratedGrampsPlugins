@@ -7,15 +7,14 @@ translations change. The startup half lives in TranslationUpdaterLib.py.
 """
 
 import os
+import threading
 
-from gi.repository import Gtk
+from gi.repository import GLib, Gtk
 
 from gramps.gen.const import GRAMPS_LOCALE as glocale
-from gramps.gui.dialog import ErrorDialog, OkDialog
 from gramps.gui.display import display_url
 from gramps.gui.managedwindow import ManagedWindow
 from gramps.gui.plug import tool
-from gramps.gui.utils import ProgressMeter
 
 import TranslationUpdaterLib as lib
 
@@ -39,6 +38,8 @@ class TranslationUpdater(tool.Tool, ManagedWindow):
 
     def __init__(self, dbstate, user, options_class, name, callback=None):
         self.uistate = user.uistate
+        self._busy = False
+        self._closed = False
         tool.Tool.__init__(self, dbstate, options_class, name)
         ManagedWindow.__init__(self, self.uistate, [], self.__class__)
         self.set_window(Gtk.Window(), None, TITLE)
@@ -77,6 +78,7 @@ class TranslationUpdater(tool.Tool, ManagedWindow):
         fbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         fbox.set_border_width(6)
         view = Gtk.TreeView(model=self.store)
+        self.view = view
         toggle = Gtk.CellRendererToggle()
         toggle.connect("toggled", self.cb_language_toggled)
         view.append_column(Gtk.TreeViewColumn("", toggle, active=COL_SELECTED))
@@ -93,11 +95,11 @@ class TranslationUpdater(tool.Tool, ManagedWindow):
         scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.add(view)
         fbox.pack_start(scroll, True, True, 0)
-        refresh = Gtk.Button(label=_("Refresh list"))
-        refresh.set_tooltip_text(_("Get the list of published languages"))
-        refresh.connect("clicked", self.cb_refresh)
+        self.refresh_button = Gtk.Button(label=_("Refresh list"))
+        self.refresh_button.set_tooltip_text(_("Get the list of published languages"))
+        self.refresh_button.connect("clicked", self.cb_refresh)
         rbox = Gtk.Box()
-        rbox.pack_start(refresh, False, False, 0)
+        rbox.pack_start(self.refresh_button, False, False, 0)
         fbox.pack_start(rbox, False, False, 0)
         frame.add(fbox)
         vbox.pack_start(frame, True, True, 0)
@@ -182,7 +184,12 @@ class TranslationUpdater(tool.Tool, ManagedWindow):
         else:
             self.create_button = self.remove_button = self.launcher_status = None
 
-        self.status = Gtk.Label(xalign=0, wrap=True)
+        # Progress and results stay inside this window, so no dialog ever
+        # covers another (GNOME centers modal dialogs and pins them there).
+        self.progress = Gtk.ProgressBar(show_text=True)
+        self.progress.set_no_show_all(True)
+        vbox.pack_start(self.progress, False, False, 0)
+        self.status = Gtk.Label(xalign=0, wrap=True, selectable=True)
         vbox.pack_start(self.status, False, False, 0)
 
         buttons = Gtk.Box(spacing=6)
@@ -192,9 +199,9 @@ class TranslationUpdater(tool.Tool, ManagedWindow):
         close = Gtk.Button(label=_("Close"))
         close.connect("clicked", self.close)
         buttons.pack_end(close, False, False, 0)
-        check = Gtk.Button(label=_("Check for updates"))
-        check.connect("clicked", self.cb_check)
-        buttons.pack_end(check, False, False, 0)
+        self.check_button = Gtk.Button(label=_("Check for updates"))
+        self.check_button.connect("clicked", self.cb_check)
+        buttons.pack_end(self.check_button, False, False, 0)
         vbox.pack_start(buttons, False, False, 0)
         return vbox
 
@@ -264,17 +271,71 @@ class TranslationUpdater(tool.Tool, ManagedWindow):
         lib.CONFIG.set("source.base_url", entry.get_text().strip() or lib.DEFAULT_URL)
         lib.CONFIG.save()
 
+    # --------------------------------------------------------------------
+    # Background work (keeps Gramps responsive during downloads)
+    # --------------------------------------------------------------------
+    def _set_busy(self, busy, text=""):
+        self._busy = busy
+        for widget in (self.check_button, self.refresh_button, self.view):
+            widget.set_sensitive(not busy)
+        if busy:
+            self.progress.set_fraction(0.0)
+            self.progress.set_text(text)
+            self.progress.show()
+            self.status.set_text("")
+        else:
+            self.progress.hide()
+
+    def _cb_progress(self, fraction, text):
+        if not self._closed:
+            self.progress.set_fraction(min(max(fraction, 0.0), 1.0))
+            if text:
+                self.progress.set_text(text)
+        return False
+
+    def _run_in_background(self, work, done, text):
+        """
+        Run work(progress) in a thread, then done(result, error) in the GTK
+        main loop. progress(fraction, text) may be called from the thread.
+        """
+        self._set_busy(True, text)
+
+        def progress(fraction, label):
+            GLib.idle_add(self._cb_progress, fraction, label)
+
+        def finish(result, error):
+            if not self._closed:
+                self._set_busy(False)
+            done(result, error)
+            return False
+
+        def runner():
+            try:
+                result, error = work(progress), None
+            except Exception as err:  # pylint: disable=broad-except
+                result, error = None, err
+            GLib.idle_add(finish, result, error)
+
+        threading.Thread(target=runner, daemon=True).start()
+
+    # --------------------------------------------------------------------
+    # Refresh and check
+    # --------------------------------------------------------------------
     def cb_refresh(self, _button):
-        self.uistate.set_busy_cursor(True)
-        try:
-            index = lib.fetch_index()
-        except Exception as err:  # pylint: disable=broad-except
-            ErrorDialog(
-                _("Could not get the language list"), str(err), parent=self.window
-            )
+        if self._busy:
             return
-        finally:
-            self.uistate.set_busy_cursor(False)
+        self._run_in_background(
+            lambda _progress: lib.fetch_index(),
+            self._refresh_done,
+            _("Getting the list of published languages"),
+        )
+
+    def _refresh_done(self, index, error):
+        if self._closed:
+            return
+        if error:
+            self.status.set_text(_("Could not get the language list: %s") % error)
+            return
         self._fill_languages(index)
         self.status.set_text(
             _("%d languages published for %s.")
@@ -282,39 +343,41 @@ class TranslationUpdater(tool.Tool, ManagedWindow):
         )
 
     def cb_check(self, _button):
+        if self._busy:
+            return
         languages = self._chosen()
         if not languages:
             self.status.set_text(_("Choose at least one language first."))
             return
         lib.CONFIG.set("packs.languages", languages)
         lib.CONFIG.save()
-        progress = ProgressMeter(TITLE, can_cancel=False, parent=self.window)
-        progress.set_pass(_("Checking translations"), len(languages) + 1)
-        try:
-            results = lib.update_packs(languages, lambda _frac, _text: progress.step())
-        except Exception as err:  # pylint: disable=broad-except
-            progress.close()
-            ErrorDialog(
-                _("Could not check for translations"), str(err), parent=self.window
-            )
+        self._run_in_background(
+            lambda progress: lib.update_packs(languages, progress),
+            self._check_done,
+            _("Checking translations"),
+        )
+
+    def _check_done(self, results, error):
+        if error:
+            if not self._closed:
+                self.status.set_text(_("Could not check for translations: %s") % error)
             return
-        progress.close()
+        # Patching the running translators belongs in the main loop.
         lib.apply_now()
+        if self._closed:
+            return
         self._fill_languages(lib.cached_index())
         self._update_launcher_status()
-        lines = lib.summarize(results)
+        lines = [_("Translations checked")] + lib.summarize(results)
         if any(r["core"] or r["addons"] for r in results):
-            lines.append("")
             lines.append(_("Restart Gramps so every window uses the new translations."))
-        OkDialog(_("Translations checked"), "\n".join(lines), parent=self.window)
+        self.status.set_text("\n".join(lines))
 
     def cb_create_launcher(self, _button):
         try:
             lib.create_launcher()
         except OSError as err:
-            ErrorDialog(
-                _("Could not create the launcher"), str(err), parent=self.window
-            )
+            self.status.set_text(_("Could not create the launcher: %s") % err)
         self._update_launcher_status()
 
     def cb_remove_launcher(self, _button):
@@ -336,6 +399,7 @@ class TranslationUpdater(tool.Tool, ManagedWindow):
         self.launcher_status.set_text(text)
 
     def close(self, *obj):
+        self._closed = True
         width, height = self.window.get_size()
         lib.CONFIG.set("window.width", width)
         lib.CONFIG.set("window.height", height)
