@@ -32,9 +32,9 @@ if (5, 2) <= VERSION_TUPLE[:2] < (7, 0):
         description=_(
             "Applies translation packs downloaded by the Translation Updater tool."
         ),
-        version="0.1.1",  # build 20261121.0005
+        version="0.1.1",  # build 20261121.0603
         gramps_target_version=major_version,
-        status=EXPERIMENTAL,
+        status=BETA,
         fname="TranslationUpdaterLib.py",
         authors=["Brian McCullough"],
         authors_email=[""],
@@ -54,9 +54,9 @@ if (5, 2) <= VERSION_TUPLE[:2] < (7, 0):
             "Downloads newer Gramps and addon translations for chosen languages, "
             "without changing addon versions."
         ),
-        version="0.1.1",  # build 20261121.0005
+        version="0.1.1",  # build 20261121.0603
         gramps_target_version=major_version,
-        status=EXPERIMENTAL,
+        status=BETA,
         fname="TranslationUpdater.py",
         authors=["Brian McCullough"],
         authors_email=[""],

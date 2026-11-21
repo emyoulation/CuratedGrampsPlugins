@@ -13,6 +13,11 @@ Output layout (under --out):
     <branch>/<lang>/manifest.json
     <branch>/<lang>/core/gramps.mo
     <branch>/<lang>/addons/<AddonFolder>.mo
+    <branch>/<lang>/pack.zip       (all of the above .mo files in one download)
+
+Clients fetch pack.zip, so a language costs one download instead of one per
+addon (GitHub limits how many files one computer may fetch in a short time).
+The separate .mo files stay for older clients.
 
 Optionally, a newer branch can lend its translations (--donor-gramps,
 --donor-addons). Weblate follows one branch at a time, so once translators
@@ -45,6 +50,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 FORMAT = 1
 
@@ -122,6 +128,28 @@ def compile_po(po_file, mo_file):
             os.remove(mo_file)
         return result.stderr.strip() or "msgfmt failed"
     return None
+
+
+def write_bundle(out_dir, manifest):
+    """
+    Zip every .mo of a language into pack.zip and return its manifest entry.
+
+    Fixed timestamps and order, so unchanged translations give an unchanged
+    file and hash.
+    """
+    members = []
+    if manifest["core"]:
+        members.append(manifest["core"]["path"])
+    members += [entry["path"] for entry in manifest["addons"].values()]
+    path = os.path.join(out_dir, "pack.zip")
+    with zipfile.ZipFile(path, "w") as bundle:
+        for member in sorted(members):
+            info = zipfile.ZipInfo(member, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            with open(os.path.join(out_dir, member), "rb") as fp:
+                bundle.writestr(info, fp.read())
+    return {"path": "pack.zip", "sha256": sha256(path), "size": os.path.getsize(path)}
 
 
 def run(cmd):
@@ -403,6 +431,7 @@ def main():
                 shutil.rmtree(out_dir, ignore_errors=True)
                 continue
             os.makedirs(out_dir, exist_ok=True)
+            manifest["bundle"] = write_bundle(out_dir, manifest)
             with open(
                 os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8"
             ) as fp:

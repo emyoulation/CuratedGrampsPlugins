@@ -31,6 +31,10 @@ import struct
 import sys
 import tempfile
 import threading
+import time
+import zipfile
+from io import BytesIO
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from gi.repository import GLib
@@ -80,7 +84,7 @@ CONFIG.register("packs.addons", True)
 CONFIG.register("packs.glade", True)
 CONFIG.register("packs.check_at_startup", False)
 CONFIG.register("packs.last_check", "")
-CONFIG.register("window.width", 640)
+CONFIG.register("window.width", 820)
 CONFIG.register("window.height", 720)
 CONFIG.load()
 CONFIG.set("meta.plugin_id", PLUGIN_ID)
@@ -356,7 +360,7 @@ def merge_mo(base_path, pack_path, out_path):
 # ------------------------------------------------------------------------
 # Option A: merge the core pack into running translators
 # ------------------------------------------------------------------------
-_OVERLAID = set()
+_MARK = "_translation_updater_overlaid"
 
 
 def overlay_translation(trans, force=False):
@@ -364,7 +368,9 @@ def overlay_translation(trans, force=False):
     if not CONFIG.get("packs.core") or not isinstance(trans, GrampsTranslations):
         return False
     catalog = getattr(trans, "_catalog", None)
-    if catalog is None or (id(catalog) in _OVERLAID and not force):
+    # Marked on the translator itself: Python reuses object ids, so a set of
+    # ids could wrongly skip a translator created later.
+    if catalog is None or (getattr(trans, _MARK, False) and not force):
         return False
     _code, path = valid_core_pack(getattr(trans, "lang", None))
     if not path:
@@ -373,7 +379,7 @@ def overlay_translation(trans, force=False):
         fresh = gettext.GNUTranslations(fp)
     fresh._catalog.pop("", None)  # pylint: disable=protected-access
     catalog.update(fresh._catalog)  # pylint: disable=protected-access
-    _OVERLAID.add(id(catalog))
+    setattr(trans, _MARK, True)
     return True
 
 
@@ -393,12 +399,37 @@ def _patched_get_translation(self, domain=None, localedir=None, languages=None):
     return trans
 
 
+def _addon_pack_translator(self, name, addon_path, lang, domain, fallback):
+    """Pack translator for one addon, falling back to fallback; or None."""
+    _code, path = valid_addon_pack(name, addon_path, lang)
+    if not path:
+        return None
+    pack = gettext.translation(
+        domain,
+        localedir=addon_pack_root(name),
+        languages=[lang],
+        class_=GrampsTranslations,
+    )
+    pack.lang = lang
+    if fallback is not None:
+        pack.add_fallback(fallback)
+    return pack
+
+
 def _patched_get_addon_translator(self, filename=None, domain="addon", languages=None):
     # Call through __wrapped__ (not a captured reference) so that a later
     # patch such as Addon Locale Fix can slot in underneath this one.
-    result = _patched_get_addon_translator.__wrapped__(
-        self, filename, domain, languages
-    )
+    try:
+        result = _patched_get_addon_translator.__wrapped__(
+            self, filename, domain, languages
+        )
+    except ValueError:
+        # Stock Gramps raises when the addon ships no translation for the
+        # language. A downloaded pack can still supply one.
+        rescued = _rescue_addon_translator(self, filename, domain, languages)
+        if rescued is None:
+            raise
+        return rescued
     if not filename or not CONFIG.get("packs.addons"):
         return result
     try:
@@ -407,21 +438,34 @@ def _patched_get_addon_translator(self, filename=None, domain="addon", languages
             return result  # English: nothing to layer
         addon_path = os.path.dirname(os.path.abspath(filename))
         name = os.path.basename(addon_path)
-        _code, path = valid_addon_pack(name, addon_path, lang)
-        if not path:
-            return result
-        pack = gettext.translation(
-            domain,
-            localedir=addon_pack_root(name),
-            languages=[lang],
-            class_=GrampsTranslations,
-        )
-        pack.lang = lang
-        pack.add_fallback(result)
-        return pack
+        pack = _addon_pack_translator(self, name, addon_path, lang, domain, result)
+        return pack or result
     except Exception:  # pylint: disable=broad-except
         LOG.warning("Addon translation pack failed for %s", filename, exc_info=True)
         return result
+
+
+def _rescue_addon_translator(self, filename, domain, languages):
+    """Pack translator (with Gramps as fallback) when stock lookup failed."""
+    if not filename or not CONFIG.get("packs.addons"):
+        return None
+    addon_path = os.path.dirname(os.path.abspath(filename))
+    name = os.path.basename(addon_path)
+    for lang in languages or self.language or []:
+        try:
+            fallback = self._get_translation(languages=[lang])
+        except ValueError:
+            fallback = None
+        try:
+            pack = _addon_pack_translator(
+                self, name, addon_path, lang, domain, fallback
+            )
+        except Exception:  # pylint: disable=broad-except
+            LOG.warning("Addon translation pack failed for %s", filename, exc_info=True)
+            pack = None
+        if pack is not None:
+            return pack
+    return None
 
 
 def install_patches():
@@ -590,12 +634,37 @@ def _url(*parts):
     return "/".join([CONFIG.get("source.base_url").rstrip("/")] + list(parts))
 
 
-def fetch(url, timeout=30):
+RETRY_CODES = (429, 500, 502, 503, 504)
+
+
+def fetch(url, timeout=30, tries=5):
+    """
+    Download url. When the server says "too many requests" or is briefly
+    unavailable, wait (as long as it asks, or 2, 4, 8 ... seconds) and retry.
+    Only called from background threads, so waiting does not freeze Gramps.
+    """
     request = Request(
         url, headers={"User-Agent": "Gramps/%s TranslationUpdater" % VERSION}
     )
-    with urlopen(request, timeout=timeout) as response:
-        return response.read()
+    for attempt in range(tries):
+        try:
+            with urlopen(request, timeout=timeout) as response:
+                return response.read()
+        except HTTPError as err:
+            if err.code not in RETRY_CODES or attempt == tries - 1:
+                raise
+            try:
+                wait = float(err.headers.get("Retry-After", ""))
+            except ValueError:
+                wait = 2.0 ** (attempt + 1)
+            wait = min(max(wait, 1.0), 60.0)
+        except URLError:
+            if attempt == tries - 1:
+                raise
+            wait = 2.0 ** (attempt + 1)
+        LOG.info("Retrying %s in %.0f s", url, wait)
+        time.sleep(wait)
+    raise RuntimeError("unreachable")
 
 
 def fetch_json(url):
@@ -643,11 +712,39 @@ def selected_languages():
     return [code] if code else []
 
 
-def _download_entry(lang, entry, dest):
+class _Bundle:
+    """
+    The language's pack.zip, downloaded at most once and only when some
+    wanted file has changed. Falls back to single files for packs built
+    before bundles existed.
+    """
+
+    def __init__(self, lang, manifest):
+        self.lang = lang
+        self.entry = manifest.get("bundle")
+        self.zip = None
+
+    def read(self, path):
+        if not self.entry:
+            return None
+        if self.zip is None:
+            data = fetch(_url(branch(), self.lang, self.entry["path"]))
+            if hashlib.sha256(data).hexdigest() != self.entry["sha256"]:
+                raise ValueError(_("Checksum mismatch for %s") % self.entry["path"])
+            self.zip = zipfile.ZipFile(BytesIO(data))
+        try:
+            return self.zip.read(path)
+        except KeyError:
+            return None
+
+
+def _download_entry(lang, entry, dest, bundle=None):
     """Download one pack file if its hash differs. Returns True if replaced."""
     if file_sha(dest) == entry["sha256"]:
         return False
-    data = fetch(_url(branch(), lang, entry["path"]))
+    data = bundle.read(entry["path"]) if bundle else None
+    if data is None:
+        data = fetch(_url(branch(), lang, entry["path"]))
     if hashlib.sha256(data).hexdigest() != entry["sha256"]:
         raise ValueError(_("Checksum mismatch for %s") % entry["path"])
     write_atomic(dest, data)
@@ -695,7 +792,14 @@ def update_packs(languages=None, progress=None):
 
     total = max(len(languages), 1)
     for number, code in enumerate(languages):
-        result = {"lang": code, "core": False, "addons": 0, "removed": 0, "error": ""}
+        result = {
+            "lang": code,
+            "core": False,
+            "addons": 0,
+            "updated": [],
+            "removed": 0,
+            "error": "",
+        }
         results.append(result)
         if progress:
             progress(number / total, code)
@@ -704,12 +808,15 @@ def update_packs(languages=None, progress=None):
             continue
         try:
             manifest = fetch_json(_url(branch(), code, "manifest.json"))
+            bundle = _Bundle(code, manifest)
             lang_state = st["langs"].setdefault(code, {})
             lang_state["checked"] = now_iso()
 
             core_dest = mo_path(core_pack_root(), code, CORE_DOMAIN)
             if want_core and manifest.get("core"):
-                result["core"] = _download_entry(code, manifest["core"], core_dest)
+                result["core"] = _download_entry(
+                    code, manifest["core"], core_dest, bundle
+                )
                 lang_state["core"] = {
                     "sha256": manifest["core"]["sha256"],
                     "system_sha256": file_sha(system_core_mo(code)),
@@ -737,13 +844,21 @@ def update_packs(languages=None, progress=None):
                         _remove(os.path.join(addon_pack_root(name), code))
                         result["removed"] += 1
                     continue
-                if _download_entry(code, entry, dest):
+                if _download_entry(code, entry, dest, bundle):
                     result["addons"] += 1
+                    result["updated"].append(name)
                 addon_state[name] = {
                     "sha256": entry["sha256"],
                     "shipped_sha256": file_sha(shipped_addon_mo(addon_path, code)),
                 }
             lang_state["addons"] = addon_state
+            if result["core"] or result["updated"]:
+                # Remembered so the tool can show what the last update brought.
+                lang_state["last_update"] = {
+                    "date": lang_state["checked"],
+                    "core": result["core"],
+                    "addons": list(result["updated"]),
+                }
         except Exception as err:  # pylint: disable=broad-except
             LOG.warning("Translation pack update failed for %s", code, exc_info=True)
             result["error"] = str(err)
@@ -767,25 +882,296 @@ def apply_now():
         bind_glade()
 
 
-def summarize(results):
-    """One line per language for the user."""
+def addon_titles():
+    """
+    {addon folder: display name} from the plugin registry.
+
+    A folder can register several plugins; a listed one (such as the tool)
+    is preferred over a hidden helper. Falls back to the folder name.
+    """
+    found = {}
+    try:
+        from gramps.gen.plug import (  # pylint: disable=import-outside-toplevel
+            PTYPE_STR,
+            PluginRegister,
+        )
+
+        preg = PluginRegister.get_instance()
+        for ptype in PTYPE_STR:
+            for pdata in preg.type_plugins(ptype):
+                folder = os.path.basename(os.path.normpath(pdata.fpath or ""))
+                if not folder or not pdata.name:
+                    continue
+                listed = getattr(pdata, "include_in_listing", True)
+                if folder not in found or (listed and not found[folder][1]):
+                    found[folder] = (pdata.name, listed)
+    except Exception:  # pylint: disable=broad-except
+        LOG.debug("Could not read addon names", exc_info=True)
+    return {folder: name for folder, (name, _listed) in found.items()}
+
+
+def item_names(core, addons, titles=None):
+    """Sorted display names for an update: Gramps first, then addons."""
+    titles = addon_titles() if titles is None else titles
+    names = sorted((titles.get(name, name) for name in addons), key=str.lower)
+    return ([_("Gramps")] if core else []) + names
+
+
+def summarize(results, lang_names=None, limit=6):
+    """
+    One line per language for the user, naming what was updated.
+
+    :param lang_names: optional {code: display name}
+    :param limit: how many item names to show before "and N more"
+    """
+    lang_names = lang_names or {}
+    titles = addon_titles()
     lines = []
     for res in results:
+        label = lang_names.get(res["lang"], res["lang"])
         if res["error"]:
-            lines.append("%s: %s" % (res["lang"], res["error"]))
+            lines.append("%s: %s" % (label, res["error"]))
             continue
+        names = item_names(res["core"], res.get("updated", []), titles)
+        if len(names) > limit + 1:  # never "and 1 more"
+            more = len(names) - limit
+            names = names[:limit] + [_("and %d more") % more]
         parts = []
-        if res["core"]:
-            parts.append(_("Gramps updated"))
-        if res["addons"]:
-            parts.append(
-                ngettext("%d addon updated", "%d addons updated", res["addons"])
-                % res["addons"]
-            )
+        if names:
+            parts.append(", ".join(names))
         if res["removed"]:
             parts.append(_("%d removed") % res["removed"])
-        lines.append("%s: %s" % (res["lang"], ", ".join(parts) or _("up to date")))
+        lines.append("%s: %s" % (label, "; ".join(parts) or _("up to date")))
     return lines
+
+
+# ------------------------------------------------------------------------
+# Language details for the table (same rules as Environment Inspector)
+# ------------------------------------------------------------------------
+# Region names in Gramps' Windows locale table -> ISO codes. A copy of the
+# table in Environment Inspector (envinsp_catalog.py); keep the two in step.
+_COUNTRY_ISO = {
+    "Albania": "AL", "Austria": "AT", "Brazil": "BR", "Bulgaria": "BG",
+    "China": "CN", "Croatia": "HR", "Czech Republic": "CZ", "Denmark": "DK",
+    "Finland": "FI", "France": "FR", "Germany": "DE", "Greece": "GR",
+    "Hong Kong": "HK", "Hungary": "HU", "Iran": "IR", "Israel": "IL",
+    "Italy": "IT", "Japan": "JP", "Korea": "KR", "Lithuania": "LT",
+    "Netherlands": "NL", "Norway": "NO", "Poland": "PL", "Portugal": "PT",
+    "Romania": "RO", "Russia": "RU", "Saudi Arabia": "SA",
+    "Serbia and Montenegro": "RS", "Slovakia": "SK", "Slovenia": "SI",
+    "Spain": "ES", "Sweden": "SE", "Taiwan": "TW", "Turkey": "TR",
+    "Ukraine": "UA", "United Kingdom": "GB", "United States": "US",
+    "Vietnam": "VN",
+}  # fmt: skip
+_LANG_CACHE = {}
+
+
+def _flag(iso):
+    if len(iso) != 2 or not iso.isalpha():
+        return ""
+    return "".join(chr(0x1F1E6 + ord(ch) - ord("A")) for ch in iso.upper())
+
+
+def _locale_table():
+    try:
+        from gramps.gen.utils.win32locale import (  # pylint: disable=import-outside-toplevel
+            _LOCALE_NAMES,
+        )
+    except ImportError:
+        return {}
+    return _LOCALE_NAMES
+
+
+def language_info(code):
+    """
+    {region, name, endonym} for a pack code, as Environment Inspector shows
+    them: region is flag plus ISO code (from the code itself, else the region
+    Gramps pairs with the language), name is in the session language, endonym
+    is the language's name in itself (from its installed Gramps catalog).
+    """
+    if code in _LANG_CACHE:
+        return _LANG_CACHE[code]
+    table = _locale_table()
+    entry = table.get(code) or table.get(code[:2])
+    english = entry[2] if entry else code
+    region = ""
+    parts = code.split("_")
+    if len(parts) > 1 and len(parts[1]) == 2:
+        region = parts[1].upper()
+    elif entry and entry[0] and "_" in entry[0]:
+        region = _COUNTRY_ISO.get(entry[0].split("_", 1)[1], "")
+    try:
+        names = {c: n for n, c in glocale.get_language_dict().items()}
+    except Exception:  # pylint: disable=broad-except
+        names = {}
+    endonym = ""
+    if not code.startswith("en"):
+        installed = system_core_mo(code)
+        if installed:
+            try:
+                with open(installed, "rb") as fp:
+                    endonym = gettext.GNUTranslations(fp).gettext(english)
+            except (OSError, ValueError):
+                endonym = ""
+            if endonym == english:
+                endonym = ""
+    else:
+        endonym = english
+    info = {
+        "region": ("%s %s" % (_flag(region), region)).strip(),
+        "name": names.get(code, english),
+        "endonym": endonym,
+    }
+    _LANG_CACHE[code] = info
+    return info
+
+
+# ------------------------------------------------------------------------
+# Verification: prove that Gramps really uses the downloaded translations
+# ------------------------------------------------------------------------
+def _split_key(key):
+    """(context or None, msgid, is_plural) from a raw .mo key."""
+    text = key.decode("utf-8", "replace")
+    context = None
+    if "\x04" in text:
+        context, text = text.split("\x04", 1)
+    return context, text.split("\x00", 1)[0], "\x00" in text
+
+
+def _live(trans, context, msgid):
+    """What Gramps' own translator returns for a string right now."""
+    if context is not None:
+        return trans.pgettext(context, msgid)
+    return trans.gettext(msgid)
+
+
+def _compare(name, base, pack, trans, paths=("", "")):
+    """
+    Section dict comparing installed (base) and downloaded (pack) entries,
+    and what trans returns. Plural entries are left out: which plural form
+    a test number selects differs by language.
+    """
+    rows = []
+    for key, value in pack.items():
+        if not key or base.get(key) == value:
+            continue
+        context, msgid, plural = _split_key(key)
+        if plural:
+            continue
+        downloaded = value.decode("utf-8", "replace")
+        installed = base.get(key, b"").decode("utf-8", "replace")
+        live = _live(trans, context, msgid)
+        english = msgid if context is None else "%s  [%s]" % (msgid, context)
+        rows.append((english, installed, downloaded, live, live == downloaded))
+    rows.sort(key=lambda row: (row[4], row[0].lower()))  # problems first
+    return {
+        "name": name,
+        "differ": len(rows),
+        "ok": sum(1 for row in rows if row[4]),
+        "rows": rows,
+        "installed_path": paths[0] or "",
+        "downloaded_path": paths[1] or "",
+    }
+
+
+def verify(code):
+    """
+    Compare installed and downloaded translations for one language, and ask
+    Gramps' own translators (the same calls Gramps and addons make) which
+    text they return now.
+
+    :returns: dict with lang, sections (list) and notes (list of str)
+    """
+    reload_state()
+    install_patches()
+    result = {"lang": code, "sections": [], "notes": []}
+
+    _pcode, pack = valid_core_pack(code)
+    if not pack:
+        result["notes"].append(
+            _("No Gramps translation is downloaded for this language, or it is paused.")
+        )
+    else:
+        system = system_core_mo(code)
+        try:
+            # New translator through the patched lookup, as Gramps makes one.
+            trans = glocale._get_translation(  # pylint: disable=protected-access
+                languages=[code]
+            )
+        except ValueError:
+            trans = None
+            result["notes"].append(
+                _(
+                    "Gramps has no installed translation for this language, so "
+                    "the downloaded Gramps translation cannot be layered on it."
+                )
+            )
+        if trans is not None:
+            result["sections"].append(
+                _compare(
+                    _("Gramps"),
+                    read_mo_raw(system) if system else {},
+                    read_mo_raw(pack),
+                    trans,
+                    (system, pack),
+                )
+            )
+
+    titles = addon_titles()
+    for name, addon_path in sorted(installed_addons().items()):
+        _acode, apack = valid_addon_pack(name, addon_path, code)
+        if not apack:
+            continue
+        shipped = shipped_addon_mo(addon_path, code)
+        try:
+            trans = glocale.get_addon_translator(
+                os.path.join(addon_path, "__init__.py"), languages=[code]
+            )
+        except ValueError as err:
+            result["notes"].append("%s: %s" % (titles.get(name, name), err))
+            continue
+        section = _compare(
+            titles.get(name, name),
+            read_mo_raw(shipped) if shipped else {},
+            read_mo_raw(apack),
+            trans,
+            (shipped, apack),
+        )
+        if section["differ"]:
+            result["sections"].append(section)
+    return result
+
+
+def verify_report(result, samples=3):
+    """Plain-text report of a verify() result, for pasting into a post."""
+    index = cached_index() or {}
+    lines = [
+        "Translation Updater check: %s" % result["lang"],
+        "Gramps %s, packs for %s, checked %s"
+        % (VERSION, branch(), now_iso()[:16].replace("T", " ")),
+    ]
+    for key, source in sorted(index.get("sources", {}).items()):
+        lines.append(
+            "  %s: %s (%s)"
+            % (key, source.get("commit", "")[:10], source.get("date", "")[:10])
+        )
+    total = sum(sec["differ"] for sec in result["sections"])
+    good = sum(sec["ok"] for sec in result["sections"])
+    lines.append(
+        "Strings that differ from the installed translation: %d; "
+        "Gramps now returns the downloaded text for %d of them." % (total, good)
+    )
+    for note in result["notes"]:
+        lines.append("Note: " + note)
+    for sec in result["sections"]:
+        lines.append("")
+        lines.append("%s: %d of %d" % (sec["name"], sec["ok"], sec["differ"]))
+        for english, installed, downloaded, live, okay in sec["rows"][:samples]:
+            lines.append("  English:    " + english)
+            lines.append("  Installed:  " + (installed or "(none)"))
+            lines.append("  Downloaded: " + downloaded)
+            lines.append("  Gramps now: %s  %s" % (live, "OK" if okay else "MISMATCH"))
+    return "\n".join(lines)
 
 
 # ------------------------------------------------------------------------

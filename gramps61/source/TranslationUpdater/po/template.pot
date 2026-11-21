@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Translation Updater startup 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 20:13-0600\n"
+"POT-Creation-Date: 2026-11-21 00:03-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+#: TipOfDayFix.gpr.py:28
+msgid "Tip of the Day Fix"
+msgstr ""
+
+#: TipOfDayFix.gpr.py:30
+msgid ""
+"Monkey patch for Tip of the Day: shows the paragraph breaks in tips "
+"correctly when they are written in an unexpected form, and stops the GTK "
+"markup warnings this causes."
+msgstr ""
+
 #: TranslationUpdater.gpr.py:31
 msgid "Translation Updater startup"
 msgstr ""
@@ -26,7 +37,7 @@ msgstr ""
 msgid "Applies translation packs downloaded by the Translation Updater tool."
 msgstr ""
 
-#: TranslationUpdater.gpr.py:52 TranslationUpdater.py:32
+#: TranslationUpdater.gpr.py:52 TranslationUpdater.py:66
 msgid "Translation Updater"
 msgstr ""
 
@@ -36,220 +47,385 @@ msgid ""
 "changing addon versions."
 msgstr ""
 
-#: TranslationUpdater.py:67
+#: TranslationUpdater.py:53
+msgid "Help"
+msgstr ""
+
+#: TranslationUpdater.py:117
 msgid ""
 "Download newer translations for Gramps and for your installed addons, in the "
 "languages you choose. Addons keep their version numbers; only the "
 "translations change."
 msgstr ""
 
-#: TranslationUpdater.py:77
+#: TranslationUpdater.py:127
 msgid "Languages"
 msgstr ""
 
-#: TranslationUpdater.py:86
-msgid "Language"
+#: TranslationUpdater.py:142
+msgid "Region"
 msgstr ""
 
-#: TranslationUpdater.py:87
-msgid "Code"
-msgstr ""
-
-#: TranslationUpdater.py:88
-msgid "Status"
-msgstr ""
-
-#: TranslationUpdater.py:98
-msgid "Refresh list"
-msgstr ""
-
-#: TranslationUpdater.py:99
-msgid "Get the list of published languages"
-msgstr ""
-
-#: TranslationUpdater.py:109
-msgid "Gramps translations"
-msgstr ""
-
-#: TranslationUpdater.py:110
-msgid "Addon translations"
-msgstr ""
-
-#: TranslationUpdater.py:113
-msgid "Also use updated Gramps translations in Glade-built dialogs"
-msgstr ""
-
-#: TranslationUpdater.py:114
-msgid "Takes effect when Gramps restarts"
-msgstr ""
-
-#: TranslationUpdater.py:118
-msgid "Check for updates when Gramps starts (at most once a day)"
-msgstr ""
-
-#: TranslationUpdater.py:130
-msgid "Advanced"
-msgstr ""
-
-#: TranslationUpdater.py:133
-msgid "Source:"
-msgstr ""
-
-#: TranslationUpdater.py:139
-msgid "Branch:"
-msgstr ""
-
-#: TranslationUpdater.py:141
-msgid "Packs folder:"
+#: TranslationUpdater.py:146
+msgid ""
+"The region named in the translation code, or else the region Gramps pairs "
+"with the language"
 msgstr ""
 
 #: TranslationUpdater.py:150
+msgid "Code"
+msgstr ""
+
+#: TranslationUpdater.py:151
+msgid "Name"
+msgstr ""
+
+#: TranslationUpdater.py:152
+msgid "Endonym"
+msgstr ""
+
+#: TranslationUpdater.py:154
+msgid "Addons"
+msgstr ""
+
+#: TranslationUpdater.py:157
+msgid "How many addons have a published translation"
+msgstr ""
+
+#: TranslationUpdater.py:159
+msgid "Status"
+msgstr ""
+
+#: TranslationUpdater.py:174
+msgid "Refresh list"
+msgstr ""
+
+#: TranslationUpdater.py:175
+msgid "Get the list of published languages"
+msgstr ""
+
+#: TranslationUpdater.py:185
+msgid "Gramps translations"
+msgstr ""
+
+#: TranslationUpdater.py:186
+msgid "Addon translations"
+msgstr ""
+
+#: TranslationUpdater.py:189
+msgid "Also use updated Gramps translations in Glade-built dialogs"
+msgstr ""
+
+#: TranslationUpdater.py:190
+msgid "Takes effect when Gramps restarts"
+msgstr ""
+
+#: TranslationUpdater.py:194
+msgid "Check for updates when Gramps starts (at most once a day)"
+msgstr ""
+
+#: TranslationUpdater.py:206
+msgid "Advanced"
+msgstr ""
+
+#: TranslationUpdater.py:209
+msgid "Source:"
+msgstr ""
+
+#: TranslationUpdater.py:215
+msgid "Branch:"
+msgstr ""
+
+#: TranslationUpdater.py:217
+msgid "Packs folder:"
+msgstr ""
+
+#: TranslationUpdater.py:226
 msgid "Full-coverage launcher"
 msgstr ""
 
-#: TranslationUpdater.py:156
+#: TranslationUpdater.py:232
 msgid ""
 "Some text, such as menu labels, is translated before addons load. A separate "
 "launcher starts Gramps with the updated translations from the very beginning."
 msgstr ""
 
-#: TranslationUpdater.py:170
+#: TranslationUpdater.py:246
 msgid "Command line equivalent"
 msgstr ""
 
-#: TranslationUpdater.py:173
+#: TranslationUpdater.py:249
 msgid "Create launcher"
 msgstr ""
 
-#: TranslationUpdater.py:175
+#: TranslationUpdater.py:251
 msgid "Remove launcher"
 msgstr ""
 
-#: TranslationUpdater.py:196
-msgid "Help"
+#: TranslationUpdater.py:275
+msgid "Verify"
 msgstr ""
 
-#: TranslationUpdater.py:199
+#: TranslationUpdater.py:278
+msgid ""
+"Show which strings changed for the highlighted language, and whether Gramps "
+"now uses the downloaded text"
+msgstr ""
+
+#: TranslationUpdater.py:284 TranslationUpdater.py:606
 msgid "Close"
 msgstr ""
 
-#: TranslationUpdater.py:202
+#: TranslationUpdater.py:287
 msgid "Check for updates"
 msgstr ""
 
-#: TranslationUpdater.py:227
+#: TranslationUpdater.py:303 TranslationUpdaterLib.py:917
+#: TranslationUpdaterLib.py:1112
 msgid "Gramps"
 msgstr ""
 
-#: TranslationUpdater.py:229
+#: TranslationUpdater.py:305
 msgid "Gramps paused (installed translation changed)"
 msgstr ""
 
-#: TranslationUpdater.py:232
+#: TranslationUpdater.py:308
 #, python-format
 msgid "%d addon"
 msgid_plural "%d addons"
 msgstr[0] ""
 msgstr[1] ""
 
-#: TranslationUpdater.py:235
+#: TranslationUpdater.py:311
 #, python-format
 msgid "checked %s"
 msgstr ""
 
-#: TranslationUpdater.py:251
+#: TranslationUpdater.py:320
+#, python-format
+msgid "Last updated %s:"
+msgstr ""
+
+#: TranslationUpdater.py:353
 msgid "Press Refresh list to see which languages are published."
 msgstr ""
 
-#: TranslationUpdater.py:330
+#: TranslationUpdater.py:442
 msgid "Getting the list of published languages"
 msgstr ""
 
-#: TranslationUpdater.py:337
+#: TranslationUpdater.py:449
 #, python-format
 msgid "Could not get the language list: %s"
 msgstr ""
 
-#: TranslationUpdater.py:341
+#: TranslationUpdater.py:453
 #, python-format
 msgid "%d languages published for %s."
 msgstr ""
 
-#: TranslationUpdater.py:350
+#: TranslationUpdater.py:462 TranslationUpdater.py:497
 msgid "Choose at least one language first."
 msgstr ""
 
-#: TranslationUpdater.py:357
+#: TranslationUpdater.py:469
 msgid "Checking translations"
 msgstr ""
 
-#: TranslationUpdater.py:363
+#: TranslationUpdater.py:475
 #, python-format
 msgid "Could not check for translations: %s"
 msgstr ""
 
-#: TranslationUpdater.py:371
+#: TranslationUpdater.py:484
 msgid "Translations checked"
 msgstr ""
 
-#: TranslationUpdater.py:373
+#: TranslationUpdater.py:486
 msgid "Restart Gramps so every window uses the new translations."
 msgstr ""
 
-#: TranslationUpdater.py:380
+#: TranslationUpdater.py:487
+msgid "Point at a language to see what its last update brought."
+msgstr ""
+
+#: TranslationUpdater.py:518
 #, python-format
 msgid "Could not create the launcher: %s"
 msgstr ""
 
-#: TranslationUpdater.py:394
+#: TranslationUpdater.py:532
 msgid "Gramps is running from the launcher now."
 msgstr ""
 
-#: TranslationUpdater.py:396
+#: TranslationUpdater.py:534
 msgid "Look for \"Gramps (updated translations)\" in your menu."
 msgstr ""
 
-#: TranslationUpdaterLib.py:567
+#: TranslationUpdater.py:566
+#, python-format
+msgid "Verify translations: %s"
+msgstr ""
+
+#: TranslationUpdater.py:576
+#, python-format
+msgid ""
+"Each row is a phrase that the download changed. Installed: the translation "
+"that came with Gramps %(version)s or with the addon. Downloaded: the "
+"translation that Translation Updater downloaded. Gramps now: the text Gramps "
+"shows today. When Gramps now matches Downloaded, the download is working."
+msgstr ""
+
+#: TranslationUpdater.py:602
+msgid "Copy report"
+msgstr ""
+
+#: TranslationUpdater.py:603
+msgid "Copy a short text report for a post or email"
+msgstr ""
+
+#: TranslationUpdater.py:641
+msgid "The download changed no phrases compared with what is installed."
+msgstr ""
+
+#: TranslationUpdater.py:644
+#, python-format
+msgid ""
+"The download changed %(total)d phrases. Gramps now shows the downloaded text "
+"for all of them."
+msgstr ""
+
+#: TranslationUpdater.py:649
+#, python-format
+msgid ""
+"The download changed %(total)d phrases. Gramps now shows the downloaded text "
+"for %(good)d of them; the %(bad)d that do not match are listed first."
+msgstr ""
+
+#: TranslationUpdater.py:661
+msgid "All"
+msgstr ""
+
+#: TranslationUpdater.py:677 TranslationUpdater.py:695
+msgid "Item"
+msgstr ""
+
+#: TranslationUpdater.py:678
+msgid "Changed"
+msgstr ""
+
+#: TranslationUpdater.py:678
+msgid "Phrases the download changed"
+msgstr ""
+
+#: TranslationUpdater.py:680
+msgid "Shown"
+msgstr ""
+
+#: TranslationUpdater.py:683
+msgid "Phrases for which Gramps now shows the downloaded text"
+msgstr ""
+
+#: TranslationUpdater.py:696
+msgid "English"
+msgstr ""
+
+#: TranslationUpdater.py:697
+msgid "Installed"
+msgstr ""
+
+#: TranslationUpdater.py:698
+msgid "Downloaded"
+msgstr ""
+
+#: TranslationUpdater.py:699
+msgid "Gramps now"
+msgstr ""
+
+#: TranslationUpdater.py:710
+msgid "Files"
+msgstr ""
+
+#: TranslationUpdater.py:718
+msgid "Installed:"
+msgstr ""
+
+#: TranslationUpdater.py:720
+msgid "Downloaded:"
+msgstr ""
+
+#: TranslationUpdater.py:722
+msgid "Open folder"
+msgstr ""
+
+#: TranslationUpdater.py:723
+msgid "Show the downloaded file in its folder"
+msgstr ""
+
+#: TranslationUpdater.py:728
+msgid ""
+"Both are .mo files: compiled translation catalogs that Gramps reads with "
+"Python gettext. They are binary, not compressed. To read one as text, run: "
+"msgunfmt FILE"
+msgstr ""
+
+#: TranslationUpdater.py:791
+msgid "(none)"
+msgstr ""
+
+#: TranslationUpdater.py:798 TranslationUpdater.py:799
+msgid "(choose an item above)"
+msgstr ""
+
+#: TranslationUpdater.py:805
+msgid "(none: this addon has no translation of its own)"
+msgstr ""
+
+#: TranslationUpdaterLib.py:611
 msgid "Gramps (updated translations)"
 msgstr ""
 
-#: TranslationUpdaterLib.py:568
+#: TranslationUpdaterLib.py:612
 msgid "Gramps using translations from Translation Updater"
 msgstr ""
 
-#: TranslationUpdaterLib.py:604
+#: TranslationUpdaterLib.py:673
 msgid "This pack format is newer than Translation Updater"
 msgstr ""
 
-#: TranslationUpdaterLib.py:652
+#: TranslationUpdaterLib.py:733 TranslationUpdaterLib.py:749
 #, python-format
 msgid "Checksum mismatch for %s"
 msgstr ""
 
-#: TranslationUpdaterLib.py:703
+#: TranslationUpdaterLib.py:807
 msgid "No translations published for this language"
 msgstr ""
 
-#: TranslationUpdaterLib.py:779
-msgid "Gramps updated"
+#: TranslationUpdaterLib.py:938
+#, python-format
+msgid "and %d more"
 msgstr ""
 
-#: TranslationUpdaterLib.py:782
-#, python-format
-msgid "%d addon updated"
-msgid_plural "%d addons updated"
-msgstr[0] ""
-msgstr[1] ""
-
-#: TranslationUpdaterLib.py:786
+#: TranslationUpdaterLib.py:943
 #, python-format
 msgid "%d removed"
 msgstr ""
 
-#: TranslationUpdaterLib.py:787
+#: TranslationUpdaterLib.py:944
 msgid "up to date"
 msgstr ""
 
-#: TranslationUpdaterLib.py:822
+#: TranslationUpdaterLib.py:1092
+msgid "No Gramps translation is downloaded for this language, or it is paused."
+msgstr ""
+
+#: TranslationUpdaterLib.py:1105
+msgid ""
+"Gramps has no installed translation for this language, so the downloaded "
+"Gramps translation cannot be layered on it."
+msgstr ""
+
+#: TranslationUpdaterLib.py:1208
 msgid "Translation updates downloaded; restart Gramps to see them all."
 msgstr ""
