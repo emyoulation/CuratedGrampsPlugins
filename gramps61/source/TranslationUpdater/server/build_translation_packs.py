@@ -143,9 +143,12 @@ def with_donor(po_file, donor_po, tmp_dir, tag):
     clean = os.path.join(tmp_dir, "%s-donor.po" % tag)
     combined = os.path.join(tmp_dir, "%s-combined.po" % tag)
     # Only finished donor work: no fuzzy, untranslated or obsolete entries.
+    # --force-po: gettext tools write no file at all when the result is
+    # empty (a donor language with nothing translated yet).
     error = run(
         [
             "msgattrib",
+            "--force-po",
             "--translated",
             "--no-fuzzy",
             "--no-obsolete",
@@ -158,8 +161,9 @@ def with_donor(po_file, donor_po, tmp_dir, tag):
         return po_file, error
     # --use-first: the donor translation wins; the header comes from the
     # donor too, which only matters for Plural-Forms (the same per language).
-    error = run(["msgcat", "--use-first", "-o", combined, clean, po_file])
-    os.remove(clean)
+    error = run(["msgcat", "--force-po", "--use-first", "-o", combined, clean, po_file])
+    if os.path.exists(clean):
+        os.remove(clean)
     if error:
         return po_file, error
     return combined, None
@@ -171,6 +175,7 @@ def restrict(po_file, pot, out_po):
         [
             "msgmerge",
             "--quiet",
+            "--force-po",
             "--for-msgfmt",
             "--no-fuzzy-matching",
             "-o",
@@ -214,6 +219,7 @@ def build_addon(addons_src, lang, addon, out_dir, tmp_dir, lang_po=None):
         [
             "msgmerge",
             "--quiet",
+            "--force-po",
             "--for-msgfmt",
             "--no-fuzzy-matching",
             "-o",
@@ -228,7 +234,8 @@ def build_addon(addons_src, lang, addon, out_dir, tmp_dir, lang_po=None):
         return addon, None, result.stderr.strip() or "msgmerge failed"
     mo_file = os.path.join(out_dir, "addons", f"{addon}.mo")
     error = compile_po(tmp_po, mo_file)
-    os.remove(tmp_po)
+    if os.path.exists(tmp_po):
+        os.remove(tmp_po)
     if error:
         return addon, None, error
     count = mo_count(mo_file)
@@ -341,10 +348,17 @@ def main():
                     if not error and combined != po_file:
                         merged = os.path.join(tmp_dir, f"{lang}-core.po")
                         error = restrict(combined, core_pot, merged)
-                        os.remove(combined)
+                        if os.path.exists(combined):
+                            os.remove(combined)
                         po_file = merged
                 if not error:
                     error = compile_po(po_file, mo_file)
+                plain = os.path.join(args.gramps, "po", f"{lang}.po")
+                if error and po_file != plain:
+                    # A broken donor entry must not cost the branch its own
+                    # translation: fall back to the branch file alone.
+                    print(f"[{lang}] core donor dropped: {error}", file=sys.stderr)
+                    error = compile_po(plain, mo_file)
                 if error:
                     problems += 1
                     print(f"[{lang}] core skipped: {error}", file=sys.stderr)
