@@ -396,6 +396,17 @@
     "h": "https://gramps.discourse.group/t/1889/14"
   },
   {
+    "n": "PR2296 Live Preferences",
+    "i": "PR2296_LivePreferences",
+    "t": 6,
+    "d": "Monkey patch: applies the Date format, Age display precision, Display ages for events after death, and Navigator text label Preferences without restarting Gramps. Also shows date format examples in Preferences (Gramps PR 2296).",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "PR2296_LivePreferences.addon.tgz",
+    "h": "https://github.com/gramps-project/gramps/pull/2296"
+  },
+  {
     "n": "PR2388 Gyakorló családfa ajánlat",
     "i": "PR2388_ExampleTreePrompt",
     "t": 6,

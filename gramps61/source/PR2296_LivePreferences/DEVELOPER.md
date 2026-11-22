@@ -1,0 +1,27 @@
+# PR2296 Live Preferences: Gramps core changes beyond PR 2296
+[README.md](README.md) ● [DEVELOPER.md](DEVELOPER.md)
+
+PR 2296 only changes how the Date format menu looks. To make these four settings take effect without a restart in Gramps itself, these core changes could be submitted as a separate PR (or added to PR 2296). Each setting needs a restart today because its value is read only once, when a module is imported or when a widget is built. The addon works around that from outside; core can fix it at the source.
+
+### 1. Date format (`gramps/gen/datehandler/__init__.py`, `gramps/gui/configure.py`, `gramps/gui/displaystate.py`, views)
+- The global `displayer` in `gen/datehandler/__init__.py` and the cached `GrampsLocale._dd` behind `glocale.date_displayer` (`gen/utils/grampslocale.py`) are built once with the configured format. `DateDisplay.set_format()` already exists, and every `_display_*` method reads `self.format` at call time, so changing the format in place is safe. Modules that hold `_dd = glocale.date_displayer` keep a reference to the same object, so they follow automatically. The date parser uses the locale `dhformat`, not this preference, so date entry is unaffected.
+- Suggested change: in `gen/datehandler/__init__.py`, register `config.connect("preferences.date-format", ...)` and have the callback call `set_format()` on both displayers. `gen/display/name.py` already uses `config.connect()` this way for `preferences.patronimic-surname`, and `gen` may import `config`, so the rule that `gen` must not import from `gui` is kept.
+- In `configure.py`, `date_format_changed()` should only call `config.set()` and emit a new `uistate` signal, `"dateformat-changed"`, registered in `displaystate.py` next to `"nameformat-changed"`. Remove the "Change is not immediate" `OkDialog`.
+- Views and gramplets that show dates should connect `"dateformat-changed"` to `build_tree` or `update`, following the existing `"nameformat-changed"` connections (person, family, event, relationship and pedigree views, the Person Details and Children gramplets). The citation and media views show dates but do not listen for name changes, so they need new connections. Connecting once in the `ListView` base class would cover all list views. Rebuilding the tree also rebuilds the model, which clears its LRU caches.
+
+### 2. Age display precision and Display ages for events after death (`gramps/gui/editors/displaytabs/eventrefmodel.py`, `gramps/plugins/gramplet/events.py`, `gramps/plugins/view/relview.py`)
+- `eventrefmodel.py` reads both settings into module globals at import, and `events.py` does the same for precision. Move the `config.get()` calls into `column_age()`. That is one cheap dictionary lookup per row.
+- `RelationshipView.__init__` stores `self.age_precision` once. Read the setting where the age string is built (two places), or connect the key to `build_tree`.
+- For an immediate refresh, these two keys can also emit `"dateformat-changed"`, since ages are part of how dates are shown.
+
+### 3. Show text label beside Navigator buttons (`gramps/gui/navigator.py`, `gramps/gui/basesidebar.py`, `gramps/plugins/sidebar/*.py`)
+- Every sidebar plugin (Category, Drop-Down, Expander, and Favorites in 6.1) reads `interface.sidebar-text` once in `__init__` and builds its buttons from it.
+- Recommended: `Navigator` connects to `config.connect("interface.sidebar-text", ...)` and either rebuilds the sidebar pages (call `inactive()` on the current page, remove the pages, rerun the sidebar-building part of `load_plugins()`, then call `view_changed()` with the active category and view), or calls a new optional `BaseSidebar.set_use_text(use_text)` hook. With the hook, each core sidebar shows or hides its labels and switches its icons between `Gtk.IconSize.BUTTON` and `Gtk.IconSize.DND` (the addon does this). Sidebars from other addons that do not have the hook can be rebuilt. The Favorites sidebar already rebuilds itself through `show_views()`, so rebuilding has a precedent.
+- `navigator.py` is quite different in 5.2 (Notebook plus menu) than in 6.0 and 6.1 (Stack plus combo), so a core PR should target `master` only.
+
+### 4. Preferences labels and strings (`gramps/gui/configure.py`, `po/`)
+- After items 1 to 3, remove the asterisk from "Date format *", "Age display precision *", "Display ages for events after death *" and "Show text label beside Navigator buttons *". Also remove "Requires Gramps restart to apply." from the Navigator tooltip and both "* Requires Restart" footer labels (Data and General tabs). In 5.2 to 6.1, these four are the only items marked as needing a restart.
+- Translation impact: "Date format" is already translated in core. "Age display precision", "Display ages for events after death", "Show text label beside Navigator buttons" and the shortened tooltip are new strings for translators. Keep the strings with asterisks out of the code so that they become obsolete in the `.po` files.
+
+### 5. Tests
+- PR 2296 adds `gramps/gen/datehandler/test/date_format_examples_test.py`, which checks that every format renders an example. A second `unittest` (in `gramps/gen/datehandler/test/`, with a `*_test.py` name) would check that changing `preferences.date-format` through `config.set()` changes what `datehandler.displayer.display()` and `glocale.date_displayer.display()` return. The addon passed an equivalent check off screen (headless) against the 5.2, 6.0 and 6.1 source trees.

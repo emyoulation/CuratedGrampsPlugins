@@ -1,0 +1,61 @@
+# Translation template for the 0.1.0 PR2296 Live Preferences general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the PR2296 Live Preferences package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PR2296 Live Preferences 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-22 12:17-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PR2296_LivePreferences.gpr.py:20
+msgid "PR2296 Live Preferences"
+msgstr ""
+
+#: PR2296_LivePreferences.gpr.py:22
+msgid ""
+"Monkey patch: applies the Date format, Age display precision, Display ages "
+"for events after death, and Navigator text label Preferences without "
+"restarting Gramps. Also shows date format examples in Preferences (Gramps PR "
+"2296)."
+msgstr ""
+
+#: PR2296_LivePreferences.py:164 PR2296_LivePreferences.py:165
+#, python-format
+msgid "%s: "
+msgstr ""
+
+#: PR2296_LivePreferences.py:164
+msgid "Date format *"
+msgstr ""
+
+#: PR2296_LivePreferences.py:165
+msgid "Age display precision *"
+msgstr ""
+
+#: PR2296_LivePreferences.py:166
+msgid "Display ages for events after death *"
+msgstr ""
+
+#: PR2296_LivePreferences.py:167
+msgid "Show text label beside Navigator buttons *"
+msgstr ""
+
+#: PR2296_LivePreferences.py:169
+msgid "* Requires Restart"
+msgstr ""
+
+#: PR2296_LivePreferences.py:171
+msgid ""
+"Show or hide text beside Navigator buttons (People, Families, Events...).\n"
+"Requires Gramps restart to apply."
+msgstr ""
