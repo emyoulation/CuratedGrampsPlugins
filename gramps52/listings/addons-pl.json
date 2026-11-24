@@ -23,6 +23,17 @@
     "a": 1
   },
   {
+    "n": "Auto Active and Home Person",
+    "i": "AutoActiveHome",
+    "t": 6,
+    "d": "Monkey patch for new Family Trees: when the first people are added or imported, makes the last created Person the Active Person and the first created Person the Home Person, if they are not set yet.",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "AutoActiveHome.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AutoActiveHome"
+  },
+  {
     "n": "Beta What's Next",
     "i": "Beta What's Next",
     "t": 10,
@@ -521,7 +532,7 @@
     "i": "webpthumb",
     "t": 14,
     "d": "Dedicated thumbnailer for WEBP format images",
-    "v": "0.1.4",
+    "v": "0.1.5",
     "g": "5.2",
     "s": 1,
     "z": "Thumbnailers.addon.tgz",

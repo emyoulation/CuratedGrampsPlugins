@@ -1,6 +1,14 @@
 # Changelog — WebP Thumbnailer
 <!-- -->
 [README.md](README.md) • [CHANGELOG.md](CHANGELOG.md) • [DEVELOPER.md](DEVELOPER.md) • [.webp and .avif format (native) support in the primary OSes](webp_and_avif.md)
+## 0.1.5 — 2026-11-24
+### Fixed
+- WebP images imported on systems where Python does not know the `.webp` extension (reported for Gramps 5.2.3 on Windows 10, Python 3.11) are now recorded with the MIME type `image/webp` instead of `unknown`, so they get a thumbnail. The addon registers the type at Gramps startup, and only when it is missing. Gramps 6.0.8 on Windows (Python 3.14) already knew the type and is not changed.
+- Media records imported before this fix keep their stored `unknown` MIME type. Those records must be corrected separately.
+
+### Credits
+- Problem report, tested fix and Dynamic Web Extended check: [johnvitlin](https://github.com/johnvitlin) in [issue #4](https://github.com/emyoulation/CuratedGrampsPlugins/issues/4). Placement at startup: Claude (Anthropic, Claude Opus 5.5), wish coding by Brian McCullough.
+
 ## 0.1.4 — 2026-10-26
 ### Fixed
 - Thumbnails are now written by GdkPixbuf as intended. The save call passed empty strings where lists are required, and newer PyGObject (for example on Fedora 44) rejects that with the message "Unable to marshal str as an array". Every WEBP thumbnail then failed after a successful decode and was made a second time by the Pillow fallback, with two log warnings each time.

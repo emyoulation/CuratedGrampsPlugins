@@ -5,6 +5,8 @@ In standard Gramps, a few Preferences do not take effect until you restart Gramp
 
 The date format examples come from Gramps pull request [#2296: Show date format examples in Preferences Data tab date format menu](https://github.com/gramps-project/gramps/pull/2296), by Brian McCullough (Emyoulation) and Doug Blank. This addon lets you try that change before it becomes part of Gramps.
 
+The code and documentation for this addon were written by Claude AI (Claude Opus 5.5, by Anthropic), from wish coding by Brian McCullough.
+
 This is a "monkey patch" addon. It changes how Gramps behaves while Gramps is running, but it does not change any Gramps files. To return to standard Gramps behavior, hide or uninstall the addon and restart Gramps.
 
 ## What changes in Preferences

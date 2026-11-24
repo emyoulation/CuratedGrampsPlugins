@@ -2,6 +2,7 @@
 # Gramps - a GTK+/GNOME based genealogy program
 #
 # Copyright (C) 2026 OpenAI (GPT-5.3-Codex)
+# Copyright (C) 2026 Claude AI (wish coding by Brian McCullough)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,18 +27,30 @@ Development: AI-assisted using OpenAI (GPT-5.3-Codex)
 Date: April 2026
 """
 
+import mimetypes
+
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.version import major_version, VERSION_TUPLE
 
 _ = glocale.translation.gettext
 
 if VERSION_TUPLE >= (5, 2, 0):
+    # Gramps classifies new Media with mimetypes.guess_type(). Some Python
+    # builds (e.g. Gramps 5.2.3 for Windows, Python 3.11) do not know ".webp",
+    # so the Media gets MIME "unknown" and no thumbnailer is ever asked.
+    # Registered here, not in webp_thumb.py, because this file runs at
+    # startup while the thumbnailer module is only loaded on first use,
+    # which can be after the MIME type of the first import was guessed.
+    # Only added when missing, so a platform mapping is never overridden.
+    if mimetypes.guess_type("x.webp")[0] is None:
+        mimetypes.add_type("image/webp", ".webp")
+
     register(
         THUMBNAILER,
         id="webpthumb",
         name=_("WebP Thumbnailer"),
         description=_("Dedicated thumbnailer for WEBP format images"),
-        version="0.1.4",
+        version="0.1.5",  # build 20261124.0420
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         order=START,

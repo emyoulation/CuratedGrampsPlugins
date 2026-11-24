@@ -1,0 +1,29 @@
+# Translation template for the 0.1.0 Auto Active and Home Person general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Auto Active and Home Person package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Auto Active and Home Person 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-22 17:04-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: AutoActiveHome.gpr.py:31
+msgid "Auto Active and Home Person"
+msgstr ""
+
+#: AutoActiveHome.gpr.py:33
+msgid ""
+"Monkey patch for new Family Trees: when the first people are added or "
+"imported, makes the last created Person the Active Person and the first "
+"created Person the Home Person, if they are not set yet."
+msgstr ""
