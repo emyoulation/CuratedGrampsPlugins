@@ -141,7 +141,7 @@
     "i": "editdatecalculator",
     "t": 6,
     "d": "Adds a slide-out Date Calculator panel to the Edit Date dialog. Open it with the triangle tab on the right edge of the dialog. To switch it off, hide this plugin and restart Gramps.",
-    "v": "0.1.2",
+    "v": "0.1.3",
     "g": "6.0",
     "s": 1,
     "z": "EditDateCalculator.addon.tgz",
@@ -257,6 +257,17 @@
     "z": "DataEntryGramplet.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/DataEntryGramplet/CHANGELOG.md",
     "a": 1
+  },
+  {
+    "n": "Idle Hidden Bars",
+    "i": "IdleHiddenBars",
+    "t": 6,
+    "d": "A monkey patch so that a hidden sidebar or bottombar does no work: its gramplet stops updating while the bar is hidden and catches up when the bar is shown again. Undocked gramplets keep updating.",
+    "v": "0.1.0",
+    "g": "6.0",
+    "s": 1,
+    "z": "PR_IdleHiddenBars.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IdleHiddenBars"
   },
   {
     "n": "Import with No Tree Loaded",

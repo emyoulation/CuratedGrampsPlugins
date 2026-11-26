@@ -1,0 +1,29 @@
+# Translation template for the 0.1.0 Idle Hidden Bars general addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Idle Hidden Bars package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Idle Hidden Bars 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-26 13:51-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: IdleHiddenBars.gpr.py:26
+msgid "Idle Hidden Bars"
+msgstr ""
+
+#: IdleHiddenBars.gpr.py:28
+msgid ""
+"A monkey patch so that a hidden sidebar or bottombar does no work: its "
+"gramplet stops updating while the bar is hidden and catches up when the bar "
+"is shown again. Undocked gramplets keep updating."
+msgstr ""

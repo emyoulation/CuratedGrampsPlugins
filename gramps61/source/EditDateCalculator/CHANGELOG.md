@@ -4,6 +4,10 @@
 
 All notable changes to the Edit Date Calculator addon are listed here, newest first.
 
+## 0.1.3 - 2026-11-25
+### Fixed
+- Gramps no longer prints an error about the icon theme ("stock_link") in the terminal when Gramps runs without its window, for example an export from the command line, or a background helper of another addon that opens the Family Tree. This addon now loads the Gramps Clipboard code only when you copy an evaluated date to the Gramps Clipboard.
+
 ## 0.1.1 - 2026-11-17
 ### Changed
 - A plain number over 130 in Date or offset is read as a year, not as a number of years to add. For example, Reference date 16 Mar 1923 and Date or offset `1854` give the time between the two dates (69 years, 2 months, 15 days), not the year 3777. A number with a minus, or after "Age" / "Aged", is still an offset.

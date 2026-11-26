@@ -67,7 +67,10 @@ from gramps.gen.datehandler import displayer, parser
 from gramps.gen.lib.date import Date, Today
 from gramps.gen.plug import PluginRegister
 from gramps.gen.plug._pluginreg import PluginData
-from gramps.gui import clipboard as gramps_clipboard
+# gramps.gui.clipboard is imported where it is used (_to_gramps_clipboard):
+# importing it loads icons from the GTK icon theme, which fails without a
+# display, and Gramps imports this module also on the command line (and
+# in background worker processes) to call load_on_reg().
 from gramps.gui.ddtargets import DdTargets
 from gramps.gui.dialog import OkDialog
 from gramps.gui.utils import text_to_clipboard
@@ -2283,6 +2286,8 @@ def _to_gramps_clipboard(dialog, text):
 
     :returns: True if the drop was handed to the Clipboard.
     """
+    from gramps.gui import clipboard as gramps_clipboard
+
     viewmanager = getattr(dialog.uistate, "viewmanager", None)
     dbstate = getattr(viewmanager, "dbstate", None)
     if dbstate is None or not dbstate.is_open():

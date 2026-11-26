@@ -34,7 +34,7 @@ if (5, 2, 0) <= VERSION_TUPLE < (6, 2, 0):
             "Open it with the triangle tab on the right edge of the dialog. "
             "To switch it off, hide this plugin and restart Gramps."
         ),
-        version="0.1.2",  # build 20261117.2011
+        version="0.1.3",  # build 20261125.2220
         gramps_target_version=major_version,
         status=EXPERIMENTAL,
         fname="editdatecalculator.py",
