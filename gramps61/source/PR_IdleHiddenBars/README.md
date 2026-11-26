@@ -25,4 +25,4 @@ When you dock a gramplet back into its bar, it becomes a tab again and follows t
 - To go back to the usual Gramps behavior, disable or remove the addon and restart Gramps.
 
 ## Why this addon exists
-This addon is a "monkey patch": it changes how Gramps itself behaves while it is installed, without replacing any Gramps files. The problem it solves is reported to the Gramps project in [hidden_bars_bug_report.md](hidden_bars_bug_report.md). If Gramps fixes it, this addon will no longer be needed.
+This addon is a "monkey patch": it changes how Gramps itself behaves while it is installed, without replacing any Gramps files. The problem it solves is reported to the Gramps project in [Bug Report 14391](https://gramps-project.org/bugs/view.php?id=14391): "hidden_bars_bug_report.md". If Gramps fixes it, this addon will no longer be needed.
