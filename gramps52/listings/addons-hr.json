@@ -383,6 +383,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/ImmediateFamilyRules"
   },
   {
+    "n": "Person Addresses",
+    "i": "PersonAddresses",
+    "t": 10,
+    "d": "Gramplet showing a sortable table of the Addresses of the active Person",
+    "v": "0.1.0",
+    "g": "5.2",
+    "s": 1,
+    "z": "PersonAddresses.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PersonAddresses"
+  },
+  {
     "n": "Person Role Reversal",
     "i": "RoleReversalPerson",
     "t": 13,

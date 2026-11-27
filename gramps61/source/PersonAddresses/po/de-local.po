@@ -1,0 +1,78 @@
+# German translation for the Person Addresses gramplet addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Person Addresses package.
+# Strings shared with Gramps core use the core Gramps translation.
+# Other strings: Claude AI (Anthropic), 2026, not yet reviewed by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: Person Addresses 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-27 17:13-0600\n"
+"PO-Revision-Date: 2026-11-27 17:30-0600\n"
+"Last-Translator: Claude AI (Anthropic) <noreply@anthropic.com>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: PersonAddresses.gpr.py:28
+msgid "Person Addresses"
+msgstr "Personenadressen"
+
+#: PersonAddresses.gpr.py:29
+msgid ""
+"Gramplet showing a sortable table of the Addresses of the active Person"
+msgstr ""
+"Gramplet, das eine sortierbare Tabelle der Adressen der aktiven Person zeigt"
+
+#: PersonAddresses.gpr.py:36
+msgid "Addresses"
+msgstr "Adressen"
+
+#: PersonAddresses.py:69
+msgid "Double-click on a row to edit the selected address."
+msgstr ""
+"Doppelklicken Sie auf eine Zeile, um die ausgewählte Adresse zu bearbeiten."
+
+#: PersonAddresses.py:73
+msgid "Date"
+msgstr "Datum"
+
+#: PersonAddresses.py:75
+msgid "Street"
+msgstr "Straße"
+
+#: PersonAddresses.py:76
+msgid "Locality"
+msgstr "Ortschaft"
+
+#: PersonAddresses.py:77
+msgid "City"
+msgstr "Stadt"
+
+#: PersonAddresses.py:78
+msgid "County"
+msgstr "Kreis"
+
+#: PersonAddresses.py:79
+msgid "State"
+msgstr "Bundesland"
+
+#: PersonAddresses.py:80
+msgid "Country"
+msgstr "Land"
+
+#: PersonAddresses.py:81
+msgid "ZIP/Postal Code"
+msgstr "ZIP/Postleitzahl"
+
+#: PersonAddresses.py:82
+msgid "Phone"
+msgstr "Telefon"
+
+#: PersonAddresses.py:152
+#, python-format
+msgid "Edit Person (%s)"
+msgstr "Person bearbeiten (%s)"

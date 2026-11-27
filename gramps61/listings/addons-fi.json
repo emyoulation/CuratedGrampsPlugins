@@ -234,6 +234,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/blob/main/gramps61/source/Fuzzy/README.md"
   },
   {
+    "n": "Henkilön osoitteet",
+    "i": "PersonAddresses",
+    "t": 10,
+    "d": "Gramplet, joka näyttää aktiivisen henkilön osoitteet lajiteltavana taulukkona",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "PersonAddresses.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PersonAddresses"
+  },
+  {
     "n": "Idle Hidden Bars",
     "i": "IdleHiddenBars",
     "t": 6,

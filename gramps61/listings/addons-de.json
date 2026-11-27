@@ -384,6 +384,17 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
+    "n": "Personenadressen",
+    "i": "PersonAddresses",
+    "t": 10,
+    "d": "Gramplet, das eine sortierbare Tabelle der Adressen der aktiven Person zeigt",
+    "v": "0.1.0",
+    "g": "6.1",
+    "s": 1,
+    "z": "PersonAddresses.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PersonAddresses"
+  },
+  {
     "n": "Phonex (French) match of People with the <names>",
     "i": "FuzzyMatchingEncoder:phonex_french",
     "t": 13,

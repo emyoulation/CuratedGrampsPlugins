@@ -1,0 +1,75 @@
+# Translation template for the 0.1.0 Person Addresses gramplet addon for Gramps.
+# Copyright (C) 2026 Brian McCullough
+# This file is distributed under the same license as the Person Addresses package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Person Addresses 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-27 17:13-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: PersonAddresses.gpr.py:28
+msgid "Person Addresses"
+msgstr ""
+
+#: PersonAddresses.gpr.py:29
+msgid "Gramplet showing a sortable table of the Addresses of the active Person"
+msgstr ""
+
+#: PersonAddresses.gpr.py:36
+msgid "Addresses"
+msgstr ""
+
+#: PersonAddresses.py:69
+msgid "Double-click on a row to edit the selected address."
+msgstr ""
+
+#: PersonAddresses.py:73
+msgid "Date"
+msgstr ""
+
+#: PersonAddresses.py:75
+msgid "Street"
+msgstr ""
+
+#: PersonAddresses.py:76
+msgid "Locality"
+msgstr ""
+
+#: PersonAddresses.py:77
+msgid "City"
+msgstr ""
+
+#: PersonAddresses.py:78
+msgid "County"
+msgstr ""
+
+#: PersonAddresses.py:79
+msgid "State"
+msgstr ""
+
+#: PersonAddresses.py:80
+msgid "Country"
+msgstr ""
+
+#: PersonAddresses.py:81
+msgid "ZIP/Postal Code"
+msgstr ""
+
+#: PersonAddresses.py:82
+msgid "Phone"
+msgstr ""
+
+#: PersonAddresses.py:152
+#, python-format
+msgid "Edit Person (%s)"
+msgstr ""
