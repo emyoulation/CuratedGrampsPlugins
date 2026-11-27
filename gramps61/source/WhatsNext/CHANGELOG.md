@@ -8,28 +8,34 @@ Baseline for comparison: "What's Next" version 1.0.0, as registered in [gramplet
 
 ## [1.1.0]
 ### Added
-- A "Missing Death event" test, which reports a person without a Death event only when Gramps judges that the person is no longer alive (the same "probably alive" check that Gramps uses elsewhere, with the limits set in Preferences). The built-in gramplet has no such test.
+- A 👣 suggested next step under every reported Person or Family, for each kind of problem: a missing name, a missing Birth, Death or Marriage event, an event without a full date or a place, an unknown relationship type, and a missing partner, father, mother or parent family. Earlier versions suggested a step only for a missing Birth event. Each step is shown once per line, and none are shown when "Show suggested 👣 Next Steps" is off.
 - Every test can now be turned on or off in the options: 18 check boxes in two columns to the right of the other options, under the headings People, Families, Relationships and Events (headings that Gramps already translates). Each check box has a tooltip.
-- The "Show suggested Next Steps" option is now labeled "Show suggested 👣 Next Steps", and sits below the tag options.
-- A 👣 suggested next step under every reported Person or Family, for each kind of problem: a missing name, a missing Birth or Marriage event, an event without a full date or a place, an unknown relationship type, and a missing partner, father, mother or parent family. Earlier versions suggested a step only for a missing Birth event. Each step is shown once per line, and none are shown when "Show suggested Next Steps" is off.
+- A "Missing Death event" test, which reports a person without a Death event only when Gramps judges that the person is no longer alive (the same "probably alive" check that Gramps uses elsewhere, with the limits set in Preferences). The built-in gramplet has no such test.
+- A small gap above each reported Person or Family, so it and its 👣 suggested next steps read as one group. The gap is about 60% of a line, measured from the font of the gramplet.
+- Unit tests in `test/whatsnext_test.py` (44 tests, Python `unittest`): the settings file and its meta block, the date descriptions, the checks of people and families, the tag rules, the guidance text and the option tables.
 
 ### Changed
-- The addon now replaces the built-in "What's Next?" gramplet. It registers with the same id ("What's Next"), name and title as the built-in gramplet, so a Dashboard or gramplet bar that showed the built-in gramplet shows this one after a restart. The name, description and title reuse the strings that Gramps already translates. A gramplet added under the old "Beta What's Next?" name must be added again as "What's Next?". The chosen tags and the on-or-off options carry over, while the Search Quota and the two loop controls, which are stored with each gramplet, start from their defaults.
-- A date that is a range, a span, "before", "after" or "about", or marked as estimated or calculated, is now reported as "date inexact" rather than "date incomplete". A date that Gramps could only keep as text is reported as "date is text only". "Date incomplete" now means a single date without its day or month.
+- The addon now replaces the built-in "What's Next?" gramplet. It registers with the same id ("What's Next"), name and title as the built-in gramplet, so a Dashboard or gramplet bar that showed the built-in gramplet shows this one after a restart. The name, description and title reuse the strings that Gramps already translates. A gramplet added under the old "Beta What's Next?" name must be added again as "What's Next?", with its tags and options chosen again.
 - The Complete, Ignore and Prune tags are now chosen separately for each Family Tree, since tags belong to a tree. Opening another tree uses the tags chosen for that tree.
+- A date that is a range, a span, "before", "after" or "about", or marked as estimated or calculated, is now reported as "date inexact" rather than "date incomplete". A date that Gramps could only keep as text is reported as "date is text only". "Date incomplete" now means a single date without its day or month.
 - The addon is renamed without "Beta": the folder and files are now `WhatsNext` (`WhatsNext.py`, `WhatsNext.gpr.py`, `WhatsNext.ini`). Remove an old `Betawhatsnext` folder after installing.
-- The settings file `WhatsNext.ini` keeps its `[meta]` block (plugin id and schema version) as `;;` comment lines at the top of the file, so it always comes first. A file written by a newer version of the addon is used but never saved over, and a file without the block is replaced with fresh settings. Settings of the test versions are not carried over.
-- The registration status is now Stable, and the version is raised above the 1.0.0 of the built-in gramplet.
+- The "no tree loaded" guidance explains importing a Gramps backup or a GEDCOM file in plainer words. When Import works with no tree loaded (the Import With No Tree change), it no longer asks to create an empty tree first.
+- The "Show suggested Next Steps" option is now labeled "Show suggested 👣 Next Steps", and sits below the tag options.
 - The Help button shows a larger color icon with no text and no outline. The tooltip remains. The plain fallback button, used when MarkdownUtils is missing, keeps its text.
 - The Help button is hidden while the gramplet is undocked, since the undocked window has its own Help button.
-- The "no tree loaded" guidance explains importing a Gramps backup or a GEDCOM file in plainer words. When Import works with no tree loaded (the Import With No Tree change), it no longer asks to create an empty tree first.
+- The help link points to the folder of the addon in the CuratedGrampsPlugins collection, and problems are reported in that collection.
+- The settings file `WhatsNext.ini` keeps its `[meta]` block (plugin id and schema version) as `;;` comment lines at the top of the file, so it always comes first. A file written by a newer version of the addon is used but never saved over, and a file without the block is replaced with fresh settings. Settings of the test versions are not carried over.
+- The registration status is now Stable, and the version is raised above the 1.0.0 of the built-in gramplet.
 - Translations now use the addon translator. Strings that Gramps already translates keep their core translations, and new strings can be translated in the consolidated addon catalog.
+- The license header states "version 2 of the License, or (at your option) any later version", as in the built-in gramplet.
 
 ### Removed
 - The batch "Complete", "Ignore" and "Prune" buttons are hidden until a clearer interface is found. A right-click still tags one Person or Family at a time.
 
 ### Fixed
 - The button row along the bottom of the gramplet stayed on screen when the gramplet was collapsed on the Dashboard. It now hides and returns with the list.
+- The Home Person line showed two spaces after the name ("Name:  focal Home Person."), and its text could not be translated.
+- A person with no Birth and no Death event was listed as "Birth event missing., Death event missing.", with doubled punctuation.
 
 ## [0.2.0]
 ### Added
@@ -82,6 +88,7 @@ Baseline for comparison: "What's Next" version 1.0.0, as registered in [gramplet
 - The data integrity tests from the [Verify the Data](https://github.com/gramps-project/gramps/blob/maintenance/gramps61/gramps/plugins/tool/verify.py) tool are to be offered as further options, so one gramplet can report the same concerns.
 
 ### Needs discussion
+- A "Use fallback events" option: when a person has no Birth event but has a Baptism or Christening event (or no Death event but a Burial or Cremation event), whether to accept the fallback event instead of reporting the missing one, and check its date and place instead, as Gramps does when it shows dates.
 - A clearer interface for tagging every shown object at once, to replace the hidden batch buttons.
 - Whether a batch "Complete" should tag every shown object, or only the shown objects that have no remaining finding, since marking an object Complete is a claim that its gaps will never be filled.
 

@@ -1,16 +1,16 @@
 # encoding: utf-8
 #
-# "What's Next?" Gramplet, a modular plugin for Gramps
-# (Gramps - the genealogy software suite built on GTK+/GNOME)
+# Gramps - a GTK+/GNOME based genealogy program - What's Next Gramplet plugin
 #
-# Copyright (C) 2008 Reinhard Mueller
-# Copyright (C) 2010 Jakim Friant
-# Copyright (C) 2023, 2024 Brian McCullough
-# Copyright (C) 2026 Claude AI (wish coding by Brian McCullough)
+# Copyright (C) 2008  Reinhard Mueller
+# Copyright (C) 2010  Jakim Friant
+# Copyright (C) 2023-2024  Brian McCullough
+# Copyright (C) 2026  Claude AI (wish coding by Brian McCullough)
 #
 # This program is free software; you can redistribute it and/or modify
-# it under the terms of version 2 of the GNU General Public License as
-# published by the Free Software Foundation.
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,16 +21,32 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# For the Gramps-Project volunteer community's contact information, visit:
-# https://gramps-project.org/wiki/index.php/Contact
+# pylint: disable=invalid-name,too-many-lines
+# (The module name follows the addon file naming: WhatsNext.py,
+# WhatsNext.gpr.py, WhatsNext.ini.)
+"""
+What's Next? gramplet: suggests the next research or documentation tasks.
+
+Starting at the Home Person, it works outward through ancestors,
+descendants and their partners, and lists the People and Families with
+missing or incomplete information, each with a 👣 suggested next step.
+
+This addon registers with the id of the built-in "What's Next" gramplet,
+which it replaces (Gramps registers the addons in the user plugins folder
+after its built-in plugins, and a later registration with the same id
+replaces the earlier one).
+"""
 
 # ------------------------------------------------------------------------
 #
 # Python modules
 #
 # ------------------------------------------------------------------------
+from __future__ import annotations
+
 import ast
 import logging
+from typing import TYPE_CHECKING, Any, Callable, Iterator
 
 # ------------------------------------------------------------------------
 #
@@ -45,15 +61,29 @@ from gi.repository import GLib, Gtk
 #
 # ------------------------------------------------------------------------
 from gramps.gen.config import config as configman
+from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gen.db import DbTxn
+from gramps.gen.display.name import displayer as name_displayer
+from gramps.gen.errors import WindowActiveError
 from gramps.gen.lib import Date, EventType, FamilyRelType, Tag
 from gramps.gen.plug import Gramplet, PluginRegister
-from gramps.gen.display.name import displayer as name_displayer
-from gramps.gen.utils.alive import probably_alive
+from gramps.gen.plug.menu import BooleanOption, EnumeratedListOption, NumberOption
 from gramps.gen.plug.report import utils
-from gramps.gen.const import GRAMPS_LOCALE as glocale
-from gramps.gui.utils import is_right_click
+from gramps.gen.utils.alive import probably_alive
 from gramps.gui.display import display_url
+from gramps.gui.editors import EditFamily, EditPerson
+from gramps.gui.utils import is_right_click
+from gramps.gui.views.tags import OrganizeTagsDialog
+
+if TYPE_CHECKING:
+    # For type hints only. gramps.gen.types first appears in Gramps 6.0, so
+    # it is not imported at run time (this addon also supports 5.2).
+    from gi.repository import Gdk, GObject
+    from gramps.gen.lib import Event, Family, Person
+    from gramps.gen.plug import PluginData
+    from gramps.gen.plug.menu import Option
+    from gramps.gen.types import FamilyHandle, PersonHandle, TagHandle
+    from gramps.gui.displaystate import DisplayState
 
 # The addon translator checks the core catalog first, then this addon's own
 # catalog (locale/<lang>/LC_MESSAGES/addon.mo), so strings Gramps already
@@ -73,12 +103,27 @@ try:
     from MarkdownUtils import add_help_button
 except Exception:  # pylint: disable=broad-except
 
-    def add_help_button(container, uistate, plugin, *, size=16):
+    def add_help_button(
+        container: Gtk.Box,
+        uistate: DisplayState,
+        plugin: str | PluginData,
+        *,
+        size: int = 16,
+    ) -> Gtk.Button:
         """
-        Pack a plain text "Help" button that opens the help_url of the
-        plugin. Stand-in for MarkdownUtils.add_help_button(); *size* is
-        accepted for the same call signature and not used.
+        Pack a plain text "Help" button that opens the help_url of the plugin.
+
+        Stand-in for MarkdownUtils.add_help_button(), used when MarkdownUtils is
+        missing, too old, or fails to load.
+
+        :param container: The box the button is packed into.
+        :param uistate: The Gramps display state (unused here; kept for the same
+            call signature as MarkdownUtils).
+        :param plugin: The plugin id, or its registered plugin data.
+        :param size: The icon size (unused here; kept for the same call signature).
+        :returns: The new button.
         """
+        del uistate, size  # same call signature as MarkdownUtils
         if isinstance(plugin, str):
             plugin = PluginRegister.get_instance().get_plugin(plugin)
         button = Gtk.Button(label=_("Help"))
@@ -94,7 +139,7 @@ except Exception:  # pylint: disable=broad-except
 
 # END HELP BUTTON BLOCK
 
-show_diagnostic = False
+SHOW_DIAGNOSTIC = False
 
 # How many people or families to examine before handing control back to
 # Gramps, so the window stays responsive during a long search.
@@ -160,10 +205,22 @@ CHECK_GROUPS = [
     (
         _("People"),
         [
-            ("first_name", _("Unknown first name"), _("Report a person without a first name")),
+            (
+                "first_name",
+                _("Unknown first name"),
+                _("Report a person without a first name"),
+            ),
             ("surname", _("Unknown surname"), _("Report a person without a surname")),
-            ("birth_missing", _("Missing Birth event"), _("Report a person without a Birth event")),
-            ("birth_event", _("Birth date and place"), _("Check the date and place of the Birth event")),
+            (
+                "birth_missing",
+                _("Missing Birth event"),
+                _("Report a person without a Birth event"),
+            ),
+            (
+                "birth_event",
+                _("Birth date and place"),
+                _("Check the date and place of the Birth event"),
+            ),
             (
                 "death_missing",
                 _("Missing Death event"),
@@ -173,7 +230,11 @@ CHECK_GROUPS = [
                     " is no longer alive"
                 ),
             ),
-            ("death_event", _("Death date and place"), _("Check the date and place of the Death event")),
+            (
+                "death_event",
+                _("Death date and place"),
+                _("Check the date and place of the Death event"),
+            ),
         ],
     ),
     (
@@ -189,17 +250,41 @@ CHECK_GROUPS = [
                 _("Missing Marriage event"),
                 _('Report a family of the "Married" type without a Marriage event'),
             ),
-            ("marriage_event", _("Marriage date and place"), _("Check the date and place of the Marriage event")),
-            ("divorce_event", _("Divorce date and place"), _("Check the date and place of the Divorce event")),
+            (
+                "marriage_event",
+                _("Marriage date and place"),
+                _("Check the date and place of the Marriage event"),
+            ),
+            (
+                "divorce_event",
+                _("Divorce date and place"),
+                _("Check the date and place of the Divorce event"),
+            ),
         ],
     ),
     (
         _("Relationships"),
         [
-            ("parents_missing", _("Missing parent family"), _("List each person who has no parent family")),
-            ("spouse_missing", _("Missing partner"), _("Report a family with only one partner")),
-            ("father_missing", _("Missing father"), _("Report a person whose parent family has no father")),
-            ("mother_missing", _("Missing mother"), _("Report a person whose parent family has no mother")),
+            (
+                "parents_missing",
+                _("Missing parent family"),
+                _("List each person who has no parent family"),
+            ),
+            (
+                "spouse_missing",
+                _("Missing partner"),
+                _("Report a family with only one partner"),
+            ),
+            (
+                "father_missing",
+                _("Missing father"),
+                _("Report a person whose parent family has no father"),
+            ),
+            (
+                "mother_missing",
+                _("Missing mother"),
+                _("Report a person whose parent family has no mother"),
+            ),
         ],
     ),
     (
@@ -214,7 +299,10 @@ CHECK_GROUPS = [
             (
                 "date_inexact",
                 _("Inexact date"),
-                _('Report a range, a span, or a date with "before", "after", "about", "estimated" or "calculated"'),
+                _(
+                    'Report a range, a span, or a date with "before", "after",'
+                    ' "about", "estimated" or "calculated"'
+                ),
             ),
             (
                 "date_incomplete",
@@ -227,8 +315,12 @@ CHECK_GROUPS = [
 ]
 # The same tests as a flat list of (key, label), in display order, and
 # their tooltips by key.
-CHECK_OPTIONS = [(key, label) for _group, items in CHECK_GROUPS for key, label, _help in items]
-CHECK_HELP = {key: help_text for _group, items in CHECK_GROUPS for key, _label, help_text in items}
+CHECK_OPTIONS = [
+    (key, label) for _group, items in CHECK_GROUPS for key, label, _help in items
+]
+CHECK_HELP = {
+    key: help_text for _group, items in CHECK_GROUPS for key, _label, help_text in items
+}
 
 # The 👣 suggested next step for each kind of problem, shown on its own line
 # under the reported Person or Family when "Show suggested Next Steps" is on.
@@ -289,7 +381,7 @@ CONFIG_SCHEMA_VERSION = 1
 #: {from_version: function(config)} upgrading loaded settings by one
 #: version. Version 1 is the first; a file without a meta block is not
 #: loaded at all.
-CONFIG_MIGRATIONS = {}
+CONFIG_MIGRATIONS: dict[int, Callable[[Any], None]] = {}
 
 # When no tag is chosen in the Configuration, these are created on first use
 # and placed at the top of the tag list. Color is a hex string.
@@ -315,17 +407,19 @@ CONFIG = configman.register_manager("WhatsNext", __file__, use_plugins_path=Fals
 # Display preferences (not tree data integrity tests).
 CONFIG.register("display.show_next_steps", True)
 for _key, _label in CHECK_OPTIONS:
-    CONFIG.register("checks.%s" % _key, CHECKS[_key])
+    CONFIG.register(f"checks.{_key}", CHECKS[_key])
 # {tree id: {"tree": tree name, "complete": tag, "ignore": tag,
 # "prune": tag}}. The tree name is only there to make the file readable.
 CONFIG.register("trees.tags", {})
 
 
-def read_meta_block(path):
+def read_meta_block(path: str) -> dict[str, Any]:
     """
     Read the ";; [meta]" comment block at the top of a settings file.
-    Return a dict of its values (schema_version as an int), or {} when the
-    file is missing or has no meta block.
+
+    :param path: The full path of the settings file.
+    :returns: The values of the block, with ``schema_version`` as an int, or
+        an empty dict when the file is missing or has no meta block.
     """
     try:
         with open(path, encoding="utf-8") as handle:
@@ -357,21 +451,30 @@ def read_meta_block(path):
     return meta
 
 
-def meta_lines(version=CONFIG_SCHEMA_VERSION):
-    """The meta block, as comment lines for ConfigManager.save()."""
+def meta_lines(version: int = CONFIG_SCHEMA_VERSION) -> list[str]:
+    """
+    Build the meta block as comment lines for ConfigManager.save().
+
+    :param version: The settings schema version to record.
+    :returns: The comment lines, without their ";;" prefix.
+    """
     return [
         META_START,
-        "plugin_id=%r" % PLUGIN_ID,
-        "schema_version='%d'" % version,
+        f"plugin_id={PLUGIN_ID!r}",
+        f"schema_version='{version}'",
     ]
 
 
-def load_config():
+def load_config() -> bool:
     """
-    Load WhatsNext.ini if its meta block says it is ours. Return False if
-    it was written by a newer version of this addon: it is used, but never
-    saved over. A file without a meta block (or with another plugin_id) is
-    ignored, and fresh settings replace it at the first save.
+    Load WhatsNext.ini if its meta block says it is ours.
+
+    A file without a meta block (or with another plugin_id) is ignored, and
+    fresh settings replace it at the first save. Older files are upgraded one
+    version at a time through CONFIG_MIGRATIONS.
+
+    :returns: False if the file was written by a newer version of this addon:
+        it is used, but never saved over. True otherwise.
     """
     meta = read_meta_block(CONFIG.filename)
     if not meta:
@@ -404,22 +507,24 @@ def load_config():
 
 
 CONFIG_WRITABLE = load_config()
-# The "All Birth and Death events" option was removed before release; drop
-# its saved value, which the ConfigManager would otherwise keep writing.
-CONFIG.data.get("checks", {}).pop("alternate_events", None)
 
 
-def save_config():
+def save_config() -> None:
     """Save WhatsNext.ini with its meta block, unless it is from a newer version."""
     if CONFIG_WRITABLE:
         CONFIG.save(comments=meta_lines())
 
 
-def can_import_without_tree(uistate):
+def can_import_without_tree(uistate: DisplayState) -> bool:
     """
-    True when "Import..." in the "Family Trees" menu works with no tree
-    loaded (the Import With No Tree change, in Gramps core or as an addon).
-    Stock Gramps disables the Import action until a tree is loaded.
+    Tell whether "Import..." in the "Family Trees" menu works with no tree.
+
+    The Import With No Tree change (in Gramps core or as an addon) enables
+    the Import action with no tree loaded; stock Gramps disables it until a
+    tree is loaded.
+
+    :param uistate: The Gramps display state.
+    :returns: True when the Import action is enabled.
     """
     try:
         viewmanager = uistate.viewmanager
@@ -429,14 +534,16 @@ def can_import_without_tree(uistate):
         return False
 
 
-def no_tree_message(show_next_steps, import_ready=False):
+def no_tree_message(show_next_steps: bool, import_ready: bool = False) -> str:
     """
-    Build the "no tree loaded" guidance, with or without the Next Steps.
-    *import_ready* tells whether Import works with no tree loaded.
+    Build the "no tree loaded" guidance.
+
+    :param show_next_steps: Include the 👣 Next Steps.
+    :param import_ready: Import works with no tree loaded, so the step to
+        create an empty tree first is left out.
+    :returns: The guidance text.
     """
-    message = _(
-        "\n ⛔ A local Genealogical Tree database has not yet been loaded.\n\n"
-    )
+    message = _("\n ⛔ A local Genealogical Tree database has not yet been loaded.\n\n")
     if show_next_steps:
         message += _(" 👣 Next Steps:\n")
         message += _('  •  From the "Family Trees" menu,')
@@ -457,6 +564,7 @@ def no_tree_message(show_next_steps, import_ready=False):
                 ' Then choose "Import..." in the "Family Trees" menu.\n\n'
             )
     return message
+
 
 # Signals that can change what the search reports.
 REFRESH_SIGNALS = (
@@ -486,9 +594,29 @@ REFRESH_SIGNALS = (
 # ------------------------------------------------------------------------
 
 
+# ------------------------------------------------------------
+#
+# WhatNextGramplet
+#
+# ------------------------------------------------------------
+# Gramplets set up their state in init() and on_load(), which Gramps calls
+# from Gramplet.__init__, so attributes are defined outside __init__.
+# pylint: disable-next=too-many-instance-attributes,too-many-public-methods
 class WhatNextGramplet(Gramplet):
+    """
+    The What's Next? gramplet.
 
-    def init(self):
+    It lists the People and Families with missing or incomplete information,
+    starting at the Home Person, with a 👣 suggested next step for each.
+    """
+
+    # pylint: disable=attribute-defined-outside-init
+
+    # Tag slots saved by the built-in 1.0.0 gramplet, waiting for a tree.
+    __legacy_tags: tuple[str, str] | None
+
+    def init(self) -> None:
+        """Show the no-tree guidance until a tree is loaded."""
         self.set_tooltip(
             _(
                 'Use the "Configure" in the "View" menu to'
@@ -501,8 +629,12 @@ class WhatNextGramplet(Gramplet):
         # so check again once Gramps has finished starting up.
         GLib.idle_add(self.cb_refresh_no_tree)
 
-    def cb_refresh_no_tree(self):
-        """Show the no-tree guidance again, now that Import can be checked."""
+    def cb_refresh_no_tree(self) -> bool:
+        """
+        Show the no-tree guidance again, now that Import can be checked.
+
+        :returns: False, so the idle callback runs once.
+        """
         if not self.dbstate.db.is_open():
             self.set_text(
                 no_tree_message(
@@ -512,15 +644,14 @@ class WhatNextGramplet(Gramplet):
             )
         return False  # run once
 
-    def post_init(self):
+    def post_init(self) -> None:
         """
-        Take over the text view's button handling.
+        Take over the button handling of the text view, and add the button bar.
 
-        The gramplet pane connects its own button-press handler, which opens
-        the editor on a right-click over a Person or Family link. We replace
-        it with our own handler so a right-click instead offers a small menu
-        (Review, Tag as Complete, Tag to Ignore), and we hand every other
-        click back to the pane's handler unchanged.
+        The gramplet pane connects its own button-press handler, which opens the
+        editor on a right-click over a Person or Family link. It is replaced by
+        cb_button_press, which offers a small menu (Review, Tag as Complete, Tag
+        to Ignore, Tag to Prune) and hands every other click back to the pane.
         """
         try:
             self.gui.textview.disconnect_by_func(self.gui.on_button_press)
@@ -534,8 +665,13 @@ class WhatNextGramplet(Gramplet):
         self.gui.textview.connect("populate-popup", self.cb_populate_popup)
         self.__build_button_bar()
 
-    def cb_populate_popup(self, _view, menu):
-        """Append an Organize Tags item to the text view's default menu."""
+    def cb_populate_popup(self, _view: Gtk.TextView, menu: Gtk.Widget) -> None:
+        """
+        Append an Organize Tags item to the default menu of the text view.
+
+        :param _view: The text view (unused).
+        :param menu: The menu about to be shown.
+        """
         if not isinstance(menu, Gtk.Menu):
             return
         separator = Gtk.SeparatorMenuItem()
@@ -546,23 +682,25 @@ class WhatNextGramplet(Gramplet):
         item.show()
         menu.append(item)
 
-    def __build_button_bar(self):
+    def __build_button_bar(self) -> None:
         """
-        Add a row of buttons at the bottom of the gramplet: a Help button on
-        the far left, then (only when SHOW_TAG_BUTTONS is True) batch "Tag
-        all shown" buttons for Complete, Ignore and Prune. The row is appended to the box that holds the scrolling
-        text area, so it stays fixed below the text.
+        Add a row of buttons below the text of the gramplet.
+
+        The row holds a Help button on the far left, then (only when
+        SHOW_TAG_BUTTONS is True) batch "Tag all shown" buttons for Complete,
+        Ignore and Prune. It is appended to the box that holds the scrolling text
+        area, so it stays fixed below the text.
         """
         try:
             container = self.gui.get_container_widget()
             parent = container.get_parent()
             if parent is None or not hasattr(parent, "pack_start"):
                 return
-            bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-            bar.set_border_width(2)
+            button_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+            button_bar.set_border_width(2)
             # Help button on the far left.
             help_button = add_help_button(
-                bar, self.uistate, PLUGIN_ID, size=HELP_ICON_SIZE
+                button_bar, self.uistate, PLUGIN_ID, size=HELP_ICON_SIZE
             )
             help_image = help_button.get_image() if help_button else None
             if help_image is not None:
@@ -576,7 +714,7 @@ class WhatNextGramplet(Gramplet):
                     help_image.set_pixel_size(HELP_ICON_SIZE)
             self.__help_button = help_button
             if SHOW_TAG_BUTTONS:
-                bar.pack_start(
+                button_bar.pack_start(
                     self.__batch_button(
                         _("Complete"),
                         _("Tag listed People and Families as Completed"),
@@ -586,7 +724,7 @@ class WhatNextGramplet(Gramplet):
                     False,
                     0,
                 )
-                bar.pack_start(
+                button_bar.pack_start(
                     self.__batch_button(
                         _("Ignore"),
                         _("Tag to Ignore People and Families"),
@@ -596,50 +734,73 @@ class WhatNextGramplet(Gramplet):
                     False,
                     0,
                 )
-                bar.pack_start(
+                button_bar.pack_start(
                     self.__batch_button(
                         _("Prune"),
-                        _("Tag to Prune (exclude) listed People and Families from testing"),
+                        _(
+                            "Tag to Prune (exclude) listed People and Families from testing"
+                        ),
                         self.cb_batch_prune,
                     ),
                     False,
                     False,
                     0,
                 )
-            parent.pack_start(bar, False, False, 0)
+            parent.pack_start(button_bar, False, False, 0)
             # Show the buttons now, but let the bar's own visibility follow
             # the text area: collapsing a Dashboard gramplet hides only its
             # scrolled text window, so without this the bar stays behind.
-            for child in bar.get_children():
+            for child in button_bar.get_children():
                 child.show_all()
-            bar.set_no_show_all(True)
-            self.__button_bar = bar
+            button_bar.set_no_show_all(True)
+            self.__button_bar = button_bar
             container.connect("notify::visible", self.cb_text_visible)
             # Moving into (or back out of) a detached window re-parents the
             # whole gramplet frame, which this signal reports.
-            bar.connect("hierarchy-changed", self.cb_bar_moved)
+            button_bar.connect("hierarchy-changed", self.cb_bar_moved)
             self.cb_text_visible(container, None)
-            self.cb_bar_moved(bar, None)
+            self.cb_bar_moved(button_bar, None)
         except Exception:  # pylint: disable=broad-except
             # The gramplet still works without the button bar; the right-click
             # menu offers the same tagging per object.
             pass
 
-    def cb_text_visible(self, widget, _pspec):
-        """Show the button bar only while the text area is shown (expanded)."""
+    def cb_text_visible(
+        self, widget: Gtk.Widget, _pspec: GObject.ParamSpec | None
+    ) -> None:
+        """
+        Show the button bar only while the text area is shown (expanded).
+
+        :param widget: The scrolled text area of the gramplet.
+        :param _pspec: The changed property (unused).
+        """
         self.__button_bar.set_visible(widget.get_visible())
 
-    def cb_bar_moved(self, _bar, _old_toplevel):
+    def cb_bar_moved(self, _bar: Gtk.Widget, _old_toplevel: Gtk.Widget | None) -> None:
         """
-        Hide the Help button while the gramplet is undocked, since the
-        detached window has its own Help button; show it again when docked.
+        Hide the Help button while the gramplet is undocked.
+
+        The detached window has its own Help button; the button shows again when
+        the gramplet is docked.
+
+        :param _bar: The button bar (unused).
+        :param _old_toplevel: The previous top-level window (unused).
         """
         if self.__help_button is not None:
             detached = getattr(self.gui, "gstate", "") == "detached"
             self.__help_button.set_visible(not detached)
 
-    def __batch_button(self, label, tooltip, callback):
-        """A button with the themed tag icon (menu size) and a text label."""
+    def __batch_button(
+        self, label: str, tooltip: str, callback: Callable[[Gtk.Button], None]
+    ) -> Gtk.Button:
+        """
+        Make a button with the themed tag icon (menu size) and a text label.
+
+        :param label: The text of the button.
+        :param tooltip: The tooltip of the button.
+        :param callback: Called when the button is clicked.
+        :returns: The new button.
+        """
         button = Gtk.Button()
         button.set_image(
             Gtk.Image.new_from_icon_name("gramps-tag-new", Gtk.IconSize.MENU)
@@ -650,24 +811,19 @@ class WhatNextGramplet(Gramplet):
         button.connect("clicked", callback)
         return button
 
-    def build_options(self):
-        """
-        Build the configuration options.
-        """
-        from gramps.gen.plug.menu import (
-            NumberOption,
-            EnumeratedListOption,
-            BooleanOption,
-        )
-
-        self.opts = []
+    def build_options(self) -> None:
+        """Build the configuration options."""
+        self.opts: list[Any] = []
 
         # Minimum number of lines we want to see. Further lines with the same
         # distance to the main person will be added on top of this.
         name = _("Search Quota ")
-        opt = NumberOption(name, self.__todos_wanted, 1, 300)
+        opt: Any = NumberOption(name, self.__todos_wanted, 1, 300)
         opt.set_help(
-            _("The least number of lines to show. The search stops once this many problems are found")
+            _(
+                "The least number of lines to show. The search stops once"
+                " this many problems are found"
+            )
         )
         self.opts.append(opt)
 
@@ -676,7 +832,10 @@ class WhatNextGramplet(Gramplet):
         name = _("Depth per loop")
         opt = NumberOption(name, self.__downs_per_up, 1, 15)
         opt.set_help(
-            _("How many generations of descendants to check before going up one more generation of ancestors")
+            _(
+                "How many generations of descendants to check before going up"
+                " one more generation of ancestors"
+            )
         )
         self.opts.append(opt)
 
@@ -685,16 +844,17 @@ class WhatNextGramplet(Gramplet):
         name = _("Pause search expansion")
         opt = NumberOption(name, self.__ancestor_delay, 1, 10)
         opt.set_help(
-            _("How many extra rounds to wait after checking an ancestor before checking the descendants of that ancestor")
+            _(
+                "How many extra rounds to wait after checking an ancestor"
+                " before checking the descendants of that ancestor"
+            )
         )
         self.opts.append(opt)
 
         # Complete tag: the object is finished (its gaps will never be
         # filled). Hidden from the list, but still travelled through.
         opt = EnumeratedListOption(_("Complete tag"), self.__complete_tag)
-        opt.set_help(
-            _("Finished. Hide the object, and keep searching through it")
-        )
+        opt.set_help(_("Finished. Hide the object, and keep searching through it"))
         self.opts.append(opt)
 
         # Ignore tag: gaps acknowledged for now. Hidden from the list, still
@@ -708,9 +868,7 @@ class WhatNextGramplet(Gramplet):
         # Prune tag: a dead end. Hidden, and the search does not travel
         # through it. Delete the tag to bring that branch back.
         opt = EnumeratedListOption(_("Prune tag"), self.__prune_tag)
-        opt.set_help(
-            _("Dead end. Hide the object, and stop searching through it")
-        )
+        opt.set_help(_("Dead end. Hide the object, and stop searching through it"))
         self.opts.append(opt)
 
         self.opts[3].add_item("", "")
@@ -729,7 +887,9 @@ class WhatNextGramplet(Gramplet):
         self.__display_first = len(self.opts)
         opt = BooleanOption(_("Show suggested 👣 Next Steps"), self.__show_next_steps)
         opt.set_help(
-            _("Show the guidance steps and the 👣 suggestions. Turn off for a shorter list")
+            _(
+                "Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+            )
         )
         self.opts.append(opt)
 
@@ -757,21 +917,28 @@ class WhatNextGramplet(Gramplet):
         last = self.option_dict[self.opts[-1].get_label()][0]
         last.connect("parent-set", self.cb_arrange_check_boxes)
 
-    def cb_arrange_check_boxes(self, widget, _old_parent):
+    def cb_arrange_check_boxes(
+        self, widget: Gtk.Widget, _old_parent: Gtk.Widget | None
+    ) -> None:
         """
-        Move the check boxes out of the label/widget rows of the Configure
-        dialog into columns to the right, under headings:
+        Move the check boxes of the Configure dialog into headed columns.
+
+        The check boxes are moved out of the label/widget rows of the dialog into
+        columns to the right, under headings::
 
             Search Quota    [10 ]         People          Relationships
-            Depth per loop  [1  ]         [x] ...         [x] Missing partner
+            Depth per loop  [1  ]         [x] ...         [x] ...
             ...                           ...             ...
             Prune tag       [    ]        Families        Events
                     [x] Show suggested    [x] ...         [x] ...
                         👣 Next Steps
 
-        Gramps (make_gui_options in grampletpane.py, the same in 5.2 to
-        6.1) attaches every option in order, so the last check box being
-        attached means all options are in place.
+        Gramps (make_gui_options in grampletpane.py, the same in 5.2 to 6.1)
+        attaches every option in order, so the last check box being attached
+        means all options are in place.
+
+        :param widget: The last check box, just attached.
+        :param _old_parent: Its previous parent (unused).
         """
         grid = widget.get_parent()
         if self.__arranged or not isinstance(grid, Gtk.Grid):
@@ -780,11 +947,22 @@ class WhatNextGramplet(Gramplet):
         # Rearrange once GTK has finished attaching this check box.
         GLib.idle_add(self.__arrange_check_boxes, grid)
 
-    def __arrange_check_boxes(self, grid):
-        """Do the work of cb_arrange_check_boxes (see there)."""
+    # pylint: disable-next=too-many-locals
+    def __arrange_check_boxes(self, grid: Gtk.Grid) -> bool:
+        """
+        Do the work of cb_arrange_check_boxes.
 
-        def take(opt):
-            """Remove a check box and the label in front of it."""
+        :param grid: The grid of options built by Gramps.
+        :returns: False, so the idle callback runs once.
+        """
+
+        def take(opt: Option) -> Gtk.Widget:
+            """
+            Remove a check box and the label in front of it from the grid.
+
+            :param opt: The option shown by the check box.
+            :returns: The check box.
+            """
             box = self.option_dict[opt.get_label()][0]
             row = grid.child_get_property(box, "top-attach")
             label = grid.get_child_at(0, row)
@@ -793,14 +971,22 @@ class WhatNextGramplet(Gramplet):
             grid.remove(box)
             return box
 
-        def heading(text):
+        def heading(text: str) -> Gtk.Label:
+            """
+            Make a bold heading for a group of check boxes.
+
+            :param text: The heading text.
+            :returns: The new label.
+            """
             label = Gtk.Label()
-            label.set_markup("<b>%s</b>" % text)
+            label.set_markup(f"<b>{GLib.markup_escape_text(text)}</b>")
             label.set_halign(Gtk.Align.START)
             label.set_margin_top(6)
             return label
 
-        display = [take(opt) for opt in self.opts[self.__display_first : self.__check_first]]
+        display = [
+            take(opt) for opt in self.opts[self.__display_first : self.__check_first]
+        ]
         checks = iter(take(opt) for opt in self.opts[self.__check_first :])
 
         # The display check box goes at the bottom of the labelled options,
@@ -811,7 +997,7 @@ class WhatNextGramplet(Gramplet):
             row += 1
 
         # Test columns: People and Families, then the other groups.
-        columns = {2: [], 3: []}
+        columns: dict[int, list[tuple[str, list[Gtk.Widget]]]] = {2: [], 3: []}
         for index, (group, items) in enumerate(CHECK_GROUPS):
             boxes = [next(checks) for _item in items]
             columns[2 if index < 2 else 3].append((group, boxes))
@@ -841,8 +1027,16 @@ class WhatNextGramplet(Gramplet):
         row_box.show_all()
         return False  # run once
 
-    def cb_option_parent_set(self, widget, _old_parent, option):
-        """Adjust the dialog label that sits to the left of an option."""
+    def cb_option_parent_set(
+        self, widget: Gtk.Widget, _old_parent: Gtk.Widget | None, option: Option
+    ) -> None:
+        """
+        Give the dialog label to the left of an option the tooltip of the option.
+
+        :param widget: The widget of the option, just placed in the dialog.
+        :param _old_parent: Its previous parent (unused).
+        :param option: The option.
+        """
         grid = widget.get_parent()
         if not isinstance(grid, Gtk.Grid):
             return
@@ -853,10 +1047,8 @@ class WhatNextGramplet(Gramplet):
         if option.get_help():
             label.set_tooltip_text(option.get_help())
 
-    def save_options(self):
-        """
-        Save gramplet configuration data.
-        """
+    def save_options(self) -> None:
+        """Save the gramplet configuration data."""
         self.__todos_wanted = int(self.opts[0].get_value())
         self.__downs_per_up = int(self.opts[1].get_value())
         self.__ancestor_delay = int(self.opts[2].get_value())
@@ -870,23 +1062,26 @@ class WhatNextGramplet(Gramplet):
         for offset, (key, _label) in enumerate(CHECK_OPTIONS):
             value = bool(self.opts[self.__check_first + offset].get_value())
             self.__checks[key] = value
-            CONFIG.set("checks.%s" % key, value)
+            CONFIG.set(f"checks.{key}", value)
         # Also saves the settings file.
         self.__persist_tags()
 
-    def save_update_options(self, obj):
+    def save_update_options(self, obj: Gtk.Widget) -> None:
         """
-        Save a gramplet's options to file.
+        Save the options of the gramplet and refresh the list.
+
+        :param obj: The Save button (unused).
         """
         self.save_options()
         self.__sync_gui_data()
         self.update()
 
-    def __sync_gui_data(self):
+    def __sync_gui_data(self) -> None:
         """
-        Store the numeric options in the gramplet bar. The tags of each
-        tree and the on-or-off options are kept in WhatsNext.ini instead
-        (see __persist_tags).
+        Store the numeric options in the gramplet bar.
+
+        The tags of each tree and the on-or-off options are kept in WhatsNext.ini
+        instead (see __persist_tags).
         """
         self.gui.data = [
             self.__todos_wanted,
@@ -894,8 +1089,12 @@ class WhatNextGramplet(Gramplet):
             self.__ancestor_delay,
         ]
 
-    def __tree_id(self):
-        """The id of the open Family Tree, or "" when none is open."""
+    def __tree_id(self) -> str:
+        """
+        Get the id of the open Family Tree.
+
+        :returns: The tree id (the name of its folder), or "" when no tree is open.
+        """
         db = self.dbstate.db
         try:
             if db is not None and db.is_open():
@@ -904,19 +1103,24 @@ class WhatNextGramplet(Gramplet):
             pass
         return ""
 
-    def __tree_name(self):
-        """The name of the open Family Tree, for readability of the .ini."""
+    def __tree_name(self) -> str:
+        """
+        Get the name of the open Family Tree, for readability of the .ini.
+
+        :returns: The tree name, or "".
+        """
         try:
             return self.dbstate.db.get_dbname() or ""
         except (AttributeError, NotImplementedError, OSError):
             return ""
 
-    def __load_tree_tags(self):
+    def __load_tree_tags(self) -> None:
         """
-        Read the three chosen tags of the open Family Tree. A tree with no
-        saved choice starts with none (the default tags are created on first
-        use), except that the tag slots saved with this gramplet by the
-        built-in 1.0.0 gramplet are carried over once, to the first tree
+        Read the three chosen tags of the open Family Tree.
+
+        A tree with no saved choice starts with none (the default tags are
+        created on first use), except that the tag slots saved with this gramplet
+        by the built-in 1.0.0 gramplet are carried over once, to the first tree
         that is opened.
         """
         entry = CONFIG.get("trees.tags").get(self.__tree_id(), {})
@@ -928,7 +1132,7 @@ class WhatNextGramplet(Gramplet):
             self.__legacy_tags = None
             self.__persist_tags()
 
-    def __persist_tags(self):
+    def __persist_tags(self) -> None:
         """Save the chosen tags of the open tree, and the settings file."""
         tree_id = self.__tree_id()
         if tree_id:
@@ -942,16 +1146,14 @@ class WhatNextGramplet(Gramplet):
             CONFIG.set("trees.tags", tags)
         save_config()
 
-    def on_load(self):
-        """
-        Load stored configuration data.
-        """
+    def on_load(self) -> None:
+        """Load the stored configuration data."""
         # Which tree data integrity tests run. Start from the defaults,
         # then apply the choices saved in WhatsNext.ini for the tests that
         # are exposed in the Configuration dialog.
         self.__checks = dict(CHECKS)
         for key, _label in CHECK_OPTIONS:
-            self.__checks[key] = CONFIG.get("checks.%s" % key)
+            self.__checks[key] = CONFIG.get(f"checks.{key}")
 
         # Display preference: whether 👣 Next Steps suggestions are shown.
         self.__show_next_steps = CONFIG.get("display.show_next_steps")
@@ -980,7 +1182,14 @@ class WhatNextGramplet(Gramplet):
         # loads them again whenever a tree is opened).
         self.__load_tree_tags()
 
-    def db_changed(self):
+    def db_changed(self) -> None:
+        """
+        Connect the signals of a newly opened tree, and load its tags.
+
+        Each signal is connected once. A burst of signals (one save can send
+        several) leads to a single search, because main() runs in the background
+        and a newer request replaces a pending one.
+        """
         # Each signal is connected once. A burst of signals (one save can
         # send several) now leads to a single search, because main() runs
         # in the background and a newer request replaces a pending one.
@@ -989,11 +1198,14 @@ class WhatNextGramplet(Gramplet):
         # The chosen tags belong to the tree that was just opened.
         self.__load_tree_tags()
 
-    def _no_db(self):
+    def _no_db(self) -> None:
+        """Show the no-tree guidance when the tree is closed."""
         super()._no_db()
         self.__clear_links()
         self.set_text(
-            no_tree_message(self.__show_next_steps, can_import_without_tree(self.uistate))
+            no_tree_message(
+                self.__show_next_steps, can_import_without_tree(self.uistate)
+            )
         )
         # Gramps may switch the Import action off after this runs.
         GLib.idle_add(self.cb_refresh_no_tree)
@@ -1001,10 +1213,15 @@ class WhatNextGramplet(Gramplet):
     # ------------------------------------------------------------------
     # Right-click menu and tagging
     # ------------------------------------------------------------------
-    def cb_button_press(self, view, event):
+    def cb_button_press(self, view: Gtk.TextView, event: Gdk.EventButton) -> bool:
         """
-        Offer a tag menu on a right-click over a reported object; otherwise
-        let the gramplet pane handle the click as usual.
+        Offer a tag menu on a right-click over a reported object.
+
+        Every other click is handled by the gramplet pane as usual.
+
+        :param view: The text view.
+        :param event: The button press.
+        :returns: True when the click was handled here.
         """
         if is_right_click(event):
             hit = self.__link_at(view, event)
@@ -1018,9 +1235,15 @@ class WhatNextGramplet(Gramplet):
         # text view's own Copy and Select All menu) is the pane's job.
         return self.gui.on_button_press(view, event)
 
-    def __link_at(self, view, event):
+    def __link_at(
+        self, view: Gtk.TextView, event: Gdk.EventButton
+    ) -> tuple[str, Any] | None:
         """
-        Return (link_type, handle) for the link under the pointer, or None.
+        Find the link under the pointer.
+
+        :param view: The text view.
+        :param event: The button press.
+        :returns: (link_type, handle) for the link, or None.
         """
         buffer_location = view.window_to_buffer_coords(
             Gtk.TextWindowType.TEXT, int(event.x), int(event.y)
@@ -1028,13 +1251,26 @@ class WhatNextGramplet(Gramplet):
         text_iter = view.get_iter_at_location(*buffer_location)
         if isinstance(text_iter, tuple):
             text_iter = text_iter[1]
+        # The pane keeps its links in _tags; Gramps has no public accessor.
+        # pylint: disable-next=protected-access
         for tag, link_type, handle, _tooltip in self.gui._tags:
             if text_iter.has_tag(tag):
                 return (link_type, handle)
         return None
 
-    def __popup_tag_menu(self, link_type, handle, event):
-        """Build and show the Review / Tag menu for one object."""
+    def __popup_tag_menu(
+        self,
+        link_type: str,
+        handle: PersonHandle | FamilyHandle,
+        event: Gdk.EventButton,
+    ) -> None:
+        """
+        Build and show the Review / Tag menu for one object.
+
+        :param link_type: "Person" or "Family".
+        :param handle: The handle of the object.
+        :param event: The button press that opens the menu.
+        """
         menu = Gtk.Menu()
         menu.set_reserve_toggle_size(False)
 
@@ -1065,17 +1301,29 @@ class WhatNextGramplet(Gramplet):
 
         # Keep a reference so the menu is not garbage-collected before it is
         # shown. Gramps 5.2 through 6.1 are GTK 3.
-        self.__tag_menu = menu
+        self.__tag_menu = menu  # pylint: disable=unused-private-member
         menu.popup_at_pointer(event)
 
-    def cb_organize_tags(self, _item):
-        """Open the Gramps Organize Tags dialog."""
-        from gramps.gui.views.tags import OrganizeTagsDialog
+    def cb_organize_tags(self, _item: Gtk.MenuItem) -> None:
+        """
+        Open the Gramps Organize Tags dialog.
 
+        :param _item: The menu item (unused).
+        """
         OrganizeTagsDialog(self.dbstate.db, self.uistate, [])
 
-    def __tag_menu_item(self, label, kind, link_type, handle):
-        """A menu item carrying the themed tag icon at menu (16x16) size."""
+    def __tag_menu_item(
+        self, label: str, kind: str, link_type: str, handle: PersonHandle | FamilyHandle
+    ) -> Gtk.MenuItem:
+        """
+        Make a menu item carrying the themed tag icon at menu (16x16) size.
+
+        :param label: The text of the item.
+        :param kind: "complete", "ignore" or "prune".
+        :param link_type: "Person" or "Family".
+        :param handle: The handle of the object to tag.
+        :returns: The new menu item.
+        """
         item = Gtk.MenuItem()
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         image = Gtk.Image.new_from_icon_name("gramps-tag-new", Gtk.IconSize.MENU)
@@ -1086,11 +1334,16 @@ class WhatNextGramplet(Gramplet):
         item.show_all()
         return item
 
-    def cb_review(self, _item, link_type, handle):
-        """Open the editor for the object, as a double-click would."""
-        from gramps.gui.editors import EditPerson, EditFamily
-        from gramps.gen.errors import WindowActiveError
+    def cb_review(
+        self, _item: Gtk.MenuItem, link_type: str, handle: PersonHandle | FamilyHandle
+    ) -> None:
+        """
+        Open the editor for the object, as a double-click would.
 
+        :param _item: The menu item (unused).
+        :param link_type: "Person" or "Family".
+        :param handle: The handle of the object.
+        """
         db = self.dbstate.db
         try:
             if link_type == "Person" and db.has_person_handle(handle):
@@ -1102,14 +1355,17 @@ class WhatNextGramplet(Gramplet):
         except WindowActiveError:
             pass
 
-    def __effective_tag(self, kind):
+    def __effective_tag(self, kind: str) -> str:
         """
-        The tag name chosen for a kind, or "" when none is chosen.
+        Get the tag name chosen for a kind.
 
-        Each kind needs its own tag. If two kinds are set to the same tag,
-        the later one (in the order complete, ignore, prune) counts as not
-        chosen, so Prune can never act as Complete. Both the tag buttons and
-        the search use this one rule.
+        Each kind needs its own tag. If two kinds are set to the same tag, the
+        later one (in the order complete, ignore, prune) counts as not chosen, so
+        Prune can never act as Complete. Both the tag buttons and the search use
+        this one rule.
+
+        :param kind: "complete", "ignore" or "prune".
+        :returns: The tag name, or "" when none is chosen.
         """
         chosen = {
             "complete": self.__complete_tag,
@@ -1123,11 +1379,14 @@ class WhatNextGramplet(Gramplet):
                 return ""
         return name
 
-    def __tag_for_kind(self, kind):
+    def __tag_for_kind(self, kind: str) -> tuple[str, str, bool]:
         """
-        Return (tag_name, color, is_default) for a tag kind. If no tag is
-        chosen for it, this returns the default name and color and flags it
-        so the caller can remember the new tag as the chosen one.
+        Get the tag to apply for a kind.
+
+        :param kind: "complete", "ignore" or "prune".
+        :returns: (tag_name, color, is_default). When no tag is chosen for the
+            kind, the default name and color are returned, flagged so the caller
+            can remember the new tag as the chosen one.
         """
         defaults = {
             "complete": (DEFAULT_COMPLETE_TAG, DEFAULT_COMPLETE_COLOR),
@@ -1138,8 +1397,13 @@ class WhatNextGramplet(Gramplet):
         name, color = defaults[kind]
         return (chosen or name, color, not chosen)
 
-    def __remember_tag(self, kind, tag_name):
-        """Record an auto-created tag name as the chosen tag for its kind."""
+    def __remember_tag(self, kind: str, tag_name: str) -> None:
+        """
+        Record an automatically created tag as the chosen tag for its kind.
+
+        :param kind: "complete", "ignore" or "prune".
+        :param tag_name: The name of the tag.
+        """
         if kind == "complete":
             self.__complete_tag = tag_name
         elif kind == "ignore":
@@ -1148,30 +1412,59 @@ class WhatNextGramplet(Gramplet):
             self.__prune_tag = tag_name
         self.__persist_tags()
 
-    def cb_tag_one(self, _item, kind, link_type, handle):
-        """Apply one kind of tag to a single Person or Family."""
+    def cb_tag_one(
+        self,
+        _item: Gtk.MenuItem,
+        kind: str,
+        link_type: str,
+        handle: PersonHandle | FamilyHandle,
+    ) -> None:
+        """
+        Apply one kind of tag to a single Person or Family.
+
+        :param _item: The menu item (unused).
+        :param kind: "complete", "ignore" or "prune".
+        :param link_type: "Person" or "Family".
+        :param handle: The handle of the object.
+        """
         tag_name, color, is_default = self.__tag_for_kind(kind)
-        objects = {"Person": [], "Family": []}
+        objects: dict[str, list[Any]] = {"Person": [], "Family": []}
         objects[link_type].append(handle)
         self.__apply_tag_batch(objects, tag_name, color)
         if is_default:
             self.__remember_tag(kind, tag_name)
         self.update()
 
-    def cb_batch_complete(self, _button):
-        """Tag every shown Person and Family as Complete."""
+    def cb_batch_complete(self, _button: Gtk.Button) -> None:
+        """
+        Tag every shown Person and Family as Complete.
+
+        :param _button: The button (unused).
+        """
         self.__batch_tag("complete")
 
-    def cb_batch_ignore(self, _button):
-        """Tag every shown Person and Family as Ignore."""
+    def cb_batch_ignore(self, _button: Gtk.Button) -> None:
+        """
+        Tag every shown Person and Family as Ignore.
+
+        :param _button: The button (unused).
+        """
         self.__batch_tag("ignore")
 
-    def cb_batch_prune(self, _button):
-        """Tag every shown Person and Family as Prune."""
+    def cb_batch_prune(self, _button: Gtk.Button) -> None:
+        """
+        Tag every shown Person and Family as Prune.
+
+        :param _button: The button (unused).
+        """
         self.__batch_tag("prune")
 
-    def __batch_tag(self, kind):
-        """Apply one kind of tag to all currently shown objects."""
+    def __batch_tag(self, kind: str) -> None:
+        """
+        Apply one kind of tag to all currently shown objects.
+
+        :param kind: "complete", "ignore" or "prune".
+        """
         if not self.__shown_persons and not self.__shown_families:
             return
         tag_name, color, is_default = self.__tag_for_kind(kind)
@@ -1193,10 +1486,14 @@ class WhatNextGramplet(Gramplet):
         # after the tag name has been remembered.
         self.update()
 
-    def __get_or_create_tag(self, tag_name, color, trans):
+    def __get_or_create_tag(self, tag_name: str, color: str, trans: DbTxn) -> TagHandle:
         """
-        Return the handle of the named tag, creating it at the top of the
-        tag list (with the given color) when it does not exist yet.
+        Get the named tag, creating it at the top of the tag list if needed.
+
+        :param tag_name: The name of the tag.
+        :param color: The color for a new tag, as a hex string.
+        :param trans: The open database transaction.
+        :returns: The handle of the tag.
         """
         db = self.dbstate.db
         tag = db.get_tag_from_name(tag_name)
@@ -1216,11 +1513,17 @@ class WhatNextGramplet(Gramplet):
         db.add_tag(tag, trans)
         return tag.get_handle()
 
-    def __apply_tag_batch(self, objects, tag_name, color):
+    def __apply_tag_batch(
+        self, objects: dict[str, list[Any]], tag_name: str, color: str
+    ) -> None:
         """
-        Add one tag to the given People and Families in a single transaction,
-        creating the tag if needed. objects is {"Person": [handles], "Family":
-        [handles]}. The caller refreshes the list afterwards.
+        Add one tag to the given People and Families in a single transaction.
+
+        The tag is created if needed. The caller refreshes the list afterwards.
+
+        :param objects: {"Person": [handles], "Family": [handles]}.
+        :param tag_name: The name of the tag.
+        :param color: The color for a new tag, as a hex string.
         """
         db = self.dbstate.db
         with DbTxn(_("Tag as %s") % tag_name, db) as trans:
@@ -1240,18 +1543,23 @@ class WhatNextGramplet(Gramplet):
                     obj.add_tag(tag_handle)
                     db.commit_family(obj, trans)
 
-    def __on(self, key):
-        """Is this tree data integrity test switched on?"""
+    def __on(self, key: str) -> bool:
+        """
+        Tell whether a tree data integrity test is switched on.
+
+        :param key: The key of the test in CHECKS.
+        :returns: True when the test runs.
+        """
         return self.__checks.get(key, False)
 
-    def __clear_links(self):
+    def __clear_links(self) -> None:
         """
         Forget the clickable links of the previous list.
 
-        Gramps core keeps every link a gramplet has ever shown (the list in
-        the gramplet pane is never emptied), so a gramplet that refreshes
-        often makes mouse movement over its text slower and slower. Core
-        has no method for this, so the pane's list is emptied here.
+        Gramps core keeps every link a gramplet has ever shown (the list in the
+        gramplet pane is never emptied), so a gramplet that refreshes often makes
+        mouse movement over its text slower and slower. Core has no method for
+        this, so the list of the pane is emptied here.
         """
         gui = self.gui
         tags = getattr(gui, "_tags", None)
@@ -1261,32 +1569,42 @@ class WhatNextGramplet(Gramplet):
             tag_table = gui.buffer.get_tag_table()
             for link_data in tags:
                 tag_table.remove(link_data[0])
-        except Exception:  # never let housekeeping stop the gramplet
-            pass
-        gui._tags = []
+        except Exception:  # pylint: disable=broad-except
+            pass  # never let housekeeping stop the gramplet
+        gui._tags = []  # pylint: disable=protected-access
 
-    def __trace(self, where):
-        """Quota-counter trace line, shown only when show_diagnostic is on."""
-        if show_diagnostic:
-            self.append_text(
-                f"[{where}: {self.__counter}/{self.__todos_wanted}]\n"
-            )
+    def __trace(self, where: str) -> None:
+        """
+        Write a quota-counter trace line, when SHOW_DIAGNOSTIC is on.
 
-    def main(self):
+        :param where: A label for the place in the search.
+        """
+        if SHOW_DIAGNOSTIC:
+            self.append_text(f"[{where}: {self.__counter}/{self.__todos_wanted}]\n")
+
+    # The search loop comes from the built-in gramplet; its shape is kept so
+    # that the two can still be compared.
+    # pylint: disable-next=too-many-locals,too-many-branches,too-many-statements
+    def main(self) -> Iterator[bool]:
         """
         Build the list.
 
-        This is a generator: Gramps runs it a little at a time while idle,
-        so the window stays responsive, and a newer refresh request stops
-        an unfinished search instead of waiting for it.
+        This is a generator: Gramps runs it a little at a time while idle, so the
+        window stays responsive, and a newer refresh request stops an unfinished
+        search instead of waiting for it.
+
+        :returns: An iterator that yields True after each slice of work.
         """
+        # pylint: disable=too-many-nested-blocks
         self.__clear_links()
 
         # Fail gracefully if no database is loaded; warn or no entry ⚠ ☡ ⛔ 🚫 🛑 🚧 🚨 👣
         if not self.dbstate.db.is_open():
             self.set_text(
-            no_tree_message(self.__show_next_steps, can_import_without_tree(self.uistate))
-        )
+                no_tree_message(
+                    self.__show_next_steps, can_import_without_tree(self.uistate)
+                )
+            )
             return
 
         # complain if database is empty
@@ -1311,9 +1629,7 @@ class WhatNextGramplet(Gramplet):
         # complain if no Home Person
         default_person = self.dbstate.db.get_default_person()
         if default_person is None:
-            message = _(
-                '\n ⛔ No Person has been chosen as the focal "Home Person".\n'
-            )
+            message = _('\n ⛔ No Person has been chosen as the focal "Home Person".\n')
             if self.__show_next_steps:
                 message += _(
                     "\n 👣 Next Steps:"
@@ -1336,24 +1652,24 @@ class WhatNextGramplet(Gramplet):
 
         # Handles of the objects actually shown, so the batch buttons can
         # tag exactly what the reader sees.
-        self.__shown_persons = set()
+        self.__shown_persons: set[str] = set()
         # Suggested next steps for the object being checked.
-        self.__steps = []
-        self.__shown_families = set()
+        self.__steps: list[str] = []
+        self.__shown_families: set[str] = set()
 
         self.__counter = 0
         self.__work = 0
 
         self.set_text("")
-        base_message = " focal Home Person.\n"
-        self.__missing_link(default_person, base_message)
+        self.__missing_link(default_person, _("focal Home Person"))
+        self.append_text("\n")  # set the Home Person apart from the list
         self.__counter = 0
 
         # Already processed persons and families, to avoid recursing
         # back down to ourselves or meeting the same person through different
         # paths.
         self.__processed_persons = {default_person.get_handle()}
-        self.__processed_families = set()
+        self.__processed_families: set[str] = set()
 
         # List of lists of ancestors in currently processed generation. We go
         # up one generation in each round.
@@ -1383,23 +1699,23 @@ class WhatNextGramplet(Gramplet):
         # Not that this may slightly vary with the parameters given at the
         # beginning of this class definition, but the principle remains the
         # same.
-        families = []
-        families_queue = [[] for i in range(self.__ancestor_delay)]
+        families: list[list[Any]] = []
+        families_queue: list[list[Any]] = [[] for i in range(self.__ancestor_delay)]
 
         # List of spouses to add to ancestors list so we track ancestors of
         # spouses, too, but delayed as defined by the parameter.
-        spouses = []
-        spouses_queue = []
+        spouses: list[list[Person]] = []
+        spouses_queue: list[list[list[Person]]] = []
 
         while ancestors or families:
             # (Other) families of parents
             for ancestor_group in ancestors_queue.pop(0):
-                new_family_group = []
-                new_spouses_group = []
+                new_family_group: list[Any] = []
+                new_spouses_group: list[Person] = []
                 for person in ancestor_group:
                     for family in self.__get_families(person):
                         spouse = self.__get_spouse(person, family)
-                        if spouse is UnknownPerson:
+                        if spouse is UNKNOWN_PERSON:
                             self.__missing_spouse(person)
                         elif spouse is not None:
                             self.__process_person(spouse, new_spouses_group)
@@ -1418,10 +1734,10 @@ class WhatNextGramplet(Gramplet):
             # Next generation of children
             if self.__downs_per_up:
 
-                for down in range(self.__downs_per_up):
+                for _down in range(self.__downs_per_up):
                     new_families = []
                     for family_group in families:
-                        children = []
+                        children: list[Person] = []
                         for family, person, spouse in family_group:
                             for child in self.__get_children(family):
                                 self.__process_person(child, children)
@@ -1441,7 +1757,7 @@ class WhatNextGramplet(Gramplet):
                                 break
                             for family in self.__get_families(person):
                                 spouse = self.__get_spouse(person, family)
-                                if spouse is UnknownPerson:
+                                if spouse is UNKNOWN_PERSON:
                                     self.__missing_spouse(person)
                                 elif spouse is not None:
                                     self.__process_person(spouse, new_spouses_group)
@@ -1472,19 +1788,19 @@ class WhatNextGramplet(Gramplet):
             new_ancestors = []
             new_families = []
             for ancestor_group in ancestors:
-                new_ancestor_group_1 = []
-                new_ancestor_group_2 = []
+                new_ancestor_group_1: list[Person] = []
+                new_ancestor_group_2: list[Person] = []
                 new_family_group = []
                 for person in ancestor_group:
-                    (father, mother, family) = self.__get_parents(person)
-                    if family is UnknownFamily:
+                    father, mother, family = self.__get_parents(person)
+                    if family is UNKNOWN_FAMILY:
                         self.__missing_parents(person)
                     elif family is not None:
-                        if father is UnknownPerson:
+                        if father is UNKNOWN_PERSON:
                             self.__missing_father(person)
                         elif father is not None:
                             self.__process_person(father, new_ancestor_group_1)
-                        if mother is UnknownPerson:
+                        if mother is UNKNOWN_PERSON:
                             self.__missing_mother(person)
                         elif mother is not None:
                             if father is None:
@@ -1520,39 +1836,67 @@ class WhatNextGramplet(Gramplet):
     # ------------------------------------------------------------------
     # Names (only worked out when something is actually reported)
     # ------------------------------------------------------------------
-    def __person_name(self, person):
+    def __person_name(self, person: Person) -> str:
+        """
+        Get the display name of a person.
+
+        :param person: The person.
+        :returns: The name to show.
+        """
         name = name_displayer.display_name(person.get_primary_name())
         return name or _("(person with unknown name)")
 
-    def __partner_name(self, person):
-        if person is UnknownPerson or person is None:
+    def __partner_name(self, person: Person | Any | None) -> str:
+        """
+        Get the display name of a partner in a family line.
+
+        :param person: The partner.
+        :returns: The name to show.
+        """
+        if person is UNKNOWN_PERSON or person is None:
             return _("(unknown person)")
         return name_displayer.display(person) or _("(person with unknown name)")
 
-    def __family_name(self, person1, person2):
+    def __family_name(
+        self, person1: Person | Any | None, person2: Person | Any | None
+    ) -> str:
+        """
+        Get the display name of a family from its two partners.
+
+        :param person1: The first partner, None, or UNKNOWN_PERSON.
+        :param person2: The second partner, None, or UNKNOWN_PERSON.
+        :returns: The name to show.
+        """
         return _("%(name1)s and %(name2)s") % {
             "name1": self.__partner_name(person1),
             "name2": self.__partner_name(person2),
         }
 
-    def __add_step(self, step):
-        """Remember a suggested next step for the object being checked."""
+    def __add_step(self, step: str) -> None:
+        """
+        Remember a suggested next step for the object being checked.
+
+        :param step: The key of the step in NEXT_STEPS.
+        """
         if step not in self.__steps:
             self.__steps.append(step)
 
-    def __show_steps(self):
+    def __show_steps(self) -> None:
         """Write the 👣 suggested next steps under the line just reported."""
         if self.__show_next_steps:
             for step in self.__steps:
-                self.append_text("  👣 %s\n" % NEXT_STEPS[step])
+                self.append_text(f"  👣 {NEXT_STEPS[step]}\n")
         self.__steps = []
 
-    def __gap_tag(self):
+    def __gap_tag(self) -> Gtk.TextTag:
         """
-        A text tag that puts about 60% of a line of space above a paragraph,
-        so each reported Person or Family and its 👣 steps read as a group.
-        Measured from the font of the text view, so it follows the font
-        size. Created once; Gramps keeps the tag table of the text view.
+        Get the text tag that puts space above each reported entry.
+
+        The space is about 60% of a line, measured from the font of the text
+        view, so each reported Person or Family and its 👣 steps read as a group.
+        The tag is created once; Gramps keeps the tag table of the text view.
+
+        :returns: The text tag.
         """
         buffer = self.gui.buffer
         tag = buffer.get_tag_table().lookup("whatsnext-gap")
@@ -1564,12 +1908,20 @@ class WhatNextGramplet(Gramplet):
             )
         return tag
 
-    def __start_entry(self):
-        """Mark the start of a reported line; see __end_entry."""
+    def __start_entry(self) -> int:
+        """
+        Mark the start of a reported line; see __end_entry.
+
+        :returns: The character offset where the line starts.
+        """
         return self.gui.buffer.get_char_count()
 
-    def __end_entry(self, offset):
-        """Put the gap above the reported line that started at *offset*."""
+    def __end_entry(self, offset: int) -> None:
+        """
+        Put the gap above the reported line that started at *offset*.
+
+        :param offset: The value returned by __start_entry.
+        """
         try:
             buffer = self.gui.buffer
             start = buffer.get_iter_at_offset(offset)
@@ -1578,7 +1930,21 @@ class WhatNextGramplet(Gramplet):
         except (AttributeError, TypeError):
             pass  # spacing is cosmetic; never stop the search for it
 
-    def __report(self, name, link_type, handle, missingbits):
+    def __report(
+        self,
+        name: str,
+        link_type: str,
+        handle: PersonHandle | FamilyHandle,
+        missingbits: list[str],
+    ) -> None:
+        """
+        Report one Person or Family with its problems and next steps.
+
+        :param name: The name to show as a link.
+        :param link_type: "Person" or "Family".
+        :param handle: The handle of the object.
+        :param missingbits: The problems found.
+        """
         entry = self.__start_entry()
         self.link(name, link_type, handle)
         self.append_text(
@@ -1595,8 +1961,13 @@ class WhatNextGramplet(Gramplet):
     # ------------------------------------------------------------------
     # Tests on people
     # ------------------------------------------------------------------
-    def __process_person(self, person, append_list):
+    def __process_person(self, person: Person, append_list: list[Person]) -> None:
+        """
+        Check one person, and add them to the list the search continues from.
 
+        :param person: The person.
+        :param append_list: The group of people for the next step of the search.
+        """
         handle = person.get_handle()
         if handle in self.__processed_persons:
             return
@@ -1645,17 +2016,22 @@ class WhatNextGramplet(Gramplet):
 
         append_list.append(person)
 
-    def __person_events(self, person, missingbits):
+    def __person_events(
+        self, person: Person, missingbits: list[str]
+    ) -> tuple[bool, bool]:
         """
-        Examine the Birth and Death events. Returns (has_birth, has_death):
-        whether the person has a Birth event, and whether a Death event was
-        seen (a preferred one, or any one when every event was read).
+        Examine the Birth and Death events of a person.
 
-        Only the preferred Birth and Death events are checked (two database
-        reads at most). Every Primary-role event is read only when no
-        preferred Birth is set and the event list has to be searched for
-        one. Non-preferred Birth and Death events are usually kept on purpose,
-        to record a source that disagrees, so they are not reported.
+        Only the preferred Birth and Death events are checked (two database reads
+        at most). Every Primary-role event is read only when no preferred Birth
+        is set and the event list has to be searched for one. Non-preferred Birth
+        and Death events are usually kept on purpose, to record a source that
+        disagrees, so they are not reported.
+
+        :param person: The person.
+        :param missingbits: The list the problems found are added to.
+        :returns: (has_birth, has_death): whether the person has a Birth event,
+            and whether a Death event was seen.
         """
         db = self.dbstate.db
         birth_ref = person.get_birth_ref()
@@ -1687,8 +2063,13 @@ class WhatNextGramplet(Gramplet):
 
         return True, death_ref is not None
 
-    def __has_death_event(self, person):
-        """True if any Primary-role event of the person is a Death event."""
+    def __has_death_event(self, person: Person) -> bool:
+        """
+        Tell whether any Primary-role event of the person is a Death event.
+
+        :param person: The person.
+        :returns: True when a Death event is found.
+        """
         db = self.dbstate.db
         for event_ref in person.get_primary_event_ref_list():
             if db.get_event_from_handle(event_ref.ref).get_type() == EventType.DEATH:
@@ -1698,8 +2079,21 @@ class WhatNextGramplet(Gramplet):
     # ------------------------------------------------------------------
     # Tests on families
     # ------------------------------------------------------------------
-    def __process_family(self, family, person1, person2, append_list):
+    def __process_family(
+        self,
+        family: Family,
+        person1: Person | Any | None,
+        person2: Person | Any | None,
+        append_list: list[tuple[Family, Any, Any]],
+    ) -> None:
+        """
+        Check one family, and add it to the list the search continues from.
 
+        :param family: The family.
+        :param person1: The first partner, None, or UNKNOWN_PERSON.
+        :param person2: The second partner, None, or UNKNOWN_PERSON.
+        :param append_list: The group of families for the next step of the search.
+        """
         handle = family.get_handle()
         if handle in self.__processed_families:
             return
@@ -1749,10 +2143,17 @@ class WhatNextGramplet(Gramplet):
     # ------------------------------------------------------------------
     # Tests on an event
     # ------------------------------------------------------------------
-    def __process_event(self, event, step):
+    def __process_event(self, event: Event, step: str) -> list[str]:
         """
-        Check the date and place of an event. *step* is the NEXT_STEPS key
-        suggested when something is missing.
+        Check the date and place of an event.
+
+        Each date is reported once, in the first of these that fits: unknown,
+        text only, inexact (a range, a span, before, after, about, estimated or
+        calculated), or incomplete (a single exact date without its day or month).
+
+        :param event: The event.
+        :param step: The key in NEXT_STEPS suggested when something is missing.
+        :returns: The problems found, as one "Type: problems" entry, or [].
         """
         missingbits = []
 
@@ -1768,8 +2169,7 @@ class WhatNextGramplet(Gramplet):
             if self.__on("date_text_only"):
                 missingbits.append(_("date is text only"))
         elif (
-            date.get_modifier() != Date.MOD_NONE
-            or date.get_quality() != Date.QUAL_NONE
+            date.get_modifier() != Date.MOD_NONE or date.get_quality() != Date.QUAL_NONE
         ):
             if self.__on("date_inexact"):
                 missingbits.append(_("date inexact"))
@@ -1787,13 +2187,17 @@ class WhatNextGramplet(Gramplet):
                 _("%(str1)s: %(str2)s")
                 % {"str1": event.get_type(), "str2": _(", ").join(missingbits)}
             ]  # Arabic OK
-        else:
-            return []
+        return []
 
     # ------------------------------------------------------------------
     # Tests on links between people
     # ------------------------------------------------------------------
-    def __missing_spouse(self, person):
+    def __missing_spouse(self, person: Person) -> None:
+        """
+        Report a person whose family has no partner.
+
+        :param person: The person.
+        """
         if self.__on("spouse_missing") and not self.__suppressed(person):
             self.__missing_link(
                 person,
@@ -1801,27 +2205,47 @@ class WhatNextGramplet(Gramplet):
                 "spouse",
             )
 
-    def __missing_father(self, person):
+    def __missing_father(self, person: Person) -> None:
+        """
+        Report a person whose parent family has no father.
+
+        :param person: The person.
+        """
         if self.__on("father_missing") and not self.__suppressed(person):
             self.__missing_link(
                 person, _("Father missing from the parent family"), "father"
             )
 
-    def __missing_mother(self, person):
+    def __missing_mother(self, person: Person) -> None:
+        """
+        Report a person whose parent family has no mother.
+
+        :param person: The person.
+        """
         if self.__on("mother_missing") and not self.__suppressed(person):
             self.__missing_link(
                 person, _("Mother missing from the parent family"), "mother"
             )
 
-    def __missing_parents(self, person):
+    def __missing_parents(self, person: Person) -> None:
+        """
+        Report a person who has no parent family.
+
+        :param person: The person.
+        """
         if self.__on("parents_missing") and not self.__suppressed(person):
             self.__missing_link(person, _("Parent family is unknown."), "parents")
 
-    def __missing_link(self, person, text, step=None):
+    def __missing_link(
+        self, person: Person, text: str, step: str | None = None
+    ) -> None:
         """
-        Report one Person with *text*. *step* is the NEXT_STEPS key of the
-        suggested next step, or None for a line with no step (the Home
-        Person line at the top of the list).
+        Report one Person with a single line of text.
+
+        :param person: The person.
+        :param text: The text after the name.
+        :param step: The key in NEXT_STEPS of the suggested next step, or None
+            for a line with no step (the Home Person line at the top of the list).
         """
 
         entry = self.__start_entry()
@@ -1838,46 +2262,74 @@ class WhatNextGramplet(Gramplet):
     # ------------------------------------------------------------------
     # Walking the tree
     # ------------------------------------------------------------------
-    def __handle_for(self, tag_name):
-        """Return the handle of a configured tag by name, or None."""
+    def __handle_for(self, tag_name: str) -> TagHandle | None:
+        """
+        Get the handle of a configured tag by name.
+
+        :param tag_name: The name of the tag.
+        :returns: The handle, or None when there is no such tag.
+        """
         if not tag_name:
             return None
         tag = self.dbstate.db.get_tag_from_name(tag_name)
         return tag.get_handle() if tag is not None else None
 
-    def __pruned(self, obj):
-        """Pruned objects are not travelled through by the search."""
+    def __pruned(self, obj: Person | Family) -> bool:
+        """
+        Tell whether an object carries the Prune tag.
+
+        Pruned objects are not travelled through by the search.
+
+        :param obj: The Person or Family.
+        :returns: True when the object is pruned.
+        """
         return (
             self.__prune_handle is not None
             and self.__prune_handle in obj.get_tag_list()
         )
 
-    def __suppressed(self, obj):
+    def __suppressed(self, obj: Person | Family) -> bool:
         """
-        Complete or Ignore objects are hidden from the list, but the search
-        still travels through them.
+        Tell whether an object carries the Complete or the Ignore tag.
+
+        Such objects are hidden from the list, but the search still travels
+        through them.
+
+        :param obj: The Person or Family.
+        :returns: True when the object is hidden.
         """
         tags = obj.get_tag_list()
         return (
             self.__complete_handle is not None and self.__complete_handle in tags
         ) or (self.__ignore_handle is not None and self.__ignore_handle in tags)
 
-    def __get_spouse(self, person, family):
+    def __get_spouse(self, person: Person, family: Family) -> Person | Any | None:
+        """
+        Get the partner of a person in a family.
 
+        :param person: The person.
+        :param family: The family.
+        :returns: The partner; UNKNOWN_PERSON when a married family has no
+            partner; or None when there is no partner to follow (none expected,
+            or pruned).
+        """
         spouse_handle = utils.find_spouse(person, family)
         if not spouse_handle:
             if family.get_relationship() == FamilyRelType.MARRIED:
-                return UnknownPerson
-            else:
-                return None
+                return UNKNOWN_PERSON
+            return None
         spouse = self.dbstate.db.get_person_from_handle(spouse_handle)
         if self.__pruned(spouse):
             return None
-        else:
-            return spouse
+        return spouse
 
-    def __get_children(self, family):
+    def __get_children(self, family: Family) -> Iterator[Person]:
+        """
+        Get the children of a family that are not yet examined or pruned.
 
+        :param family: The family.
+        :returns: An iterator over the children.
+        """
         for child_ref in family.get_child_ref_list():
             # Someone already examined would be skipped anyway, so do not
             # read that person from the database again.
@@ -1888,8 +2340,13 @@ class WhatNextGramplet(Gramplet):
                 continue
             yield child
 
-    def __get_families(self, person):
+    def __get_families(self, person: Person) -> Iterator[Family]:
+        """
+        Get the families of a person that are not yet examined or pruned.
 
+        :param person: The person.
+        :returns: An iterator over the families.
+        """
         for family_handle in person.get_family_handle_list():
             if family_handle in self.__processed_families:
                 continue
@@ -1898,11 +2355,18 @@ class WhatNextGramplet(Gramplet):
                 continue
             yield family
 
-    def __get_parents(self, person):
+    def __get_parents(self, person: Person) -> tuple[Any, Any, Any]:
+        """
+        Get the parents and parent family of a person.
 
+        :param person: The person.
+        :returns: (father, mother, family). Each is the object, None when there
+            is nothing to follow, or UNKNOWN_PERSON / UNKNOWN_FAMILY when it is
+            missing and should be reported.
+        """
         family_handle = person.get_main_parents_family_handle()
         if not family_handle:
-            return (UnknownPerson, UnknownPerson, UnknownFamily)
+            return (UNKNOWN_PERSON, UNKNOWN_PERSON, UNKNOWN_FAMILY)
         if family_handle in self.__processed_families:
             return (None, None, None)
 
@@ -1913,7 +2377,7 @@ class WhatNextGramplet(Gramplet):
         father_handle = family.get_father_handle()
         if not father_handle:
             if family.get_relationship() == FamilyRelType.MARRIED:
-                father = UnknownPerson
+                father = UNKNOWN_PERSON
             else:
                 father = None
         else:
@@ -1923,7 +2387,7 @@ class WhatNextGramplet(Gramplet):
 
         mother_handle = family.get_mother_handle()
         if not mother_handle:
-            mother = UnknownPerson
+            mother = UNKNOWN_PERSON
         else:
             mother = self.dbstate.db.get_person_from_handle(mother_handle)
             if self.__pruned(mother):
@@ -1932,14 +2396,23 @@ class WhatNextGramplet(Gramplet):
         return (father, mother, family)
 
 
-class UnknownPersonClass:
-    pass
+# ------------------------------------------------------------
+#
+# UnknownPersonMarker
+#
+# ------------------------------------------------------------
+class UnknownPersonMarker:  # pylint: disable=too-few-public-methods
+    """Stands for a person who is missing and should be reported."""
 
 
-class UnknownFamilyClass:
-    pass
+# ------------------------------------------------------------
+#
+# UnknownFamilyMarker
+#
+# ------------------------------------------------------------
+class UnknownFamilyMarker:  # pylint: disable=too-few-public-methods
+    """Stands for a parent family that is missing and should be reported."""
 
 
-UnknownPerson = UnknownPersonClass()
-UnknownFamily = UnknownFamilyClass()
-
+UNKNOWN_PERSON = UnknownPersonMarker()
+UNKNOWN_FAMILY = UnknownFamilyMarker()

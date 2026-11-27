@@ -1,0 +1,608 @@
+# hr translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Croatian <https://hosted.weblate.org/projects/gramps-project/addons/hr/>\n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "Što je sljedeće na redu"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "Gramplet predlaže predmete za istraživanje"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "Što je sljedeće na redu?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "Pomoć"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "Osobe"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "Nepoznato ime"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "Prijavi osobu bez imena"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "Nepoznato prezime"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "Prijavi osobu bez prezimena"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "Nedostaje događaj Rođenje"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "Prijavi osobu bez događaja Rođenje"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "Datum i mjesto rođenja"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "Provjeri datum i mjesto događaja Rođenje"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "Nedostaje događaj Smrt"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+"Prijavi osobu bez događaja Smrt kada Gramps prema datumima osobe i njezinih "
+"srodnika procijeni da osoba više nije živa"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "Datum i mjesto smrti"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "Provjeri datum i mjesto događaja Smrt"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "Obitelji"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "Nepoznata vrsta odnosa"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "Prijavi obitelj s vrstom odnosa \"Nepoznato\""
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "Nedostaje događaj Brak"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "Prijavi obitelj vrste \"Vjenčani\" bez događaja Brak"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "Datum i mjesto vjenčanja"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "Provjeri datum i mjesto događaja Brak"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "Datum i mjesto razvoda"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "Provjeri datum i mjesto događaja Razvod braka"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "Srodstva"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "Nedostaje obitelj roditelja"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "Navedi svaku osobu koja nema obitelj roditelja"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "Nedostaje partner"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "Prijavi obitelj sa samo jednim partnerom"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "Nedostaje otac"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "Prijavi osobu čija obitelj roditelja nema oca"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "Nedostaje majka"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "Prijavi osobu čija obitelj roditelja nema majku"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "Događaji"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "Nepoznat datum"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "Prijavi događaj bez datuma"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "Datum je samo tekst"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Prijavi datum koji Gramps nije mogao pročitati kao datum"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "Netočan datum"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+"Prijavi raspon, razdoblje ili datum s \"prije\", \"nakon\", \"oko\", "
+"\"približno\" ili \"izračunato\""
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "Nepotpun datum"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "Prijavi pojedinačni datum bez dana ili mjeseca"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "Nepoznato mjesto"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "Prijavi događaj bez mjesta"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "Unesite ime koje nedostaje u dijalogu Uredi osobu."
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "Dodajte putem kartice Događaji u dijalogu Uredi osobu."
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr ""
+"Otvorite događaj na kartici Događaji u dijalogu Uredi osobu i dopunite "
+"njegov datum i mjesto."
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr ""
+"Otvorite događaj na kartici Događaji u dijalogu Uredi obitelj i dopunite "
+"njegov datum i mjesto."
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr "Dodajte događaj Brak na kartici Događaji u dijalogu Uredi obitelj."
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "Odaberite \"Vrstu\" odnosa u dijalogu Uredi obitelj."
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "Dodajte partnera koji nedostaje u dijalogu Uredi obitelj."
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "Dodajte oca u dijalogu Uredi obitelj za obitelj roditelja."
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "Dodajte majku u dijalogu Uredi obitelj za obitelj roditelja."
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+"U prikazu Srodstva odaberite \"Dodaj nove roditelje ...\" ili \"Dodaj "
+"postojeće roditelje ...\" iz izbornika Uredi."
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "Završeno"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "Zanemareno"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "Obrezano"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ Još nije učitana lokalna baza podataka rodoslova.\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 Sljedeći koraci:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  U izborniku \"Rodoslovi\""
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " upotrijebite opciju \"Upravljaj rodoslovima …\" kako biste"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " stvorili novu bazu podataka rodoslova (ili odabrali postojeću).\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  Kliknite gumb \"Učitaj rodoslov\" kako biste počeli"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" raditi s odabranim rodoslovom.\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Za upotrebu sigurnosne kopije iz Grampsa ili GEDCOM datoteke iz drugog genealoškog alata odaberite \"Uvezi …\" u izborniku \"Rodoslovi\".\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Za upotrebu sigurnosne kopije iz Grampsa ili GEDCOM datoteke iz drugog genealoškog alata najprije stvorite i učitajte novi, prazan rodoslov. Zatim odaberite \"Uvezi …\" u izborniku \"Rodoslovi\".\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr ""
+"Upotrijebite \"Konfiguriraj ...\" u izborniku \"Prikaz\" za promjenu opcija "
+"Grampleta."
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "Organiziraj oznake"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "Potpuno"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "Označi navedene osobe i obitelji kao Završeno"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "Zanemari"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "Oznaka za zanemarivanje osoba i obitelji"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "Obreži"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr ""
+"Oznaka za obrezivanje (isključivanje) navedenih osoba i obitelji iz provjere"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "Kvota pretraživanja "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+"Najmanji broj redaka za prikaz. Pretraživanje se zaustavlja kad se pronađe "
+"toliko problema"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "Dubina po krugu"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr ""
+"Koliko generacija potomaka provjeriti prije prelaska jednu generaciju "
+"predaka više"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "Pauziraj širenje pretraživanja"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr ""
+"Koliko dodatnih krugova pričekati nakon provjere pretka prije provjere "
+"potomaka tog pretka"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "Oznaka Završeno"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "Gotovo. Sakrij objekt i nastavi pretraživati kroz njega"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "Oznaka Zanemareno"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr ""
+"Zasad ostavljeno po strani. Sakrij objekt i nastavi pretraživati kroz njega"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "Oznaka Obrezano"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "Slijepa ulica. Sakrij objekt i prestani pretraživati kroz njega"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "Prikaži predložene 👣 sljedeće korake"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr "Prikaži korake vodiča i 👣 prijedloge. Isključite za kraći popis"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "_Pregledaj (otvori uređivač)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "Označi kao Završeno"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "Označi za zanemarivanje"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "Označi za obrezivanje"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "Označi kao %s"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ Trenutna baza podataka rodoslova ne sadrži osobe.\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 Sljedeći koraci:\n"
+" Dodajte obitelj i osobu u tu obitelj:\n"
+"  • Obitelj se može dodati putem izbornika \"Dodaj\"\n"
+"  • Osoba se može dodati pritiskom na \"+\" (plus) u pločama supružnika (\"Otac/partner1\" ili \"Majka/partner2\") ili na kartici \"Djeca\".\n"
+"\n"
+"Ili uvezite osobe iz vanjske datoteke:\n"
+"  • Vanjska datoteka može se upotrijebiti za popunjavanje rodoslova putem \"Uvezi …\" u izborniku \"Rodoslovi\"."
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ Nijedna osoba nije odabrana kao središnja \"Početna osoba\".\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 Sljedeći koraci:\n"
+"  •  Odaberite ikonu prikaza Osobe u bočnoj traci Navigatora.\n"
+"  •  Odaberite nekoga kako bi postao \"Aktivna osoba\".\n"
+"  •  Odaberite \"Postavi početnu osobu\" iz izbornika Uredi ili iz kontekstnog izbornika (desni klik).\n"
+"\n"
+" Time postaje središnja \"Početna osoba\"."
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "Dvaput kliknite obojeni tekst za uređivanje pojedinosti"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "središnja Početna osoba"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(osoba s nepoznatim imenom)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(nepoznata osoba)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s i %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "ime nepoznato"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "prezime nepoznato"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "Nedostaje događaj Rođenje"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "Nedostaje događaj Smrt"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "događaj sklapanja braka nedostaje"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "vrsta odnosa nepoznata"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "datum nepoznat"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "datum je samo tekst"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "datum netočan"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "datum nepotpun"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "mjesto događaja nepoznato"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "Postoji partnerski odnos, ali supružnik nedostaje"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "Otac nedostaje u obitelji roditelja"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "Majka nedostaje u obitelji roditelja"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "Obitelj roditelja je nepoznata."
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

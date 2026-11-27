@@ -1,0 +1,612 @@
+# id translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Indonesian <https://hosted.weblate.org/projects/gramps-project/addons/id/>\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "Apa Berikutnya"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "Gramplet yang menyarankan hal untuk diteliti"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "Apa Berikutnya?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "Bantuan"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "Orang"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "Nama depan tidak diketahui"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "Laporkan orang tanpa nama depan"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "Nama keluarga tidak diketahui"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "Laporkan orang tanpa nama keluarga"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "Peristiwa Kelahiran tidak ada"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "Laporkan orang tanpa peristiwa Kelahiran"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "Tanggal dan tempat lahir"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "Periksa tanggal dan tempat peristiwa Kelahiran"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "Peristiwa Kematian tidak ada"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+"Laporkan orang tanpa peristiwa Kematian, bila Gramps menilai dari tanggal "
+"orang tersebut dan kerabatnya bahwa orang itu sudah tidak hidup"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "Tanggal dan tempat kematian"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "Periksa tanggal dan tempat peristiwa Kematian"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "Keluarga"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "Jenis hubungan tidak diketahui"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "Laporkan keluarga dengan jenis hubungan \"Tidak diketahui\""
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "Peristiwa Pernikahan tidak ada"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "Laporkan keluarga berjenis \"Menikah\" tanpa peristiwa Pernikahan"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "Tanggal dan tempat pernikahan"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "Periksa tanggal dan tempat peristiwa Pernikahan"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "Tanggal dan tempat perceraian"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "Periksa tanggal dan tempat peristiwa Perceraian"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "Hubungan"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "Keluarga orang tua tidak ada"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "Daftarkan setiap orang yang tidak memiliki keluarga orang tua"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "Pasangan tidak ada"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "Laporkan keluarga yang hanya memiliki satu pasangan"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "Ayah tidak ada"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "Laporkan orang yang keluarga orang tuanya tidak memiliki ayah"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "Ibu tidak ada"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "Laporkan orang yang keluarga orang tuanya tidak memiliki ibu"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "Peristiwa"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "Tanggal tidak diketahui"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "Laporkan peristiwa tanpa tanggal"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "Tanggal hanya berupa teks"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Laporkan tanggal yang tidak dapat dibaca Gramps sebagai tanggal"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "Tanggal tidak tepat"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+"Laporkan rentang, jangka waktu, atau tanggal dengan \"sebelum\", "
+"\"sesudah\", \"sekitar\", \"perkiraan\" atau \"hasil hitungan\""
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "Tanggal tidak lengkap"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "Laporkan tanggal tunggal tanpa hari atau bulan"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "Tempat tidak diketahui"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "Laporkan peristiwa tanpa tempat"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "Masukkan nama yang hilang di dialog Sunting Orang."
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "Tambahkan melalui tab Peristiwa di dialog Sunting Orang."
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr ""
+"Buka peristiwa di tab Peristiwa pada dialog Sunting Orang, lalu lengkapi "
+"tanggal dan tempatnya."
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr ""
+"Buka peristiwa di tab Peristiwa pada dialog Sunting Keluarga, lalu lengkapi "
+"tanggal dan tempatnya."
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr ""
+"Tambahkan peristiwa Pernikahan di tab Peristiwa pada dialog Sunting "
+"Keluarga."
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "Pilih \"Jenis\" hubungan di dialog Sunting Keluarga."
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "Tambahkan pasangan yang hilang di dialog Sunting Keluarga."
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "Tambahkan ayah di dialog Sunting Keluarga untuk keluarga orang tua."
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "Tambahkan ibu di dialog Sunting Keluarga untuk keluarga orang tua."
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+"Di tampilan Hubungan, pilih \"Tambah Orang Tua Baru...\" atau \"Tambah Orang"
+" Tua yang Ada...\" dari menu Sunting."
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "Selesai"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "Diabaikan"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "Dipangkas"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ Basis data Pohon Silsilah lokal belum dimuat.\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 Langkah Berikutnya:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  Dari menu \"Pohon Keluarga\","
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " gunakan opsi \"Kelola Pohon Keluarga...\" untuk"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " membuat basis data Pohon baru (atau memilih yang sudah ada).\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  Klik tombol \"Muat Pohon Keluarga\" untuk mulai"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" bekerja dengan pohon silsilah yang dipilih.\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Untuk memakai cadangan dari Gramps, atau berkas GEDCOM dari alat silsilah lain, pilih \"Impor...\" di menu \"Pohon Keluarga\".\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Untuk memakai cadangan dari Gramps, atau berkas GEDCOM dari alat silsilah lain, buat dan muat dulu pohon baru yang kosong. Lalu pilih \"Impor...\" di menu \"Pohon Keluarga\".\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr "Gunakan \"Konfigurasi\" di menu \"Tampilan\" untuk mengubah opsi Gramplet."
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "Atur Tanda"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "Selesaikan"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "Tandai Orang dan Keluarga yang terdaftar sebagai Selesai"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "Abaikan"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "Tandai untuk Mengabaikan Orang dan Keluarga"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "Pangkas"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr ""
+"Tandai untuk Memangkas (mengecualikan) Orang dan Keluarga yang terdaftar "
+"dari pengujian"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "Kuota Pencarian "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+"Jumlah baris paling sedikit yang ditampilkan. Pencarian berhenti setelah "
+"masalah sebanyak ini ditemukan"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "Kedalaman per putaran"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr ""
+"Berapa generasi keturunan yang diperiksa sebelum naik satu generasi leluhur "
+"lagi"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "Jeda perluasan pencarian"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr ""
+"Berapa putaran tambahan untuk menunggu setelah memeriksa seorang leluhur "
+"sebelum memeriksa keturunan leluhur tersebut"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "Tanda Selesai"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "Selesai. Sembunyikan objek, dan lanjutkan pencarian melaluinya"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "Tanda Abaikan"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr ""
+"Disisihkan untuk sementara. Sembunyikan objek, dan lanjutkan pencarian "
+"melaluinya"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "Tanda Pangkas"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "Jalan buntu. Sembunyikan objek, dan hentikan pencarian melaluinya"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "Tampilkan 👣 Langkah Berikutnya yang disarankan"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr ""
+"Tampilkan langkah panduan dan 👣 saran. Matikan untuk daftar yang lebih "
+"pendek"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "_Tinjau (buka penyunting)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "Tandai sebagai Selesai"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "Tandai untuk Diabaikan"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "Tandai untuk Dipangkas"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "Tandai sebagai %s"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ Basis data Pohon saat ini tidak berisi orang.\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 Langkah Berikutnya:\n"
+" Tambahkan Keluarga dan seseorang dalam keluarga itu:\n"
+"  • Keluarga dapat ditambahkan melalui menu \"Tambah\"\n"
+"  • Seseorang dapat ditambahkan dengan menekan \"+\" (plus) di panel pasangan (\"Ayah/pasangan1\" atau \"Ibu/pasangan2\") atau tab \"Anak\".\n"
+"\n"
+"Atau Impor Orang dari berkas eksternal:\n"
+"  • Berkas eksternal dapat dipakai untuk mengisi pohon melalui \"Impor...\" di menu \"Pohon Keluarga\"."
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ Belum ada Orang yang dipilih sebagai \"Orang Utama\" pusat.\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 Langkah Berikutnya:\n"
+"  •  Pilih ikon tampilan Orang di bilah sisi Navigator.\n"
+"  •  Pilih seseorang untuk menjadikannya \"Orang Aktif\".\n"
+"  •  Pilih \"Tetapkan Orang Utama\" dari menu Sunting atau dari menu konteks (klik kanan).\n"
+"\n"
+" Ini menetapkannya sebagai \"Orang Utama\" pusat."
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "Klik ganda teks berwarna untuk menyunting rincian"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "Orang Utama pusat"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(orang dengan nama tidak diketahui)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(orang tidak diketahui)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s dan %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "nama depan tidak diketahui"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "nama keluarga tidak diketahui"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "Peristiwa Kelahiran tidak ada"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "Peristiwa Kematian tidak ada"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "peristiwa pernikahan tidak ada"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "jenis hubungan tidak diketahui"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "tanggal tidak diketahui"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "tanggal hanya berupa teks"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "tanggal tidak tepat"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "tanggal tidak lengkap"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "tempat Peristiwa tidak diketahui"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "Ada hubungan pasangan tetapi pasangannya tidak ada"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "Ayah tidak ada dalam keluarga orang tua"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "Ibu tidak ada dalam keluarga orang tua"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "Keluarga orang tua tidak diketahui."
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

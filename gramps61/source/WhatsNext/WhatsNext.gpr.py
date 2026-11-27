@@ -29,10 +29,8 @@
 #
 # ------------------------------------------------------------------------
 
-# from gramps.gen.plug._pluginreg import register, STABLE, BETA, EXPERIMENTAL, UNSTABLE, DEVELOPER, GRAMPLET
-# from gramps.gen.const import GRAMPS_LOCALE as glocale
-# _ = glocale.translation.sgettext
-
+# register, GRAMPLET, STABLE, EVERYONE and _ are provided by the Gramps
+# plugin registration environment.
 from gramps.version import major_version, VERSION_TUPLE
 
 # ------------------------------------------------------------------------
@@ -53,7 +51,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         id="What's Next",
         name=_("What's Next"),
         description=_("Gramplet suggesting items to research"),
-        version="1.1.0",  # build 20261126.2200
+        version="1.1.0",  # build 20261127.0132
         gramps_target_version=major_version,
         status=STABLE,
         audience=EVERYONE,
@@ -66,6 +64,8 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         expand=True,
         gramplet="WhatNextGramplet",
         gramplet_title=_("What's Next?"),
-        help_url="https://github.com/emyoulation/_BetaDashboards",
-        # help_url="Gramps_5.2_Wiki_Manual_-_Gramplets#What.27s_Next",
+        help_url=(
+            "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/"
+            "gramps61/source/WhatsNext"
+        ),
     )

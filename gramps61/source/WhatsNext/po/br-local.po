@@ -1,0 +1,609 @@
+# br translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Breton <https://hosted.weblate.org/projects/gramps-project/addons/br/>\n"
+"Language: br\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "Petra da heul"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "Gramplet a ginnig elfennoù da glask"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "Petra da heul?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "Skoazell"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "Tudoù"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "Anv-bihan dianav"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "Danevelliñ un den hep anv-bihan"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "Anv-familh dianav"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "Danevelliñ un den hep anv-familh"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "Darvoud Ganedigezh o vankout"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "Danevelliñ un den hep darvoud Ganedigezh"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "Deiziad ha lec'h ar ganedigezh"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "Gwiriañ deiziad ha lec'h an darvoud Ganedigezh"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "Darvoud Marv o vankout"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+"Danevelliñ un den hep darvoud Marv, pa varn Gramps diouzh deiziadoù an den "
+"hag e gerent n'emañ ket ken en e vuhez"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "Deiziad ha lec'h ar marv"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "Gwiriañ deiziad ha lec'h an darvoud Marv"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "Familhoù"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "Seurt darempred dianav"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "Danevelliñ ur familh gant ar seurt darempred \"Dianav\""
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "Darvoud Dimeziñ o vankout"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "Danevelliñ ur familh eus ar seurt \"Dimezet\" hep darvoud Dimeziñ"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "Deiziad ha lec'h an dimeziñ"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "Gwiriañ deiziad ha lec'h an darvoud Dimeziñ"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "Deiziad ha lec'h an dispartiañ"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "Gwiriañ deiziad ha lec'h an darvoud Dispartiañ"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "Darempredoù"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "Familh an tud o vankout"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "Rollañ pep den hep familh tud"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "Kevelour o vankout"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "Danevelliñ ur familh gant ur c'hevelour hepken"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "Tad o vankout"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "Danevelliñ un den n'eus tad ebet en e familh tud"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "Mamm o vankout"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "Danevelliñ un den n'eus mamm ebet en e familh tud"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "Darvoudoù"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "Deiziad dianav"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "Danevelliñ un darvoud hep deiziad"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "Testenn hepken eo an deiziad"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Danevelliñ un deiziad na c'hall ket Gramps lenn evel un deiziad"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "Deiziad diresis"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+"Danevelliñ ur maread, ur prantad, pe un deiziad gant \"a-raok\", \"goude\", "
+"\"war-dro\", \"priziet\" pe \"jedet\""
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "Deiziad diglok"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "Danevelliñ un deiziad eeun hep e zeiz pe e viz"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "Lec'h dianav"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "Danevelliñ un darvoud hep lec'h"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "Lakait an anv a vank er prenestr Aozer den."
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "Ouzhpennit dre ivinell an Darvoudoù er prenestr Aozer den."
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr ""
+"Digorit an darvoud war ivinell an Darvoudoù er prenestr Aozer den, ha "
+"klokait e zeiziad hag e lec'h."
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr ""
+"Digorit an darvoud war ivinell an Darvoudoù er prenestr Aozañ ar familh, ha "
+"klokait e zeiziad hag e lec'h."
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr ""
+"Ouzhpennit un darvoud Dimeziñ war ivinell an Darvoudoù er prenestr Aozañ ar "
+"familh."
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "Dibabit \"Seurt\" an darempred er prenestr Aozañ ar familh."
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "Ouzhpennit ar c'hevelour a vank er prenestr Aozañ ar familh."
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "Ouzhpennit an tad er prenestr Aozañ ar familh eus familh an tud."
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "Ouzhpennit ar vamm er prenestr Aozañ ar familh eus familh an tud."
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+"E gwel an Darempredoù, dibabit \"Ouzhpennañ tud nevez...\" pe \"Ouzhpennañ "
+"tud a zo anezho...\" el lañser Aozañ."
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "Klokaet"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "Lezet a-gostez"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "Divarret"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ N'eo ket bet karget c'hoazh ur stlennvon gwezenn-gerentiezh lec'hel.\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 Paziou da-heul:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  Eus al lañser \"Gwez familh\","
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " implijit an dibarzh \"Merañ ar gwez familh...\" evit"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " krouiñ ur stlennvon gwezenn nevez (pe evit dibab unan a zo anezhi).\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  Klikit war ar bouton \"Kargañ ar wezenn familh\" evit kregiñ"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" da labourat gant ar wezenn-gerentiezh dibabet.\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Evit implijout un enrolladenn-gwarez eus Gramps, pe ur restr GEDCOM eus un ostilh kerentiezh all, dibabit \"Enporzhiañ...\" el lañser \"Gwez familh\".\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Evit implijout un enrolladenn-gwarez eus Gramps, pe ur restr GEDCOM eus un ostilh kerentiezh all, krouit ha kargit da gentañ ur wezenn nevez ha goullo. Goude-se dibabit \"Enporzhiañ...\" el lañser \"Gwez familh\".\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr "Implijit \"Kefluniañ\" el lañser \"Gwel\" evit cheñch dibarzhioù ar Gramplet."
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "Aozañ an tikedennoù"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "Klokaat"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "Merkañ an dud hag ar familhoù rollet evel Klokaet"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "Lezel a-gostez"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "Merkañ evit lezel a-gostez tud ha familhoù"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "Divarrañ"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr ""
+"Merkañ evit divarrañ (lemel) an dud hag ar familhoù rollet eus ar "
+"gwiriadennoù"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "Kevrann ar c'hlask "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+"An niver bihanañ a linennoù da ziskouez. Paouez a ra ar c'hlask kerkent ha "
+"ma vez kavet kement-se a gudennoù"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "Donder dre dro"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr ""
+"Pet remziad diskennidi da wiriañ a-raok pignat ur remziad hendadoù ouzhpenn"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "Ehanañ astenn ar c'hlask"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr ""
+"Pet tro ouzhpenn da c'hortoz goude bezañ gwiriet un hendad a-raok gwiriañ "
+"diskennidi an hendad-se"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "Tikedenn Klokaet"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "Echu. Kuzhat an objed, ha kenderc'hel da glask drezañ"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "Tikedenn Lezet a-gostez"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr ""
+"Lakaet a-gostez evit bremañ. Kuzhat an objed, ha kenderc'hel da glask drezañ"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "Tikedenn Divarret"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "Hent dall. Kuzhat an objed, ha paouez da glask drezañ"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "Diskouez ar 👣 Paziou da-heul kinniget"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr ""
+"Diskouez ar paziou heñchañ hag an 👣 alioù. Lazhit evit ur roll berroc'h"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "_Adwelet (digeriñ an aozer)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "Merkañ evel Klokaet"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "Merkañ evit lezel a-gostez"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "Merkañ evit divarrañ"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "Merkañ evel %s"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ N'eus den ebet er stlennvon gwezenn red.\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 Paziou da-heul:\n"
+" Ouzhpennit ur familh hag un den er familh-se:\n"
+"  • Ur familh a c'hall bezañ ouzhpennet dre al lañser \"Ouzhpennañ\"\n"
+"  • Un den a c'hall bezañ ouzhpennet en ur bouezañ war \"+\" (muioc'h) er panelloù pried (\"Tad/kevelour1\" pe \"Mamm/kevelour2\") pe en ivinell \"Bugale\".\n"
+"\n"
+"Pe enporzhiit tud eus ur restr diavaez:\n"
+"  • Ur restr diavaez a c'hall bezañ implijet evit leuniañ ar wezenn dre \"Enporzhiañ...\" el lañser \"Gwez familh\"."
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ Den ebet n'eo bet dibabet evel \"Den degemer\" kreiz.\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 Paziou da-heul:\n"
+"  •  Dibabit arlun ar gwel Tud er varrenn-gostez Merdeer.\n"
+"  •  Dibabit unan bennak evit e lakaat da \"Den oberiant\".\n"
+"  •  Dibabit \"Lakaat evel Den degemer\" el lañser Aozañ pe el lañser kemperzh (klik dehou).\n"
+"\n"
+" Lakaat a ra anezhañ da \"Den degemer\" kreiz."
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "Daouglikit war an destenn liv evit aozañ ar munudoù"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "Den degemer kreiz"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(den gant un anv dianav)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(den dianav)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s ha %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "anv-bihan dianav"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "anv-familh dianav"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "Darvoud Ganedigezh o vankout"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "Darvoud Marv o vankout"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "darvoud dimeziñ o vankout"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "seurt darempred dianav"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "deiziad dianav"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "testenn hepken eo an deiziad"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "deiziad diresis"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "deiziad diglok"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "lec'h an Darvoud dianav"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s : %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "Bez' ez eus un darempred kevelourien met mankout a ra ar pried"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "Mankout a ra an tad e familh an tud"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "Mankout a ra ar vamm e familh an tud"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "Dianav eo familh an tud."
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

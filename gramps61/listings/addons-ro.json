@@ -56,6 +56,18 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/CapsuleSources"
   },
   {
+    "n": "Ce urmează",
+    "i": "What's Next",
+    "t": 10,
+    "d": "Gramplet care sugerează elemente de cercetat",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "WhatsNext.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/WhatsNext",
+    "a": 0
+  },
+  {
     "n": "Citation Date Modifiers",
     "i": "HasDateModifiersCitation",
     "t": 13,
@@ -542,17 +554,5 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
-  },
-  {
-    "n": "What's Next",
-    "i": "What's Next",
-    "t": 10,
-    "d": "Gramplet suggesting items to research",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 3,
-    "z": "WhatsNext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
   }
 ]

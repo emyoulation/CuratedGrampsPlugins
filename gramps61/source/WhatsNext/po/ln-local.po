@@ -1,0 +1,612 @@
+# ln translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: none\n"
+"Language: ln\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "Nini elandi"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "Gramplet oyo epesaka makanisi ya makambo ya koluka"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "Nini elandi?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "Lisalisi"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "Bato"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "Nkombo ya yambo eyebani te"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "Kolakisa moto oyo azali na nkombo ya yambo te"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "Nkombo ya libota eyebani te"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "Kolakisa moto oyo azali na nkombo ya libota te"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "Likambo ya Mbotama ezali te"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "Kolakisa moto oyo azali na likambo ya Mbotama te"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "Mokolo mpe esika ya mbotama"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "Kotala mokolo mpe esika ya likambo ya Mbotama"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "Likambo ya Liwa ezali te"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+"Kolakisa moto oyo azali na likambo ya Liwa te, ntango Gramps emoni na mikolo"
+" ya moto yango mpe ya bandeko na ye ete azali lisusu na bomoi te"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "Mokolo mpe esika ya liwa"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "Kotala mokolo mpe esika ya likambo ya Liwa"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "Mabota"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "Lolenge ya boyokani eyebani te"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "Kolakisa libota oyo lolenge ya boyokani na yango ezali \"Eyebani te\""
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "Likambo ya Libala ezali te"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "Kolakisa libota ya lolenge \"Babalani\" oyo ezali na likambo ya Libala te"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "Mokolo mpe esika ya libala"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "Kotala mokolo mpe esika ya likambo ya Libala"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "Mokolo mpe esika ya bokabwani"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "Kotala mokolo mpe esika ya likambo ya Bokabwani"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "Boyokani"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "Libota ya baboti ezali te"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "Kotya na liste moto nyonso oyo azali na libota ya baboti te"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "Molongani azali te"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "Kolakisa libota oyo ezali na molongani moko kaka"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "Tata azali te"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "Kolakisa moto oyo libota ya baboti na ye ezali na tata te"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "Mama azali te"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "Kolakisa moto oyo libota ya baboti na ye ezali na mama te"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "Makambo"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "Mokolo eyebani te"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "Kolakisa likambo oyo ezali na mokolo te"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "Mokolo ezali kaka makomi"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Kolakisa mokolo oyo Gramps akokaki kotánga lokola mokolo te"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "Mokolo ya sikisiki te"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+"Kolakisa eleko, ntango, to mokolo na \"liboso ya\", \"nsima ya\", \"pene "
+"na\", \"ya kokanisa\" to \"ya kotánga\""
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "Mokolo ya kokoka te"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "Kolakisa mokolo moko oyo ezali na mokolo ya sanza to sanza te"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "Esika eyebani te"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "Kolakisa likambo oyo ezali na esika te"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "Kotya nkombo oyo ezangi na lisanga ya Kobongisa Moto."
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "Kobakisa na lokasa ya Makambo na lisanga ya Kobongisa Moto."
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr ""
+"Fungola likambo na lokasa ya Makambo na lisanga ya Kobongisa Moto, mpe "
+"tondisa mokolo mpe esika na yango."
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr ""
+"Fungola likambo na lokasa ya Makambo na lisanga ya Kobongisa Libota, mpe "
+"tondisa mokolo mpe esika na yango."
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr ""
+"Bakisa likambo ya Libala na lokasa ya Makambo na lisanga ya Kobongisa "
+"Libota."
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "Pona \"Lolenge\" ya boyokani na lisanga ya Kobongisa Libota."
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "Bakisa molongani oyo azangi na lisanga ya Kobongisa Libota."
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "Bakisa tata na lisanga ya Kobongisa Libota ya libota ya baboti."
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "Bakisa mama na lisanga ya Kobongisa Libota ya libota ya baboti."
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+"Na lolenge ya kotala Boyokani, pona \"Bakisa Baboti ya sika...\" to \"Bakisa"
+" Baboti oyo bazali...\" na menu ya Kobongisa."
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "Esilisami"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "Etikami"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "Ekatami"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ Base ya ba données ya Nzete ya libota ya esika oyo naino ezwami te.\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 Matambe oyo elandi:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  Na menu \"Banzete ya Libota\","
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " salela option \"Kobongisa Banzete ya Libota...\" mpo na"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " kosala base ya ba données ya Nzete ya sika (to kopona oyo ezali).\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  Finá bouton \"Kofungola Nzete ya Libota\" mpo na kobanda"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" kosala na nzete ya libota oyo oponi.\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Mpo na kosalela copie ya Gramps, to fichier GEDCOM ya esaleli mosusu ya libota, pona \"Kokotisa...\" na menu \"Banzete ya Libota\".\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Mpo na kosalela copie ya Gramps, to fichier GEDCOM ya esaleli mosusu ya libota, salá liboso mpe fungolá nzete ya sika oyo ezali mpamba. Sima pona \"Kokotisa...\" na menu \"Banzete ya Libota\".\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr ""
+"Salela \"Kobongisa\" na menu \"Kotala\" mpo na kobongola ba options ya "
+"Gramplet."
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "Kobongisa bilembo"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "Kosilisa"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "Kotya elembo Esilisami na Bato mpe Mabota oyo bakomami"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "Kotika"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "Kotya elembo ya Kotika na Bato mpe Mabota"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "Kokata"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr ""
+"Kotya elembo ya Kokata (kolongola) Bato mpe Mabota oyo bakomami na komeka"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "Ndelo ya Boluki "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+"Motango moke ya milongo ya kolakisa. Boluki etelemaka soki mikakatano mingi "
+"boye emonani"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "Bozindo na mbala moko"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr ""
+"Mabota boni ya bakitani ya kotala liboso ya komata libota moko lisusu ya "
+"bankoko"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "Kotelemisa mwa moke bokolisi ya boluki"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr ""
+"Mbala boni lisusu ya kozela nsima ya kotala nkoko liboso ya kotala bakitani "
+"ya nkoko yango"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "Elembo Esilisami"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "Esili. Kobomba eloko, mpe kokoba koluka na kati na yango"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "Elembo Kotika"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr ""
+"Etikami pembeni mpo na sikawa. Kobomba eloko, mpe kokoba koluka na kati na "
+"yango"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "Elembo Kokata"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "Nzela ekangami. Kobomba eloko, mpe kotika koluka na kati na yango"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "Kolakisa 👣 Matambe oyo elandi oyo epesami"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr ""
+"Kolakisa matambe ya bokambi mpe 👣 makanisi. Kanga mpo na liste ya mokuse"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "_Kotala lisusu (kofungola mobongisi)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "Kotya elembo Esilisami"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "Kotya elembo ya Kotika"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "Kotya elembo ya Kokata"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "Kotya elembo %s"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ Base ya ba données ya Nzete oyo ezali na bato te.\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 Matambe oyo elandi:\n"
+" Bakisa Libota mpe moto moko na libota yango:\n"
+"  • Libota ekoki kobakisama na menu \"Bakisa\"\n"
+"  • Moto akoki kobakisama na kofina \"+\" (bakisa) na ba panneaux ya balongani (\"Tata/molongani1\" to \"Mama/molongani2\") to na lokasa \"Bana\".\n"
+"\n"
+"To Kokotisa Bato uta na fichier ya libanda:\n"
+"  • Fichier ya libanda ekoki kosalelama mpo na kotondisa nzete na nzela ya \"Kokotisa...\" na menu \"Banzete ya Libota\"."
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ Moto moko te aponami lokola \"Moto ya Ndako\" ya katikati.\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 Matambe oyo elandi:\n"
+"  •  Pona elilingi ya kotala Bato na barre ya pembeni ya Navigateur.\n"
+"  •  Pona moto moko mpo azala \"Moto oyo azali kosala\".\n"
+"  •  Pona \"Kotya Moto ya Ndako\" na menu ya Kobongisa to na menu ya contexte (kofina na loboko ya mobali).\n"
+"\n"
+" Yango ekotya ye lokola \"Moto ya Ndako\" ya katikati."
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "Fina mbala mibale na makomi ya langi mpo na kobongisa makambo"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "Moto ya Ndako ya katikati"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(moto oyo nkombo na ye eyebani te)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(moto oyo ayebani te)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s mpe %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "nkombo ya yambo eyebani te"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "nkombo ya libota eyebani te"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "Likambo ya Mbotama ezali te"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "Likambo ya Liwa ezali te"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "likambo ya libala ezali te"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "lolenge ya boyokani eyebani te"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "mokolo eyebani te"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "mokolo ezali kaka makomi"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "mokolo ya sikisiki te"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "mokolo ya kokoka te"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "esika ya Likambo eyebani te"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "Boyokani ya balongani ezali kasi molongani azali te"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "Tata azali te na libota ya baboti"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "Mama azali te na libota ya baboti"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "Libota ya baboti eyebani te."
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

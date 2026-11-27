@@ -1,0 +1,605 @@
+# sk translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Slovak <https://hosted.weblate.org/projects/gramps-project/addons/sk/>\n"
+"Language: sk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "Čo ďalej?"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "Gramplet navrhujúci položky na výskum"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "Čo ďalej?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "Pomoc"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "Ľudia"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "Neznáme krstné meno"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "Nahlásiť osobu bez krstného mena"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "Neznáme priezvisko"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "Nahlásiť osobu bez priezviska"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "Chýba udalosť Narodenie"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "Nahlásiť osobu bez udalosti Narodenie"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "Dátum a miesto narodenia"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "Skontrolovať dátum a miesto udalosti Narodenie"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "Chýba udalosť Úmrtie"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+"Nahlásiť osobu bez udalosti Úmrtie, ak Gramps podľa dátumov osoby a jej "
+"príbuzných usúdi, že osoba už nežije"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "Dátum a miesto úmrtia"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "Skontrolovať dátum a miesto udalosti Úmrtie"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "Rodiny"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "Neznámy typ vzťahu"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "Nahlásiť rodinu s typom vzťahu \"Neznáme\""
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "Chýba udalosť Manželstvo"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "Nahlásiť rodinu typu \"Manželský\" bez udalosti Manželstvo"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "Dátum a miesto sobáša"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "Skontrolovať dátum a miesto udalosti Manželstvo"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "Dátum a miesto rozvodu"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "Skontrolovať dátum a miesto udalosti Rozvod"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "Vzťahy"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "Chýba rodina rodičov"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "Vypísať každú osobu, ktorá nemá rodinu rodičov"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "Chýba partner"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "Nahlásiť rodinu iba s jedným partnerom"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "Chýba otec"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "Nahlásiť osobu, ktorej rodina rodičov nemá otca"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "Chýba matka"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "Nahlásiť osobu, ktorej rodina rodičov nemá matku"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "Udalosti"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "Neznámy dátum"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "Nahlásiť udalosť bez dátumu"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "Dátum je iba text"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Nahlásiť dátum, ktorý Gramps nedokázal prečítať ako dátum"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "Nepresný dátum"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+"Nahlásiť rozsah, obdobie alebo dátum s \"pred\", \"po\", \"okolo\", "
+"\"odhadovaný\" alebo \"vypočítaný\""
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "Neúplný dátum"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "Nahlásiť jednoduchý dátum bez dňa alebo mesiaca"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "Neznáme miesto"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "Nahlásiť udalosť bez miesta"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "Zadajte chýbajúce meno v dialógu Upraviť osobu."
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "Pridajte na karte Udalosti v dialógu Upraviť osobu."
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr ""
+"Otvorte udalosť na karte Udalosti v dialógu Upraviť osobu a doplňte jej "
+"dátum a miesto."
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr ""
+"Otvorte udalosť na karte Udalosti v dialógu Upraviť rodinu a doplňte jej "
+"dátum a miesto."
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr ""
+"Pridajte udalosť Manželstvo na karte Udalosti v dialógu Upraviť rodinu."
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "Zvoľte \"Typ\" vzťahu v dialógu Upraviť rodinu."
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "Pridajte chýbajúceho partnera v dialógu Upraviť rodinu."
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "Pridajte otca v dialógu Upraviť rodinu pre rodinu rodičov."
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "Pridajte matku v dialógu Upraviť rodinu pre rodinu rodičov."
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+"V pohľade Vzťahy zvoľte v ponuke Upraviť \"Pridať nových rodičov...\" alebo "
+"\"Pridať existujúcich rodičov...\"."
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "Dokončené"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "Ignorované"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "Orezané"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ Zatiaľ nebola načítaná žiadna lokálna databáza rodostromu.\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 Ďalšie kroky:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  V ponuke \"Rodostromy\""
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " použite možnosť \"Správa rodostromov...\" a"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " vytvorte novú databázu rodostromu (alebo vyberte existujúcu).\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  Kliknite na tlačidlo \"Načítať rodostrom\" a začnite"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" pracovať s vybraným rodostromom.\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Ak chcete použiť zálohu z Gramps alebo súbor GEDCOM z iného genealogického programu, zvoľte \"Import...\" v ponuke \"Rodostromy\".\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Ak chcete použiť zálohu z Gramps alebo súbor GEDCOM z iného genealogického programu, najprv vytvorte a načítajte nový prázdny rodostrom. Potom zvoľte \"Import...\" v ponuke \"Rodostromy\".\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr "Nastavenia Grampletu zmeníte cez \"Konfigurovať...\" v ponuke \"Pohľad\"."
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "Usporiadať štítky"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "Dokončené"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "Označiť vypísané osoby a rodiny štítkom Dokončené"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "Ignorovať"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "Štítok na ignorovanie osôb a rodín"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "Orezať"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr "Štítok na orezanie (vylúčenie) vypísaných osôb a rodín z kontroly"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "Kvóta hľadania "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+"Najmenší počet riadkov na zobrazenie. Hľadanie sa zastaví, keď sa nájde "
+"toľko problémov"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "Hĺbka na cyklus"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr ""
+"Koľko generácií potomkov skontrolovať pred posunom o ďalšiu generáciu "
+"predkov vyššie"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "Pozastaviť rozširovanie hľadania"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr ""
+"Koľko kôl navyše počkať po kontrole predka, než sa skontrolujú jeho "
+"potomkovia"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "Štítok Dokončené"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "Hotovo. Skryť objekt a ďalej ním prehľadávať"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "Štítok Ignorované"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr "Zatiaľ odložené. Skryť objekt a ďalej ním prehľadávať"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "Štítok Orezané"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "Slepá ulička. Skryť objekt a prestať ním prehľadávať"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "Zobraziť navrhované 👣 ďalšie kroky"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr "Zobraziť pokyny a 👣 návrhy. Vypnite pre kratší zoznam"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "_Skontrolovať (otvoriť editor)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "Označiť ako Dokončené"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "Označiť na ignorovanie"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "Označiť na orezanie"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "Označiť ako %s"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ Aktuálna databáza rodostromu neobsahuje žiadne osoby.\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 Ďalšie kroky:\n"
+" Pridajte rodinu a osobu v tejto rodine:\n"
+"  • Rodinu možno pridať z ponuky \"Pridať\"\n"
+"  • Osobu možno pridať stlačením \"+\" (plus) v paneloch partnerov (\"Otec/partner1\" alebo \"Matka/partner2\") alebo na karte \"Deti\".\n"
+"\n"
+"Alebo importujte osoby z externého súboru:\n"
+"  • Externý súbor možno použiť na naplnenie rodostromu cez \"Import...\" v ponuke \"Rodostromy\"."
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ Žiadna osoba nebola zvolená za ústrednú \"Domovskú osobu\".\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 Ďalšie kroky:\n"
+"  •  Vyberte ikonu pohľadu Osoby v bočnom paneli Navigátora.\n"
+"  •  Vyberte niekoho, aby sa stal \"Aktívnou osobou\".\n"
+"  •  Zvoľte \"Nastaviť domovskú osobu\" v ponuke Upraviť alebo v kontextovej ponuke (pravé tlačidlo).\n"
+"\n"
+" Tým sa stane ústrednou \"Domovskou osobou\"."
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "Dvojitým kliknutím na farebný text upravíte podrobnosti"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "ústredná Domovská osoba"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(osoba s neznámym menom)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(neznáma osoba)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s a %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "prvé meno neznáme"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "priezvisko neznáme"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "Chýba udalosť Narodenie"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "Chýba udalosť Úmrtie"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "Chýbajúca udalosť sobáša"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "typ vzťahu neznámy"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "neznámy dátum"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "dátum je iba text"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "dátum nepresný"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "dátum neúplný"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "miesto udalosti neznáme"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "Existuje partnerský vzťah, ale chýba partner"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "V rodine rodičov chýba otec"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "V rodine rodičov chýba matka"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "Rodina rodičov je neznáma."
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

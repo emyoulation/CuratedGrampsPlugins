@@ -1,0 +1,588 @@
+# ja translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Japanese <https://hosted.weblate.org/projects/gramps-project/addons/ja/>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "次のステップ"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "調査すべき項目を提案する Gramplet"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "次のステップは？"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "ヘルプ"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "人物"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "名が不明"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "名のない人物を報告"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "姓が不明"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "姓のない人物を報告"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "出生イベントがありません"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "出生イベントのない人物を報告"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "出生日と出生地"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "出生イベントの日付と場所を確認"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "死亡イベントがありません"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr "人物と親族の日付から、Gramps がその人物はすでに亡くなっていると判断した場合に、死亡イベントのない人物を報告"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "死亡日と死亡地"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "死亡イベントの日付と場所を確認"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "家族"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "関係のタイプが不明"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "関係のタイプが「不明」の家族を報告"
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "結婚イベントがありません"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "結婚イベントのない「既婚」タイプの家族を報告"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "結婚日と結婚地"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "結婚イベントの日付と場所を確認"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "離婚日と離婚地"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "離婚イベントの日付と場所を確認"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "関係"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "親の家族がありません"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "親の家族がない人物をすべて一覧表示"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "パートナーがいません"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "パートナーが一人だけの家族を報告"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "父親がいません"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "親の家族に父親がいない人物を報告"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "母親がいません"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "親の家族に母親がいない人物を報告"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "イベント"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "日付が不明"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "日付のないイベントを報告"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "日付がテキストのみ"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Gramps が日付として読み取れなかった日付を報告"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "不正確な日付"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr "範囲、期間、または「前」「後」「約」「見積された」「計算された」の付いた日付を報告"
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "不完全な日付"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "日または月のない単一の日付を報告"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "場所が不明"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "場所のないイベントを報告"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "「人物を編集」ダイアログで不足している名前を入力してください。"
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "「人物を編集」ダイアログの「イベント」タブから追加してください。"
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr "「人物を編集」ダイアログの「イベント」タブでイベントを開き、日付と場所を入力してください。"
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr "「家族を編集」ダイアログの「イベント」タブでイベントを開き、日付と場所を入力してください。"
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr "「家族を編集」ダイアログの「イベント」タブで結婚イベントを追加してください。"
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "「家族を編集」ダイアログで関係の「タイプ」を選択してください。"
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "「家族を編集」ダイアログで不足しているパートナーを追加してください。"
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "親の家族の「家族を編集」ダイアログで父親を追加してください。"
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "親の家族の「家族を編集」ダイアログで母親を追加してください。"
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr "「関係」表示で、「編集」メニューから「新しい親を追加...」または「既存の親を追加...」を選択してください。"
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "完了"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "無視"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "剪定済み"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ ローカルの家系図データベースがまだ読み込まれていません。\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 次のステップ:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  「家系図」メニューから、"
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " 「家系図を管理...」オプションを使って"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " 新しい家系図データベースを作成（または既存のものを選択）してください。\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  「家系図を読み込む」ボタンをクリックして、"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" 選択した家系図での作業を始めてください。\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Gramps のバックアップ、または他の系図ソフトの GEDCOM ファイルを使うには、「家系図」メニューの「インポート...」を選択してください。\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Gramps のバックアップ、または他の系図ソフトの GEDCOM ファイルを使うには、まず新しい空の家系図を作成して読み込みます。次に「家系図」メニューの「インポート...」を選択してください。\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr "グランプレットのオプションを変更するには、「表示」メニューの「設定...」を使用してください。"
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "タグを整理"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "完了"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "一覧の人物と家族に「完了」タグを付ける"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "無視"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "人物と家族に無視のタグを付ける"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "剪定"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr "一覧の人物と家族に剪定（検査から除外）のタグを付ける"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "検索ノルマ "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr "表示する最小行数。この数の問題が見つかると検索を停止します"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "ループごとの深さ"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr "祖先を一世代さかのぼる前に確認する子孫の世代数"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "検索拡張の一時停止"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr "祖先を確認した後、その祖先の子孫を確認するまでに待つ追加ラウンド数"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "完了タグ"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "完了。オブジェクトを非表示にし、その先の検索を続けます"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "無視タグ"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr "ひとまず保留。オブジェクトを非表示にし、その先の検索を続けます"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "剪定タグ"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "行き止まり。オブジェクトを非表示にし、その先の検索を停止します"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "提案された 👣 次のステップを表示"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr "ガイドの手順と 👣 提案を表示します。短い一覧にするにはオフにします"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "確認 (エディターを開く)(_R)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "完了のタグを付ける"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "無視のタグを付ける"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "剪定のタグを付ける"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "%s のタグを付ける"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ 現在の家系図データベースには人物がいません。\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 次のステップ:\n"
+" 家族と、その家族の人物を追加します:\n"
+"  • 家族は「追加」メニューから追加できます\n"
+"  • 人物は、配偶者パネル（「父親/パートナー1」または「母親/パートナー2」）や「子供」タブで「+」（プラス）を押して追加できます。\n"
+"\n"
+"または外部ファイルから人物をインポートします:\n"
+"  • 「家系図」メニューの「インポート...」で、外部ファイルを使って家系図を作成できます。"
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ 中心となる「ホームパーソン」に選ばれた人物がいません。\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 次のステップ:\n"
+"  •  ナビゲーターのサイドバーで人物表示のアイコンを選択します。\n"
+"  •  誰かを選んで「アクティブな人物」にします。\n"
+"  •  「編集」メニューまたは（右クリックの）コンテキストメニューから「ホームパーソンに設定」を選択します。\n"
+"\n"
+" これでその人物が中心となる「ホームパーソン」になります。"
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "色付きの文字をダブルクリックして詳細を編集"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "中心となるホームパーソン"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(名前不明の人物)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(不明な人物)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s と %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "名が不明"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "姓が不明"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "出生イベントがありません"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "死亡イベントがありません"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "結婚イベントがありません"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "関係のタイプが不明"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "日付が不明"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "日付がテキストのみ"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "日付が不正確"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "日付が不完全"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "イベントの場所が不明"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "パートナー関係はありますが、配偶者がいません"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "親の家族に父親がいません"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "親の家族に母親がいません"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "親の家族が不明です。"
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

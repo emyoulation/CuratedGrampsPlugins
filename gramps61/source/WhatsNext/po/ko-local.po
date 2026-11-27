@@ -1,0 +1,588 @@
+# ko translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Korean <https://hosted.weblate.org/projects/gramps-project/addons/ko/>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "다음 할 일"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "조사할 항목을 제안하는 그램플릿"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "다음 할 일?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "도움말"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "민족"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "이름을 알 수 없음"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "이름이 없는 사람 보고"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "성을 알 수 없음"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "성이 없는 사람 보고"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "출생 사건 누락"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "출생 사건이 없는 사람 보고"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "출생 날짜 및 장소"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "출생 사건의 날짜와 장소 확인"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "사망 사건 누락"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr "Gramps가 본인과 친척의 날짜로 보아 더 이상 생존하지 않는다고 판단한 사람 중 사망 사건이 없는 사람 보고"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "사망 날짜 및 장소"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "사망 사건의 날짜와 장소 확인"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "가족"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "관계 유형을 알 수 없음"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "관계 유형이 \"알 수 없음\"인 가족 보고"
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "결혼 사건 누락"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "결혼 사건이 없는 \"기혼\" 유형의 가족 보고"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "결혼 날짜 및 장소"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "결혼 사건의 날짜와 장소 확인"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "이혼 날짜 및 장소"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "이혼 사건의 날짜와 장소 확인"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "관계"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "부모 가족 누락"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "부모 가족이 없는 모든 사람 나열"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "배우자 누락"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "배우자가 한 명뿐인 가족 보고"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "아버지 누락"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "부모 가족에 아버지가 없는 사람 보고"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "어머니 누락"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "부모 가족에 어머니가 없는 사람 보고"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "사건"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "날짜를 알 수 없음"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "날짜가 없는 사건 보고"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "날짜가 텍스트로만 되어 있음"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Gramps가 날짜로 읽지 못한 날짜 보고"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "부정확한 날짜"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr "범위, 기간 또는 \"이전\", \"이후\", \"경\", \"추정\" 또는 \"계산\"이 붙은 날짜 보고"
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "불완전한 날짜"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "일 또는 월이 없는 단일 날짜 보고"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "장소를 알 수 없음"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "장소가 없는 사건 보고"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "인물 편집 대화 상자에서 누락된 이름을 입력하십시오."
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "인물 편집 대화 상자의 사건 탭에서 추가하십시오."
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr "인물 편집 대화 상자의 사건 탭에서 사건을 열고 날짜와 장소를 완성하십시오."
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr "가족 편집 대화 상자의 사건 탭에서 사건을 열고 날짜와 장소를 완성하십시오."
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr "가족 편집 대화 상자의 사건 탭에서 결혼 사건을 추가하십시오."
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "가족 편집 대화 상자에서 관계 \"유형\"을 선택하십시오."
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "가족 편집 대화 상자에서 누락된 배우자를 추가하십시오."
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "부모 가족의 가족 편집 대화 상자에서 아버지를 추가하십시오."
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "부모 가족의 가족 편집 대화 상자에서 어머니를 추가하십시오."
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr "관계 보기에서 편집 메뉴의 \"새 부모 추가...\" 또는 \"기존 부모 추가...\"를 선택하십시오."
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "완료됨"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "무시됨"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "가지치기됨"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ 로컬 가계도 데이터베이스가 아직 로드되지 않았습니다.\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 다음 단계:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  \"가계도\" 메뉴에서"
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " \"가계도 관리...\" 옵션을 사용하여"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " 새 가계도 데이터베이스를 만드십시오(또는 기존 것을 선택하십시오).\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  \"가계도 불러오기\" 버튼을 클릭하여"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" 선택한 가계도로 작업을 시작하십시오.\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Gramps 백업이나 다른 족보 프로그램의 GEDCOM 파일을 사용하려면 \"가계도\" 메뉴에서 \"가져오기...\"를 선택하십시오.\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Gramps 백업이나 다른 족보 프로그램의 GEDCOM 파일을 사용하려면 먼저 비어 있는 새 가계도를 만들고 불러오십시오. 그런 다음 \"가계도\" 메뉴에서 \"가져오기...\"를 선택하십시오.\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr "그램플릿 옵션을 변경하려면 \"보기\" 메뉴의 \"구성\"을 사용하십시오."
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "태그 정리"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "완료"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "나열된 사람과 가족에 완료 태그 지정"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "무시"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "사람과 가족을 무시하도록 태그 지정"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "가지치기"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr "나열된 사람과 가족을 검사에서 가지치기(제외)하도록 태그 지정"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "검색 할당량 "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr "표시할 최소 줄 수. 이만큼의 문제를 찾으면 검색이 멈춥니다"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "반복당 깊이"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr "조상을 한 세대 더 올라가기 전에 확인할 후손 세대 수"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "검색 확장 일시 중지"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr "조상을 확인한 뒤 그 조상의 후손을 확인하기 전에 기다릴 추가 회차 수"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "완료 태그"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "완료됨. 개체를 숨기고 그것을 통해 계속 검색합니다"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "무시 태그"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr "당분간 보류. 개체를 숨기고 그것을 통해 계속 검색합니다"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "가지치기 태그"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "막다른 길. 개체를 숨기고 그것을 통한 검색을 멈춥니다"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "제안된 👣 다음 단계 표시"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr "안내 단계와 👣 제안을 표시합니다. 더 짧은 목록을 원하면 끄십시오"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "검토(편집기 열기)(_R)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "완료로 태그 지정"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "무시로 태그 지정"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "가지치기로 태그 지정"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "%s(으)로 태그 지정"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ 현재 가계도 데이터베이스에 사람이 없습니다.\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 다음 단계:\n"
+" 가족과 그 가족의 사람을 추가하십시오:\n"
+"  • 가족은 \"추가\" 메뉴에서 추가할 수 있습니다\n"
+"  • 사람은 배우자 패널(\"아버지/배우자1\" 또는 \"어머니/배우자2\")이나 \"자녀\" 탭에서 \"+\"(더하기)를 눌러 추가할 수 있습니다.\n"
+"\n"
+"또는 외부 파일에서 사람을 가져오십시오:\n"
+"  • \"가계도\" 메뉴의 \"가져오기...\"를 통해 외부 파일로 가계도를 채울 수 있습니다."
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ 중심 \"기본 인물\"로 선택된 사람이 없습니다.\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 다음 단계:\n"
+"  •  탐색기 사이드바에서 인물 보기 아이콘을 선택하십시오.\n"
+"  •  누군가를 선택하여 \"활성 인물\"로 만드십시오.\n"
+"  •  편집 메뉴나 (오른쪽 클릭) 상황 메뉴에서 \"기본 인물로 설정\"을 선택하십시오.\n"
+"\n"
+" 그러면 그 사람이 중심 \"기본 인물\"로 설정됩니다."
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "세부 정보를 편집하려면 색상 텍스트를 두 번 클릭하십시오"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "중심 기본 인물"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(이름을 알 수 없는 사람)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(알 수 없는 사람)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s 및 %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "이름 알 수 없음"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "성 알 수 없음"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "출생 사건 누락"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "사망 사건 누락"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "결혼 사건 누락"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "관계 유형 알 수 없음"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "날짜 알 수 없음"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "날짜가 텍스트로만 되어 있음"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "날짜 부정확"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "날짜 불완전"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "사건의 장소를 알 수 없음"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "배우자 관계는 있으나 배우자가 없습니다"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "부모 가족에 아버지 누락"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "부모 가족에 어머니 누락"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "부모 가족을 알 수 없습니다."
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

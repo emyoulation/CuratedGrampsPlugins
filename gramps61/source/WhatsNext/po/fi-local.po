@@ -1,0 +1,610 @@
+# fi translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Finnish <https://hosted.weblate.org/projects/gramps-project/addons/fi/>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "Mitä seuraavaksi?"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "Gramplet ehdottaa lisätutkittavaa"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "Mitä seuraavaksi?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "Ohje"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "Henkilöt"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "Tuntematon etunimi"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "Ilmoita henkilö, jolla ei ole etunimeä"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "Tuntematon sukunimi"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "Ilmoita henkilö, jolla ei ole sukunimeä"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "Syntymätapahtuma puuttuu"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "Ilmoita henkilö, jolla ei ole Syntymä-tapahtumaa"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "Syntymäaika ja -paikka"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "Tarkista Syntymä-tapahtuman aika ja paikka"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "Kuolematapahtuma puuttuu"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+"Ilmoita henkilö, jolla ei ole Kuolema-tapahtumaa, kun Gramps päättelee "
+"henkilön ja sukulaisten päivämääristä, ettei henkilö ole enää elossa"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "Kuolinaika ja -paikka"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "Tarkista Kuolema-tapahtuman aika ja paikka"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "Perheet"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "Tuntematon suhdetyyppi"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "Ilmoita perhe, jonka suhdetyyppi on \"Tuntematon\""
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "Avioliittotapahtuma puuttuu"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr ""
+"Ilmoita \"Avioliitto\"-tyyppinen perhe, jolla ei ole Avioliitto-tapahtumaa"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "Vihkimisaika ja -paikka"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "Tarkista Avioliitto-tapahtuman aika ja paikka"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "Avioeron aika ja paikka"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "Tarkista Avioero-tapahtuman aika ja paikka"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "Suhteet"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "Vanhempien perhe puuttuu"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "Luettele jokainen henkilö, jolla ei ole vanhempien perhettä"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "Kumppani puuttuu"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "Ilmoita perhe, jossa on vain yksi kumppani"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "Isä puuttuu"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "Ilmoita henkilö, jonka vanhempien perheessä ei ole isää"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "Äiti puuttuu"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "Ilmoita henkilö, jonka vanhempien perheessä ei ole äitiä"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "Tapahtumat"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "Tuntematon päivämäärä"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "Ilmoita tapahtuma, jolla ei ole päivämäärää"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "Päivämäärä on pelkkää tekstiä"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Ilmoita päivämäärä, jota Gramps ei osannut lukea päivämääräksi"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "Epätarkka päivämäärä"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+"Ilmoita väli, jakso tai päivämäärä, jossa on \"ennen\", \"jälkeen\", "
+"\"noin\", \"arvioitu\" tai \"laskettuna\""
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "Puutteellinen päivämäärä"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "Ilmoita yksittäinen päivämäärä, josta puuttuu päivä tai kuukausi"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "Tuntematon paikka"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "Ilmoita tapahtuma, jolla ei ole paikkaa"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "Kirjoita puuttuva nimi Muokkaa henkilöä -ikkunaan."
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "Lisää Muokkaa henkilöä -ikkunan Tapahtumat-välilehdellä."
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr ""
+"Avaa tapahtuma Muokkaa henkilöä -ikkunan Tapahtumat-välilehdellä ja täydennä"
+" sen aika ja paikka."
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr ""
+"Avaa tapahtuma Muokkaa perhettä -ikkunan Tapahtumat-välilehdellä ja täydennä"
+" sen aika ja paikka."
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr ""
+"Lisää Avioliitto-tapahtuma Muokkaa perhettä -ikkunan Tapahtumat-"
+"välilehdellä."
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "Valitse suhteen \"Tyyppi\" Muokkaa perhettä -ikkunassa."
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "Lisää puuttuva kumppani Muokkaa perhettä -ikkunassa."
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "Lisää isä vanhempien perheen Muokkaa perhettä -ikkunassa."
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "Lisää äiti vanhempien perheen Muokkaa perhettä -ikkunassa."
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+"Valitse Suhteet-näkymässä Muokkaa-valikosta \"Lisää vanhemmat...\" tai "
+"\"Lisää olemassa olevat vanhemmat...\"."
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "Valmis"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "Ohitettu"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "Karsittu"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ Paikallista sukupuutietokantaa ei ole vielä ladattu.\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 Seuraavat vaiheet:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  Valitse \"Sukupuut\"-valikosta"
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " \"Hallinnoi sukupuita...\" ja"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " luo uusi sukupuutietokanta (tai valitse olemassa oleva).\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  Napsauta \"Lataa sukupuu\" -painiketta aloittaaksesi"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" työskentelyn valitun sukupuun kanssa.\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Jos haluat käyttää Grampsin varmuuskopiota tai toisen sukututkimusohjelman GEDCOM-tiedostoa, valitse \"Sukupuut\"-valikosta \"Tuonti...\".\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Jos haluat käyttää Grampsin varmuuskopiota tai toisen sukututkimusohjelman GEDCOM-tiedostoa, luo ja lataa ensin uusi, tyhjä sukupuu. Valitse sitten \"Sukupuut\"-valikosta \"Tuonti...\".\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr "Muuta Gramplet-asetuksia \"Näytä\"-valikon kohdasta \"Asetukset...\"."
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "Järjestä tagit"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "Valmis"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "Merkitse luetellut henkilöt ja perheet tagilla Valmis"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "Ohita"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "Merkitse henkilöt ja perheet ohitettaviksi"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "Karsi"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr ""
+"Merkitse luetellut henkilöt ja perheet karsittaviksi (pois tarkistuksesta)"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "Hakukiintiö "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+"Näytettävien rivien vähimmäismäärä. Haku pysähtyy, kun näin monta ongelmaa "
+"on löytynyt"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "Syvyys kierrosta kohden"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr ""
+"Montako jälkeläissukupolvea tarkistetaan ennen kuin noustaan yksi "
+"esivanhempien sukupolvi ylemmäs"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "Keskeytä haun laajentaminen"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr ""
+"Montako lisäkierrosta odotetaan esivanhemman tarkistamisen jälkeen ennen "
+"tämän jälkeläisten tarkistamista"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "Valmis-tagi"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "Valmis. Piilota kohde ja jatka hakua sen kautta"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "Ohita-tagi"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr ""
+"Siirretty toistaiseksi sivuun. Piilota kohde ja jatka hakua sen kautta"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "Karsi-tagi"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "Umpikuja. Piilota kohde ja lopeta haku sen kautta"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "Näytä ehdotetut 👣 seuraavat vaiheet"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr ""
+"Näytä ohjeet ja 👣 ehdotukset. Poista käytöstä lyhyempää luetteloa varten"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "_Tarkastele (avaa muokkain)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "Merkitse Valmiiksi"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "Merkitse ohitettavaksi"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "Merkitse karsittavaksi"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "Merkitse tagilla %s"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ Nykyisessä sukupuutietokannassa ei ole henkilöitä.\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 Seuraavat vaiheet:\n"
+" Lisää perhe ja henkilö tähän perheeseen:\n"
+"  • Perheen voi lisätä \"Lisää\"-valikosta\n"
+"  • Henkilön voi lisätä painamalla \"+\" (plus) puolisopaneeleissa (\"Isä/kumppani1\" tai \"Äiti/kumppani2\") tai \"Lapset\"-välilehdellä.\n"
+"\n"
+"Tai tuo henkilöt ulkoisesta tiedostosta:\n"
+"  • Ulkoisella tiedostolla voi täyttää sukupuun \"Sukupuut\"-valikon kohdasta \"Tuonti...\"."
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ Ketään henkilöä ei ole valittu keskeiseksi \"kotihenkilöksi\".\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 Seuraavat vaiheet:\n"
+"  •  Valitse Henkilöt-näkymän kuvake Navigaattorin sivupalkista.\n"
+"  •  Valitse joku tehdäksesi hänestä \"Aktiivisen henkilön\".\n"
+"  •  Valitse \"Tee kotihenkilöksi\" Muokkaa-valikosta tai pikavalikosta (hiiren oikea painike).\n"
+"\n"
+" Näin hänestä tulee keskeinen \"kotihenkilö\"."
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "Muokkaa tietoja kaksoisnapsauttamalla värillistä tekstiä"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "keskeinen kotihenkilö"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(henkilö jonka nimi tuntematon)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(tuntematon henkilö)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s ja %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "etunimi tuntematon"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "sukunimi tuntematon"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "Syntymätapahtuma puuttuu"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "Kuolematapahtuma puuttuu"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "avioliittotapahtuma puuttuu"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "suhdetyyppi tuntematon"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "päivämäärä tuntematon"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "päivämäärä on pelkkää tekstiä"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "päivämäärä epätarkka"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "päivämäärä puutteellinen"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "tapahtuman paikka tuntematon"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "Kumppanisuhde on olemassa, mutta puoliso puuttuu"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "Isä puuttuu vanhempien perheestä"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "Äiti puuttuu vanhempien perheestä"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "Vanhempien perhe on tuntematon."
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

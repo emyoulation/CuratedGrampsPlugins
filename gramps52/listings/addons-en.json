@@ -528,19 +528,7 @@
     "g": "5.2",
     "s": 3,
     "z": "WhatsNext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
-  },
-  {
-    "n": "What's Next",
-    "i": "What's Next",
-    "t": 10,
-    "d": "Gramplet suggesting items to research",
-    "v": "1.1.0",
-    "g": "5.2",
-    "s": 3,
-    "z": "Betawhatsnext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/WhatsNext",
     "a": 0
   }
 ]

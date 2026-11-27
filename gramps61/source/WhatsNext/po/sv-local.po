@@ -1,0 +1,611 @@
+# sv translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Swedish <https://hosted.weblate.org/projects/gramps-project/addons/sv/>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "Nästa uppgift"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "Gramplet som ger förslag på kommande forskningsuppgifter"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "Nästa uppgift?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "Hjälp"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "Personer"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "Okänt förnamn"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "Rapportera en person utan förnamn"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "Okänt efternamn"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "Rapportera en person utan efternamn"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "Saknar Födelse-händelse"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "Rapportera en person utan Födelse-händelse"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "Födelsedatum och -ort"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "Kontrollera datum och ort för Födelse-händelsen"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "Saknar Död-händelse"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+"Rapportera en person utan Död-händelse, när Gramps utifrån personens och "
+"släktingarnas datum bedömer att personen inte längre lever"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "Dödsdatum och -ort"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "Kontrollera datum och ort för Död-händelsen"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "Familjer"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "Okänd relationstyp"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "Rapportera en familj med relationstypen \"Okänd\""
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "Saknar Giftermål-händelse"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "Rapportera en familj av typen \"Gift\" utan Giftermål-händelse"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "Vigseldatum och -ort"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "Kontrollera datum och ort för Giftermål-händelsen"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "Skilsmässodatum och -ort"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "Kontrollera datum och ort för Skilsmässa-händelsen"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "Släktskap"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "Saknar föräldrafamilj"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "Lista varje person som saknar föräldrafamilj"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "Saknar partner"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "Rapportera en familj med bara en partner"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "Saknar fader"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "Rapportera en person vars föräldrafamilj saknar fader"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "Saknar moder"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "Rapportera en person vars föräldrafamilj saknar moder"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "Händelser"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "Okänt datum"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "Rapportera en händelse utan datum"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "Datum är bara text"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Rapportera ett datum som Gramps inte kunde läsa som ett datum"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "Inexakt datum"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+"Rapportera ett intervall, ett tidsspann eller ett datum med \"före\", "
+"\"efter\", \"omkring\", \"uppskattad\" eller \"beräknad\""
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "Ofullständigt datum"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "Rapportera ett enskilt datum utan dag eller månad"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "Okänd ort"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "Rapportera en händelse utan ort"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "Ange det saknade namnet i dialogen Redigera person."
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "Lägg till via fliken Händelser i dialogen Redigera person."
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr ""
+"Öppna händelsen på fliken Händelser i dialogen Redigera person och fyll i "
+"dess datum och ort."
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr ""
+"Öppna händelsen på fliken Händelser i dialogen Redigera familj och fyll i "
+"dess datum och ort."
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr ""
+"Lägg till en Giftermål-händelse på fliken Händelser i dialogen Redigera "
+"familj."
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "Välj relationens \"Typ\" i dialogen Redigera familj."
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "Lägg till den saknade partnern i dialogen Redigera familj."
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "Lägg till fadern i dialogen Redigera familj för föräldrafamiljen."
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "Lägg till modern i dialogen Redigera familj för föräldrafamiljen."
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+"Välj \"Lägg till föräldrar...\" eller \"Lägg till befintliga föräldrar...\" "
+"i menyn Redigera i vyn Släktskap."
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "Färdigt"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "Ignorerad"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "Beskuren"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ Ingen lokal släktträdsdatabas har laddats ännu.\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 Nästa steg:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  I menyn \"Släktträd\""
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " använder du \"Hantera släktträd...\" för att"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " skapa en ny släktträdsdatabas (eller välja en befintlig).\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  Klicka på knappen \"Ladda släktträd\" för att börja"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" arbeta med det valda släktträdet.\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"För att använda en säkerhetskopia från Gramps, eller en GEDCOM-fil från ett annat släktforskningsprogram, väljer du \"Importera...\" i menyn \"Släktträd\".\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"För att använda en säkerhetskopia från Gramps, eller en GEDCOM-fil från ett annat släktforskningsprogram, skapar och laddar du först ett nytt, tomt släktträd. Välj sedan \"Importera...\" i menyn \"Släktträd\".\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr ""
+"Använd \"Inställningsvy...\" i menyn \"Visa\" för att ändra gramplettens "
+"alternativ."
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "Ordna taggar"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "Fullständig"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "Tagga de listade personerna och familjerna som Slutförd"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "Ignorera"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "Tagga personer och familjer för att ignorera dem"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "Beskär"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr ""
+"Tagga de listade personerna och familjerna för att beskära (utesluta) dem "
+"från kontrollen"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "Sökkvot "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+"Minsta antal rader som visas. Sökningen stoppar när så många problem har "
+"hittats"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "Djup per varv"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr ""
+"Hur många generationer ättlingar som kontrolleras innan sökningen går en "
+"generation anor uppåt"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "Pausa utvidgningen av sökningen"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr ""
+"Hur många extra varv som väntas efter kontroll av en ana innan anans "
+"ättlingar kontrolleras"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "Tagg för Slutförd"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "Klar. Dölj objektet och fortsätt sökningen genom det"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "Tagg för Ignorera"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr ""
+"Lagd åt sidan tills vidare. Dölj objektet och fortsätt sökningen genom det"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "Tagg för Beskär"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "Återvändsgränd. Dölj objektet och stoppa sökningen genom det"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "Visa föreslagna 👣 nästa steg"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr "Visa vägledningsstegen och 👣 förslagen. Stäng av för en kortare lista"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "_Granska (öppna redigerare)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "Tagga som Slutförd"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "Tagga för att ignorera"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "Tagga för att beskära"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "Tagga som %s"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ Den aktuella släktträdsdatabasen innehåller inga personer.\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 Nästa steg:\n"
+" Lägg till en familj och en person i den familjen:\n"
+"  • En familj kan läggas till via menyn \"Lägg till\"\n"
+"  • En person kan läggas till genom att trycka på \"+\" (plus) i makepanelerna (\"Fader/partner1\" eller \"Moder/partner2\") eller på fliken \"Barn\".\n"
+"\n"
+"Eller importera personer från en extern fil:\n"
+"  • En extern fil kan användas för att fylla släktträdet via \"Importera...\" i menyn \"Släktträd\"."
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ Ingen person har valts som central \"Standardperson\".\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 Nästa steg:\n"
+"  •  Välj ikonen för vyn Personer i Navigatorns sidopanel.\n"
+"  •  Välj någon för att göra den till \"Aktiv person\".\n"
+"  •  Välj \"Välj hemperson\" i menyn Redigera eller i snabbmenyn (högerklick).\n"
+"\n"
+" Det gör personen till central \"Standardperson\"."
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "Dubbelklicka på färgad text för att redigera detaljer"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "central Standardperson"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(person med okänt namn)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(okänd person)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s och %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "förnamn okänt"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "efternamn okänt"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "Födelse-händelse saknas"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "Död-händelse saknas"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "bröllopshändelse saknas"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "relationstyp okänd"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "datum okänt"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "datum är bara text"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "datum inexakt"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "datum ofullständigt"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "ort okänd för händelsen"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "En partnerrelation finns, men maken saknas"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "Fader saknas i föräldrafamiljen"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "Moder saknas i föräldrafamiljen"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "Föräldrafamiljen är okänd."
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

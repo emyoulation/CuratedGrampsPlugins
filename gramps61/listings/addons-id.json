@@ -23,6 +23,18 @@
     "a": 1
   },
   {
+    "n": "Apa Berikutnya",
+    "i": "What's Next",
+    "t": 10,
+    "d": "Gramplet yang menyarankan hal untuk diteliti",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "WhatsNext.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/WhatsNext",
+    "a": 0
+  },
+  {
     "n": "Auto Active and Home Person",
     "i": "AutoActiveHome",
     "t": 6,
@@ -542,17 +554,5 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
-  },
-  {
-    "n": "What's Next",
-    "i": "What's Next",
-    "t": 10,
-    "d": "Gramplet suggesting items to research",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 3,
-    "z": "WhatsNext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
   }
 ]

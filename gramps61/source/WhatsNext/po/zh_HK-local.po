@@ -1,0 +1,588 @@
+# zh_HK translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: Chinese (Traditional Han script, Hong Kong) <https://hosted.weblate.org/projects/gramps-project/addons/zh_Hant_HK/>\n"
+"Language: zh_HK\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "下一步做甚麼"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "Gramplet 建議項目搜尋"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "下一項?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "說明"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "成員"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "名字未知"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "報告沒有名字的人員"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "姓氏未知"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "報告沒有姓氏的人員"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "缺少出生事件"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "報告沒有出生事件的人員"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "出生日期及地點"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "檢查出生事件的日期及地點"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "缺少死亡事件"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr "當 Gramps 根據此人及其親屬的日期判斷此人已不在世時，報告沒有死亡事件的人員"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "死亡日期及地點"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "檢查死亡事件的日期及地點"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "家庭"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "關係類別未知"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "報告關係類別為「未知」的家庭"
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "缺少婚姻事件"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "報告沒有婚姻事件的「已婚」類別家庭"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "結婚日期及地點"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "檢查婚姻事件的日期及地點"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "離婚日期及地點"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "檢查離婚事件的日期及地點"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "關係"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "缺少父母家庭"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "列出每個沒有父母家庭的人員"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "缺少伴侶"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "報告只有一名伴侶的家庭"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "缺少父親"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "報告其父母家庭中沒有父親的人員"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "缺少母親"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "報告其父母家庭中沒有母親的人員"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "事件"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "日期未知"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "報告沒有日期的事件"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "日期只是文字"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "報告 Gramps 無法辨認為日期的日期"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "不準確的日期"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr "報告日期範圍、時段，或帶有「以前」「之後」「約」「推測的」或「計算的」的日期"
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "不完整的日期"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "報告缺少日或月的單一日期"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "地點未知"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "報告沒有地點的事件"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "在「編輯此人」對話框中輸入缺少的名字。"
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "透過「編輯此人」對話框的「事件」分頁新增。"
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr "在「編輯此人」對話框的「事件」分頁中開啟該事件，並補全其日期及地點。"
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr "在「編輯家庭」對話框的「事件」分頁中開啟該事件，並補全其日期及地點。"
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr "在「編輯家庭」對話框的「事件」分頁中新增婚姻事件。"
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "在「編輯家庭」對話框中選擇關係「類別」。"
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "在「編輯家庭」對話框中新增缺少的伴侶。"
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "在父母家庭的「編輯家庭」對話框中新增父親。"
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "在父母家庭的「編輯家庭」對話框中新增母親。"
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr "在「關係」檢視中，從「編輯」選單選擇「新增父母...」或「新增一名已存在成員為父母...」。"
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "完成"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "已忽略"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "已修剪"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ 尚未載入本機家族樹資料庫。\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 下一步：\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  從「家族樹」選單中，"
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " 使用「管理家族樹...」選項"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " 建立新的家族樹資料庫（或選擇現有的家族樹）。\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  按「載入家族樹」按鈕，"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" 開始處理所選的家族樹。\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"如要使用 Gramps 備份或其他族譜工具的 GEDCOM 檔案，請在「家族樹」選單中選擇「匯入...」。\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"如要使用 Gramps 備份或其他族譜工具的 GEDCOM 檔案，請先建立並載入一個新的空白家族樹，然後在「家族樹」選單中選擇「匯入...」。\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr "使用「檢視」選單中的「配置...」來更改 Gramplet 的選項。"
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "整理標籤"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "完成"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "將列出的人員及家庭標記為已完成"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "忽略"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "標記要忽略的人員及家庭"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "修剪"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr "標記要從檢查中修剪（排除）的列出人員及家庭"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "搜尋配額 "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr "最少顯示的行數。找到這麼多問題後搜尋即停止"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "每輪深度"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr "在向上多查一代祖先之前要檢查的後代代數"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "暫停擴展搜尋"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr "檢查一位祖先後，在檢查其後代之前要額外等待的輪數"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "已完成標籤"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "已完成。隱藏該物件，並繼續穿過它搜尋"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "已忽略標籤"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr "暫時擱置。隱藏該物件，並繼續穿過它搜尋"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "已修剪標籤"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "死胡同。隱藏該物件，並停止穿過它搜尋"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "顯示建議的 👣 下一步"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr "顯示指引步驟及 👣 建議。關閉可得到較短的列表"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "檢視(_R)（開啟編輯器）"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "標記為已完成"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "標記為忽略"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "標記為修剪"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "標記為 %s"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ 目前的家族樹資料庫中沒有人員。\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 下一步：\n"
+" 新增一個家庭以及該家庭中的一名人員：\n"
+"  • 可透過「新增」選單新增家庭\n"
+"  • 可在配偶（「父親/伴侶1」或「母親/伴侶2」）面板或「子女」分頁中按「+」（加號）新增人員。\n"
+"\n"
+"或從外部檔案匯入人員：\n"
+"  • 可透過「家族樹」選單中的「匯入...」使用外部檔案填充家族樹。"
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ 尚未選擇任何人員作為核心「預設人」。\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 下一步：\n"
+"  •  在導覽側欄中選擇人員檢視圖示。\n"
+"  •  選擇某人，使其成為「目前人員」。\n"
+"  •  從「編輯」選單或（右鍵按一下）快顯選單中選擇「設定為主人翁」。\n"
+"\n"
+" 這會將其設為核心「預設人」。"
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "按兩下彩色文字以編輯詳細資料"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "核心預設人"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "（人員未知姓名）"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "（未知人員）"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s 和 %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr "， "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "未知其名"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "未知其姓"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "缺少出生事件"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "缺少死亡事件"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "婚姻事件缺失"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "關係類別未知"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "未知日期"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "日期只是文字"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "日期不準確"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "日期不完整"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "事件地點未知"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s：%(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "存在伴侶關係，但缺少配偶"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "父母家庭中缺少父親"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "父母家庭中缺少母親"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "父母家庭未知。"
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ":%s\n"

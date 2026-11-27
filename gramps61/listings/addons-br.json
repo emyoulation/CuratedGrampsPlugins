@@ -384,6 +384,18 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/RoleReversal"
   },
   {
+    "n": "Petra da heul",
+    "i": "What's Next",
+    "t": 10,
+    "d": "Gramplet a ginnig elfennoù da glask",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "WhatsNext.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/WhatsNext",
+    "a": 0
+  },
+  {
     "n": "Phonex (French) match of People with the <names>",
     "i": "FuzzyMatchingEncoder:phonex_french",
     "t": 13,
@@ -542,17 +554,5 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
-  },
-  {
-    "n": "What's Next",
-    "i": "What's Next",
-    "t": 10,
-    "d": "Gramplet suggesting items to research",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 3,
-    "z": "WhatsNext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
   }
 ]

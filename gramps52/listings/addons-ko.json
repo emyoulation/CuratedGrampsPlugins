@@ -498,18 +498,6 @@
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
   },
   {
-    "n": "What's Next",
-    "i": "What's Next",
-    "t": 10,
-    "d": "Gramplet suggesting items to research",
-    "v": "1.1.0",
-    "g": "5.2",
-    "s": 3,
-    "z": "WhatsNext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
-  },
-  {
     "n": "개인 전체 보고서 (정렬됨)",
     "i": "IndivComplete_sort",
     "t": 0,
@@ -519,6 +507,18 @@
     "s": 1,
     "z": "IndivComplete_sort.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/IndivComplete_sort"
+  },
+  {
+    "n": "다음 할 일",
+    "i": "What's Next",
+    "t": 10,
+    "d": "조사할 항목을 제안하는 그램플릿",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "WhatsNext.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/WhatsNext",
+    "a": 0
   },
   {
     "n": "애드온 언어 수정",

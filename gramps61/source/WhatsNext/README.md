@@ -4,14 +4,12 @@
 
 **What's Next?** suggests the next research or documentation tasks for a family tree. It starts at the Home Person, works outward through ancestors, descendants and their partners, and lists the people and families that have missing or incomplete information. This addon is an improved version of the "What's Next?" gramplet that is built into Gramps, and it takes the place of that gramplet.
 
-![Next steps when the Example Tree is loaded](media/screenshot.png) 
-
-Advanced users can disable the "Show Suggested 👣 Next Steps" for a more compact display.
-![What's Next? without Next Steps hints](media/expert.png) 
+![What's Next? with suggested next steps, using the Example Tree](media/screenshot.png)
 
 The changes from the built-in gramplet are for new users: plain-language guidance when the tree cannot be checked yet, clearer descriptions of each problem, suggested next steps, and a list that refreshes when the tree changes. A new set of tags lets a reader clear finished or hopeless entries from the list with a right-click. See CHANGELOG.md for a full comparison.
 
 ## Requirements
+- Gramps 5.2 to 6.2.
 - A loaded Family Tree with a Home Person set.
 - For the color Help button, the MarkdownUtils addon. When MarkdownUtils is not present, a plain Help button is shown instead.
 
@@ -38,7 +36,7 @@ When the gramplet cannot build a list yet, it explains why and what to do next. 
 ![Next steps when no Home Person has been set](media/NoHomePerson.png)
 
 ## Reading the list
-The first line names the Home Person, so it is clear where the search started. Each following line names a person or a family and then lists the problems found.
+The first line names the Home Person, so it is clear where the search started. Each following line names a person or a family and then lists the problems found. A small gap above each person or family keeps it together with its 👣 suggested next steps.
 
 - Single-click a colored name to make that person or family the Active one.
 - Double-click a colored name to open the Edit Person or Edit Family dialog.
@@ -46,6 +44,9 @@ The first line names the Home Person, so it is clear where the search started. E
 - Right-click anywhere else in the list for the usual Copy and Select All menu, with "Organize Tags" added at the bottom.
 - A line that starts with 👣 suggests a next step to fix the problem.
 - A blank line separates each round of the search. Each round moves one generation further away from the Home Person.
+
+With "Show suggested 👣 Next Steps" turned off, the list is shorter, for readers who already know how to fix each problem.
+![The list with the suggested next steps turned off](media/expert.png)
 
 The list refreshes on its own when people, families or events are added, changed or deleted, and when the Home Person changes.
 
@@ -113,8 +114,9 @@ Open the gramplet options with "Configure..." in the View menu (Sidebar and Bott
 | Show suggested 👣 Next Steps | on or off | on | Shows or hides the guidance steps and the 👣 suggestions, for a shorter list. |
 | The tests under People, Families, Relationships and Events | on or off | on | Turns each test on or off. |
 
+![The options of the gramplet on the Dashboard](media/NextStepsConfig.png)
+
 The test options are shown in two columns to the right of the others, and "Show suggested 👣 Next Steps" is below the tag options. Hold the pointer over an option, or over its label, to see a short description.
-![Next steps when the Example Tree is loaded](media/NextStepsConfig.png)
 
 The defaults for "Depth per loop" and "Pause search expansion" differ from the built-in gramplet, to keep the search closer to direct ancestors for longer.
 
@@ -124,10 +126,10 @@ The defaults for "Depth per loop" and "Pause search expansion" differ from the b
 - To reset the list after setting items aside, open "Organize Tags..." in the Edit menu and delete the Ignore tag.
 
 ## Feedback
-Please report problems and suggestions at https://github.com/emyoulation/_BetaDashboards
+Please report problems and suggestions at https://github.com/emyoulation/CuratedGrampsPlugins/issues
 
 ## Credits and license
 - Original "What's Next" gramplet: Reinhard Mueller (2008), maintained by Jakim Friant (2010) and the Gramps project.
 - Changes: Brian McCullough (2023 to 2024), with development and documentation by Claude (2026) from wish-coding by Brian McCullough.
 
-Distributed under the GNU General Public License. See the license header in the source files.
+Distributed under the GNU General Public License, version 2 or (at your option) any later version. See the license header in the source files.

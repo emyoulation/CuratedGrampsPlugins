@@ -1,0 +1,604 @@
+# ne translation for the What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# Strings shared with Gramps core are copied from the Gramps translation teams.
+# Other strings: machine translation by Claude AI (Anthropic), 2026; needs review by a native speaker.
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 19:42-0600\n"
+"PO-Revision-Date: 2026-11-26 21:00-0600\n"
+"Last-Translator: Claude AI (machine translation)\n"
+"Language-Team: none\n"
+"Language: ne\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: WhatsNext.gpr.py:52
+msgid "What's Next"
+msgstr "अब के गर्ने"
+
+#: WhatsNext.gpr.py:53
+msgid "Gramplet suggesting items to research"
+msgstr "अनुसन्धान गर्ने वस्तुहरू सुझाव गर्ने ग्राम्प्लेट"
+
+#: WhatsNext.gpr.py:66
+msgid "What's Next?"
+msgstr "अब के गर्ने?"
+
+#: WhatsNext.py:129
+msgid "Help"
+msgstr "मद्दत"
+
+#: WhatsNext.py:206
+msgid "People"
+msgstr "व्यक्तिहरू"
+
+#: WhatsNext.py:210
+msgid "Unknown first name"
+msgstr "पहिलो नाम अज्ञात"
+
+#: WhatsNext.py:211
+msgid "Report a person without a first name"
+msgstr "पहिलो नाम नभएको व्यक्तिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:213
+msgid "Unknown surname"
+msgstr "थर अज्ञात"
+
+#: WhatsNext.py:213
+msgid "Report a person without a surname"
+msgstr "थर नभएको व्यक्तिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:216
+msgid "Missing Birth event"
+msgstr "जन्म घटना छैन"
+
+#: WhatsNext.py:217
+msgid "Report a person without a Birth event"
+msgstr "जन्म घटना नभएको व्यक्तिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:221
+msgid "Birth date and place"
+msgstr "जन्म मिति र स्थान"
+
+#: WhatsNext.py:222
+msgid "Check the date and place of the Birth event"
+msgstr "जन्म घटनाको मिति र स्थान जाँच्नुहोस्"
+
+#: WhatsNext.py:226
+msgid "Missing Death event"
+msgstr "मृत्यु घटना छैन"
+
+#: WhatsNext.py:228
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+"व्यक्ति र आफन्तहरूको मितिबाट Gramps ले व्यक्ति अब जीवित छैन भनी अनुमान "
+"गर्दा, मृत्यु घटना नभएको व्यक्तिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:235
+msgid "Death date and place"
+msgstr "मृत्यु मिति र स्थान"
+
+#: WhatsNext.py:236
+msgid "Check the date and place of the Death event"
+msgstr "मृत्यु घटनाको मिति र स्थान जाँच्नुहोस्"
+
+#: WhatsNext.py:241
+msgid "Families"
+msgstr "परिवारहरू"
+
+#: WhatsNext.py:245
+msgid "Unknown relationship type"
+msgstr "सम्बन्ध प्रकार अज्ञात"
+
+#: WhatsNext.py:246
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr "सम्बन्ध प्रकार \"अज्ञात\" भएको परिवारको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:250
+msgid "Missing Marriage event"
+msgstr "विवाह घटना छैन"
+
+#: WhatsNext.py:251
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr "विवाह घटना नभएको \"विवाहित\" प्रकारको परिवारको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:255
+msgid "Marriage date and place"
+msgstr "विवाह मिति र स्थान"
+
+#: WhatsNext.py:256
+msgid "Check the date and place of the Marriage event"
+msgstr "विवाह घटनाको मिति र स्थान जाँच्नुहोस्"
+
+#: WhatsNext.py:260
+msgid "Divorce date and place"
+msgstr "सम्बन्ध विच्छेद मिति र स्थान"
+
+#: WhatsNext.py:261
+msgid "Check the date and place of the Divorce event"
+msgstr "सम्बन्ध विच्छेद घटनाको मिति र स्थान जाँच्नुहोस्"
+
+#: WhatsNext.py:266
+msgid "Relationships"
+msgstr "सम्बन्धहरू"
+
+#: WhatsNext.py:270
+msgid "Missing parent family"
+msgstr "आमाबुबाको परिवार छैन"
+
+#: WhatsNext.py:271
+msgid "List each person who has no parent family"
+msgstr "आमाबुबाको परिवार नभएका प्रत्येक व्यक्तिको सूची बनाउनुहोस्"
+
+#: WhatsNext.py:275
+msgid "Missing partner"
+msgstr "साथी छैन"
+
+#: WhatsNext.py:276
+msgid "Report a family with only one partner"
+msgstr "एउटा मात्र साथी भएको परिवारको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:280
+msgid "Missing father"
+msgstr "बुबा छैन"
+
+#: WhatsNext.py:281
+msgid "Report a person whose parent family has no father"
+msgstr "आमाबुबाको परिवारमा बुबा नभएको व्यक्तिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:285
+msgid "Missing mother"
+msgstr "आमा छैन"
+
+#: WhatsNext.py:286
+msgid "Report a person whose parent family has no mother"
+msgstr "आमाबुबाको परिवारमा आमा नभएको व्यक्तिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:291
+msgid "Events"
+msgstr "घटनाहरू"
+
+#: WhatsNext.py:293
+msgid "Unknown date"
+msgstr "मिति अज्ञात"
+
+#: WhatsNext.py:293
+msgid "Report an event without a date"
+msgstr "मिति नभएको घटनाको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:296
+msgid "Date is text only"
+msgstr "मिति पाठ मात्र हो"
+
+#: WhatsNext.py:297
+msgid "Report a date that Gramps could not read as a date"
+msgstr "Gramps ले मितिको रूपमा पढ्न नसकेको मितिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:301
+msgid "Inexact date"
+msgstr "अशुद्ध मिति"
+
+#: WhatsNext.py:303
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+"दायरा, अवधि, वा \"अघि\", \"पछि\", \"लगभग\", \"अनुमानित\" वा \"गणना गरिएको\" "
+"सहितको मितिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:309
+msgid "Incomplete date"
+msgstr "अपूर्ण मिति"
+
+#: WhatsNext.py:310
+msgid "Report a single date without its day or month"
+msgstr "दिन वा महिना नभएको एकल मितिको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:312
+msgid "Unknown place"
+msgstr "स्थान अज्ञात"
+
+#: WhatsNext.py:312
+msgid "Report an event without a place"
+msgstr "स्थान नभएको घटनाको रिपोर्ट गर्नुहोस्"
+
+#: WhatsNext.py:330
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr "व्यक्ति सम्पादन संवादमा छुटेको नाम प्रविष्ट गर्नुहोस्।"
+
+#: WhatsNext.py:331
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr "व्यक्ति सम्पादन संवादको घटनाहरू ट्याबबाट थप्नुहोस्।"
+
+#: WhatsNext.py:333
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its"
+" date and place."
+msgstr ""
+"व्यक्ति सम्पादन संवादको घटनाहरू ट्याबमा घटना खोल्नुहोस्, र यसको मिति र स्थान"
+" पूरा गर्नुहोस्।"
+
+#: WhatsNext.py:337
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its"
+" date and place."
+msgstr ""
+"परिवार सम्पादन संवादको घटनाहरू ट्याबमा घटना खोल्नुहोस्, र यसको मिति र स्थान "
+"पूरा गर्नुहोस्।"
+
+#: WhatsNext.py:340
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr "परिवार सम्पादन संवादको घटनाहरू ट्याबमा विवाह घटना थप्नुहोस्।"
+
+#: WhatsNext.py:341
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr "परिवार सम्पादन संवादमा सम्बन्धको \"प्रकार\" छान्नुहोस्।"
+
+#: WhatsNext.py:342
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr "परिवार सम्पादन संवादमा छुटेको साथी थप्नुहोस्।"
+
+#: WhatsNext.py:343
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr "आमाबुबाको परिवारको परिवार सम्पादन संवादमा बुबा थप्नुहोस्।"
+
+#: WhatsNext.py:344
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr "आमाबुबाको परिवारको परिवार सम्पादन संवादमा आमा थप्नुहोस्।"
+
+#: WhatsNext.py:346
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+"सम्बन्ध दृश्यमा, सम्पादन मेनुबाट \"नयाँ आमाबुबा थप्नुहोस्...\" वा \"भइरहेका "
+"आमाबुबा थप्नुहोस्...\" छान्नुहोस्।"
+
+#: WhatsNext.py:400
+msgid "Completed"
+msgstr "पूरा भयो"
+
+#: WhatsNext.py:402
+msgid "Ignored"
+msgstr "बेवास्ता गरिएको"
+
+#: WhatsNext.py:404
+msgid "Pruned"
+msgstr "काटछाँट गरिएको"
+
+#: WhatsNext.py:546
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+"\n"
+" ⛔ स्थानीय वंशावली रूख डाटाबेस अझै लोड गरिएको छैन।\n"
+"\n"
+
+#: WhatsNext.py:548
+msgid " 👣 Next Steps:\n"
+msgstr " 👣 अर्को चरणहरू:\n"
+
+#: WhatsNext.py:549
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr "  •  \"पारिवारिक रूखहरू\" मेनुबाट,"
+
+#: WhatsNext.py:550
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr " \"पारिवारिक रूखहरू व्यवस्थापन गर्नुहोस्...\" विकल्प प्रयोग गरी"
+
+#: WhatsNext.py:551
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr " नयाँ रूख डाटाबेस सिर्जना गर्नुहोस् (वा भइरहेको छान्नुहोस्)।\n"
+
+#: WhatsNext.py:552
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr "  •  छानिएको वंशावली रूखसँग काम सुरु गर्न"
+
+#: WhatsNext.py:553
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+" \"पारिवारिक रूख लोड गर्नुहोस्\" बटन क्लिक गर्नुहोस्।\n"
+"\n"
+
+#: WhatsNext.py:556
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Gramps को ब्याकअप, वा अर्को वंशावली उपकरणको GEDCOM फाइल प्रयोग गर्न, \"पारिवारिक रूखहरू\" मेनुमा \"आयात...\" छान्नुहोस्।\n"
+"\n"
+
+#: WhatsNext.py:562
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical tool, first create and load a new, empty tree. Then choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+"Gramps को ब्याकअप, वा अर्को वंशावली उपकरणको GEDCOM फाइल प्रयोग गर्न, पहिले नयाँ, खाली रूख सिर्जना गरी लोड गर्नुहोस्। त्यसपछि \"पारिवारिक रूखहरू\" मेनुमा \"आयात...\" छान्नुहोस्।\n"
+"\n"
+
+#: WhatsNext.py:622
+msgid "Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr ""
+"ग्राम्प्लेट विकल्पहरू परिवर्तन गर्न \"दृश्य\" मेनुमा \"कन्फिगर\" प्रयोग "
+"गर्नुहोस्।"
+
+#: WhatsNext.py:680 WhatsNext.py:1297
+msgid "Organize Tags"
+msgstr "ट्यागहरू व्यवस्थित गर्नुहोस्"
+
+#: WhatsNext.py:719
+msgid "Complete"
+msgstr "पूरा गर्नुहोस्"
+
+#: WhatsNext.py:720
+msgid "Tag listed People and Families as Completed"
+msgstr "सूचीबद्ध व्यक्ति र परिवारहरूलाई पूरा भएको भनी ट्याग गर्नुहोस्"
+
+#: WhatsNext.py:729
+msgid "Ignore"
+msgstr "बेवास्ता गर्नुहोस्"
+
+#: WhatsNext.py:730
+msgid "Tag to Ignore People and Families"
+msgstr "व्यक्ति र परिवारहरूलाई बेवास्ता गर्न ट्याग गर्नुहोस्"
+
+#: WhatsNext.py:739
+msgid "Prune"
+msgstr "काटछाँट गर्नुहोस्"
+
+#: WhatsNext.py:741
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr ""
+"सूचीबद्ध व्यक्ति र परिवारहरूलाई जाँचबाट काटछाँट (बाहिर) गर्न ट्याग गर्नुहोस्"
+
+#: WhatsNext.py:820
+msgid "Search Quota "
+msgstr "खोज कोटा "
+
+#: WhatsNext.py:824
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+"देखाउनुपर्ने लाइनहरूको न्यूनतम संख्या। यति धेरै समस्या फेला परेपछि खोज "
+"रोकिन्छ"
+
+#: WhatsNext.py:832
+msgid "Depth per loop"
+msgstr "प्रति चक्र गहिराइ"
+
+#: WhatsNext.py:836
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr "पुर्खाको अर्को एक पुस्ता माथि जानुअघि सन्तानका कति पुस्ता जाँच्ने"
+
+#: WhatsNext.py:844
+msgid "Pause search expansion"
+msgstr "खोज विस्तार रोक्नुहोस्"
+
+#: WhatsNext.py:848
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the"
+" descendants of that ancestor"
+msgstr "एक पुर्खा जाँचेपछि त्यस पुर्खाका सन्तान जाँच्नुअघि कति थप चरण पर्खने"
+
+#: WhatsNext.py:856
+msgid "Complete tag"
+msgstr "पूरा भएको ट्याग"
+
+#: WhatsNext.py:857
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr "सकियो। वस्तु लुकाउनुहोस्, र यसबाट खोज जारी राख्नुहोस्"
+
+#: WhatsNext.py:862
+msgid "Ignore tag"
+msgstr "बेवास्ता ट्याग"
+
+#: WhatsNext.py:864
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr "अहिलेलाई पन्छाइएको। वस्तु लुकाउनुहोस्, र यसबाट खोज जारी राख्नुहोस्"
+
+#: WhatsNext.py:870
+msgid "Prune tag"
+msgstr "काटछाँट ट्याग"
+
+#: WhatsNext.py:871
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr "अन्तिम बाटो। वस्तु लुकाउनुहोस्, र यसबाट खोज रोक्नुहोस्"
+
+#: WhatsNext.py:888
+msgid "Show suggested 👣 Next Steps"
+msgstr "सुझाव गरिएका 👣 अर्को चरणहरू देखाउनुहोस्"
+
+#: WhatsNext.py:891
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr ""
+"मार्गदर्शन चरणहरू र 👣 सुझावहरू देखाउनुहोस्। छोटो सूचीका लागि बन्द गर्नुहोस्"
+
+#: WhatsNext.py:1277
+msgid "_Review (open editor)"
+msgstr "_समीक्षा (सम्पादक खोल्नुहोस्)"
+
+#: WhatsNext.py:1287
+msgid "Tag as Complete"
+msgstr "पूरा भएको भनी ट्याग गर्नुहोस्"
+
+#: WhatsNext.py:1288
+msgid "Tag to Ignore"
+msgstr "बेवास्ता गर्न ट्याग गर्नुहोस्"
+
+#: WhatsNext.py:1289
+msgid "Tag to Prune"
+msgstr "काटछाँट गर्न ट्याग गर्नुहोस्"
+
+#: WhatsNext.py:1529
+#, python-format
+msgid "Tag as %s"
+msgstr "%s भनी ट्याग गर्नुहोस्"
+
+#: WhatsNext.py:1613
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+"\n"
+" ⛔ हालको रूख डाटाबेसमा कुनै व्यक्ति छैन।\n"
+
+#: WhatsNext.py:1616
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse (\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in the \"Family Trees\" menu."
+msgstr ""
+"\n"
+" 👣 अर्को चरणहरू:\n"
+" एउटा परिवार र त्यस परिवारमा एक व्यक्ति थप्नुहोस्:\n"
+"  • परिवार \"थप्नुहोस्\" मेनुबाट थप्न सकिन्छ\n"
+"  • व्यक्ति पति/पत्नी (\"बुबा/साथी१\" वा \"आमा/साथी२\") प्यानलहरूमा वा \"छोराछोरी\" ट्याबमा \"+\" (प्लस) थिचेर थप्न सकिन्छ।\n"
+"\n"
+"वा बाह्य फाइलबाट व्यक्तिहरू आयात गर्नुहोस्:\n"
+"  • \"पारिवारिक रूखहरू\" मेनुमा \"आयात...\" मार्फत रूख भर्न बाह्य फाइल प्रयोग गर्न सकिन्छ।"
+
+#: WhatsNext.py:1632
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+"\n"
+" ⛔ केन्द्रीय \"गृह व्यक्ति\" को रूपमा कुनै व्यक्ति छानिएको छैन।\n"
+
+#: WhatsNext.py:1635
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+"\n"
+" 👣 अर्को चरणहरू:\n"
+"  •  नेभिगेटर साइडबारमा व्यक्तिहरू दृश्य आइकन छान्नुहोस्।\n"
+"  •  कसैलाई \"सक्रिय व्यक्ति\" बनाउन छान्नुहोस्।\n"
+"  •  सम्पादन मेनु वा (दायाँ-क्लिक) सन्दर्भ मेनुबाट \"गृह व्यक्ति सेट गर्नुहोस्\" छान्नुहोस्।\n"
+"\n"
+" यसले उनीहरूलाई केन्द्रीय \"गृह व्यक्ति\" बनाउँछ।"
+
+#: WhatsNext.py:1645
+msgid "Double-click color text to edit details"
+msgstr "विवरण सम्पादन गर्न रङ्गीन पाठमा डबल-क्लिक गर्नुहोस्"
+
+#: WhatsNext.py:1664
+msgid "focal Home Person"
+msgstr "केन्द्रीय गृह व्यक्ति"
+
+#: WhatsNext.py:1847 WhatsNext.py:1858
+msgid "(person with unknown name)"
+msgstr "(अज्ञात नाम भएको व्यक्ति)"
+
+#: WhatsNext.py:1857
+msgid "(unknown person)"
+msgstr "(अज्ञात व्यक्ति)"
+
+#: WhatsNext.py:1870
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr "%(name1)s र %(name2)s"
+
+#: WhatsNext.py:1951
+#, python-format
+msgid ": %(list)s\n"
+msgstr ": %(list)s\n"
+
+#: WhatsNext.py:1951 WhatsNext.py:2188
+msgid ", "
+msgstr ", "
+
+#: WhatsNext.py:1990
+msgid "first name unknown"
+msgstr "पहिलो नाम अज्ञात"
+
+#: WhatsNext.py:1994
+msgid "surname unknown"
+msgstr "थर अज्ञात"
+
+#: WhatsNext.py:2000
+msgid "Birth event missing"
+msgstr "जन्म घटना छैन"
+
+#: WhatsNext.py:2011
+msgid "Death event missing"
+msgstr "मृत्यु घटना छैन"
+
+#: WhatsNext.py:2129
+msgid "marriage event missing"
+msgstr "विवाह घटना छैन"
+
+#: WhatsNext.py:2133
+msgid "relationship type unknown"
+msgstr "सम्बन्ध प्रकार अज्ञात"
+
+#: WhatsNext.py:2167
+msgid "date unknown"
+msgstr "मिति अज्ञात"
+
+#: WhatsNext.py:2170
+msgid "date is text only"
+msgstr "मिति पाठ मात्र हो"
+
+#: WhatsNext.py:2175
+msgid "date inexact"
+msgstr "मिति अशुद्ध"
+
+#: WhatsNext.py:2178
+msgid "date incomplete"
+msgstr "मिति अपूर्ण"
+
+#: WhatsNext.py:2181
+msgid "place unknown for the Event"
+msgstr "घटनाको स्थान अज्ञात"
+
+#: WhatsNext.py:2187
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr "%(str1)s: %(str2)s"
+
+#: WhatsNext.py:2204
+msgid "A partner relationship exists but the spouse is missing"
+msgstr "साथी सम्बन्ध छ तर पति/पत्नी छैन"
+
+#: WhatsNext.py:2216
+msgid "Father missing from the parent family"
+msgstr "आमाबुबाको परिवारमा बुबा छैन"
+
+#: WhatsNext.py:2227
+msgid "Mother missing from the parent family"
+msgstr "आमाबुबाको परिवारमा आमा छैन"
+
+#: WhatsNext.py:2237
+msgid "Parent family is unknown."
+msgstr "आमाबुबाको परिवार अज्ञात छ।"
+
+#: WhatsNext.py:2254
+#, python-format
+msgid ": %s\n"
+msgstr ": %s\n"

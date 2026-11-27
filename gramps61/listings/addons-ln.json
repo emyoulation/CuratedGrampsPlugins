@@ -347,6 +347,18 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/MetadataInspector"
   },
   {
+    "n": "Nini elandi",
+    "i": "What's Next",
+    "t": 10,
+    "d": "Gramplet oyo epesaka makanisi ya makambo ya koluka",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "WhatsNext.addon.tgz",
+    "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/WhatsNext",
+    "a": 0
+  },
+  {
     "n": "Note Styling Editor",
     "i": "Note Styling Editor",
     "t": 10,
@@ -542,17 +554,5 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
-  },
-  {
-    "n": "What's Next",
-    "i": "What's Next",
-    "t": 10,
-    "d": "Gramplet suggesting items to research",
-    "v": "1.1.0",
-    "g": "6.1",
-    "s": 3,
-    "z": "WhatsNext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
   }
 ]
