@@ -32,6 +32,11 @@ Double-click a row to open the **Address Editor** for that address. When you cli
 
 The table also updates by itself when the same person is changed somewhere else, such as in the **Edit Person** dialog.
 
+## Credits
+This gramplet was made in answer to a request by J_Hermann in the posting [Personenbaumansicht: Ist es möglich, die Felder zu erweitern?](https://discourse.genealogy.net/t/personenbaumansicht-ist-es-moeglich-die-felder-zu-erweitern/834190) on Genealogy.net ([gramps-l](https://discourse.genealogy.net/c/gramps-l/66)).
+
+The code, this README and the new translation strings were written by Claude AI (Anthropic), from wish coding by Brian McCullough. The design follows the Extended Person Attributes gramplet by Nick Hall and Gary Burton.
+
 ## Assumptions I made
 - The gramplet is offered only in the People category view, like the Extended Person Attributes gramplet it is modeled on.
 - Double-click opens the Address Editor (not the Edit Person dialog), so you go straight to the address you clicked.

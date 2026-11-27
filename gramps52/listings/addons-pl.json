@@ -391,7 +391,7 @@
     "d": "Gramplet showing a sortable table of the Addresses of the active Person",
     "v": "0.1.0",
     "g": "5.2",
-    "s": 1,
+    "s": 3,
     "z": "PersonAddresses.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/PersonAddresses"
   },
