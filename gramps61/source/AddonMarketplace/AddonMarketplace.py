@@ -371,6 +371,66 @@ def _find_addon_folder(addon_id):
     return folders[0] if folders else None
 
 
+def _register_addon(pmgr, dbstate, uistate, addon_id):
+    """
+    Register one freshly downloaded addon, touching no other addon.
+
+    Gramps' own Addon Manager registers with
+    ``reg_plugins(USER_PLUGINS, load_on_reg=True)``, which runs the
+    load_on_reg() of every startup addon again (monkey patches applied
+    twice), and its update window follows with a rescan that re-imports
+    every loaded plugin module, gramplets included. Here only the folder
+    of this addon is scanned, and only its own load_on_reg() runs, once.
+
+    An addon whose module was already imported this session keeps running
+    its old code until Gramps restarts (Gramps caches the module).
+
+    :returns: the PluginData, or None when Gramps does not register it.
+    """
+    preg = PluginRegister.get_instance()
+    pdata = preg.get_plugin(addon_id)
+    was_loaded = pdata is not None and pmgr.is_loaded(addon_id)
+    folders = [pdata.directory] if pdata is not None else []
+    if not folders:
+        # new folders only: Gramps skips the folders it scanned before
+        pmgr.reg_plugins(USER_PLUGINS, dbstate, uistate)
+        if preg.get_plugin(addon_id) is None:
+            # scanned at startup and dropped then (for example for a
+            # missing Python module that is installed now): scan again
+            folder = _find_addon_folder(addon_id)
+            folders = [folder] if folder else []
+    for folder in folders:
+        try:
+            pmgr.reg_plugin_dir(folder, dbstate, uistate)
+        except ValueError:
+            # not scanned before: reg_plugin_dir() cannot forget it
+            pmgr.reg_plugins(folder, dbstate, uistate)
+    pdata = preg.get_plugin(addon_id)
+    if pdata is None:
+        return None
+    if was_loaded:
+        LOG.info("Addon Marketplace: restart Gramps to use the new %s", addon_id)
+        return pdata
+    module = pmgr.load_plugin(pdata)
+    if (
+        module is not None
+        and getattr(pdata, "load_on_reg", False)
+        and hasattr(module, "load_on_reg")
+        and addon_id not in config.get("plugin.hiddenplugins")
+    ):
+        try:
+            results = module.load_on_reg(dbstate, uistate, pdata)
+        except Exception:  # pylint: disable=broad-except
+            # another addon failing must not take the Marketplace down
+            LOG.exception("Addon Marketplace: load_on_reg of %s failed", addon_id)
+        else:
+            if isinstance(results, (list, tuple)):
+                pdata.data = list(results)
+            elif results is not None:
+                pdata.data = results
+    return pdata
+
+
 def _url_key(url):
     """
     Comparison form of a project address: normalized like the project
@@ -385,28 +445,30 @@ def _url_key(url):
 # help_url when MarkdownUtils is missing, too old, or fails to load.
 # Recipe: HelpDocButton.md in the MarkdownBased folder.
 # ----------------------------------------------------------------------
+def _plain_help_button(container, uistate, plugin, *, size=16):
+    """
+    Pack a plain text "Help" button that opens the help_url of the
+    plugin. Stand-in for MarkdownUtils.add_help_button(); *size* is
+    accepted for the same call signature and not used.
+    """
+    if isinstance(plugin, str):
+        plugin = PluginRegister.get_instance().get_plugin(plugin)
+    button = Gtk.Button(label=_("Help"))
+    help_url = getattr(plugin, "help_url", None)
+    if help_url:
+        button.connect("clicked", lambda _btn: display_url(help_url))
+    else:
+        button.set_sensitive(False)
+    container.pack_start(button, False, False, 0)
+    button.show()
+    return button
+
+
 try:
     # pylint: disable-next=import-error
     from MarkdownUtils import add_help_button
 except Exception:  # pylint: disable=broad-except
-
-    def add_help_button(container, uistate, plugin, *, size=16):
-        """
-        Pack a plain text "Help" button that opens the help_url of the
-        plugin. Stand-in for MarkdownUtils.add_help_button(); *size* is
-        accepted for the same call signature and not used.
-        """
-        if isinstance(plugin, str):
-            plugin = PluginRegister.get_instance().get_plugin(plugin)
-        button = Gtk.Button(label=_("Help"))
-        help_url = getattr(plugin, "help_url", None)
-        if help_url:
-            button.connect("clicked", lambda _btn: display_url(help_url))
-        else:
-            button.set_sensitive(False)
-        container.pack_start(button, False, False, 0)
-        button.show()
-        return button
+    add_help_button = _plain_help_button
 
 
 # Import names whose PyPI distribution has another name. The first part is
@@ -464,6 +526,19 @@ def _pip_command(package):
         # elsewhere "python -m pip" finds the pip that matches Gramps.
         cmd = ["pip.exe"] if win() else [sys.executable, "-m", "pip"]
     return cmd + ["install", "--target", LIB_PATH] + names, names
+
+
+def _addon_sort_key(addon):
+    """
+    Sort key for an addon catalog entry: its name in the user's locale
+    collation (case is ignored), then its ID and project.
+    """
+    name = str(addon.get("n") or addon.get("i") or "")
+    return (
+        glocale.sort_key(name.casefold()),
+        str(addon.get("i", "")),
+        str(addon.get("_p", "")),
+    )
 
 
 class _PipProgress:
@@ -2877,7 +2952,12 @@ class AddonMarketplace(ManagedWindow):
         # Help button lower left: opens README.md in Markdown Dash, or
         # else the help_url registered in AddonMarketplace.gpr.py
         area = self.window.get_action_area()
-        help_button = add_help_button(area, uistate, PLUGIN_ID)
+        try:
+            help_button = add_help_button(area, uistate, PLUGIN_ID)
+        except Exception:  # pylint: disable=broad-except
+            # a broken MarkdownUtils must not stop the Marketplace opening
+            LOG.exception("Addon Marketplace: MarkdownUtils Help button failed")
+            help_button = _plain_help_button(area, uistate, PLUGIN_ID)
         if isinstance(area, Gtk.ButtonBox):
             area.set_child_secondary(help_button, True)
 
@@ -3255,59 +3335,25 @@ class AddonMarketplace(ManagedWindow):
 
     def update_addon(self, addon_id):
         """
-        Register and load the freshly downloaded version of an addon.
+        Register the freshly downloaded version of an addon.
         """
-        pdata = self.__preg.get_plugin(addon_id)
-        if pdata is not None:
-            self.__pmgr.reg_plugin_dir(
-                pdata.directory, self.dbstate, self.uistate, load_on_reg=True
-            )
-            pdata = self.__preg.get_plugin(addon_id)
-        if pdata is None:
-            pdata = self.__rescan_addon_folder(addon_id)
-        if pdata is None:
-            self.__registration_failed(addon_id)
-            return
-        self.__pmgr.load_plugin(pdata)
-        self.__pmgr.emit("plugins-reloaded")
+        self.__register(addon_id)
 
     def install_addon(self, addon_id):
         """
         Register and load a freshly downloaded addon.
         """
-        self.__pmgr.reg_plugins(
-            USER_PLUGINS, self.dbstate, self.uistate, load_on_reg=True
-        )
-        pdata = self.__preg.get_plugin(addon_id)
-        if pdata is None:
-            pdata = self.__rescan_addon_folder(addon_id)
+        self.__register(addon_id)
+
+    def __register(self, addon_id):
+        """
+        Register one addon (see _register_addon) and refresh the menus.
+        """
+        pdata = _register_addon(self.__pmgr, self.dbstate, self.uistate, addon_id)
         if pdata is None:
             self.__registration_failed(addon_id)
             return
-        self.__pmgr.load_plugin(pdata)
         self.__pmgr.emit("plugins-reloaded")
-
-    def __rescan_addon_folder(self, addon_id):
-        """
-        Scan the folder of a freshly installed addon again. Gramps scans
-        each plugin folder once and skips it afterwards, so an addon whose
-        folder was scanned at startup (and dropped then, for example for a
-        missing Python module that is installed now) is never registered
-        by reg_plugins(); reg_plugin_dir() forgets the folder and scans it
-        again.
-
-        :returns: the PluginData, or None.
-        """
-        folder = _find_addon_folder(addon_id)
-        if folder is None:
-            return None
-        try:
-            self.__pmgr.reg_plugin_dir(
-                folder, self.dbstate, self.uistate, load_on_reg=True
-            )
-        except ValueError:
-            pass  # not scanned before, so reg_plugins() already tried it
-        return self.__preg.get_plugin(addon_id)
 
     def __registration_failed(self, addon_id):
         """
@@ -3664,11 +3710,13 @@ class AddonMarketplace(ManagedWindow):
 
     def __sort_func(self, row1, row2):
         """
-        Sort the addons by ID, then by name (the same addon can come from
-        two projects, or in English from an "Include English" project).
+        Sort the addons alphabetically by name (locale aware, ignoring
+        case), then by ID and project, so the same addon from two
+        projects, or in English from an "Include English" project, keeps
+        a steady order.
         """
-        value1 = (row1.addon["i"], row1.addon["n"])
-        value2 = (row2.addon["i"], row2.addon["n"])
+        value1 = _addon_sort_key(row1.addon)
+        value2 = _addon_sort_key(row2.addon)
         if value1 > value2:
             return 1
         elif value1 < value2:
@@ -4043,11 +4091,11 @@ class AddonMarketplace(ManagedWindow):
             return
 
         if len(addon_update_list) > 0:
-            rescan = PluginWindows.UpdateAddons(
+            # the window registers what it installs itself (see
+            # _UpdateAddons.install_addons); do_reg_plugins() here would
+            # run every startup addon's load_on_reg() again
+            PluginWindows.UpdateAddons(
                 self.uistate, self.track, addon_update_list, show_inactive=True
-            ).rescan
-            self.uistate.viewmanager.do_reg_plugins(
-                self.dbstate, self.uistate, rescan=rescan
             )
         else:
             check_types = config.get("behavior.check-for-addon-update-types")
@@ -4556,7 +4604,11 @@ class _UpdateAddons(_CORE_UPDATE_ADDONS):
 
         req = Requirements()
         pos = None
-        addon_update_list.sort(key=lambda x: "%s %s" % (x[0], x[2]["t"]))
+        # grouped by status and type (the category rows), each group
+        # alphabetical by name
+        addon_update_list.sort(
+            key=lambda x: (x[0], x[2]["t"], _addon_sort_key(x[2]))
+        )
         last_category = None
         node = None
         for status, plugin_url, plugin_dict in addon_update_list:
@@ -4648,6 +4700,16 @@ class _UpdateAddons(_CORE_UPDATE_ADDONS):
         _remember_installed_offers(chosen)
         self.__install_modules_of(chosen)
         super().install_addons(obj)
+        if self.rescan:
+            # Gramps' callers would rescan every plugin on rescan=True,
+            # re-importing every loaded addon module; register only the
+            # addons installed here instead.
+            self.rescan = False
+            pmgr = GuiPluginManager.get_instance()
+            dbstate = getattr(self.uistate.viewmanager, "dbstate", None)
+            for addon_id in chosen:
+                _register_addon(pmgr, dbstate, self.uistate, addon_id)
+            pmgr.emit("plugins-reloaded")
 
     def __install_modules_of(self, addon_ids):
         """
@@ -4752,6 +4814,26 @@ def _relabel_menu(uistate):
             label.attrib.pop("translatable", None)
 
 
+# Gramps' own Addon Manager, kept across module reloads (a reload would
+# otherwise see the patched name and lose the original)
+_CORE_ADDON_MANAGER = getattr(
+    PluginWindows, "_core_AddonManager", PluginWindows.AddonManager
+)
+PluginWindows._core_AddonManager = _CORE_ADDON_MANAGER
+
+
+def _open_addon_manager(dbstate, uistate, track):
+    """
+    Open the Addon Marketplace, or Gramps' own Addon Manager when the
+    Marketplace fails to open, so users can always reach their addons.
+    """
+    try:
+        return AddonMarketplace(dbstate, uistate, track)
+    except Exception:  # pylint: disable=broad-except
+        LOG.exception("Addon Marketplace failed to open; using the Addon Manager")
+        return _CORE_ADDON_MANAGER(dbstate, uistate, track)
+
+
 def load_on_reg(dbstate, uistate, plugin):
     """
     Called by the Gramps plugin manager at registration. The command line
@@ -4759,7 +4841,7 @@ def load_on_reg(dbstate, uistate, plugin):
     """
     if uistate is None:
         return []
-    PluginWindows.AddonManager = AddonMarketplace
+    PluginWindows.AddonManager = _open_addon_manager
     # also used by the startup check for addon updates (viewmanager)
     PluginWindows.UpdateAddons = _UpdateAddons
     _load_css()

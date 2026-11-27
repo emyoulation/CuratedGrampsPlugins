@@ -115,7 +115,9 @@ try:
     _RENDER_HAS_MAX_HEIGHT = (
         "image_max_height" in inspect.signature(render_markdown).parameters
     )
-except ImportError:
+# not only ImportError: a MarkdownUtils with an error in it (or half
+# written by an update) must leave the plain-text Preview, not no window
+except Exception:  # pylint: disable=broad-except
     _MARKDOWN_AVAILABLE = False
     _RENDER_HAS_MAX_HEIGHT = False
     # Without MarkdownUtils there is no alias table, so gramplets and

@@ -1,4 +1,4 @@
-# Translation template for the 0.1.3 Addon Marketplace general addon for Gramps.
+# Translation template for the 0.1.4 Addon Marketplace general addon for Gramps.
 # Copyright (C) 2026 Brian McCullough
 # This file is distributed under the same license as the Addon Marketplace package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Addon Marketplace 0.1.3\n"
+"Project-Id-Version: Addon Marketplace 0.1.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-15 09:06-0600\n"
+"POT-Creation-Date: 2026-11-27 07:56-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: AddonMarketplace.gpr.py:31 AddonMarketplace.py:2853
+#: AddonMarketplace.gpr.py:31 AddonMarketplace.py:2928
 msgid "Addon Marketplace"
 msgstr ""
 
@@ -35,30 +35,30 @@ msgstr ""
 msgid "Double-click to open %s"
 msgstr ""
 
-#: AddonMarketplace.py:401
+#: AddonMarketplace.py:456
 msgid "Help"
 msgstr ""
 
-#: AddonMarketplace.py:483
+#: AddonMarketplace.py:558
 msgid "Installing Python modules"
 msgstr ""
 
-#: AddonMarketplace.py:501
+#: AddonMarketplace.py:576
 msgid ""
 "Large modules can take several minutes, especially when parts of them must "
 "be built on this computer."
 msgstr ""
 
-#: AddonMarketplace.py:510
+#: AddonMarketplace.py:585
 msgid "Cancel"
 msgstr ""
 
-#: AddonMarketplace.py:531
+#: AddonMarketplace.py:606
 #, python-format
 msgid "Installing <b>%s</b>..."
 msgstr ""
 
-#: AddonMarketplace.py:633
+#: AddonMarketplace.py:708
 #, python-brace-format
 msgid ""
 "This is common on macOS: Python does not use the system Keychain to verify "
@@ -73,7 +73,7 @@ msgid ""
 "  {}"
 msgstr ""
 
-#: AddonMarketplace.py:642
+#: AddonMarketplace.py:717
 #, python-brace-format
 msgid ""
 "This usually means the certificate store used by Python on this system is "
@@ -83,37 +83,37 @@ msgid ""
 "  {}"
 msgstr ""
 
-#: AddonMarketplace.py:839 AddonMarketplace.py:852 AddonMarketplace.py:867
-#: AddonMarketplace.py:917 AddonMarketplace.py:3875 AddonMarketplace.py:3895
+#: AddonMarketplace.py:914 AddonMarketplace.py:927 AddonMarketplace.py:942
+#: AddonMarketplace.py:992 AddonMarketplace.py:3923 AddonMarketplace.py:3943
 #, python-format
 msgid "%s: "
 msgstr ""
 
-#: AddonMarketplace.py:839
+#: AddonMarketplace.py:914
 msgid "Project name"
 msgstr ""
 
-#: AddonMarketplace.py:848
+#: AddonMarketplace.py:923
 msgid "e.g., My Addons Repository"
 msgstr ""
 
-#: AddonMarketplace.py:852
+#: AddonMarketplace.py:927
 msgid "Location Type"
 msgstr ""
 
-#: AddonMarketplace.py:858
+#: AddonMarketplace.py:933
 msgid "Web URL"
 msgstr ""
 
-#: AddonMarketplace.py:860
+#: AddonMarketplace.py:935
 msgid "Local/Network Folder"
 msgstr ""
 
-#: AddonMarketplace.py:867
+#: AddonMarketplace.py:942
 msgid "URL/Path"
 msgstr ""
 
-#: AddonMarketplace.py:888
+#: AddonMarketplace.py:963
 msgid ""
 "Enter URL or use Browse button.\n"
 "Examples:\n"
@@ -122,36 +122,36 @@ msgid ""
 "  C:\\Users\\Name\\addons\\  (pasted paths are converted)"
 msgstr ""
 
-#: AddonMarketplace.py:903
+#: AddonMarketplace.py:978
 msgid "Select folder"
 msgstr ""
 
-#: AddonMarketplace.py:917
+#: AddonMarketplace.py:992
 msgid "Language code"
 msgstr ""
 
-#: AddonMarketplace.py:922
+#: AddonMarketplace.py:997
 msgid ""
 "Enter an ISO 639-1 or locale code (e.g. \"en\", \"fi\", \"zh_CN\") to "
 "override which addons-XX.json listing file is fetched for this project.  "
 "Leave blank to use the running Gramps locale."
 msgstr ""
 
-#: AddonMarketplace.py:933
+#: AddonMarketplace.py:1008
 msgid "e.g. en, fi, zh_CN  (blank = Gramps locale)"
 msgstr ""
 
-#: AddonMarketplace.py:939
+#: AddonMarketplace.py:1014
 msgid ""
 "ISO 639-1 or locale code for the addons listing to use, e.g. \"en\", \"fi\", "
 "\"zh_CN\".  Leave blank to follow the running Gramps locale."
 msgstr ""
 
-#: AddonMarketplace.py:950
+#: AddonMarketplace.py:1025
 msgid "Validation Status"
 msgstr ""
 
-#: AddonMarketplace.py:978
+#: AddonMarketplace.py:1053
 msgid ""
 "Click 'Test Location' to validate the repository.\n"
 "\n"
@@ -159,49 +159,49 @@ msgid ""
 "placeholders offline)."
 msgstr ""
 
-#: AddonMarketplace.py:989 AddonMarketplace.py:1058 AddonMarketplace.py:2286
+#: AddonMarketplace.py:1064 AddonMarketplace.py:1133 AddonMarketplace.py:2361
 msgid "_Cancel"
 msgstr ""
 
-#: AddonMarketplace.py:991
+#: AddonMarketplace.py:1066
 msgid "Test Location"
 msgstr ""
 
-#: AddonMarketplace.py:993
+#: AddonMarketplace.py:1068
 msgid "_OK"
 msgstr ""
 
-#: AddonMarketplace.py:1045
+#: AddonMarketplace.py:1120
 msgid ""
 "Click 'Test Location' to validate the repository.\n"
 "\n"
 "Validation is optional - you can save without testing."
 msgstr ""
 
-#: AddonMarketplace.py:1053
+#: AddonMarketplace.py:1128
 msgid "Select Listings Folder"
 msgstr ""
 
-#: AddonMarketplace.py:1060
+#: AddonMarketplace.py:1135
 msgid "_Select"
 msgstr ""
 
-#: AddonMarketplace.py:1119
+#: AddonMarketplace.py:1194
 msgid "❌ Error: Path does not exist:\n"
 msgstr ""
 
-#: AddonMarketplace.py:1123
+#: AddonMarketplace.py:1198
 msgid ""
 "\n"
 "\n"
 "Please check the path and try again."
 msgstr ""
 
-#: AddonMarketplace.py:1128
+#: AddonMarketplace.py:1203
 msgid "❌ Error: Path is not a directory:\n"
 msgstr ""
 
-#: AddonMarketplace.py:1142
+#: AddonMarketplace.py:1217
 msgid ""
 "❌ Error: Not a listings folder.\n"
 "\n"
@@ -211,18 +211,18 @@ msgid ""
 "Path: "
 msgstr ""
 
-#: AddonMarketplace.py:1156
+#: AddonMarketplace.py:1231
 msgid "❌ Error: Permission denied reading folder:\n"
 msgstr ""
 
-#: AddonMarketplace.py:1164
+#: AddonMarketplace.py:1239
 msgid ""
 "⚠️  Warning: Listings folder found but no JSON files present.\n"
 "\n"
 "Path: "
 msgstr ""
 
-#: AddonMarketplace.py:1171
+#: AddonMarketplace.py:1246
 msgid ""
 "\n"
 "\n"
@@ -232,14 +232,14 @@ msgid ""
 "  • etc."
 msgstr ""
 
-#: AddonMarketplace.py:1193
+#: AddonMarketplace.py:1268
 msgid ""
 "✅ Success: Valid listings folder found!\n"
 "\n"
 "Path: "
 msgstr ""
 
-#: AddonMarketplace.py:1195
+#: AddonMarketplace.py:1270
 #, python-brace-format
 msgid ""
 "\n"
@@ -247,102 +247,102 @@ msgid ""
 "Found {} JSON file(s):\n"
 msgstr ""
 
-#: AddonMarketplace.py:1207
+#: AddonMarketplace.py:1282
 #, python-brace-format
 msgid ""
 "\n"
 "✅ Native language file found: {}"
 msgstr ""
 
-#: AddonMarketplace.py:1216 AddonMarketplace.py:1252
+#: AddonMarketplace.py:1291 AddonMarketplace.py:1327
 #, python-brace-format
 msgid ""
 "\n"
 "   Contains {} addon(s)"
 msgstr ""
 
-#: AddonMarketplace.py:1222
+#: AddonMarketplace.py:1297
 msgid ""
 "\n"
 "   ⚠️  Warning: Unexpected JSON format (not an array)"
 msgstr ""
 
-#: AddonMarketplace.py:1229
+#: AddonMarketplace.py:1304
 #, python-brace-format
 msgid ""
 "\n"
 "   ⚠️  Warning: Invalid JSON: {}"
 msgstr ""
 
-#: AddonMarketplace.py:1234
+#: AddonMarketplace.py:1309
 #, python-brace-format
 msgid ""
 "\n"
 "   ⚠️  Warning: Could not read file: {}"
 msgstr ""
 
-#: AddonMarketplace.py:1242
+#: AddonMarketplace.py:1317
 #, python-brace-format
 msgid ""
 "\n"
 "⚠️  Native language file not found: {}"
 msgstr ""
 
-#: AddonMarketplace.py:1246
+#: AddonMarketplace.py:1321
 msgid ""
 "\n"
 "   Will fallback to: addons-en.json"
 msgstr ""
 
-#: AddonMarketplace.py:1257
+#: AddonMarketplace.py:1332
 #, python-brace-format
 msgid ""
 "\n"
 "   ⚠️  Warning: Could not read: {}"
 msgstr ""
 
-#: AddonMarketplace.py:1264
+#: AddonMarketplace.py:1339
 #, python-brace-format
 msgid ""
 "\n"
 "⚠️  Warning: Neither {} nor addons-en.json found"
 msgstr ""
 
-#: AddonMarketplace.py:1275 AddonMarketplace.py:1457
+#: AddonMarketplace.py:1350 AddonMarketplace.py:1532
 msgid ""
 "\n"
 "\n"
 "💾 Will be saved as: "
 msgstr ""
 
-#: AddonMarketplace.py:1277 AddonMarketplace.py:1459
+#: AddonMarketplace.py:1352 AddonMarketplace.py:1534
 msgid ""
 "\n"
 "   (Gramps will append '/listings/addons-XX.json')"
 msgstr ""
 
-#: AddonMarketplace.py:1356
+#: AddonMarketplace.py:1431
 #, python-brace-format
 msgid ""
 "\n"
 "⚠️  Not found (404): {}"
 msgstr ""
 
-#: AddonMarketplace.py:1357
+#: AddonMarketplace.py:1432
 #, python-brace-format
 msgid ""
 "\n"
 "⚠️  HTTP Error {}: {}"
 msgstr ""
 
-#: AddonMarketplace.py:1367
+#: AddonMarketplace.py:1442
 #, python-brace-format
 msgid ""
 "\n"
 "⚠️  SSL certificate verification failed: {}"
 msgstr ""
 
-#: AddonMarketplace.py:1373
+#: AddonMarketplace.py:1448
 #, python-brace-format
 msgid ""
 "\n"
@@ -355,7 +355,7 @@ msgid ""
 "  • Firewall blocking access"
 msgstr ""
 
-#: AddonMarketplace.py:1385
+#: AddonMarketplace.py:1460
 #, python-brace-format
 msgid ""
 "\n"
@@ -363,7 +363,7 @@ msgid ""
 "   {}"
 msgstr ""
 
-#: AddonMarketplace.py:1407
+#: AddonMarketplace.py:1482
 msgid ""
 "❌ Error: Invalid URL scheme.\n"
 "\n"
@@ -372,7 +372,7 @@ msgid ""
 "Given: "
 msgstr ""
 
-#: AddonMarketplace.py:1418
+#: AddonMarketplace.py:1493
 msgid ""
 "❌ Error: Invalid URL format.\n"
 "\n"
@@ -381,7 +381,7 @@ msgid ""
 "Example: https://github.com/user/repo/raw/main/"
 msgstr ""
 
-#: AddonMarketplace.py:1426
+#: AddonMarketplace.py:1501
 #, python-brace-format
 msgid ""
 "❌ Error: Malformed URL.\n"
@@ -391,72 +391,72 @@ msgid ""
 "URL: "
 msgstr ""
 
-#: AddonMarketplace.py:1448
+#: AddonMarketplace.py:1523
 msgid "Testing URL: "
 msgstr ""
 
-#: AddonMarketplace.py:1450
+#: AddonMarketplace.py:1525
 msgid ""
 "\n"
 "Listings folder: "
 msgstr ""
 
-#: AddonMarketplace.py:1454
+#: AddonMarketplace.py:1529
 #, python-brace-format
 msgid ""
 "\n"
 "   (raw URL: {})"
 msgstr ""
 
-#: AddonMarketplace.py:1463
+#: AddonMarketplace.py:1538
 msgid ""
 "\n"
 "\n"
 "Checking for: "
 msgstr ""
 
-#: AddonMarketplace.py:1468
+#: AddonMarketplace.py:1543
 #, python-brace-format
 msgid ""
 "\n"
 "✅ Found: {}"
 msgstr ""
 
-#: AddonMarketplace.py:1471 AddonMarketplace.py:1489
+#: AddonMarketplace.py:1546 AddonMarketplace.py:1564
 #, python-brace-format
 msgid "   Contains {} addon(s)"
 msgstr ""
 
-#: AddonMarketplace.py:1474
+#: AddonMarketplace.py:1549
 msgid "   ⚠️  Warning: Unexpected JSON format"
 msgstr ""
 
-#: AddonMarketplace.py:1475
+#: AddonMarketplace.py:1550
 msgid ""
 "✅ Success: Repository validated\n"
 "\n"
 msgstr ""
 
-#: AddonMarketplace.py:1481
+#: AddonMarketplace.py:1556
 msgid ""
 "\n"
 "\n"
 "Checking fallback: "
 msgstr ""
 
-#: AddonMarketplace.py:1486
+#: AddonMarketplace.py:1561
 msgid ""
 "\n"
 "✅ Found: addons-en.json (fallback)"
 msgstr ""
 
-#: AddonMarketplace.py:1492
+#: AddonMarketplace.py:1567
 msgid ""
 "✅ Success: Repository validated (using fallback)\n"
 "\n"
 msgstr ""
 
-#: AddonMarketplace.py:1508
+#: AddonMarketplace.py:1583
 #, python-brace-format
 msgid ""
 "\n"
@@ -468,206 +468,206 @@ msgid ""
 "  • listings/addons-{}.json (optional)"
 msgstr ""
 
-#: AddonMarketplace.py:1527
+#: AddonMarketplace.py:1602
 msgid "⚠️  SSL Warning: Certificate verification failed\n"
 msgstr ""
 
-#: AddonMarketplace.py:1530
+#: AddonMarketplace.py:1605
 msgid ""
 "(URL structure appears valid — you may save and use this repository)\n"
 "\n"
 msgstr ""
 
-#: AddonMarketplace.py:1536
+#: AddonMarketplace.py:1611
 msgid ""
 "\n"
 "\n"
 msgstr ""
 
-#: AddonMarketplace.py:1724
+#: AddonMarketplace.py:1799
 msgid ""
 "Validating...\n"
 "\n"
 "Please wait..."
 msgstr ""
 
-#: AddonMarketplace.py:1732
+#: AddonMarketplace.py:1807
 msgid "❌ Error: URL/Path cannot be empty."
 msgstr ""
 
-#: AddonMarketplace.py:1754
+#: AddonMarketplace.py:1829
 msgid "ℹ️  Converted to: "
 msgstr ""
 
-#: AddonMarketplace.py:1864
+#: AddonMarketplace.py:1939
 msgid "the catalog could not be loaded"
 msgstr ""
 
-#: AddonMarketplace.py:2051
+#: AddonMarketplace.py:2126
 msgid "Unknown"
 msgstr ""
 
-#: AddonMarketplace.py:2052
+#: AddonMarketplace.py:2127
 #, python-format
 msgid "Unknown (%s)"
 msgstr ""
 
-#: AddonMarketplace.py:2208
+#: AddonMarketplace.py:2283
 msgid "Updated"
 msgstr ""
 
-#: AddonMarketplace.py:2210
+#: AddonMarketplace.py:2285
 msgctxt "updates"
 msgid "New"
 msgstr ""
 
-#: AddonMarketplace.py:2226
+#: AddonMarketplace.py:2301
 msgid "not a web (https://) or folder (file://) location"
 msgstr ""
 
-#: AddonMarketplace.py:2230
+#: AddonMarketplace.py:2305
 #, python-format
 msgid "a GitHub page, not a catalog; use this address instead: %s"
 msgstr ""
 
-#: AddonMarketplace.py:2238
+#: AddonMarketplace.py:2313
 msgid "the address returns a web page, not a catalog"
 msgstr ""
 
-#: AddonMarketplace.py:2242
+#: AddonMarketplace.py:2317
 msgid "catalog not found (404)"
 msgstr ""
 
-#: AddonMarketplace.py:2243
+#: AddonMarketplace.py:2318
 #, python-format
 msgid "web server error %d"
 msgstr ""
 
-#: AddonMarketplace.py:2246
+#: AddonMarketplace.py:2321
 msgid "catalog file not found"
 msgstr ""
 
-#: AddonMarketplace.py:2252
+#: AddonMarketplace.py:2327
 msgid "the security certificate could not be verified"
 msgstr ""
 
-#: AddonMarketplace.py:2253
+#: AddonMarketplace.py:2328
 #, python-format
 msgid "cannot connect: %s"
 msgstr ""
 
-#: AddonMarketplace.py:2255
+#: AddonMarketplace.py:2330
 msgid "catalog is not valid JSON"
 msgstr ""
 
-#: AddonMarketplace.py:2257
+#: AddonMarketplace.py:2332
 #, python-format
 msgid "cannot read the catalog: %s"
 msgstr ""
 
-#: AddonMarketplace.py:2259
+#: AddonMarketplace.py:2334
 msgid "catalog lists no addons"
 msgstr ""
 
-#: AddonMarketplace.py:2260
+#: AddonMarketplace.py:2335
 msgid "catalog could not be read in this language"
 msgstr ""
 
-#: AddonMarketplace.py:2278
+#: AddonMarketplace.py:2353
 msgid "Add projects"
 msgstr ""
 
-#: AddonMarketplace.py:2287
+#: AddonMarketplace.py:2362
 msgid "_Add"
 msgstr ""
 
-#: AddonMarketplace.py:2295
+#: AddonMarketplace.py:2370
 msgid "known curated addon collections"
 msgstr ""
 
-#: AddonMarketplace.py:2298
+#: AddonMarketplace.py:2373
 #, python-format
 msgid "Select from published list of %s."
 msgstr ""
 
-#: AddonMarketplace.py:2433 AddonMarketplace.py:2821 AddonMarketplace.py:3660
+#: AddonMarketplace.py:2508 AddonMarketplace.py:2896 AddonMarketplace.py:3706
 msgid "Click to clear this filter"
 msgstr ""
 
-#: AddonMarketplace.py:2436
+#: AddonMarketplace.py:2511
 msgid "Addons are not filtered by status"
 msgstr ""
 
-#: AddonMarketplace.py:2501
+#: AddonMarketplace.py:2576
 msgid "Project"
 msgstr ""
 
-#: AddonMarketplace.py:2505 AddonMarketplace.py:4530
+#: AddonMarketplace.py:2580 AddonMarketplace.py:4578
 msgid "Type"
 msgstr ""
 
-#: AddonMarketplace.py:2509
+#: AddonMarketplace.py:2584
 msgid "Audience"
 msgstr ""
 
-#: AddonMarketplace.py:2515
+#: AddonMarketplace.py:2590
 msgid "Status"
 msgstr ""
 
-#: AddonMarketplace.py:2533
+#: AddonMarketplace.py:2608
 msgid "Repository version"
 msgstr ""
 
-#: AddonMarketplace.py:2548 AddonMarketplace.py:2555
+#: AddonMarketplace.py:2623 AddonMarketplace.py:2630
 msgid "Installed version"
 msgstr ""
 
-#: AddonMarketplace.py:2551 AddonMarketplace.py:2925 AddonMarketplace.py:3696
+#: AddonMarketplace.py:2626 AddonMarketplace.py:3005 AddonMarketplace.py:3744
 msgid "Updates"
 msgstr ""
 
-#: AddonMarketplace.py:2573 AddonMarketplace.py:2574
+#: AddonMarketplace.py:2648 AddonMarketplace.py:2649
 msgid "Install"
 msgstr ""
 
-#: AddonMarketplace.py:2579
+#: AddonMarketplace.py:2654
 msgid "Wiki"
 msgstr ""
 
-#: AddonMarketplace.py:2584 AddonMarketplace.py:4258
+#: AddonMarketplace.py:2659 AddonMarketplace.py:4306
 msgid "Requires"
 msgstr ""
 
-#: AddonMarketplace.py:2589
+#: AddonMarketplace.py:2664
 msgid "Update"
 msgstr ""
 
-#: AddonMarketplace.py:2593
+#: AddonMarketplace.py:2668
 msgid "Downgrade"
 msgstr ""
 
-#: AddonMarketplace.py:2620 AddonMarketplace.py:2639
+#: AddonMarketplace.py:2695 AddonMarketplace.py:2714
 msgid "Module installation failed"
 msgstr ""
 
-#: AddonMarketplace.py:2640
+#: AddonMarketplace.py:2715
 msgid "Gramps was unable to install the required modules"
 msgstr ""
 
-#: AddonMarketplace.py:2663
+#: AddonMarketplace.py:2738
 msgid "Addon installation failed"
 msgstr ""
 
-#: AddonMarketplace.py:2664
+#: AddonMarketplace.py:2739
 #, python-format
 msgid "Gramps was unable to install '%s'."
 msgstr ""
 
-#: AddonMarketplace.py:2698
+#: AddonMarketplace.py:2773
 msgid "Addon download failed"
 msgstr ""
 
-#: AddonMarketplace.py:2700
+#: AddonMarketplace.py:2775
 #, python-brace-format
 msgid ""
 "Could not download or install '{name}'.\n"
@@ -679,84 +679,84 @@ msgid ""
 "connection."
 msgstr ""
 
-#: AddonMarketplace.py:2824 AddonMarketplace.py:3663
+#: AddonMarketplace.py:2899 AddonMarketplace.py:3709
 #, python-format
 msgid "Click to filter by \"%s\""
 msgstr ""
 
-#: AddonMarketplace.py:2871
+#: AddonMarketplace.py:2946
 msgid "Refresh"
 msgstr ""
 
-#: AddonMarketplace.py:2872
+#: AddonMarketplace.py:2947
 msgid "_Close"
 msgstr ""
 
-#: AddonMarketplace.py:2916
+#: AddonMarketplace.py:2996
 msgid "Filters"
 msgstr ""
 
-#: AddonMarketplace.py:2922
+#: AddonMarketplace.py:3002
 msgid "All addons"
 msgstr ""
 
-#: AddonMarketplace.py:2923 AddonMarketplace.py:3690
+#: AddonMarketplace.py:3003 AddonMarketplace.py:3738
 msgid "Not installed"
 msgstr ""
 
-#: AddonMarketplace.py:2924 AddonMarketplace.py:3693
+#: AddonMarketplace.py:3004 AddonMarketplace.py:3741
 msgid "Installed"
 msgstr ""
 
-#: AddonMarketplace.py:2926 AddonMarketplace.py:3704
+#: AddonMarketplace.py:3006 AddonMarketplace.py:3752
 msgid "New or Updated"
 msgstr ""
 
-#: AddonMarketplace.py:2945
+#: AddonMarketplace.py:3025
 msgid "All types"
 msgstr ""
 
-#: AddonMarketplace.py:2953
+#: AddonMarketplace.py:3033
 msgid "All audiences"
 msgstr ""
 
-#: AddonMarketplace.py:2960
+#: AddonMarketplace.py:3040
 msgid "All statuses"
 msgstr ""
 
-#: AddonMarketplace.py:2968
+#: AddonMarketplace.py:3048
 msgid "Reset addon filters to defaults"
 msgstr ""
 
-#: AddonMarketplace.py:2987
+#: AddonMarketplace.py:3067
 msgid "Show the warnings that Gramps logged"
 msgstr ""
 
-#: AddonMarketplace.py:2992
+#: AddonMarketplace.py:3072
 msgid "Certificate help"
 msgstr ""
 
-#: AddonMarketplace.py:2995 AddonMarketplace.py:3435 AddonMarketplace.py:3445
+#: AddonMarketplace.py:3075 AddonMarketplace.py:3481 AddonMarketplace.py:3491
 msgid "Open Projects tab"
 msgstr ""
 
-#: AddonMarketplace.py:3006
+#: AddonMarketplace.py:3086
 msgid "Addons"
 msgstr ""
 
-#: AddonMarketplace.py:3009
+#: AddonMarketplace.py:3089
 msgid "Settings"
 msgstr ""
 
-#: AddonMarketplace.py:3012
+#: AddonMarketplace.py:3092
 msgid "Projects"
 msgstr ""
 
-#: AddonMarketplace.py:3075 AddonMarketplace.py:3709
+#: AddonMarketplace.py:3155 AddonMarketplace.py:3757
 msgid "All projects"
 msgstr ""
 
-#: AddonMarketplace.py:3161
+#: AddonMarketplace.py:3241
 #, python-format
 msgid ""
 "Add projects from the %(file)s file of the Addon Marketplace (%(count)d "
@@ -767,20 +767,20 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: AddonMarketplace.py:3172
+#: AddonMarketplace.py:3252
 #, python-format
 msgid "Every project in the %s file of the Addon Marketplace is in your list"
 msgstr ""
 
-#: AddonMarketplace.py:3227
+#: AddonMarketplace.py:3307
 msgid "Loading..."
 msgstr ""
 
-#: AddonMarketplace.py:3323
+#: AddonMarketplace.py:3369
 msgid "Addon Requirements Missing"
 msgstr ""
 
-#: AddonMarketplace.py:3325
+#: AddonMarketplace.py:3371
 #, python-format
 msgid ""
 "The addon '%(addon_id)s' was installed, but Gramps cannot use it until these "
@@ -790,11 +790,11 @@ msgid ""
 "or remove them?"
 msgstr ""
 
-#: AddonMarketplace.py:3331
+#: AddonMarketplace.py:3377
 msgid "Addon Version Mismatch"
 msgstr ""
 
-#: AddonMarketplace.py:3333
+#: AddonMarketplace.py:3379
 #, python-format
 msgid ""
 "The addon '%(addon_id)s' was downloaded, but Gramps %(major_version)s cannot "
@@ -805,81 +805,81 @@ msgid ""
 "them?"
 msgstr ""
 
-#: AddonMarketplace.py:3343
+#: AddonMarketplace.py:3389
 msgid "Keep the files"
 msgstr ""
 
-#: AddonMarketplace.py:3344
+#: AddonMarketplace.py:3390
 msgid "Remove the files"
 msgstr ""
 
-#: AddonMarketplace.py:3355
+#: AddonMarketplace.py:3401
 msgid "Addon files not removed"
 msgstr ""
 
-#: AddonMarketplace.py:3356
+#: AddonMarketplace.py:3402
 #, python-format
 msgid "Could not remove %(folder)s: %(error)s"
 msgstr ""
 
-#: AddonMarketplace.py:3415
+#: AddonMarketplace.py:3461
 #, python-format
 msgid "%(bad)d of %(all)d enabled projects gave no addons:"
 msgstr ""
 
-#: AddonMarketplace.py:3433
+#: AddonMarketplace.py:3479
 msgid "No projects are turned on."
 msgstr ""
 
-#: AddonMarketplace.py:3434
+#: AddonMarketplace.py:3480
 msgid "Turn on at least one project on the Projects tab."
 msgstr ""
 
-#: AddonMarketplace.py:3440
+#: AddonMarketplace.py:3486
 msgid "No addon catalogs could be loaded."
 msgstr ""
 
-#: AddonMarketplace.py:3442
+#: AddonMarketplace.py:3488
 msgid "Check the project addresses on the Projects tab, then click Refresh."
 msgstr ""
 
-#: AddonMarketplace.py:3452
+#: AddonMarketplace.py:3498
 #, python-format
 msgid "The %d addon listed does not match the filters."
 msgid_plural "None of the %d addons listed match the filters."
 msgstr[0] ""
 msgstr[1] ""
 
-#: AddonMarketplace.py:3458
+#: AddonMarketplace.py:3504
 msgid "Clear all filters"
 msgstr ""
 
-#: AddonMarketplace.py:3491
+#: AddonMarketplace.py:3537
 msgid "Warnings Not Available"
 msgstr ""
 
-#: AddonMarketplace.py:3493
+#: AddonMarketplace.py:3539
 msgid ""
 "Could not find the warning button of the status bar, so the Gramps Warnings "
 "dialog could not be opened."
 msgstr ""
 
-#: AddonMarketplace.py:3507
+#: AddonMarketplace.py:3553
 #, python-brace-format
 msgid "{filtered} of {total} addon"
 msgid_plural "{filtered} of {total} addons"
 msgstr[0] ""
 msgstr[1] ""
 
-#: AddonMarketplace.py:3758
+#: AddonMarketplace.py:3806
 msgid "Include"
 msgstr ""
 
-#: AddonMarketplace.py:3758
+#: AddonMarketplace.py:3806
 msgid "English"
 msgstr ""
 
-#: AddonMarketplace.py:3762
+#: AddonMarketplace.py:3810
 msgid ""
 "For each project below that is read in another language (its own language "
 "code, or the language of Gramps), also load its English catalog, so English "
@@ -887,144 +887,144 @@ msgid ""
 "name followed by \"+ en\"."
 msgstr ""
 
-#: AddonMarketplace.py:3795
+#: AddonMarketplace.py:3843
 msgid "Insert a project"
 msgstr ""
 
-#: AddonMarketplace.py:3797
+#: AddonMarketplace.py:3845
 msgid "Remove the selected project"
 msgstr ""
 
-#: AddonMarketplace.py:3799
+#: AddonMarketplace.py:3847
 msgid "Move project upwards in the list"
 msgstr ""
 
-#: AddonMarketplace.py:3801
+#: AddonMarketplace.py:3849
 msgid "Move project downwards in the list"
 msgstr ""
 
-#: AddonMarketplace.py:3803
+#: AddonMarketplace.py:3851
 msgid "Revert to the project defaults"
 msgstr ""
 
-#: AddonMarketplace.py:3826
+#: AddonMarketplace.py:3874
 msgid "General"
 msgstr ""
 
-#: AddonMarketplace.py:3840
+#: AddonMarketplace.py:3888
 msgid "Allow Gramps to install required Python modules"
 msgstr ""
 
-#: AddonMarketplace.py:3842
+#: AddonMarketplace.py:3890
 msgid "Where possible, try to install any missing prerequisite Python modules"
 msgstr ""
 
-#: AddonMarketplace.py:3850
+#: AddonMarketplace.py:3898
 msgid "Scheduled update checks"
 msgstr ""
 
-#: AddonMarketplace.py:3865
+#: AddonMarketplace.py:3913
 msgid "Never"
 msgstr ""
 
-#: AddonMarketplace.py:3866
+#: AddonMarketplace.py:3914
 msgid "Once a month"
 msgstr ""
 
-#: AddonMarketplace.py:3867
+#: AddonMarketplace.py:3915
 msgid "Once a week"
 msgstr ""
 
-#: AddonMarketplace.py:3868
+#: AddonMarketplace.py:3916
 msgid "Once a day"
 msgstr ""
 
-#: AddonMarketplace.py:3869
+#: AddonMarketplace.py:3917
 msgid "Always"
 msgstr ""
 
-#: AddonMarketplace.py:3875
+#: AddonMarketplace.py:3923
 msgid "Check for addon updates"
 msgstr ""
 
-#: AddonMarketplace.py:3882
+#: AddonMarketplace.py:3930
 msgid "Updated addons only"
 msgstr ""
 
-#: AddonMarketplace.py:3883
+#: AddonMarketplace.py:3931
 msgid "New addons only"
 msgstr ""
 
-#: AddonMarketplace.py:3884
+#: AddonMarketplace.py:3932
 msgid "New and updated addons"
 msgstr ""
 
-#: AddonMarketplace.py:3895
+#: AddonMarketplace.py:3943
 msgid "What to check"
 msgstr ""
 
-#: AddonMarketplace.py:3901
+#: AddonMarketplace.py:3949
 msgid "Do not ask about previously notified addons"
 msgstr ""
 
-#: AddonMarketplace.py:3908
+#: AddonMarketplace.py:3956
 msgid "Check for updated addons now"
 msgstr ""
 
-#: AddonMarketplace.py:3921
+#: AddonMarketplace.py:3969
 msgid "New Project"
 msgstr ""
 
-#: AddonMarketplace.py:3923
+#: AddonMarketplace.py:3971
 msgid "Edit Project"
 msgstr ""
 
-#: AddonMarketplace.py:4009
+#: AddonMarketplace.py:4057
 msgid "Restore project defaults"
 msgstr ""
 
-#: AddonMarketplace.py:4010
+#: AddonMarketplace.py:4058
 msgid "Are you sure?"
 msgstr ""
 
-#: AddonMarketplace.py:4011
+#: AddonMarketplace.py:4059
 msgid "Yes"
 msgstr ""
 
-#: AddonMarketplace.py:4012
+#: AddonMarketplace.py:4060
 msgid "No"
 msgstr ""
 
-#: AddonMarketplace.py:4036
+#: AddonMarketplace.py:4084
 msgid "Checking Addons Failed"
 msgstr ""
 
-#: AddonMarketplace.py:4038
+#: AddonMarketplace.py:4086
 msgid "The addon repository appears to be unavailable. Please try again later."
 msgstr ""
 
-#: AddonMarketplace.py:4055
+#: AddonMarketplace.py:4103
 msgid "There are no available addons of this type"
 msgstr ""
 
-#: AddonMarketplace.py:4056
+#: AddonMarketplace.py:4104
 #, python-format
 msgid "Checked for '%s'"
 msgstr ""
 
-#: AddonMarketplace.py:4056
+#: AddonMarketplace.py:4104
 msgid "' and '"
 msgstr ""
 
-#: AddonMarketplace.py:4062
+#: AddonMarketplace.py:4110
 msgid "new"
 msgstr ""
 
-#: AddonMarketplace.py:4062
+#: AddonMarketplace.py:4110
 msgid "update"
 msgstr ""
 
-#: AddonMarketplace.py:4328
+#: AddonMarketplace.py:4376
 msgid ""
 "Gramps can try to install this module: check the addon in the list of new "
 "and updated addons and click Install Selected Addons, or click Install on "
@@ -1032,117 +1032,117 @@ msgid ""
 "commands:"
 msgstr ""
 
-#: AddonMarketplace.py:4335
+#: AddonMarketplace.py:4383
 msgid ""
 "Turn on “Allow Gramps to install required Python modules” on the Settings "
 "tab, so that Gramps can install it. You can also install it yourself:"
 msgstr ""
 
-#: AddonMarketplace.py:4354
+#: AddonMarketplace.py:4402
 #, python-format
 msgid "%s (Python module)"
 msgstr ""
 
-#: AddonMarketplace.py:4371
+#: AddonMarketplace.py:4419
 #, python-format
 msgid "%s (GObject library)"
 msgstr ""
 
-#: AddonMarketplace.py:4373 AddonMarketplace.py:4391
+#: AddonMarketplace.py:4421 AddonMarketplace.py:4439
 msgid ""
 "Install it with the package manager of your system. Gramps cannot install it."
 msgstr ""
 
-#: AddonMarketplace.py:4389
+#: AddonMarketplace.py:4437
 #, python-format
 msgid "%s (program)"
 msgstr ""
 
-#: AddonMarketplace.py:4406
+#: AddonMarketplace.py:4454
 #, python-format
 msgid "What %s needs"
 msgstr ""
 
-#: AddonMarketplace.py:4407
+#: AddonMarketplace.py:4455
 msgid "Close"
 msgstr ""
 
-#: AddonMarketplace.py:4423
+#: AddonMarketplace.py:4471
 msgid "Everything this addon requires is installed."
 msgstr ""
 
-#: AddonMarketplace.py:4437
+#: AddonMarketplace.py:4485
 msgid "Copy"
 msgstr ""
 
-#: AddonMarketplace.py:4446
+#: AddonMarketplace.py:4494
 msgid ""
 "A dnf provides command shows the name of the package that has the file; "
 "install that package with sudo dnf install <package name>."
 msgstr ""
 
-#: AddonMarketplace.py:4452
+#: AddonMarketplace.py:4500
 msgid ""
 "An apt command shows the name of the package that has the file; install that "
 "package with sudo apt install <package name>. apt-file may need to be "
 "installed and updated first."
 msgstr ""
 
-#: AddonMarketplace.py:4459
+#: AddonMarketplace.py:4507
 msgid "Restart Gramps after installing system packages."
 msgstr ""
 
-#: AddonMarketplace.py:4508
+#: AddonMarketplace.py:4556
 msgid "Available Gramps Updates for Addons"
 msgstr ""
 
-#: AddonMarketplace.py:4524
+#: AddonMarketplace.py:4572
 msgid "Select"
 msgstr ""
 
-#: AddonMarketplace.py:4531
+#: AddonMarketplace.py:4579
 msgid "Name"
 msgstr ""
 
-#: AddonMarketplace.py:4532
+#: AddonMarketplace.py:4580
 msgid "Description"
 msgstr ""
 
-#: AddonMarketplace.py:4563
+#: AddonMarketplace.py:4615
 #, python-format
 msgid "%(str1)s: %(str2)s"
 msgstr ""
 
-#: AddonMarketplace.py:4573
+#: AddonMarketplace.py:4625
 #, python-format
 msgid "Missing: %s"
 msgstr ""
 
-#: AddonMarketplace.py:4579
+#: AddonMarketplace.py:4631
 msgid "Installed, not active."
 msgstr ""
 
-#: AddonMarketplace.py:4581
+#: AddonMarketplace.py:4633
 msgid "Installed."
 msgstr ""
 
-#: AddonMarketplace.py:4586
+#: AddonMarketplace.py:4638
 msgid ""
 "Gramps cannot use this addon until what it requires is installed. Click the "
 "warning icon for what to do."
 msgstr ""
 
-#: AddonMarketplace.py:4689
+#: AddonMarketplace.py:4751
 msgid "Some Python modules could not be installed"
 msgstr ""
 
-#: AddonMarketplace.py:4691
+#: AddonMarketplace.py:4753
 msgid ""
 "The addons are installed anyway, but stay inactive until these modules are "
 "installed. Click the warning icon of an addon in this list, or its Requires "
 "button in the Addon Marketplace, for what to do."
 msgstr ""
 
-#: AddonMarketplace.py:4750
+#: AddonMarketplace.py:4812
 msgid "_Addon Marketplace..."
 msgstr ""

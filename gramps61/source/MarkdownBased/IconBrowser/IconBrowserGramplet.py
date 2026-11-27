@@ -856,6 +856,8 @@ class IconBrowserGramplet(Gramplet):
         as every subsequent startup: the gramplet stays small as much as
         it reasonably can, even on its very first run.
         """
+        if self._gui_gone():
+            return False
         cached_names = self._get_cached_gramps_icon_names()
         if cached_names is not None:
             self._refresh_gramps_only()
@@ -966,6 +968,11 @@ class IconBrowserGramplet(Gramplet):
 
         self._tree = Gtk.TreeView(model=self._sort_model)
         self._tree.get_selection().connect("changed", self._on_selection_changed)
+        # Gramps can tear this gramplet's widgets down without calling
+        # on_unload (e.g. "plugins-reloaded" after Addon Marketplace
+        # installs or updates an addon); queued idle callbacks must then
+        # stop instead of touching the destroyed tree.
+        self._tree.connect("destroy", self._cb_tree_destroyed)
         # Per-row tooltips on the found/not-found flag column (see
         # _on_tree_query_tooltip); header tooltips are set directly on
         # each column's header button below instead, since GtkTreeView
@@ -1192,8 +1199,22 @@ class IconBrowserGramplet(Gramplet):
         self._filter.refilter()
         GLib.idle_add(self._select_default_icon, "gramps-view")
 
+    def _cb_tree_destroyed(self, tree):
+        # only the current tree counts; an older one from a previous
+        # init() may be finalized later
+        if tree is getattr(self, "_tree", None):
+            self._shutting_down = True
+
+    def _gui_gone(self):
+        """True when the widgets an idle callback would touch are gone."""
+        if getattr(self, "_shutting_down", True):
+            return True
+        tree = getattr(self, "_tree", None)
+        # a destroyed GtkTreeView has no selection any more
+        return tree is None or tree.get_selection() is None
+
     def _select_default_icon(self, target_name):
-        if not self._tree or not self._sort_model:
+        if self._gui_gone() or not self._sort_model:
             return False
 
         it = self._sort_model.get_iter_first()
@@ -1927,7 +1948,8 @@ class IconBrowserGramplet(Gramplet):
         self._update_count_label()
 
     def _refresh_full_idle(self):
-        self._refresh_full()
+        if not self._gui_gone():
+            self._refresh_full()
         return False
 
     def _on_refresh_clicked(self, _widget):
@@ -1947,13 +1969,21 @@ class IconBrowserGramplet(Gramplet):
         """
 
         def _reload_then_show_all():
+            if self._gui_gone():
+                return False
             self._refresh_full()
             self._ctx_combo.set_active_id("*")
             return False
 
         GLib.idle_add(_reload_then_show_all)
 
-    def _on_theme_changed(self, _settings, _param):
+    def _on_theme_changed(self, settings, _param):
+        if self._gui_gone():
+            # torn down without on_unload: stop listening
+            if getattr(self, "_theme_handler_id", None) is not None:
+                settings.disconnect(self._theme_handler_id)
+                self._theme_handler_id = None
+            return
         GLib.timeout_add(300, self._deferred_refresh)
 
     def _deferred_refresh(self):
@@ -1964,6 +1994,8 @@ class IconBrowserGramplet(Gramplet):
         but there's no reason a theme change should force the expensive
         full cascade if only the small Gramps subset was ever loaded.
         """
+        if self._gui_gone():
+            return False
         if self._full_list_loaded:
             GLib.idle_add(self._refresh_full_idle)
         else:
@@ -1971,7 +2003,8 @@ class IconBrowserGramplet(Gramplet):
         return False
 
     def _refresh_gramps_only_idle(self):
-        self._refresh_gramps_only()
+        if not self._gui_gone():
+            self._refresh_gramps_only()
         return False
 
     def _on_copy_syntax(self, _widget, syntax):

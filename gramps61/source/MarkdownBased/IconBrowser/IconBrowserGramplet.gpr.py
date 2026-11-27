@@ -48,7 +48,7 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6,2,0):
           "MarkdownDash syntax for embedding that icon."
       ),
       status=STABLE,
-      version="1.1.4",
+      version="1.1.5",
       gramps_target_version=major_version,
       fname="IconBrowserGramplet.py",
       gramplet="IconBrowserGramplet",

@@ -40,8 +40,14 @@ Constraints:
   for this prototyping pass at user's request)
 Co-authored-by: Claude Sonnet 5 <noreply@anthropic.com>
 """
+import logging
 import sys
 import os
+
+LOG = logging.getLogger(".PluginManagerPlus")
+
+#: Gramps' own Plugin Manager window, kept for the fallback below
+_CORE_PLUGIN_STATUS = None
 
 
 def _lazy_plugin_status(*args, **kwargs):
@@ -53,10 +59,20 @@ def _lazy_plugin_status(*args, **kwargs):
     so a plain function works in place of the class. This keeps the large
     PluginManagerPlus module (and MarkdownUtils, urllib, its ini file)
     out of Gramps startup until the dialog is actually opened.
-    """
-    from PluginManagerPlus import PluginStatus
 
-    return PluginStatus(*args, **kwargs)
+    If Plugin Manager plus fails to import or to open, Gramps' own Plugin
+    Manager opens instead, so plugin problems can always be inspected.
+    """
+    try:
+        # pylint: disable-next=import-outside-toplevel
+        from PluginManagerPlus import PluginStatus
+
+        return PluginStatus(*args, **kwargs)
+    except Exception:  # pylint: disable=broad-except
+        LOG.exception("Plugin Manager plus failed; using the Plugin Manager")
+        if _CORE_PLUGIN_STATUS is None:
+            raise
+        return _CORE_PLUGIN_STATUS(*args, **kwargs)
 
 
 def load_on_reg(dbstate, uistate, plugin):
@@ -69,6 +85,11 @@ def load_on_reg(dbstate, uistate, plugin):
         sys.path.append(os.path.abspath(os.path.dirname(__file__)))
         import gramps.gui.viewmanager
 
-        gramps.gui.viewmanager.__dict__[
-            "PluginWindows"
-        ].PluginStatus = _lazy_plugin_status
+        global _CORE_PLUGIN_STATUS  # pylint: disable=global-statement
+        windows = gramps.gui.viewmanager.__dict__["PluginWindows"]
+        # kept on the module too, so a reload of this file (Gramps does
+        # that on rescans) does not mistake the patch for the original
+        if not hasattr(windows, "_core_PluginStatus"):
+            windows._core_PluginStatus = windows.PluginStatus
+        _CORE_PLUGIN_STATUS = windows._core_PluginStatus
+        windows.PluginStatus = _lazy_plugin_status
