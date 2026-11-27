@@ -37,19 +37,25 @@ from gramps.version import major_version, VERSION_TUPLE
 
 # ------------------------------------------------------------------------
 #
-# Register Beta What's Next Gramplet
+# Register What's Next Gramplet
+#
+# This addon uses the same id as the built-in "What's Next" gramplet. Gramps
+# registers its built-in plugins first and the addons in the user plugins
+# folder second, and a later registration with the same id replaces the
+# earlier one, so this gramplet supersedes the built-in one. The name,
+# description and title reuse the strings Gramps already translates.
 #
 # ------------------------------------------------------------------------
 
 if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
     register(
         GRAMPLET,
-        id="Beta What's Next",
-        name=_("Beta What's Next"),
-        description=_("Beta Gramplet suggesting items to research"),
-        version="0.2.0",  # build 20261110.2331
+        id="What's Next",
+        name=_("What's Next"),
+        description=_("Gramplet suggesting items to research"),
+        version="1.1.0",  # build 20261123.0002
         gramps_target_version=major_version,
-        status=BETA,
+        status=STABLE,
         audience=EVERYONE,
         authors=["Reinhard Mueller"],
         authors_email=[""],
@@ -58,9 +64,8 @@ if (5, 2, 0) <= VERSION_TUPLE <= (6, 2, 0):
         fname="Betawhatsnext.py",
         height=300,
         expand=True,
-        gramplet="BetaWhatNextGramplet",
-        gramplet_title=_("Beta What's Next?"),
+        gramplet="WhatNextGramplet",
+        gramplet_title=_("What's Next?"),
         help_url="https://github.com/emyoulation/_BetaDashboards",
         # help_url="Gramps_5.2_Wiki_Manual_-_Gramplets#What.27s_Next",
     )
-

@@ -44,6 +44,7 @@ from gi.repository import Gtk
 #
 # ------------------------------------------------------------------------
 from gramps.gen.config import config as configman
+from gramps.gen.utils.configmanager import ConfigManager
 from gramps.gen.db import DbTxn
 from gramps.gen.lib import EventType, FamilyRelType, Tag
 from gramps.gen.plug import Gramplet, PluginRegister
@@ -53,7 +54,11 @@ from gramps.gen.const import GRAMPS_LOCALE as glocale
 from gramps.gui.utils import is_right_click
 from gramps.gui.display import display_url
 
-_ = glocale.translation.sgettext
+# The addon translator checks the core catalog first, then this addon's own
+# catalog (locale/<lang>/LC_MESSAGES/addon.mo), so strings Gramps already
+# translates keep their core translations and new strings come from the
+# consolidated addon catalog.
+_ = glocale.get_addon_translator(__file__).sgettext
 
 # ======================================================================
 # BEGIN HELP BUTTON BLOCK (recipe: HelpDocButton.md)
@@ -93,6 +98,15 @@ show_diagnostic = False
 # Gramps, so the window stays responsive during a long search.
 WORK_PER_STEP = 40
 
+# Pixel size of the borderless Help icon in the button bar (larger than the
+# 16 px default, since it has no outline or text taking up the space).
+HELP_ICON_SIZE = 22
+
+# The batch "Tag all shown" buttons (Complete, Ignore, Prune) are hidden for
+# now: they complicate the interface until a better UI concept is found. The
+# right-click menu still tags one object at a time. True brings them back.
+SHOW_TAG_BUTTONS = False
+
 # ------------------------------------------------------------------------
 #
 # Tree data integrity tests
@@ -127,7 +141,7 @@ CHECKS = {
     "father_missing": True,
     "mother_missing": True,
     # People with no parent family are reported (the upstream intent,
-    # which the earlier beta accidentally dropped). Configurable.
+    # which an earlier beta accidentally dropped). Configurable.
     "parents_missing": True,
     # Details examined for each of the events above
     "date_unknown": True,
@@ -152,14 +166,13 @@ CHECK_HELP = {
 #
 # Persistent settings
 #
-# The .ini sits in this addon's own folder, next to this module, following
-# the ConfigManager pattern used by the other Emyoulation gramplets. The
-# [meta] block records the plugin id and a schema version so an outdated
-# settings file can be ignored rather than misread.
+# Kept as keys in gramps.ini (the "whatsnext" section, below) rather than
+# in an .ini in this addon folder, so the settings carry forward when Gramps
+# is upgraded, and a core version of this gramplet can use the same keys.
+# Settings from the earlier Betawhatsnext.ini are imported once.
 #
 # ------------------------------------------------------------------------
-PLUGIN_ID = "Beta What's Next"
-SCHEMA_VERSION = "1"
+PLUGIN_ID = "What's Next"  # same id as the built-in, which it replaces
 
 # When no tag is chosen in the Configuration, these are created on first use
 # and placed at the top of the tag list. Color is a hex string.
@@ -181,29 +194,74 @@ DEFAULT_IGNORE_TAG = _("Ignored")
 DEFAULT_IGNORE_COLOR = "#BFBFBF"  # 25% pale grey
 DEFAULT_PRUNE_TAG = _("Pruned")
 DEFAULT_PRUNE_COLOR = "#B8860B"  # dark amber
-CONFIG = configman.register_manager(
-    "Betawhatsnext", use_plugins_path=False
-)
-CONFIG.register("meta.plugin_id", PLUGIN_ID)
-CONFIG.register("meta.schema_version", SCHEMA_VERSION)
-# The chosen Complete, Ignore and Prune tags, by name. Stored here so a tag
-# created by a batch button is saved and shows in the Configuration menu.
-CONFIG.register("tags.complete", "")
-CONFIG.register("tags.ignore", "")
-CONFIG.register("tags.prune", "")
+# Settings are keys in gramps.ini, in a "whatsnext" section, registered at
+# runtime (as the core Favorites sidebar and Narrated Web Site do). gramps.ini
+# is carried forward when Gramps is upgraded, and these are the same keys a
+# core version of this gramplet would use (see CORE_MIGRATION.md).
+KEY_TAG_COMPLETE = "whatsnext.tag-complete"
+KEY_TAG_IGNORE = "whatsnext.tag-ignore"
+KEY_TAG_PRUNE = "whatsnext.tag-prune"
+KEY_SHOW_NEXT_STEPS = "whatsnext.show-next-steps"
+
+
+def check_key(check):
+    """The gramps.ini key of one test in CHECK_OPTIONS."""
+    return "whatsnext.check-%s" % check.replace("_", "-")
+
+
+# The chosen Complete, Ignore and Prune tags, by name, so a tag created on
+# first use is saved and shows in the Configuration dialog.
+configman.register(KEY_TAG_COMPLETE, "")
+configman.register(KEY_TAG_IGNORE, "")
+configman.register(KEY_TAG_PRUNE, "")
 # Display preferences (not tree data integrity tests).
-CONFIG.register("display.show_next_steps", True)
+configman.register(KEY_SHOW_NEXT_STEPS, True)
 for _key, _label in CHECK_OPTIONS:
-    CONFIG.register("checks.%s" % _key, CHECKS[_key])
-CONFIG.init()
-if CONFIG.get("meta.schema_version") != SCHEMA_VERSION:
-    # Settings from an incompatible version: start fresh rather than
-    # misread them.
-    CONFIG.set("meta.schema_version", SCHEMA_VERSION)
-    CONFIG.set("display.show_next_steps", True)
-    for _key, _label in CHECK_OPTIONS:
-        CONFIG.set("checks.%s" % _key, CHECKS[_key])
-    CONFIG.save()
+    configman.register(check_key(_key), CHECKS[_key])
+
+
+def import_addon_ini():
+    """
+    Carry the settings of earlier versions forward once. They were kept in
+    Betawhatsnext.ini in this addon folder. After the copy, the old file is
+    renamed to Betawhatsnext.ini.imported, so this runs only once and the old
+    values stay available for reference.
+    """
+    folder = os.path.dirname(os.path.abspath(__file__))
+    old_ini = os.path.join(folder, "Betawhatsnext.ini")
+    if not os.path.exists(old_ini):
+        return
+    try:
+        old = ConfigManager(old_ini)
+        old.load()
+        if "meta" in old.data and old.data["meta"].get("schema_version") != "1":
+            # An unknown layout: keep the defaults rather than misread it.
+            raise ValueError("unknown schema")
+        moves = [
+            ("tags.complete", KEY_TAG_COMPLETE),
+            ("tags.ignore", KEY_TAG_IGNORE),
+            ("tags.prune", KEY_TAG_PRUNE),
+            ("display.show_next_steps", KEY_SHOW_NEXT_STEPS),
+        ] + [("checks.%s" % key, check_key(key)) for key, _label in CHECK_OPTIONS]
+        for old_key, new_key in moves:
+            section, setting = old_key.split(".", 1)
+            if setting in old.data.get(section, {}):
+                value = old.data[section][setting]
+                if isinstance(value, type(configman.get_default(new_key))):
+                    configman.set(new_key, value)
+        configman.save()
+    except Exception:  # pylint: disable=broad-except
+        # A damaged old file must not stop the gramplet; it starts from the
+        # defaults instead.
+        pass
+    try:
+        os.replace(old_ini, old_ini + ".imported")
+    except OSError:
+        pass
+
+
+import_addon_ini()
+
 
 def no_tree_message(show_next_steps):
     """Build the "no tree loaded" guidance, with or without the Next Steps."""
@@ -249,7 +307,7 @@ REFRESH_SIGNALS = (
 # ------------------------------------------------------------------------
 
 
-class BetaWhatNextGramplet(Gramplet):
+class WhatNextGramplet(Gramplet):
 
     def init(self):
         self.set_tooltip(
@@ -259,7 +317,7 @@ class BetaWhatNextGramplet(Gramplet):
             )
         )
         # init() runs before on_load(), so read the saved value directly.
-        self.set_text(no_tree_message(CONFIG.get("display.show_next_steps")))
+        self.set_text(no_tree_message(configman.get(KEY_SHOW_NEXT_STEPS)))
 
     def post_init(self):
         """
@@ -298,8 +356,8 @@ class BetaWhatNextGramplet(Gramplet):
     def __build_button_bar(self):
         """
         Add a row of buttons at the bottom of the gramplet: a Help button on
-        the far left, then batch "Tag all shown" buttons for Complete, Ignore
-        and Prune. The row is appended to the box that holds the scrolling
+        the far left, then (only when SHOW_TAG_BUTTONS is True) batch "Tag
+        all shown" buttons for Complete, Ignore and Prune. The row is appended to the box that holds the scrolling
         text area, so it stays fixed below the text.
         """
         try:
@@ -310,44 +368,82 @@ class BetaWhatNextGramplet(Gramplet):
             bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
             bar.set_border_width(2)
             # Help button on the far left.
-            add_help_button(bar, self.uistate, PLUGIN_ID)
-            bar.pack_start(
-                self.__batch_button(
-                    _("Complete"),
-                    _("Tag listed People and Families as Completed"),
-                    self.cb_batch_complete,
-                ),
-                False,
-                False,
-                0,
+            help_button = add_help_button(
+                bar, self.uistate, PLUGIN_ID, size=HELP_ICON_SIZE
             )
-            bar.pack_start(
-                self.__batch_button(
-                    _("Ignore"),
-                    _("Tag to Ignore People and Families"),
-                    self.cb_batch_ignore,
-                ),
-                False,
-                False,
-                0,
-            )
-            bar.pack_start(
-                self.__batch_button(
-                    _("Prune"),
-                    _("Tag to Prune (exclude) listed People and Families from testing"),
-                    self.cb_batch_prune,
-                ),
-                False,
-                False,
-                0,
-            )
+            help_image = help_button.get_image() if help_button else None
+            if help_image is not None:
+                # The color icon (and its tooltip) is enough: no text and no
+                # outline, so the larger icon fits in the same space. The
+                # plain fallback button has no icon, so it keeps both.
+                help_button.set_property("label", None)
+                help_button.set_relief(Gtk.ReliefStyle.NONE)
+                help_button.set_focus_on_click(False)
+                if isinstance(help_image, Gtk.Image):
+                    help_image.set_pixel_size(HELP_ICON_SIZE)
+            self.__help_button = help_button
+            if SHOW_TAG_BUTTONS:
+                bar.pack_start(
+                    self.__batch_button(
+                        _("Complete"),
+                        _("Tag listed People and Families as Completed"),
+                        self.cb_batch_complete,
+                    ),
+                    False,
+                    False,
+                    0,
+                )
+                bar.pack_start(
+                    self.__batch_button(
+                        _("Ignore"),
+                        _("Tag to Ignore People and Families"),
+                        self.cb_batch_ignore,
+                    ),
+                    False,
+                    False,
+                    0,
+                )
+                bar.pack_start(
+                    self.__batch_button(
+                        _("Prune"),
+                        _("Tag to Prune (exclude) listed People and Families from testing"),
+                        self.cb_batch_prune,
+                    ),
+                    False,
+                    False,
+                    0,
+                )
             parent.pack_start(bar, False, False, 0)
-            bar.show_all()
+            # Show the buttons now, but let the bar's own visibility follow
+            # the text area: collapsing a Dashboard gramplet hides only its
+            # scrolled text window, so without this the bar stays behind.
+            for child in bar.get_children():
+                child.show_all()
+            bar.set_no_show_all(True)
             self.__button_bar = bar
+            container.connect("notify::visible", self.cb_text_visible)
+            # Moving into (or back out of) a detached window re-parents the
+            # whole gramplet frame, which this signal reports.
+            bar.connect("hierarchy-changed", self.cb_bar_moved)
+            self.cb_text_visible(container, None)
+            self.cb_bar_moved(bar, None)
         except Exception:  # pylint: disable=broad-except
             # The gramplet still works without the button bar; the right-click
             # menu offers the same tagging per object.
             pass
+
+    def cb_text_visible(self, widget, _pspec):
+        """Show the button bar only while the text area is shown (expanded)."""
+        self.__button_bar.set_visible(widget.get_visible())
+
+    def cb_bar_moved(self, _bar, _old_toplevel):
+        """
+        Hide the Help button while the gramplet is undocked, since the
+        detached window has its own Help button; show it again when docked.
+        """
+        if self.__help_button is not None:
+            detached = getattr(self.gui, "gstate", "") == "detached"
+            self.__help_button.set_visible(not detached)
 
     def __batch_button(self, label, tooltip, callback):
         """A button with the themed tag icon (menu size) and a text label."""
@@ -494,18 +590,18 @@ class BetaWhatNextGramplet(Gramplet):
 
         show_next_steps = bool(self.opts[self.__display_first].get_value())
         self.__show_next_steps = show_next_steps
-        if CONFIG.get("display.show_next_steps") != show_next_steps:
-            CONFIG.set("display.show_next_steps", show_next_steps)
+        if configman.get(KEY_SHOW_NEXT_STEPS) != show_next_steps:
+            configman.set(KEY_SHOW_NEXT_STEPS, show_next_steps)
             changed = True
 
         for offset, (key, _label) in enumerate(CHECK_OPTIONS):
             value = bool(self.opts[self.__check_first + offset].get_value())
             self.__checks[key] = value
-            if CONFIG.get("checks.%s" % key) != value:
-                CONFIG.set("checks.%s" % key, value)
+            if configman.get(check_key(key)) != value:
+                configman.set(check_key(key), value)
                 changed = True
         if changed:
-            CONFIG.save()
+            configman.save()
 
     def save_update_options(self, obj):
         """
@@ -517,8 +613,9 @@ class BetaWhatNextGramplet(Gramplet):
 
     def __sync_gui_data(self):
         """
-        Store the numeric options in the gramplet bar. The three tags live
-        in this addon's own settings file instead (see __persist_tags).
+        Store the numeric options in the gramplet bar. The three tags and
+        the on-or-off options are kept in gramps.ini instead (see
+        __persist_tags).
         """
         self.gui.data = [
             self.__todos_wanted,
@@ -527,31 +624,31 @@ class BetaWhatNextGramplet(Gramplet):
         ]
 
     def __persist_tags(self):
-        """Save the three chosen tag names to this addon's settings file."""
-        CONFIG.set("tags.complete", self.__complete_tag)
-        CONFIG.set("tags.ignore", self.__ignore_tag)
-        CONFIG.set("tags.prune", self.__prune_tag)
-        CONFIG.save()
+        """Save the three chosen tag names to gramps.ini."""
+        configman.set(KEY_TAG_COMPLETE, self.__complete_tag)
+        configman.set(KEY_TAG_IGNORE, self.__ignore_tag)
+        configman.set(KEY_TAG_PRUNE, self.__prune_tag)
+        configman.save()
 
     def on_load(self):
         """
         Load stored configuration data.
         """
         # Which tree data integrity tests run. Start from the defaults,
-        # then apply the choices saved in this addon's own settings file
+        # then apply the choices saved in gramps.ini
         # for the tests that are exposed in the Configuration dialog.
         self.__checks = dict(CHECKS)
         for key, _label in CHECK_OPTIONS:
-            self.__checks[key] = CONFIG.get("checks.%s" % key)
+            self.__checks[key] = configman.get(check_key(key))
 
         # Display preference: whether 👣 Next Steps suggestions are shown.
-        self.__show_next_steps = CONFIG.get("display.show_next_steps")
+        self.__show_next_steps = configman.get(KEY_SHOW_NEXT_STEPS)
 
-        # The three tags live in this addon's own settings file, so a tag
+        # The three tags are kept in gramps.ini, so a tag
         # created by a batch button is saved and appears in the options.
-        self.__complete_tag = CONFIG.get("tags.complete")
-        self.__ignore_tag = CONFIG.get("tags.ignore")
-        self.__prune_tag = CONFIG.get("tags.prune")
+        self.__complete_tag = configman.get(KEY_TAG_COMPLETE)
+        self.__ignore_tag = configman.get(KEY_TAG_IGNORE)
+        self.__prune_tag = configman.get(KEY_TAG_PRUNE)
 
         # The numeric options stay in the gramplet bar, as in the built-in
         # gramplet.
@@ -1427,3 +1524,9 @@ class UnknownFamilyClass:
 
 UnknownPerson = UnknownPersonClass()
 UnknownFamily = UnknownFamilyClass()
+
+
+# The class was named BetaWhatNextGramplet up to version 0.2.0. Keep the old
+# name, so an older Betawhatsnext.gpr.py (or another installed copy of this
+# addon) that still names it does not stop Gramps at startup.
+BetaWhatNextGramplet = WhatNextGramplet

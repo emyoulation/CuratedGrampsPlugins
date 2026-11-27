@@ -1,5 +1,17 @@
 [
   {
+    "n": "A seguir",
+    "i": "What's Next",
+    "t": 10,
+    "d": "Gramplet que sugere items a pesquisar",
+    "v": "1.1.0",
+    "g": "6.1",
+    "s": 3,
+    "z": "WhatsNext.addon.tgz",
+    "h": "https://github.com/emyoulation/_BetaDashboards",
+    "a": 0
+  },
+  {
     "n": "Addon Marketplace",
     "i": "AddonMarketplace",
     "t": 6,
@@ -32,18 +44,6 @@
     "s": 1,
     "z": "AutoActiveHome.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AutoActiveHome"
-  },
-  {
-    "n": "Beta What's Next",
-    "i": "Beta What's Next",
-    "t": 10,
-    "d": "Beta Gramplet suggesting items to research",
-    "v": "0.2.0",
-    "g": "6.1",
-    "s": 2,
-    "z": "Betawhatsnext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
   },
   {
     "n": "Biography - Complete",

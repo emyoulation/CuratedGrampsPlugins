@@ -2,9 +2,24 @@
 
 [README.md](README.md) ● [CHANGELOG.md](CHANGELOG.md)
 
-All notable differences between Beta What's Next and the built-in "What's Next" gramplet in Gramps.
+All notable differences between this addon and the built-in "What's Next" gramplet in Gramps.
 
 Baseline for comparison: "What's Next" version 1.0.0, as registered in [gramplet.gpr.py](https://github.com/gramps-project/gramps/blob/5cebb2c55fdbb0a92428625d409918216409db70/gramps/plugins/gramplet/gramplet.gpr.py#L445), using the source file [whatsnext.py on maintenance/gramps61](https://github.com/gramps-project/gramps/blob/maintenance/gramps61/gramps/plugins/gramplet/whatsnext.py) (fetched October 2026). The `maintenance/gramps52` copy, also registered as 1.0.0, has the same behavior; it differs only in the license header wording and one tuple-unpacking style change.
+
+## [1.1.0]
+### Changed
+- The addon now replaces the built-in "What's Next?" gramplet. It registers with the same id ("What's Next"), name and title as the built-in gramplet, so a Dashboard or gramplet bar that showed the built-in gramplet shows this one after a restart. The name, description and title reuse the strings that Gramps already translates. A gramplet added under the old "Beta What's Next?" name must be added again as "What's Next?". The chosen tags and the on-or-off options carry over, while the Search Quota and the two loop controls, which are stored with each gramplet, start from their defaults.
+- Settings are now kept in `gramps.ini`, in a `whatsnext` section, instead of an .ini file in the folder of the gramplet. They carry forward when Gramps is upgraded, and they are the keys a future core version of the gramplet would use. Settings from the old `Betawhatsnext.ini` are copied over once, and that file is renamed to `Betawhatsnext.ini.imported`.
+- The registration status is now Stable, and the version is raised above the 1.0.0 of the built-in gramplet.
+- The Help button shows a larger color icon with no text and no outline. The tooltip remains. The plain fallback button, used when MarkdownUtils is missing, keeps its text.
+- The Help button is hidden while the gramplet is undocked, since the undocked window has its own Help button.
+- Translations now use the addon translator. Strings that Gramps already translates keep their core translations, and new strings can be translated in the consolidated addon catalog.
+
+### Removed
+- The batch "Complete", "Ignore" and "Prune" buttons are hidden until a clearer interface is found. A right-click still tags one Person or Family at a time.
+
+### Fixed
+- The button row along the bottom of the gramplet stayed on screen when the gramplet was collapsed on the Dashboard. It now hides and returns with the list.
 
 ## [0.2.0]
 ### Added
@@ -59,7 +74,8 @@ Baseline for comparison: "What's Next" version 1.0.0, as registered in [gramplet
 - The data integrity tests from the [Verify the Data](https://github.com/gramps-project/gramps/blob/maintenance/gramps61/gramps/plugins/tool/verify.py) tool are to be offered as further options, so one gramplet can report the same concerns.
 
 ### Needs discussion
+- A clearer interface for tagging every shown object at once, to replace the hidden batch buttons.
 - Whether a batch "Complete" should tag every shown object, or only the shown objects that have no remaining finding, since marking an object Complete is a claim that its gaps will never be filled.
 
 ### Beyond scope
-- Moving the Search Quota and the two loop controls into the settings file of the gramplet. For now they stay in the gramplet bar, as in the built-in gramplet, while the tags and the newer options are kept in the folder of the gramplet.
+- Moving the Search Quota and the two loop controls into `gramps.ini`. For now they stay with each placed gramplet in the Dashboard or gramplet bar, as in the built-in gramplet, while the tags and the newer options are kept in `gramps.ini`.

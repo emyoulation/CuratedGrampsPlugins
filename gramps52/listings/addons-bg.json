@@ -34,18 +34,6 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AutoActiveHome"
   },
   {
-    "n": "Beta What's Next",
-    "i": "Beta What's Next",
-    "t": 10,
-    "d": "Beta Gramplet suggesting items to research",
-    "v": "0.2.0",
-    "g": "5.2",
-    "s": 2,
-    "z": "Betawhatsnext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
-  },
-  {
     "n": "Biography - Complete",
     "i": "completebiographyquickview",
     "t": 1,
@@ -508,6 +496,18 @@
       ]
     ],
     "h": "https://gramps.discourse.group/t/webp-image-not-supported/8246/5"
+  },
+  {
+    "n": "What's Next",
+    "i": "What's Next",
+    "t": 10,
+    "d": "Грамплет подсказващ неща за изследване",
+    "v": "1.1.0",
+    "g": "5.2",
+    "s": 3,
+    "z": "WhatsNext.addon.tgz",
+    "h": "https://github.com/emyoulation/_BetaDashboards",
+    "a": 0
   },
   {
     "n": "Корекция на езика на добавките",

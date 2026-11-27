@@ -34,18 +34,6 @@
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/AutoActiveHome"
   },
   {
-    "n": "Beta What's Next",
-    "i": "Beta What's Next",
-    "t": 10,
-    "d": "Beta Gramplet suggesting items to research",
-    "v": "0.2.0",
-    "g": "6.0",
-    "s": 2,
-    "z": "Betawhatsnext.addon.tgz",
-    "h": "https://github.com/emyoulation/_BetaDashboards",
-    "a": 0
-  },
-  {
     "n": "Biography - Complete",
     "i": "completebiographyquickview",
     "t": 1,
@@ -290,6 +278,18 @@
     "s": 3,
     "z": "ImportWithoutTree.addon.tgz",
     "h": "https://github.com/emyoulation/CuratedGrampsPlugins/tree/main/gramps61/source/ImportWithoutTree/README.md"
+  },
+  {
+    "n": "Kio nova",
+    "i": "What's Next",
+    "t": 10,
+    "d": "Gramplet por sugesti elementojn serĉotajn",
+    "v": "1.1.0",
+    "g": "6.0",
+    "s": 3,
+    "z": "WhatsNext.addon.tgz",
+    "h": "https://github.com/emyoulation/_BetaDashboards",
+    "a": 0
   },
   {
     "n": "Kompleta person-raporto (ordigita)",

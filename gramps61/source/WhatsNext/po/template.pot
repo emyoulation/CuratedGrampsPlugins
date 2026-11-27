@@ -1,0 +1,563 @@
+# Translation template for the 1.1.0 What's Next gramplet addon for Gramps.
+# Copyright (C) 2026 Jakim Friant, Brian McCullough
+# This file is distributed under the same license as the What's Next package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: What's Next 1.1.0\n"
+"Report-Msgid-Bugs-To: jmodule@friant.org\n"
+"POT-Creation-Date: 2026-11-26 18:14-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: WhatsNext.gpr.py:54
+msgid "What's Next"
+msgstr ""
+
+#: WhatsNext.gpr.py:55
+msgid "Gramplet suggesting items to research"
+msgstr ""
+
+#: WhatsNext.gpr.py:68
+msgid "What's Next?"
+msgstr ""
+
+#: WhatsNext.py:84
+msgid "Help"
+msgstr ""
+
+#: WhatsNext.py:161
+msgid "People"
+msgstr ""
+
+#: WhatsNext.py:163
+msgid "Unknown first name"
+msgstr ""
+
+#: WhatsNext.py:163
+msgid "Report a person without a first name"
+msgstr ""
+
+#: WhatsNext.py:164
+msgid "Unknown surname"
+msgstr ""
+
+#: WhatsNext.py:164
+msgid "Report a person without a surname"
+msgstr ""
+
+#: WhatsNext.py:165
+msgid "Missing Birth event"
+msgstr ""
+
+#: WhatsNext.py:165
+msgid "Report a person without a Birth event"
+msgstr ""
+
+#: WhatsNext.py:166
+msgid "Birth date and place"
+msgstr ""
+
+#: WhatsNext.py:166
+msgid "Check the date and place of the Birth event"
+msgstr ""
+
+#: WhatsNext.py:169
+msgid "Missing Death event"
+msgstr ""
+
+#: WhatsNext.py:171
+msgid ""
+"Report a person without a Death event, when Gramps judges from the dates of "
+"the person and relatives that the person is no longer alive"
+msgstr ""
+
+#: WhatsNext.py:176
+msgid "Death date and place"
+msgstr ""
+
+#: WhatsNext.py:176
+msgid "Check the date and place of the Death event"
+msgstr ""
+
+#: WhatsNext.py:180
+msgid "Families"
+msgstr ""
+
+#: WhatsNext.py:184
+msgid "Unknown relationship type"
+msgstr ""
+
+#: WhatsNext.py:185
+msgid "Report a family with the relationship type \"Unknown\""
+msgstr ""
+
+#: WhatsNext.py:189
+msgid "Missing Marriage event"
+msgstr ""
+
+#: WhatsNext.py:190
+msgid "Report a family of the \"Married\" type without a Marriage event"
+msgstr ""
+
+#: WhatsNext.py:192
+msgid "Marriage date and place"
+msgstr ""
+
+#: WhatsNext.py:192
+msgid "Check the date and place of the Marriage event"
+msgstr ""
+
+#: WhatsNext.py:193
+msgid "Divorce date and place"
+msgstr ""
+
+#: WhatsNext.py:193
+msgid "Check the date and place of the Divorce event"
+msgstr ""
+
+#: WhatsNext.py:197
+msgid "Relationships"
+msgstr ""
+
+#: WhatsNext.py:199
+msgid "Missing parent family"
+msgstr ""
+
+#: WhatsNext.py:199
+msgid "List each person who has no parent family"
+msgstr ""
+
+#: WhatsNext.py:200
+msgid "Missing partner"
+msgstr ""
+
+#: WhatsNext.py:200
+msgid "Report a family with only one partner"
+msgstr ""
+
+#: WhatsNext.py:201
+msgid "Missing father"
+msgstr ""
+
+#: WhatsNext.py:201
+msgid "Report a person whose parent family has no father"
+msgstr ""
+
+#: WhatsNext.py:202
+msgid "Missing mother"
+msgstr ""
+
+#: WhatsNext.py:202
+msgid "Report a person whose parent family has no mother"
+msgstr ""
+
+#: WhatsNext.py:206
+msgid "Events"
+msgstr ""
+
+#: WhatsNext.py:208
+msgid "Unknown date"
+msgstr ""
+
+#: WhatsNext.py:208
+msgid "Report an event without a date"
+msgstr ""
+
+#: WhatsNext.py:211
+msgid "Date is text only"
+msgstr ""
+
+#: WhatsNext.py:212
+msgid "Report a date that Gramps could not read as a date"
+msgstr ""
+
+#: WhatsNext.py:216
+msgid "Inexact date"
+msgstr ""
+
+#: WhatsNext.py:217
+msgid ""
+"Report a range, a span, or a date with \"before\", \"after\", \"about\", "
+"\"estimated\" or \"calculated\""
+msgstr ""
+
+#: WhatsNext.py:221
+msgid "Incomplete date"
+msgstr ""
+
+#: WhatsNext.py:222
+msgid "Report a single date without its day or month"
+msgstr ""
+
+#: WhatsNext.py:224
+msgid "Unknown place"
+msgstr ""
+
+#: WhatsNext.py:224
+msgid "Report an event without a place"
+msgstr ""
+
+#: WhatsNext.py:238
+msgid "Enter the missing name in the Edit Person dialog."
+msgstr ""
+
+#: WhatsNext.py:239
+msgid "Add via the Events tab of the Edit Person dialog."
+msgstr ""
+
+#: WhatsNext.py:241
+msgid ""
+"Open the event on the Events tab of the Edit Person dialog, and complete its "
+"date and place."
+msgstr ""
+
+#: WhatsNext.py:245
+msgid ""
+"Open the event on the Events tab of the Edit Family dialog, and complete its "
+"date and place."
+msgstr ""
+
+#: WhatsNext.py:248
+msgid "Add a Marriage event on the Events tab of the Edit Family dialog."
+msgstr ""
+
+#: WhatsNext.py:249
+msgid "Choose the relationship \"Type\" in the Edit Family dialog."
+msgstr ""
+
+#: WhatsNext.py:250
+msgid "Add the missing partner in the Edit Family dialog."
+msgstr ""
+
+#: WhatsNext.py:251
+msgid "Add the father in the Edit Family dialog of the parent family."
+msgstr ""
+
+#: WhatsNext.py:252
+msgid "Add the mother in the Edit Family dialog of the parent family."
+msgstr ""
+
+#: WhatsNext.py:254
+msgid ""
+"In the Relationships view, choose \"Add New Parents...\" or \"Add Existing "
+"Parents...\" from the Edit menu."
+msgstr ""
+
+#: WhatsNext.py:308
+msgid "Completed"
+msgstr ""
+
+#: WhatsNext.py:310
+msgid "Ignored"
+msgstr ""
+
+#: WhatsNext.py:312
+msgid "Pruned"
+msgstr ""
+
+#: WhatsNext.py:438
+msgid ""
+"\n"
+" ⛔ A local Genealogical Tree database has not yet been loaded.\n"
+"\n"
+msgstr ""
+
+#: WhatsNext.py:441
+msgid " 👣 Next Steps:\n"
+msgstr ""
+
+#: WhatsNext.py:442
+msgid "  •  From the \"Family Trees\" menu,"
+msgstr ""
+
+#: WhatsNext.py:443
+msgid " use the \"Manage Family Trees...\" option to"
+msgstr ""
+
+#: WhatsNext.py:444
+msgid " create a New (or to select an existing) Tree database.\n"
+msgstr ""
+
+#: WhatsNext.py:445
+msgid "  •  Click the \"Load Family Tree\" button to begin"
+msgstr ""
+
+#: WhatsNext.py:446
+msgid ""
+" working with the selected genealogical tree.\n"
+"\n"
+msgstr ""
+
+#: WhatsNext.py:449
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical "
+"tool, choose \"Import...\" in the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+
+#: WhatsNext.py:455
+msgid ""
+"To use a backup from Gramps, or a GEDCOM file from another genealogical "
+"tool, first create and load a new, empty tree. Then choose \"Import...\" in "
+"the \"Family Trees\" menu.\n"
+"\n"
+msgstr ""
+
+#: WhatsNext.py:494
+msgid ""
+"Use the \"Configure\" in the \"View\" menu to change the Gramplet options."
+msgstr ""
+
+#: WhatsNext.py:544 WhatsNext.py:1061
+msgid "Organize Tags"
+msgstr ""
+
+#: WhatsNext.py:581
+msgid "Complete"
+msgstr ""
+
+#: WhatsNext.py:582
+msgid "Tag listed People and Families as Completed"
+msgstr ""
+
+#: WhatsNext.py:591
+msgid "Ignore"
+msgstr ""
+
+#: WhatsNext.py:592
+msgid "Tag to Ignore People and Families"
+msgstr ""
+
+#: WhatsNext.py:601
+msgid "Prune"
+msgstr ""
+
+#: WhatsNext.py:602
+msgid "Tag to Prune (exclude) listed People and Families from testing"
+msgstr ""
+
+#: WhatsNext.py:667
+msgid "Search Quota "
+msgstr ""
+
+#: WhatsNext.py:670
+msgid ""
+"The least number of lines to show. The search stops once this many problems "
+"are found"
+msgstr ""
+
+#: WhatsNext.py:676
+msgid "Depth per loop"
+msgstr ""
+
+#: WhatsNext.py:679
+msgid ""
+"How many generations of descendants to check before going up one more "
+"generation of ancestors"
+msgstr ""
+
+#: WhatsNext.py:685
+msgid "Pause search expansion"
+msgstr ""
+
+#: WhatsNext.py:688
+msgid ""
+"How many extra rounds to wait after checking an ancestor before checking the "
+"descendants of that ancestor"
+msgstr ""
+
+#: WhatsNext.py:694
+msgid "Complete tag"
+msgstr ""
+
+#: WhatsNext.py:696
+msgid "Finished. Hide the object, and keep searching through it"
+msgstr ""
+
+#: WhatsNext.py:702
+msgid "Ignore tag"
+msgstr ""
+
+#: WhatsNext.py:704
+msgid "Set aside for now. Hide the object, and keep searching through it"
+msgstr ""
+
+#: WhatsNext.py:710
+msgid "Prune tag"
+msgstr ""
+
+#: WhatsNext.py:712
+msgid "Dead end. Hide the object, and stop searching through it"
+msgstr ""
+
+#: WhatsNext.py:730
+msgid "Show suggested 👣 Next Steps"
+msgstr ""
+
+#: WhatsNext.py:732
+msgid ""
+"Show the guidance steps and the 👣 suggestions. Turn off for a shorter list"
+msgstr ""
+
+#: WhatsNext.py:1041
+msgid "_Review (open editor)"
+msgstr ""
+
+#: WhatsNext.py:1051
+msgid "Tag as Complete"
+msgstr ""
+
+#: WhatsNext.py:1052
+msgid "Tag to Ignore"
+msgstr ""
+
+#: WhatsNext.py:1053
+msgid "Tag to Prune"
+msgstr ""
+
+#: WhatsNext.py:1226
+#, python-format
+msgid "Tag as %s"
+msgstr ""
+
+#: WhatsNext.py:1295
+msgid ""
+"\n"
+" ⛔ The current Tree database contains no people.\n"
+msgstr ""
+
+#: WhatsNext.py:1298
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+" Add a Family and a person in that family:\n"
+"  • A Family may be added via the \"Add\" menu\n"
+"  • A person may be added by pressing the \"+\" (plus) in the spouse "
+"(\"Father/partner1\" or \"Mother/partner2\") panels or \"Children\" tab.\n"
+"\n"
+"Or Import People from an external file:\n"
+"  • An external file may be used to populate the tree via \"Import...\" in "
+"the \"Family Trees\" menu."
+msgstr ""
+
+#: WhatsNext.py:1315
+msgid ""
+"\n"
+" ⛔ No Person has been chosen as the focal \"Home Person\".\n"
+msgstr ""
+
+#: WhatsNext.py:1319
+msgid ""
+"\n"
+" 👣 Next Steps:\n"
+"  •  Select the People view icon in the Navigator sidebar.\n"
+"  •  Select someone to make them the \"Active Person\".\n"
+"  •  Choose \"Set Home Person\" from the Edit menu or from the (right-click) "
+"context menu.\n"
+"\n"
+" This sets them as the focal \"Home Person\"."
+msgstr ""
+
+#: WhatsNext.py:1329
+msgid "Double-click color text to edit details"
+msgstr ""
+
+#: WhatsNext.py:1525 WhatsNext.py:1530
+msgid "(person with unknown name)"
+msgstr ""
+
+#: WhatsNext.py:1529
+msgid "(unknown person)"
+msgstr ""
+
+#: WhatsNext.py:1533
+#, python-format
+msgid "%(name1)s and %(name2)s"
+msgstr ""
+
+#: WhatsNext.py:1585
+#, python-format
+msgid ": %(list)s\n"
+msgstr ""
+
+#: WhatsNext.py:1585 WhatsNext.py:1788
+msgid ", "
+msgstr ""
+
+#: WhatsNext.py:1619
+msgid "first name unknown"
+msgstr ""
+
+#: WhatsNext.py:1623
+msgid "surname unknown"
+msgstr ""
+
+#: WhatsNext.py:1629
+msgid "Birth event missing"
+msgstr ""
+
+#: WhatsNext.py:1640
+msgid "Death event missing"
+msgstr ""
+
+#: WhatsNext.py:1735
+msgid "marriage event missing"
+msgstr ""
+
+#: WhatsNext.py:1739
+msgid "relationship type unknown"
+msgstr ""
+
+#: WhatsNext.py:1766
+msgid "date unknown"
+msgstr ""
+
+#: WhatsNext.py:1769
+msgid "date is text only"
+msgstr ""
+
+#: WhatsNext.py:1775
+msgid "date inexact"
+msgstr ""
+
+#: WhatsNext.py:1778
+msgid "date incomplete"
+msgstr ""
+
+#: WhatsNext.py:1781
+msgid "place unknown for the Event"
+msgstr ""
+
+#: WhatsNext.py:1787
+#, python-format
+msgid "%(str1)s: %(str2)s"
+msgstr ""
+
+#: WhatsNext.py:1800
+msgid "A partner relationship exists but the spouse is missing"
+msgstr ""
+
+#: WhatsNext.py:1807
+msgid "Father missing from the parent family"
+msgstr ""
+
+#: WhatsNext.py:1813
+msgid "Mother missing from the parent family"
+msgstr ""
+
+#: WhatsNext.py:1818
+msgid "Parent family is unknown."
+msgstr ""
+
+#: WhatsNext.py:1830
+#, python-format
+msgid ": %s\n"
+msgstr ""
