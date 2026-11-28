@@ -1,0 +1,109 @@
+{
+ "addons": {
+  "AllNamesQuickview": {
+   "path": "addons/AllNamesQuickview.mo",
+   "sha256": "d1ea97dda0f37ed858a9e5d74da8d029cc33046566c2ef8779def21f6e28e828",
+   "size": 958,
+   "translated": 5
+  },
+  "AncestorFill": {
+   "path": "addons/AncestorFill.mo",
+   "sha256": "f9ed2bafa8a5d9a34eca800135882774487d9b4746734675ae66a885fd0b93f8",
+   "size": 932,
+   "translated": 4
+  },
+  "AttachSourceTool": {
+   "path": "addons/AttachSourceTool.mo",
+   "sha256": "f1f917e4b805b6f6cae5867f27bf1faef2b94bd028a5b26ab7e88426560a2886",
+   "size": 834,
+   "translated": 3
+  },
+  "AvatarGenerator": {
+   "path": "addons/AvatarGenerator.mo",
+   "sha256": "a624828b00c810cb9a050d0bcf5c040a7dd71caf204aa0aafea6facd9dcbb207",
+   "size": 709,
+   "translated": 1
+  },
+  "CalculateEstimatedDates": {
+   "path": "addons/CalculateEstimatedDates.mo",
+   "sha256": "85df1a3266839cf3a217bb923edd98d6a0c69a4475c261c06489868b58310353",
+   "size": 8489,
+   "translated": 56
+  },
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "73a736a06976421ed3e57ceb66bb43228e03cdd5699328d89e08d23b274de06b",
+   "size": 757,
+   "translated": 2
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "73a736a06976421ed3e57ceb66bb43228e03cdd5699328d89e08d23b274de06b",
+   "size": 757,
+   "translated": 2
+  },
+  "NameSuite": {
+   "path": "addons/NameSuite.mo",
+   "sha256": "84243cd43171b225a5db63608b4bcc95998314ac0847e92b2712915e376f82db",
+   "size": 631,
+   "translated": 1
+  },
+  "PlaceCleanup": {
+   "path": "addons/PlaceCleanup.mo",
+   "sha256": "9edb7eff6e3da371f7a8cc5d05c08b19faaa229f06012539835fc568ffe9e957",
+   "size": 624,
+   "translated": 1
+  },
+  "RelID": {
+   "path": "addons/RelID.mo",
+   "sha256": "a624828b00c810cb9a050d0bcf5c040a7dd71caf204aa0aafea6facd9dcbb207",
+   "size": 709,
+   "translated": 1
+  },
+  "SetAttributeTool": {
+   "path": "addons/SetAttributeTool.mo",
+   "sha256": "4834ed3c4c264c8490566f3f46823f2388790fd55942ce8e7e764ada97ae1b3f",
+   "size": 772,
+   "translated": 2
+  },
+  "SetPrivacyTool": {
+   "path": "addons/SetPrivacyTool.mo",
+   "sha256": "a624828b00c810cb9a050d0bcf5c040a7dd71caf204aa0aafea6facd9dcbb207",
+   "size": 709,
+   "translated": 1
+  }
+ },
+ "branch": "gramps60",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "12f3ec525cba4062e775e5c9d4db4d0fab45d35b76064b481628a001e4af5f3f",
+  "size": 130491
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "7f1381f6932aef318bd774a4fe53bf87abfd9d649f553df05306a833da69ddb2",
+  "size": 451373,
+  "translated": 3774
+ },
+ "format": 1,
+ "generated": "2026-11-28T15:32:37+00:00",
+ "lang": "bg",
+ "sources": {
+  "addons": {
+   "commit": "a2f54555c649ec057b6c531f263c877d6abde94c",
+   "date": "2026-11-27T09:13:27-08:00"
+  },
+  "donor_addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "donor_gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  },
+  "gramps": {
+   "commit": "32aa29629b94c549f232cd0b61c137ae95d73acf",
+   "date": "2026-06-17T19:51:52-07:00"
+  }
+ }
+}

@@ -1,0 +1,77 @@
+{
+ "addons": {
+  "AttachSourceTool": {
+   "path": "addons/AttachSourceTool.mo",
+   "sha256": "78f10b92d3f6a460ab2494534ad5399ada3b8a881572089132d6c7f88e0b728b",
+   "size": 743,
+   "translated": 1
+  },
+  "AvatarGenerator": {
+   "path": "addons/AvatarGenerator.mo",
+   "sha256": "78f10b92d3f6a460ab2494534ad5399ada3b8a881572089132d6c7f88e0b728b",
+   "size": 743,
+   "translated": 1
+  },
+  "CalculateEstimatedDates": {
+   "path": "addons/CalculateEstimatedDates.mo",
+   "sha256": "41bcd27b225e9761e21d53a6a73cbec2270cf76bbb87cde2990f3332d3e66bb5",
+   "size": 1522,
+   "translated": 10
+  },
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "26a551f08ace84536beb901473f7ff50fc5f092f2c2d7b883c747032cd527ff5",
+   "size": 789,
+   "translated": 2
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "26a551f08ace84536beb901473f7ff50fc5f092f2c2d7b883c747032cd527ff5",
+   "size": 789,
+   "translated": 2
+  },
+  "RelID": {
+   "path": "addons/RelID.mo",
+   "sha256": "78f10b92d3f6a460ab2494534ad5399ada3b8a881572089132d6c7f88e0b728b",
+   "size": 743,
+   "translated": 1
+  },
+  "SetAttributeTool": {
+   "path": "addons/SetAttributeTool.mo",
+   "sha256": "78f10b92d3f6a460ab2494534ad5399ada3b8a881572089132d6c7f88e0b728b",
+   "size": 743,
+   "translated": 1
+  },
+  "SetPrivacyTool": {
+   "path": "addons/SetPrivacyTool.mo",
+   "sha256": "78f10b92d3f6a460ab2494534ad5399ada3b8a881572089132d6c7f88e0b728b",
+   "size": 743,
+   "translated": 1
+  }
+ },
+ "branch": "gramps61",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "15d1789a2a7e474fd7a3dbd41ff5674da872e96f8cd543f65f61ed6022b8b93b",
+  "size": 72874
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "fc56577df30336802de3b0290bac6266529503ba41e07e1e93586fce02a2b3fa",
+  "size": 221928,
+  "translated": 2565
+ },
+ "format": 1,
+ "generated": "2026-11-28T15:29:53+00:00",
+ "lang": "sq",
+ "sources": {
+  "addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  }
+ }
+}

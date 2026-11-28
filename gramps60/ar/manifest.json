@@ -1,0 +1,49 @@
+{
+ "addons": {
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "1f069ce29eff603aaeabff262c2951859261d6ab48ff1295b5378e70b52d94c1",
+   "size": 661,
+   "translated": 2
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "1f069ce29eff603aaeabff262c2951859261d6ab48ff1295b5378e70b52d94c1",
+   "size": 661,
+   "translated": 2
+  }
+ },
+ "branch": "gramps60",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "544e8c2cac260efad68f068c7197701663c818fb82f79539ac885009978171e0",
+  "size": 94875
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "9b12ad3f6864b29258ae7d6603ace6e9e207bff5977d0a73d092b828ed077b83",
+  "size": 289417,
+  "translated": 3545
+ },
+ "format": 1,
+ "generated": "2026-11-28T15:32:37+00:00",
+ "lang": "ar",
+ "sources": {
+  "addons": {
+   "commit": "a2f54555c649ec057b6c531f263c877d6abde94c",
+   "date": "2026-11-27T09:13:27-08:00"
+  },
+  "donor_addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "donor_gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  },
+  "gramps": {
+   "commit": "32aa29629b94c549f232cd0b61c137ae95d73acf",
+   "date": "2026-06-17T19:51:52-07:00"
+  }
+ }
+}

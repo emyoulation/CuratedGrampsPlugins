@@ -1,0 +1,67 @@
+{
+ "addons": {
+  "AllNamesQuickview": {
+   "path": "addons/AllNamesQuickview.mo",
+   "sha256": "f4989fa19be69543ace43ae530231a4860c880e465093f82684b1f63b73670f1",
+   "size": 925,
+   "translated": 5
+  },
+  "AncestorFill": {
+   "path": "addons/AncestorFill.mo",
+   "sha256": "4d2f0d89b57213e86f81b5ca4aebd010693509e3a71bbb9abce7c107cd992a22",
+   "size": 874,
+   "translated": 4
+  },
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "72a2fceea68d03dac987f56b0fb061398fb193895574e5b691ea44871c168e24",
+   "size": 725,
+   "translated": 2
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "72a2fceea68d03dac987f56b0fb061398fb193895574e5b691ea44871c168e24",
+   "size": 725,
+   "translated": 2
+  },
+  "PlaceCleanup": {
+   "path": "addons/PlaceCleanup.mo",
+   "sha256": "cfff5bdd10234627708bdfed6c8483d57977734bb403748fd241072c1a0668e5",
+   "size": 615,
+   "translated": 1
+  }
+ },
+ "branch": "gramps60",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "c12b9ceb4cdecde584bb64283395e9be8b7861a6249b2784b0985736b5cf2b6c",
+  "size": 196992
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "45f434d5a46a0897e813bb55d9e9ea2c4415e428d3106a677f3c8966e631f3a9",
+  "size": 716954,
+  "translated": 5670
+ },
+ "format": 1,
+ "generated": "2026-11-28T15:32:37+00:00",
+ "lang": "sr",
+ "sources": {
+  "addons": {
+   "commit": "a2f54555c649ec057b6c531f263c877d6abde94c",
+   "date": "2026-11-27T09:13:27-08:00"
+  },
+  "donor_addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "donor_gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  },
+  "gramps": {
+   "commit": "32aa29629b94c549f232cd0b61c137ae95d73acf",
+   "date": "2026-06-17T19:51:52-07:00"
+  }
+ }
+}

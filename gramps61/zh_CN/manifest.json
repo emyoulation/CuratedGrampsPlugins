@@ -1,0 +1,131 @@
+{
+ "addons": {
+  "AllNamesQuickview": {
+   "path": "addons/AllNamesQuickview.mo",
+   "sha256": "ce69dec6f7d0bfcc4dd23d5c8db657cc528d095aa4fea2135818f172ff9aa73c",
+   "size": 856,
+   "translated": 4
+  },
+  "AncestorFill": {
+   "path": "addons/AncestorFill.mo",
+   "sha256": "8af9f7f2c30b30bfe8652954cabaabbe893ce12d5fb5d7b0d16855203fba0bee",
+   "size": 1026,
+   "translated": 6
+  },
+  "AttachSourceTool": {
+   "path": "addons/AttachSourceTool.mo",
+   "sha256": "cd0355f20e29e0f8294331056e856af30eeb7c838ee554b77b2a9ae68ec7bac2",
+   "size": 758,
+   "translated": 2
+  },
+  "AvatarGenerator": {
+   "path": "addons/AvatarGenerator.mo",
+   "sha256": "fe6b0f56cfad0a30c697ee1b472e64037ac929b14c77b0273a11a44f2e84535d",
+   "size": 716,
+   "translated": 1
+  },
+  "CalculateEstimatedDates": {
+   "path": "addons/CalculateEstimatedDates.mo",
+   "sha256": "95437c071489fecd32758dc4f4731f0176fcd5007f751663324d05b158e86dc7",
+   "size": 4591,
+   "translated": 53
+  },
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "d3002641abaffe822a4d802fa36650ae931a876eb9f9af5e7cb59826228038fd",
+   "size": 747,
+   "translated": 2
+  },
+  "EventDescriptionEditor": {
+   "path": "addons/EventDescriptionEditor.mo",
+   "sha256": "a5375d2385024bbd9e3ab48417152a123deae0792720f2b84e8a33599598c888",
+   "size": 661,
+   "translated": 1
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "d3002641abaffe822a4d802fa36650ae931a876eb9f9af5e7cb59826228038fd",
+   "size": 747,
+   "translated": 2
+  },
+  "MediaBrowser": {
+   "path": "addons/MediaBrowser.mo",
+   "sha256": "52383eb48423a9371af4245fdba77413b09f64651afbc3c787c806d5df8659ae",
+   "size": 713,
+   "translated": 2
+  },
+  "MediaMerge": {
+   "path": "addons/MediaMerge.mo",
+   "sha256": "185c2d827a940ae2ec54d923084bd787eed768f1eee541828b149605f6d02a1e",
+   "size": 1082,
+   "translated": 5
+  },
+  "NameSuite": {
+   "path": "addons/NameSuite.mo",
+   "sha256": "a45dd45fcfd88982bd5b997b29ed147124ac2358900ae788c2c373922306f387",
+   "size": 667,
+   "translated": 1
+  },
+  "Overview": {
+   "path": "addons/Overview.mo",
+   "sha256": "315f81b37eaf8e3b9985045f2d70570bfc5a2e3b3be27e65ba91fdd313da1ce0",
+   "size": 665,
+   "translated": 1
+  },
+  "PlaceCleanup": {
+   "path": "addons/PlaceCleanup.mo",
+   "sha256": "485705392d884ded6bda2377605472defce57357786679f0cc6cf901cb7c89a2",
+   "size": 2167,
+   "translated": 16
+  },
+  "RelID": {
+   "path": "addons/RelID.mo",
+   "sha256": "fe6b0f56cfad0a30c697ee1b472e64037ac929b14c77b0273a11a44f2e84535d",
+   "size": 716,
+   "translated": 1
+  },
+  "SetAttributeTool": {
+   "path": "addons/SetAttributeTool.mo",
+   "sha256": "cd0355f20e29e0f8294331056e856af30eeb7c838ee554b77b2a9ae68ec7bac2",
+   "size": 758,
+   "translated": 2
+  },
+  "SetPrivacyTool": {
+   "path": "addons/SetPrivacyTool.mo",
+   "sha256": "fe6b0f56cfad0a30c697ee1b472e64037ac929b14c77b0273a11a44f2e84535d",
+   "size": 716,
+   "translated": 1
+  },
+  "lxml": {
+   "path": "addons/lxml.mo",
+   "sha256": "33df024a859fd44bf4bb4e0e56cb31bb64a3a49e95fadcaad0e9f9450a19d08c",
+   "size": 1792,
+   "translated": 21
+  }
+ },
+ "branch": "gramps61",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "ea74292b206cf8a9e3442d4ace5b9696659c21e988cf25e5a95a7942737aa992",
+  "size": 263571
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "c78edf12f20007708daf72c7ac59da4acd2b606d47da3774f1b17c6c1e820552",
+  "size": 729675,
+  "translated": 7509
+ },
+ "format": 1,
+ "generated": "2026-11-28T15:29:53+00:00",
+ "lang": "zh_CN",
+ "sources": {
+  "addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  }
+ }
+}

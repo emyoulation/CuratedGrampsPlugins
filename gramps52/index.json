@@ -1,0 +1,217 @@
+{
+ "branch": "gramps52",
+ "format": 1,
+ "generated": "2026-11-28T15:35:32+00:00",
+ "languages": {
+  "ar": {
+   "addons": 0,
+   "core": true
+  },
+  "bg": {
+   "addons": 0,
+   "core": true
+  },
+  "br": {
+   "addons": 0,
+   "core": true
+  },
+  "ca": {
+   "addons": 0,
+   "core": true
+  },
+  "cs": {
+   "addons": 0,
+   "core": true
+  },
+  "da": {
+   "addons": 0,
+   "core": true
+  },
+  "de": {
+   "addons": 0,
+   "core": true
+  },
+  "de_AT": {
+   "addons": 0,
+   "core": true
+  },
+  "el": {
+   "addons": 0,
+   "core": true
+  },
+  "en_GB": {
+   "addons": 0,
+   "core": true
+  },
+  "eo": {
+   "addons": 0,
+   "core": true
+  },
+  "es": {
+   "addons": 0,
+   "core": true
+  },
+  "fa": {
+   "addons": 0,
+   "core": true
+  },
+  "fi": {
+   "addons": 0,
+   "core": true
+  },
+  "fr": {
+   "addons": 0,
+   "core": true
+  },
+  "ga": {
+   "addons": 0,
+   "core": true
+  },
+  "gl": {
+   "addons": 0,
+   "core": true
+  },
+  "he": {
+   "addons": 0,
+   "core": true
+  },
+  "hr": {
+   "addons": 0,
+   "core": true
+  },
+  "hu": {
+   "addons": 0,
+   "core": true
+  },
+  "id": {
+   "addons": 0,
+   "core": true
+  },
+  "is": {
+   "addons": 0,
+   "core": true
+  },
+  "it": {
+   "addons": 0,
+   "core": true
+  },
+  "ja": {
+   "addons": 0,
+   "core": true
+  },
+  "ko": {
+   "addons": 0,
+   "core": true
+  },
+  "lt": {
+   "addons": 0,
+   "core": true
+  },
+  "mk": {
+   "addons": 0,
+   "core": true
+  },
+  "nb": {
+   "addons": 0,
+   "core": true
+  },
+  "nl": {
+   "addons": 0,
+   "core": true
+  },
+  "nn": {
+   "addons": 0,
+   "core": true
+  },
+  "pl": {
+   "addons": 0,
+   "core": true
+  },
+  "pt_BR": {
+   "addons": 0,
+   "core": true
+  },
+  "pt_PT": {
+   "addons": 0,
+   "core": true
+  },
+  "ro": {
+   "addons": 0,
+   "core": true
+  },
+  "ru": {
+   "addons": 0,
+   "core": true
+  },
+  "sk": {
+   "addons": 0,
+   "core": true
+  },
+  "sl": {
+   "addons": 0,
+   "core": true
+  },
+  "sq": {
+   "addons": 0,
+   "core": true
+  },
+  "sr": {
+   "addons": 0,
+   "core": true
+  },
+  "sr_Latn": {
+   "addons": 0,
+   "core": true
+  },
+  "sv": {
+   "addons": 0,
+   "core": true
+  },
+  "ta": {
+   "addons": 0,
+   "core": true
+  },
+  "tr": {
+   "addons": 0,
+   "core": true
+  },
+  "uk": {
+   "addons": 0,
+   "core": true
+  },
+  "vi": {
+   "addons": 0,
+   "core": true
+  },
+  "zh_CN": {
+   "addons": 0,
+   "core": true
+  },
+  "zh_HK": {
+   "addons": 0,
+   "core": true
+  },
+  "zh_TW": {
+   "addons": 0,
+   "core": true
+  }
+ },
+ "sources": {
+  "addons": {
+   "commit": "5f9f6fd3b49aa8803f62b19184989fa67bb96447",
+   "date": "2026-07-26T11:18:08-07:00"
+  },
+  "donor_addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "donor_gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  },
+  "gramps": {
+   "commit": "14c01e56f088a865cd1f5a78708357237b74d92d",
+   "date": "2026-04-02T22:45:55+01:00"
+  }
+ }
+}

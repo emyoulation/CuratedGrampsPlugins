@@ -1,0 +1,245 @@
+{
+ "branch": "gramps61",
+ "format": 1,
+ "generated": "2026-11-28T15:29:53+00:00",
+ "languages": {
+  "ar": {
+   "addons": 2,
+   "core": true
+  },
+  "az": {
+   "addons": 0,
+   "core": true
+  },
+  "ba": {
+   "addons": 0,
+   "core": true
+  },
+  "bg": {
+   "addons": 12,
+   "core": true
+  },
+  "br": {
+   "addons": 0,
+   "core": true
+  },
+  "ca": {
+   "addons": 95,
+   "core": true
+  },
+  "cs": {
+   "addons": 157,
+   "core": true
+  },
+  "cy": {
+   "addons": 0,
+   "core": true
+  },
+  "da": {
+   "addons": 146,
+   "core": true
+  },
+  "de": {
+   "addons": 157,
+   "core": true
+  },
+  "de_AT": {
+   "addons": 0,
+   "core": true
+  },
+  "el": {
+   "addons": 3,
+   "core": true
+  },
+  "en_GB": {
+   "addons": 59,
+   "core": true
+  },
+  "eo": {
+   "addons": 24,
+   "core": true
+  },
+  "es": {
+   "addons": 147,
+   "core": true
+  },
+  "fa": {
+   "addons": 0,
+   "core": true
+  },
+  "fi": {
+   "addons": 156,
+   "core": true
+  },
+  "fr": {
+   "addons": 151,
+   "core": true
+  },
+  "ga": {
+   "addons": 0,
+   "core": true
+  },
+  "gl": {
+   "addons": 0,
+   "core": true
+  },
+  "he": {
+   "addons": 156,
+   "core": true
+  },
+  "hr": {
+   "addons": 155,
+   "core": true
+  },
+  "hu": {
+   "addons": 59,
+   "core": true
+  },
+  "id": {
+   "addons": 0,
+   "core": true
+  },
+  "is": {
+   "addons": 19,
+   "core": true
+  },
+  "it": {
+   "addons": 157,
+   "core": true
+  },
+  "ja": {
+   "addons": 157,
+   "core": true
+  },
+  "ka": {
+   "addons": 4,
+   "core": true
+  },
+  "ko": {
+   "addons": 0,
+   "core": true
+  },
+  "ln": {
+   "addons": 0,
+   "core": true
+  },
+  "lt": {
+   "addons": 105,
+   "core": true
+  },
+  "lv": {
+   "addons": 0,
+   "core": true
+  },
+  "mk": {
+   "addons": 0,
+   "core": true
+  },
+  "mn": {
+   "addons": 18,
+   "core": false
+  },
+  "nb": {
+   "addons": 130,
+   "core": true
+  },
+  "ne": {
+   "addons": 0,
+   "core": true
+  },
+  "nl": {
+   "addons": 157,
+   "core": true
+  },
+  "nn": {
+   "addons": 5,
+   "core": true
+  },
+  "oc": {
+   "addons": 0,
+   "core": true
+  },
+  "pl": {
+   "addons": 121,
+   "core": true
+  },
+  "pt_BR": {
+   "addons": 53,
+   "core": true
+  },
+  "pt_PT": {
+   "addons": 157,
+   "core": true
+  },
+  "ro": {
+   "addons": 0,
+   "core": true
+  },
+  "ru": {
+   "addons": 131,
+   "core": true
+  },
+  "sk": {
+   "addons": 157,
+   "core": true
+  },
+  "sl": {
+   "addons": 9,
+   "core": true
+  },
+  "sq": {
+   "addons": 8,
+   "core": true
+  },
+  "sr": {
+   "addons": 5,
+   "core": true
+  },
+  "sr_Latn": {
+   "addons": 0,
+   "core": true
+  },
+  "sv": {
+   "addons": 154,
+   "core": true
+  },
+  "ta": {
+   "addons": 0,
+   "core": true
+  },
+  "tr": {
+   "addons": 156,
+   "core": true
+  },
+  "uk": {
+   "addons": 148,
+   "core": true
+  },
+  "vi": {
+   "addons": 7,
+   "core": true
+  },
+  "zh_CN": {
+   "addons": 17,
+   "core": true
+  },
+  "zh_HK": {
+   "addons": 2,
+   "core": true
+  },
+  "zh_TW": {
+   "addons": 156,
+   "core": true
+  }
+ },
+ "sources": {
+  "addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  }
+ }
+}

@@ -1,0 +1,91 @@
+{
+ "addons": {
+  "AttachSourceTool": {
+   "path": "addons/AttachSourceTool.mo",
+   "sha256": "8b841a370cc841ebb8d928bac14dbaa1b6d121c702e03e091450b44fe8a83802",
+   "size": 613,
+   "translated": 1
+  },
+  "AvatarGenerator": {
+   "path": "addons/AvatarGenerator.mo",
+   "sha256": "8b841a370cc841ebb8d928bac14dbaa1b6d121c702e03e091450b44fe8a83802",
+   "size": 613,
+   "translated": 1
+  },
+  "CalculateEstimatedDates": {
+   "path": "addons/CalculateEstimatedDates.mo",
+   "sha256": "e01008fd0d5978de4ce28229c7b8f002ae958a6be1f67da9fed50ff6ba13177c",
+   "size": 1386,
+   "translated": 10
+  },
+  "CheckPlaceTitles": {
+   "path": "addons/CheckPlaceTitles.mo",
+   "sha256": "d3b614e0dc353ae8c81a3a276da121289f32fd3927c27093fd7a64877013f83b",
+   "size": 661,
+   "translated": 2
+  },
+  "EditExifMetadata": {
+   "path": "addons/EditExifMetadata.mo",
+   "sha256": "25c148faf4bce956ae4c17f19b513becc46085a55b28215191a4054db3400498",
+   "size": 2101,
+   "translated": 12
+  },
+  "ExtractCity": {
+   "path": "addons/ExtractCity.mo",
+   "sha256": "d3b614e0dc353ae8c81a3a276da121289f32fd3927c27093fd7a64877013f83b",
+   "size": 661,
+   "translated": 2
+  },
+  "RelID": {
+   "path": "addons/RelID.mo",
+   "sha256": "8b841a370cc841ebb8d928bac14dbaa1b6d121c702e03e091450b44fe8a83802",
+   "size": 613,
+   "translated": 1
+  },
+  "SetAttributeTool": {
+   "path": "addons/SetAttributeTool.mo",
+   "sha256": "8b841a370cc841ebb8d928bac14dbaa1b6d121c702e03e091450b44fe8a83802",
+   "size": 613,
+   "translated": 1
+  },
+  "SetPrivacyTool": {
+   "path": "addons/SetPrivacyTool.mo",
+   "sha256": "8b841a370cc841ebb8d928bac14dbaa1b6d121c702e03e091450b44fe8a83802",
+   "size": 613,
+   "translated": 1
+  }
+ },
+ "branch": "gramps60",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "35a03adda639e2418629666133eff3878823b495a537e0873e1acbef73e8be09",
+  "size": 218806
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "45f22e6bf20a6db56f7e3923f2779042b7211359c7061a0dcebe30dfb10a247e",
+  "size": 663815,
+  "translated": 6730
+ },
+ "format": 1,
+ "generated": "2026-11-28T15:32:37+00:00",
+ "lang": "sl",
+ "sources": {
+  "addons": {
+   "commit": "a2f54555c649ec057b6c531f263c877d6abde94c",
+   "date": "2026-11-27T09:13:27-08:00"
+  },
+  "donor_addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "donor_gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  },
+  "gramps": {
+   "commit": "32aa29629b94c549f232cd0b61c137ae95d73acf",
+   "date": "2026-06-17T19:51:52-07:00"
+  }
+ }
+}

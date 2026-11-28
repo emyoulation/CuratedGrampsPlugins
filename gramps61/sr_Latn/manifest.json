@@ -1,0 +1,28 @@
+{
+ "addons": {},
+ "branch": "gramps61",
+ "bundle": {
+  "path": "pack.zip",
+  "sha256": "c5e2c9dae4f6a3ed6f1b5bb89e15cdff100b886d88a2a1f37820ad6e59689216",
+  "size": 3687
+ },
+ "core": {
+  "path": "core/gramps.mo",
+  "sha256": "191406277c33825c6438dca342c6a2e66aef1bc2006cb3195214796aa44eee1e",
+  "size": 18448,
+  "translated": 161
+ },
+ "format": 1,
+ "generated": "2026-11-28T15:29:53+00:00",
+ "lang": "sr_Latn",
+ "sources": {
+  "addons": {
+   "commit": "dba3c879659ab65875137e30d5cee24345fb1e10",
+   "date": "2026-11-27T09:51:59-08:00"
+  },
+  "gramps": {
+   "commit": "e9c09a44791def6a6b81079dc7f8cbe8c7e69cc0",
+   "date": "2026-10-27T23:59:11Z"
+  }
+ }
+}
